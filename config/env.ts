@@ -36,7 +36,7 @@ export const GLOBAL_CONFIG: Record<string, AppEnv> = {
     },
     client: {
       apiConfig: {
-        url: 'http://localhost:3002/api',
+        url: 'https://bookmeter.org/api',
       },
     },
   },

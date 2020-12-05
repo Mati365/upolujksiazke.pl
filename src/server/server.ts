@@ -38,7 +38,7 @@ async function forkApp(
     )
     .use(
       '/public',
-      express.static(path.resolve(__dirname, 'public/')),
+      express.static(path.resolve(__dirname, 'public/'), {fallthrough: false}),
     )
     .use(cookieParser())
     .useGlobalInterceptors(

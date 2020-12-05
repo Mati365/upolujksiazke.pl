@@ -15,7 +15,7 @@ export const HomeRoute = () => {
       </Helmet>
 
       <div>
-        ABC
+        Hello World
       </div>
     </>
   );

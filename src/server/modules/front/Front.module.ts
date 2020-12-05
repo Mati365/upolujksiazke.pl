@@ -3,9 +3,7 @@ import useragent from 'express-useragent';
 import {APP_FILTER} from '@nestjs/core';
 import {PAGE_I18N} from '@client/i18n/packs';
 
-import {isDevMode} from '@shared/helpers';
-
-import {ServeStaticExceptionFilter} from '@server/filters/ServeStaticException.filter';
+import {ServerExceptionFilter} from '@server/filters/ServerException.filter';
 import {CacheModule, MiddlewareConsumer, Module} from '@nestjs/common';
 import {FrontController} from './Front.controller';
 import {I18nModule} from '../i18n';
@@ -27,10 +25,10 @@ import {I18nModule} from '../i18n';
     controllers: [
       FrontController,
     ],
-    providers: isDevMode() ? [] : [
+    providers: [
       {
         provide: APP_FILTER,
-        useClass: ServeStaticExceptionFilter,
+        useClass: ServerExceptionFilter,
       },
     ],
   },

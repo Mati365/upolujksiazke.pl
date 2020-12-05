@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "jsx": "react",
+    "target": "ES5",
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "downlevelIteration": true,
+    "emitDecoratorMetadata": true,
+    "baseUrl": "./",
+    "paths": {
+      "@client": ["src/client"],
+      "@client/*": ["src/client/*"],
+
+      "@server": ["src/server"],
+      "@server/*": ["src/server/*"],
+
+      "@shared": ["src/shared"],
+      "@shared/*": ["src/shared/*"],
+
+      "@assets": ["assets"],
+      "@assets/*": ["assets/*"]
+    }
+  },
+  "exclude": [
+    "**/*.test.ts",
+    "node_modules"
+  ]
+}

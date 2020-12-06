@@ -16,6 +16,7 @@ services:
 
     volumes:
       - /web
+      - ~/.ssl/bookmeter.org:/web/ssl
 
     depends_on:
       - redis
@@ -25,6 +26,8 @@ services:
       - APP_ENV=production
       - APP_PORT=3000
       - APP_LISTEN_ADDRESS=0.0.0.0
+      - HTTPS_KEY_PATH=/web/ssl/lvh.me.key
+      - HTTPS_CERT_PATH=/web/ssl/lvh.me.cert
 
   redis:
     image: 'redis:alpine'

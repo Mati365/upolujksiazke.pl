@@ -1,4 +1,8 @@
-import {GLOBAL_CONFIG} from '../../../config/env';
+import {AppEnv, GLOBAL_CONFIG} from '../../../config/env';
+
+export {
+  AppEnv,
+};
 
 export const ENV = {
   ...GLOBAL_CONFIG.shared,

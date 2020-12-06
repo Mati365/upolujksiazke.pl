@@ -12,7 +12,8 @@
       "ref"  : "origin/master",
       "repo" : "git@github.com:Mati365/bookmeter.org.git",
       "path" : "/var/www/bookmeter.org",
-      "post-deploy" : "yarn install; yarn run build:production"
+      "post-deploy" : "yarn install; yarn run build:production",
+      "branch": "master"
      }
   }
 }

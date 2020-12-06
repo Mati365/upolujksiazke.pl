@@ -2,7 +2,16 @@
   "apps" : [
     {
       "name" : "bookmeter.org",
-      "script" : "dist/server.js"
+      "script" : "dist/server.js",
+      "env": {
+        "NODE_ENV": "production",
+        "APP_ENV": "production",
+        "APP_PORT": 3000,
+        "APP_INSTANCES": 1,
+        "APP_LISTEN_ADDRESS": "0.0.0.0",
+        "HTTPS_KEY_PATH": "~/.ssl/bookmeter.org.key",
+        "HTTPS_CERT_PATH": "~/.ssl/bookmeter.org.crt"
+      }
     }
   ],
   "deploy" : {
@@ -15,12 +24,7 @@
       "post-deploy" : "yarn install --production=false; yarn run build:production",
       "env": {
         "NODE_ENV": "production",
-        "APP_ENV": "production",
-        "APP_PORT": 3000,
-        "APP_INSTANCES": 1,
-        "APP_LISTEN_ADDRESS": "0.0.0.0",
-        "HTTPS_KEY_PATH": "~/.ssl/bookmeter.org.key",
-        "HTTPS_CERT_PATH": "~/.ssl/bookmeter.org.crt"
+        "APP_ENV": "production"
       }
      }
   }

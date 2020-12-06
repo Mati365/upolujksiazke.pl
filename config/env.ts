@@ -24,16 +24,25 @@ const {
 } = process.env;
 
 export const GLOBAL_CONFIG: Record<string, AppEnv> = {
-  development: {
+  shared: {
     server: {
       apiConfig: {
-        url: 'http://localhost:3002/api',
+        url: `http://${APP_LISTEN_ADDRESS}:${APP_PORT}/api`,
       },
       listen: {
         port: +APP_PORT,
         address: APP_LISTEN_ADDRESS,
       },
     },
+  },
+  development: {
+    client: {
+      apiConfig: {
+        url: `http://${APP_LISTEN_ADDRESS}:${APP_PORT}/api`,
+      },
+    },
+  },
+  production: {
     client: {
       apiConfig: {
         url: 'https://bookmeter.org/api',

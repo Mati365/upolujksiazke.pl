@@ -1,0 +1,30 @@
+version: '3'
+services:
+  bookmeter_web:
+    image: 15.3.0-alpine3.10
+    build:
+      dockerfile: ./docker/Dockerfile
+      context: ../
+      args:
+        NODE_ENV: production
+        APP_ENV: production
+
+    command: yarn run start
+
+    ports:
+      - '3000:3000'
+
+    volumes:
+      - /web
+
+    depends_on:
+      - redis
+
+    environment:
+      - NODE_ENV=production
+      - APP_ENV=production
+      - APP_PORT=3000
+      - APP_LISTEN_ADDRESS=0.0.0.0
+
+  redis:
+    image: 'redis:alpine'

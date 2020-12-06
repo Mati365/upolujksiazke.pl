@@ -17,6 +17,7 @@ const createConfig = ({
   distPath,
   externals,
   plugins = [],
+  override,
 }) => {
   const devMode = mode === 'development';
 
@@ -46,15 +47,17 @@ const createConfig = ({
             },
           ],
         },
-        {
-          enforce: 'pre',
-          test: /\.tsx?$/,
-          exclude: /node_modules/,
-          loader: 'eslint-loader',
-          options: {
-            emitError: true,
+        ...!devMode ? [] : [
+          {
+            enforce: 'pre',
+            test: /\.tsx?$/,
+            exclude: /node_modules/,
+            loader: 'eslint-loader',
+            options: {
+              emitError: true,
+            },
           },
-        },
+        ],
         {
           test: /\.tsx?$/,
           loader: 'ts-loader',
@@ -92,6 +95,7 @@ const createConfig = ({
         },
       ),
     ],
+    ...override,
   };
 };
 
@@ -169,6 +173,11 @@ module.exports = [
       externals: [
         nodeExternals(),
       ],
+      override: {
+        optimization: {
+          minimize: false,
+        },
+      },
     },
   ),
 ];

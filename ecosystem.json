@@ -1,0 +1,18 @@
+{
+  "apps" : [
+    {
+      "name" : "bookmeter.org",
+      "script" : "dist/server.js"
+    }
+  ],
+  "deploy" : {
+    "production" : {
+      "user" : "web",
+      "host" : ["192.168.1.105"],
+      "ref"  : "origin/master",
+      "repo" : "git@github.com:Mati365/bookmeter.org.git",
+      "path" : "/var/www/bookmeter.org",
+      "post-deploy" : "yarn install; yarn run build:production"
+     }
+  }
+}

@@ -1,21 +1,19 @@
 import cluster from 'cluster';
-import os from 'os';
-import * as R from 'ramda';
 import {Injectable} from '@nestjs/common';
+import * as R from 'ramda';
 
 import {isDevMode} from '@shared/helpers/isDevMode';
-
-const TOTAL_CORES = os.cpus().length;
+import {ENV} from '@server/constants/env';
 
 @Injectable()
 export class ClusterService {
   static clusterize(callback: Function): void {
-    if (cluster.isMaster && !isDevMode()) {
+    if (cluster.isMaster && !isDevMode() && ENV.server.instances > 1) {
       console.info(`🚀 Master server (${process.pid}) is running!`);
 
       R.times(
         () => cluster.fork(),
-        TOTAL_CORES,
+        ENV.server.instances,
       );
 
       cluster.on('exit', (worker) => {

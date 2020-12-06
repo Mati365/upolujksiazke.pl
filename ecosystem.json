@@ -12,7 +12,7 @@
       "ref"  : "origin/main",
       "repo" : "git@github.com:Mati365/bookmeter.org.git",
       "path" : "/var/www/bookmeter.org",
-      "post-deploy" : "yarn install --production=false; yarn run build:production; ln -s ../.env ./.env",
+      "post-deploy" : "yarn install --production=false; yarn run build:production; ln -sf ../.env ./.env",
       "env": {
         "NODE_ENV": "production",
         "APP_ENV": "production"

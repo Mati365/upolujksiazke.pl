@@ -4,9 +4,11 @@ import {useContainer} from 'class-validator';
 import path from 'path';
 import cookieParser from 'cookie-parser';
 import express from 'express';
+import http from 'http';
+import https from 'https';
 
 import {NestFactory, Reflector} from '@nestjs/core';
-import {NestExpressApplication} from '@nestjs/platform-express';
+import {ExpressAdapter, NestExpressApplication} from '@nestjs/platform-express';
 import {ClassSerializerInterceptor} from '@nestjs/common';
 
 import {ENV} from './constants/env';
@@ -30,7 +32,11 @@ async function forkApp(
     port: number,
   },
 ) {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule, {cors: true});
+  const server = express();
+  const app = await NestFactory.create<NestExpressApplication>(
+    AppModule,
+    new ExpressAdapter(server),
+  );
 
   app
     .use(
@@ -54,7 +60,19 @@ async function forkApp(
     },
   );
 
-  app.listen(port, address);
+  app.enableCors();
+  await app.init();
+
+  http
+    .createServer(server)
+    .listen(ENV.server.listen.port);
+
+  if (ENV.server.ssl.cert) {
+    https
+      .createServer(ENV.server.ssl, server)
+      .listen(ENV.server.listen.port + 1);
+  }
+
   console.info(`🚀 API server is running at http://${address}:${port}!`);
 }
 

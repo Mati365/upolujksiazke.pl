@@ -3,6 +3,10 @@ require('dotenv').config();
 
 type AppEnv = Partial<{
   server: {
+    ssl: {
+      key: string,
+      cert: string,
+    },
     apiConfig: {
       url: string,
     },
@@ -21,11 +25,17 @@ type AppEnv = Partial<{
 const {
   APP_PORT = 3000,
   APP_LISTEN_ADDRESS = 'localhost',
+  HTTPS_KEY,
+  HTTPS_CERT,
 } = process.env;
 
 export const GLOBAL_CONFIG: Record<string, AppEnv> = {
   shared: {
     server: {
+      ssl: {
+        key: HTTPS_KEY,
+        cert: HTTPS_CERT,
+      },
       apiConfig: {
         url: `http://${APP_LISTEN_ADDRESS}:${APP_PORT}/api`,
       },

@@ -43,7 +43,6 @@ const {
   HTTPS_CERT_PATH,
 } = process.env;
 
-console.info(APP_LISTEN_ADDRESS, DB_USER, DB_PASS);
 export const GLOBAL_CONFIG: Record<string, AppEnv> = {
   shared: {
     server: {

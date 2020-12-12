@@ -3,6 +3,7 @@ import {Module} from '@nestjs/common';
 import {DatabaseModule} from './database/Database.module';
 import {FrontModule} from './front';
 import {ManifestModule} from './manifest';
+import {ScrapperModule} from './scrapper/Scrapper.module';
 
 @Module(
   {
@@ -14,6 +15,7 @@ import {ManifestModule} from './manifest';
         },
       ),
       FrontModule,
+      ScrapperModule,
     ],
     controllers: [],
     providers: [],

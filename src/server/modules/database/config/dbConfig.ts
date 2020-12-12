@@ -1,12 +1,18 @@
 import {SqlHighlighter} from '@mikro-orm/sql-highlighter';
 import {MikroOrmModuleSyncOptions} from '@mikro-orm/nestjs';
-
 import {Logger} from '@nestjs/common';
 
+import {ENV} from '@server/constants/env';
 import {isDevMode} from '@shared/helpers';
 
-import {ENV} from '@server/constants/env';
+import {AuthorEntity} from '../../author/Author.entity';
 import {BookEntity} from '../../book/Book.entity';
+import {BookReviewEntity} from '../../book-review/BookReview.entity';
+
+import {
+  ScrapperMetadataEntity,
+  ScrapperWebsiteEntity,
+} from '../../scrapper/entity';
 
 const logger = new Logger('MikroORM');
 
@@ -20,7 +26,11 @@ export const DB_CONFIG: MikroOrmModuleSyncOptions = {
     disableDynamicFileAccess: true,
   },
   entities: [
+    AuthorEntity,
     BookEntity,
+    BookReviewEntity,
+    ScrapperMetadataEntity,
+    ScrapperWebsiteEntity,
   ],
   migrations: {
     path: './src/server/migrations',

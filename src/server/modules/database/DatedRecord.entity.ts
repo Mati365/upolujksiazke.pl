@@ -1,6 +1,6 @@
 import {Property, PrimaryKey} from '@mikro-orm/core';
 
-export class DatedRecordEntity {
+export abstract class DatedRecordEntity {
   @PrimaryKey()
   id!: number;
 

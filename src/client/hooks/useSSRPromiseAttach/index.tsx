@@ -26,6 +26,8 @@ export type SSRContext = {
   counter: number,
 
   readCache?(uuid: string): any,
+  readCacheStore?(): any,
+
   attachPromise?(uuid: string, promise: AttachedPromise): void,
   generateUUID?(): number,
 };
@@ -42,6 +44,9 @@ export const getDefaultSSRContext = (): SSRContext => ({
   cache: {},
   attachPromise: R.T,
   counter: 0,
+  readCacheStore() {
+    return this.cache;
+  },
   readCache(uuid: string): any {
     return this.cache[uuid];
   },

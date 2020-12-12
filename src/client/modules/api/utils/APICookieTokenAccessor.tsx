@@ -20,7 +20,7 @@ import {
 export class APICookieTokenAccessor extends APITokenAccessor {
   private tokenCookie: string;
   private refreshTokenCookie: string;
-  private cookiesDriver: CookiesDriver;
+  public readonly cookiesDriver: CookiesDriver;
 
   constructor(
     {

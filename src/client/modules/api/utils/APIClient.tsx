@@ -7,6 +7,7 @@ import {buildURL} from '@shared/helpers/urlEncoder';
 import {safeArray} from '@shared/helpers/safeArray';
 
 import {AppAPIRepo} from '../repository/AppAPIRepo';
+import {APICookieTokenAccessor} from './APICookieTokenAccessor';
 import {
   JWTTokens,
   APITokenAccessor,
@@ -80,6 +81,10 @@ export class APIClient {
 
   get config() {
     return this._config;
+  }
+
+  get cookies() {
+    return (this._config.tokenAccessor as APICookieTokenAccessor).cookiesDriver;
   }
 
   /**

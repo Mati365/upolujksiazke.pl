@@ -1,5 +1,4 @@
 import {useState, useRef, useEffect} from 'react';
-import * as R from 'ramda';
 
 import {DiscardablePromiseWrapper} from '@shared/helpers/classes/DiscardablePromiseWrapper';
 import {isSSR, shallowCompareArrays} from '@shared/helpers';
@@ -74,7 +73,9 @@ export const usePromise = <T> (config: PromiseConfig<T>): PromiseHookReturnType<
   );
 
   if (!config.skip) {
-    if (!R.isNil(ssrCacheValue)) {
+    if (ssrCacheValue) {
+      prevKeys.current = config.keys;
+
       Object.assign(
         promiseState,
         {

@@ -72,21 +72,23 @@ export class FrontController {
           );
         },
         readParentCache(uuid: string) {
-          return cacheManager.get(uuid);
+          return cacheManager.get(uuid) as any;
         },
         async mapperFn(val: AttachedPromise) {
           const {cacheParams} = val;
-          const result = await val.executor();
+          const data = await val.executor();
 
           cacheManager.set(
             cacheParams.key,
-            result,
+            {
+              data,
+            },
             {
               ttl: cacheParams.expire,
             },
           );
 
-          return result;
+          return data;
         },
       },
     )(
@@ -114,7 +116,7 @@ export class FrontController {
             i18n: hydrateLang,
             env: ENV.client,
             ssrTime: Date.now(),
-            [MAGIC_ASYNC_DATA_CONTEXT]: asyncAcc.cache,
+            [MAGIC_ASYNC_DATA_CONTEXT]: asyncAcc.toJSON,
           }}
         />
       ),

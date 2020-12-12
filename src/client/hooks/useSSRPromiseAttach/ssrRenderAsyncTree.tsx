@@ -15,6 +15,7 @@ import {
 export type SSRPromiseAccumulator = {
   promises: AttachedPromisesMap,
   cache: AttachedPromisesCacheMap,
+  toJSON?(): object,
 };
 
 export const createBlankAsyncAccumulator: () => SSRPromiseAccumulator = () => ({
@@ -25,7 +26,9 @@ export const createBlankAsyncAccumulator: () => SSRPromiseAccumulator = () => ({
 export type SsrRendererParams = {
   depth?: number,
   maxDepth?: number,
-  readParentCache?: SSRContext['readCache'],
+  readParentCache?(uuid: string): {
+    data: any,
+  },
   mapperFn?(val: AttachedPromise, key: string): Promise<any>,
   accumulator?: SSRPromiseAccumulator,
   htmlModifier?(html: string): string,
@@ -47,7 +50,8 @@ export const ssrRenderAsyncTree = (
   } = params;
 
   const {promises, cache}: SSRPromiseAccumulator = accumulator;
-  let parentCacheTotalHits = 0;
+  const usedParentCache: AttachedPromisesCacheMap = {};
+
   const asyncContext: SSRContext = {
     cache,
     promises,
@@ -56,18 +60,20 @@ export const ssrRenderAsyncTree = (
       if (readParentCache) {
         const parentCache = readParentCache(uuid);
         if (!R.isNil(parentCache)) {
-          cache[uuid] = {
-            counter: ++parentCacheTotalHits,
-            data: parentCache,
+          usedParentCache[uuid] = {
+            counter: (usedParentCache[uuid]?.counter || 0) + 1,
+            data: parentCache.data,
           };
+
+          return usedParentCache[uuid];
         }
       }
 
       return this.cache[uuid];
     },
     attachPromise(uuid: string, promise: AttachedPromise) {
-      const cached = promises[uuid];
-      if (cached) {
+      if (uuid in promises) {
+        const cached = promises[uuid];
         cached.counter++;
         return cached;
       }
@@ -83,7 +89,17 @@ export const ssrRenderAsyncTree = (
 
   let html = ReactServer.renderToString(
     <AsyncContextProvider value={asyncContext}>
-      {fn(accumulator)}
+      {fn(
+        {
+          ...accumulator,
+          toJSON() {
+            return {
+              ...accumulator.cache,
+              ...usedParentCache,
+            };
+          },
+        },
+      )}
     </AsyncContextProvider>,
   );
 

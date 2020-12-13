@@ -1,12 +1,11 @@
 import {Injectable} from '@nestjs/common';
 
-import {BookReviewDto} from '@server/modules/book-review/BookReview.dto';
-import {Scrapper} from './shared/Scrapper';
 import {WykopScrapper} from './websites';
+import {BookReviewAsyncScrapper} from './websites/BookReviewScrapper';
 
 @Injectable()
 export class ScrapperService {
-  private scrappers: Scrapper<BookReviewDto[]>[] = [
+  private scrappers: BookReviewAsyncScrapper[] = [
     new WykopScrapper,
   ];
 

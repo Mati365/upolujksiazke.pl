@@ -1,3 +1,5 @@
+import {WykopAPIAuthParams} from '@server/modules/scrapper/service/websites/wykop/WykopAPI';
+
 /* eslint-disable import/no-default-export */
 require('dotenv').config();
 
@@ -22,6 +24,9 @@ export type AppEnv = Partial<{
       password: string,
       port: number,
     },
+    parsers: {
+      wykop: WykopAPIAuthParams,
+    },
   },
   client: {
     apiConfig: {
@@ -41,6 +46,10 @@ const {
   APP_LISTEN_ADDRESS = 'localhost',
   HTTPS_KEY_PATH,
   HTTPS_CERT_PATH,
+  WYKOP_KEY,
+  WYKOP_SECRET,
+  WYKOP_ACCOUNT_NAME,
+  WYKOP_ACCOUNT_KEY,
 } = process.env;
 
 export const GLOBAL_CONFIG: Record<string, AppEnv> = {
@@ -64,6 +73,16 @@ export const GLOBAL_CONFIG: Record<string, AppEnv> = {
         user: DB_USER,
         password: DB_PASS,
         port: +DB_PORT,
+      },
+      parsers: {
+        wykop: {
+          key: WYKOP_KEY,
+          secret: WYKOP_SECRET,
+          account: {
+            name: WYKOP_ACCOUNT_NAME,
+            key: WYKOP_ACCOUNT_KEY,
+          },
+        },
       },
     },
   },

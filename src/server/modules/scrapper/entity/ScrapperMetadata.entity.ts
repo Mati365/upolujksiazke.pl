@@ -1,4 +1,7 @@
-import {Entity, ManyToOne, Property, Unique} from '@mikro-orm/core';
+import {
+  Entity, JsonType, ManyToOne,
+  Property, Unique,
+} from '@mikro-orm/core';
 
 import {DatedRecordEntity} from '../../database/DatedRecord.entity';
 import {ScrapperWebsiteEntity} from './ScrapperWebsite.entity';
@@ -29,8 +32,8 @@ export class ScrapperMetadataEntity extends DatedRecordEntity {
 
   @Property(
     {
-      columnType: 'text',
+      type: JsonType,
     },
   )
-  html!: string;
+  content!: object;
 }

@@ -1,8 +1,5 @@
-export interface Scrapper<T> {
-  collect(pages?: number): Promise<T[]>,
-  mapResult(result: T): T | Promise<T>,
-  iterator(
-    maxIterations?: number,
-    url?: string,
-  ): AsyncGenerator<T>,
+export interface Scrapper<Result, Page = any> {
+  collect(pages?: number): Promise<Result[]>,
+  filterResult(result: Result): Result | Promise<Result>,
+  iterator(maxIterations?: number, page?: Page): AsyncGenerator<Result>,
 }

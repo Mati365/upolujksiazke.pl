@@ -44,3 +44,7 @@ export type Size = Vec2 & {
 export type SortKeys = {
   [key: string]: SortDirection,
 };
+
+export type Person = {
+  name: string,
+};

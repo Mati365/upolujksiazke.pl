@@ -98,7 +98,7 @@ export class WykopScrapper extends BookReviewAsyncScrapper implements WebsiteInf
   constructor() {
     super(
       {
-        pageProcessDelay: 5000,
+        pageProcessDelay: 20000,
       },
     );
   }
@@ -122,7 +122,7 @@ export class WykopScrapper extends BookReviewAsyncScrapper implements WebsiteInf
    * @memberof WykopScrapper
    */
   protected async process(pagination: ScrapperBasicPagination): Promise<BookReviewProcessResult> {
-    const page = pagination?.page ?? 1;
+    const page = pagination?.page ?? 10;
     const result = await this.api.call(
       {
         path: `Tags/Entries/bookmeter/page/${page}/`,
@@ -140,7 +140,7 @@ export class WykopScrapper extends BookReviewAsyncScrapper implements WebsiteInf
         nextPage: (
           result.pagination.next
             ? {
-              page: page + 1,
+              page: (+page) + 1,
             }
             : null
         ),

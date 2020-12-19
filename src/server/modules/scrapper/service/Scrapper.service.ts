@@ -9,7 +9,7 @@ export class ScrapperService {
     new WykopScrapper,
   ];
 
-  latest() {
+  refreshLatest() {
     return this.scrappers[0].collect(1);
   }
 }

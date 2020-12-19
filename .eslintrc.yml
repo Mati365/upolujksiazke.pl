@@ -12,6 +12,7 @@
           ['@client', './src/client/'],
           ['@server', './src/server/'],
           ['@shared', './src/shared/'],
+          ['@tasks', './src/tasks/'],
           ['@assets', './assets/'],
         ],
         extensions: ['.js', '.ts', '.tsx', '.scss', '.json']

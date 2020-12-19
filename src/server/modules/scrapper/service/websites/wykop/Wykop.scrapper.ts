@@ -70,7 +70,7 @@ const matchContentDescription = (str: string) => {
   const match = (
     str
       .replace(/\n/g, '')
-      .match(/[☆★]<br\s\/><br\s\/>(.*)<br\s\/><br\s\/>(?:#<a|Wpis dodano za pomocą strony)/mi)
+      .match(/[☆★]<br\s\/><br\s\/>(.*)<br\s\/><br\s\/>Wpis dodano za pomocą strony/mi)
   )?.[1] ?? null;
 
   return match && R.trim(match);
@@ -127,8 +127,13 @@ export class WykopScrapper extends BookReviewAsyncScrapper {
       return null;
 
     const {embed, body} = post;
+    if (!WykopScrapper.isTemplatePost(body))
+      return null;
+
     const properties = matchContentProperties(body);
     const content = matchContentDescription(body);
+    if (!content)
+      return null;
 
     return {
       parserSource: JSON.stringify(post),

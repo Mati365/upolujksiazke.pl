@@ -15,6 +15,9 @@
       "@server": ["src/server"],
       "@server/*": ["src/server/*"],
 
+      "@tasks": ["src/tasks"],
+      "@tasks/*": ["src/tasks/*"],
+
       "@shared": ["src/shared"],
       "@shared/*": ["src/shared/*"],
 

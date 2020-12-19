@@ -16,7 +16,7 @@ const createConfig = ({
   target = 'web',
   distPath,
   externals,
-  plugins = [],
+  plugins = () => [],
   override,
 }) => {
   const devMode = mode === 'development';
@@ -75,6 +75,7 @@ const createConfig = ({
         '@client': resolveSource('client/'),
         '@server': resolveSource('server/'),
         '@shared': resolveSource('shared/'),
+        '@tasks': resolveSource('tasks/'),
         '@assets': path.resolve(__dirname, '../assets/'),
       },
     },
@@ -170,6 +171,25 @@ module.exports = [
           },
         ),
       ],
+      externals: [
+        nodeExternals(),
+      ],
+      override: {
+        optimization: {
+          minimize: false,
+        },
+      },
+    },
+  ),
+
+  // gulp
+  createConfig(
+    {
+      target: 'node',
+      entry: {
+        server: resolveSource('tasks/gulpfile.ts'),
+      },
+      distPath: 'gulpfile.js',
       externals: [
         nodeExternals(),
       ],

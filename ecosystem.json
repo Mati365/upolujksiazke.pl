@@ -14,7 +14,7 @@
       "ref"  : "origin/main",
       "repo" : "git@github.com:Mati365/bookmeter.org.git",
       "path" : "/var/www/bookmeter.org",
-      "post-deploy" : "yarn install --production=false && yarn run build:production && ln -sf ../.env ./.env && mikro-orm migration:up -r && pm2 startOrRestart ecosystem.json --env production",
+      "post-deploy" : "yarn install --production=false && yarn run build:production && ln -sf ../.env ./.env && node_modules/.bin/mikro-orm migration:up -r && pm2 startOrRestart ecosystem.json --env production",
       "env": {
         "NODE_ENV": "production",
         "APP_ENV": "production"

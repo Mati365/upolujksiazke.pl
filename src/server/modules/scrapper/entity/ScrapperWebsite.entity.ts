@@ -1,4 +1,4 @@
-import {Collection, Entity, OneToMany, Property} from '@mikro-orm/core';
+import {Collection, Entity, OneToMany, Property, Unique} from '@mikro-orm/core';
 import {DatedRecordEntity} from '../../database/DatedRecord.entity';
 import {ScrapperMetadataEntity} from './ScrapperMetadata.entity';
 
@@ -9,6 +9,7 @@ import {ScrapperMetadataEntity} from './ScrapperMetadata.entity';
 )
 export class ScrapperWebsiteEntity extends DatedRecordEntity {
   @Property()
+  @Unique()
   url!: string;
 
   @Property()
@@ -22,4 +23,9 @@ export class ScrapperWebsiteEntity extends DatedRecordEntity {
 
   @OneToMany(() => ScrapperMetadataEntity, (m) => m.website)
   metadata: Collection<ScrapperMetadataEntity> = new Collection<ScrapperMetadataEntity>(this);
+
+  constructor(partial: Partial<ScrapperWebsiteEntity>) {
+    super();
+    Object.assign(this, partial);
+  }
 }

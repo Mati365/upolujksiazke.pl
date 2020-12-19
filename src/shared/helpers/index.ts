@@ -24,3 +24,4 @@ export * from './reduceIdArrayToObject';
 export * from './memoizeOne';
 export * from './mapObjValuesToPromise';
 export * from './async/collectAsyncIterator';
+export * from './async/timeout';

@@ -59,6 +59,7 @@
     function-paren-newline: 0
     object-curly-newline: 0
     one-var: 0
+    no-await-in-loop: 0
     vars-on-top: 0
     curly: 0
     one-var-declaration-per-line: 0

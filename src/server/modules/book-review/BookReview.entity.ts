@@ -1,7 +1,8 @@
-import {Entity, ManyToOne, Property} from '@mikro-orm/core';
+import {Entity, ManyToOne, OneToOne, Property} from '@mikro-orm/core';
 
 import {DatedRecordEntity} from '../database/DatedRecord.entity';
 import {BookEntity} from '../book/Book.entity';
+import {ScrapperMetadataEntity} from '../scrapper/entity';
 
 @Entity(
   {
@@ -28,4 +29,7 @@ export class BookReviewEntity extends DatedRecordEntity {
 
   @ManyToOne(() => BookEntity)
   book!: BookEntity;
+
+  @OneToOne(() => ScrapperMetadataEntity)
+  scrapperMetadata!: ScrapperMetadataEntity;
 }

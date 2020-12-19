@@ -26,7 +26,7 @@ export class BookEntity extends DatedRecordEntity {
       columnType: 'text',
     },
   )
-  content: string;
+  description: string;
 
   @ManyToMany(() => AuthorEntity)
   authors: Collection<AuthorEntity> = new Collection<AuthorEntity>(this);

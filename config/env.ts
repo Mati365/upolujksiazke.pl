@@ -1,4 +1,4 @@
-import {WykopAPIAuthParams} from '@server/modules/scrapper/service/websites/wykop/WykopAPI';
+import {WykopAPIAuthParams} from '@server/modules/scrapper/service/scrappers/wykop/api/WykopAPI';
 
 /* eslint-disable import/no-default-export */
 require('dotenv').config();

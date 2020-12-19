@@ -1,9 +1,3 @@
-import consola, {FancyReporter} from 'consola';
+import {Logger} from '@nestjs/common';
 
-export const logger = consola.create(
-  {
-    reporters: [
-      new FancyReporter,
-    ],
-  },
-);
+export const logger = new Logger('Task');

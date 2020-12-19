@@ -1,6 +1,6 @@
 import * as R from 'ramda';
 
-import {collectAsyncIterator} from '@shared/helpers';
+import {collectAsyncIterator, timeout} from '@shared/helpers';
 import {Scrapper} from './Scrapper';
 
 export type ScrapperResult<T, P> = {
@@ -12,6 +12,10 @@ export type ScrapperResult<T, P> = {
 
 export type ScrapperBasicPagination = {
   page: number,
+};
+
+export type AsyncScrapperConfig = {
+  pageProcessDelay?: number,
 };
 
 /**
@@ -36,6 +40,20 @@ export function isValidScrappingResult<T>(result: T) {
  * @template Page
  */
 export abstract class AsyncScrapper<Result, Page = ScrapperBasicPagination> implements Scrapper<Result, Page> {
+  private pageProcessDelay: number = null;
+
+  constructor(
+    {
+      pageProcessDelay,
+    }: AsyncScrapperConfig = {},
+  ) {
+    this.pageProcessDelay = pageProcessDelay;
+  }
+
+  setPageProcessDelay(delay: number) {
+    this.pageProcessDelay = delay;
+  }
+
   /**
    * Rejects items
    *
@@ -69,10 +87,13 @@ export abstract class AsyncScrapper<Result, Page = ScrapperBasicPagination> impl
    * @memberof AsyncScrapper
    */
   async* iterator(maxIterations: number = 1, page?: Page): AsyncGenerator<Result> {
+    const {pageProcessDelay} = this;
+    let currentIterations = maxIterations;
+
     const it = {
       [Symbol.asyncIterator]: () => ({
         next: async () => {
-          if (page === null || maxIterations === 0) {
+          if (page === null || currentIterations === 0) {
             return {
               done: true,
             };
@@ -80,7 +101,8 @@ export abstract class AsyncScrapper<Result, Page = ScrapperBasicPagination> impl
 
           const {result, ptr} = await this.process(page);
           page = ptr.nextPage ?? null;
-          maxIterations--;
+          if (!Number.isNaN(currentIterations))
+            currentIterations--;
 
           return {
             done: false,
@@ -99,6 +121,9 @@ export abstract class AsyncScrapper<Result, Page = ScrapperBasicPagination> impl
         continue;
 
       yield mapped;
+
+      if (pageProcessDelay && maxIterations !== 1)
+        await timeout(pageProcessDelay);
     }
   }
 

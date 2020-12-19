@@ -1,6 +1,10 @@
 import 'isomorphic-fetch';
-
 import gulp from 'gulp';
-import {refreshReviews} from '@server/modules/scrapper/tasks/refreshReviews';
 
-gulp.task('scrapper:refresh', refreshReviews);
+import {
+  refreshLatestReviewsTask,
+  refreshAllReviewsTask,
+} from '@server/modules/scrapper/tasks/refreshReviews.task';
+
+gulp.task('scrapper:refresh:latest', refreshLatestReviewsTask);
+gulp.task('scrapper:refresh:all', refreshAllReviewsTask);

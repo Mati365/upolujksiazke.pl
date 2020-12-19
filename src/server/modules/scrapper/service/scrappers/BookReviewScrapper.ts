@@ -1,5 +1,5 @@
 import {Person} from '@shared/types';
-import {AsyncScrapper, HTMLScrapper} from '../shared';
+import {AsyncScrapper, HTMLScrapper, WebsiteInfoScrapper} from '../shared';
 
 export type BookReviewScrapperInfo = {
   parserSource: string,
@@ -34,4 +34,4 @@ export abstract class BookReviewAsyncScrapper extends AsyncScrapper<BookReviewSc
 
 export abstract class BookReviewHTMLScrapper extends HTMLScrapper<BookReviewScrapperInfo[]> {}
 
-export type BookReviewScrapper = BookReviewAsyncScrapper | BookReviewHTMLScrapper;
+export type WebsiteBookReviewScrapper = (BookReviewAsyncScrapper | BookReviewHTMLScrapper) & WebsiteInfoScrapper;

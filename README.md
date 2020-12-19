@@ -4,9 +4,19 @@
 
 OpenSource platform that aggregates reviews and book ratings.
 
+## Development
+
+```bash
+yarn install
+yarn run develop
+mikro-orm schema:update -r
+gulp scrapper:refresh
+```
+
 ## Stack
+
 - Node.JS
-- Nest.JS 
+- Nest.JS
 - Mikro-orm
 - React
 - nginx

@@ -3,9 +3,16 @@ import * as R from 'ramda';
 import {ENV} from '@server/constants/env';
 import {removeNullValues} from '@shared/helpers';
 
-import {ScrapperBasicPagination, ScrapperResult} from '../../shared';
+import {
+  fetchWebsiteInfo,
+  ScrapperBasicPagination,
+  ScrapperResult,
+  WebsiteInfoScrapper,
+} from '../../shared';
+
 import {BookReviewAsyncScrapper, BookReviewScrapperInfo} from '../BookReviewScrapper';
-import {WykopAPI} from './WykopAPI';
+import {WykopAPI} from './api/WykopAPI';
+import {ScrapperWebsiteEntity} from '../../../entity';
 
 type BookReviewProcessResult = ScrapperResult<BookReviewScrapperInfo[], ScrapperBasicPagination>;
 
@@ -83,8 +90,28 @@ const matchContentDescription = (str: string) => {
  * @class WykopScrapper
  * @extends {BookReviewAsyncScrapper}
  */
-export class WykopScrapper extends BookReviewAsyncScrapper {
+export class WykopScrapper extends BookReviewAsyncScrapper implements WebsiteInfoScrapper {
+  public readonly websiteURL: string = 'https://wykop.pl';
+
   private api = new WykopAPI(ENV.server.parsers.wykop);
+
+  constructor() {
+    super(
+      {
+        pageProcessDelay: 5000,
+      },
+    );
+  }
+
+  /**
+   * Fetches website info
+   *
+   * @returns {Promise<ScrapperWebsiteEntity>}
+   * @memberof WykopScrapper
+   */
+  async fetchWebsiteEntity(): Promise<ScrapperWebsiteEntity> {
+    return fetchWebsiteInfo(this.websiteURL);
+  }
 
   /**
    * Loads array of reviews
@@ -104,7 +131,8 @@ export class WykopScrapper extends BookReviewAsyncScrapper {
 
     return {
       result: (
-        result.data
+        result
+          .data
           .map(this.mapPost.bind(this))
           .filter(Boolean)
       ),
@@ -159,7 +187,7 @@ export class WykopScrapper extends BookReviewAsyncScrapper {
         cover: embed && {
           nsfw: embed.plus18,
           ratio: embed.ratio,
-          source: embed.source,
+          source: embed.preview,
           image: embed.source,
         },
       },

@@ -2,11 +2,16 @@ import cheerio from 'cheerio';
 
 import {
   AsyncScrapper,
+  AsyncScrapperConfig,
   ScrapperResult,
 } from './AsyncScrapper';
 
 export type HTMLParserAttrs = {
   $: cheerio.Root,
+};
+
+export type HTMLScrapperConfig = AsyncScrapperConfig & {
+  url: string,
 };
 
 /**
@@ -19,10 +24,12 @@ export type HTMLParserAttrs = {
  * @template T
  */
 export abstract class HTMLScrapper<T> extends AsyncScrapper<T, string> {
-  constructor(
-    public readonly url: string,
-  ) {
-    super();
+  private readonly url: string;
+
+  constructor({url, ...config}: HTMLScrapperConfig) {
+    super(config);
+
+    this.url = url;
   }
 
   /**
@@ -34,7 +41,7 @@ export abstract class HTMLScrapper<T> extends AsyncScrapper<T, string> {
    * @memberof HTMLScrapper
    */
   protected async process(url: string) {
-    const html = await this.fetchHTML(url);
+    const html = await this.fetchHTML(url ?? this.url);
 
     return this.parsePage(
       {

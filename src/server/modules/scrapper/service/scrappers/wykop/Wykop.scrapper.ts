@@ -137,7 +137,13 @@ export class WykopScrapper extends BookReviewAsyncScrapper implements WebsiteInf
           .filter(Boolean)
       ),
       ptr: {
-        nextPage: null,
+        nextPage: (
+          result.pagination.next
+            ? {
+              page: page + 1,
+            }
+            : null
+        ),
       },
     };
   }

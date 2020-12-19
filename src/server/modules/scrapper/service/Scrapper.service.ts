@@ -80,12 +80,12 @@ export class ScrapperService {
       await em.persistAndFlush(website);
     }
 
-    return em.transactional(async (transaction) => {
-      // insert metadata
-      let page = 0;
-      for await (const scrappedPage of scrapper.iterator(maxIterations)) {
-        logger.warn(`Scrapping ${++page} page of ${scrapper.websiteURL}!`);
+    // insert metadata
+    let page = 0;
+    for await (const scrappedPage of scrapper.iterator(maxIterations)) {
+      logger.warn(`Scrapping ${++page} page of ${scrapper.websiteURL}!`);
 
+      await em.transactional(async (transaction) => {
         // detect which ids has been already scrapped
         const scrappedIds = R.pluck(
           'remoteId',
@@ -123,7 +123,7 @@ export class ScrapperService {
           },
           scrappedPage,
         );
-      }
-    });
+      });
+    }
   }
 }

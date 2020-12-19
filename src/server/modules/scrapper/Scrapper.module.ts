@@ -3,7 +3,12 @@ import {MikroOrmModule} from '@mikro-orm/nestjs';
 
 import {BookEntity} from '../book/Book.entity';
 import {BookReviewEntity} from '../book-review/BookReview.entity';
-import {ScrapperService} from './service/Scrapper.service';
+
+import {
+  ScrapperCronService,
+  ScrapperService,
+} from './service';
+
 import {
   ScrapperMetadataEntity,
   ScrapperWebsiteEntity,
@@ -24,6 +29,7 @@ import {
     controllers: [],
     providers: [
       ScrapperService,
+      ScrapperCronService,
     ],
   },
 )

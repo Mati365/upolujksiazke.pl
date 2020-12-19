@@ -34,5 +34,6 @@ export const DB_CONFIG: MikroOrmModuleSyncOptions = {
   ],
   migrations: {
     path: './src/server/migrations',
+    disableForeignKeys: false,
   },
 };

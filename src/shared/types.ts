@@ -10,6 +10,8 @@ export type IdentifiedItem<R> = R & {
 
 export type Overwrite<T, U> = Pick<T, Exclude<keyof T, keyof U>> & U;
 
+export type ArrayElement<ArrayType extends readonly unknown[]> = ArrayType[number];
+
 export type ListItem = {
   id?: ID,
   name: string | number,

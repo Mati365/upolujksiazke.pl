@@ -1,16 +1,22 @@
 import * as R from 'ramda';
 
 import {ENV} from '@server/constants/env';
+import {ID} from '@shared/types';
+
 import {removeNullValues} from '@shared/helpers';
 
 import {
   fetchWebsiteInfo,
   ScrapperBasicPagination,
-  ScrapperResult,
   WebsiteInfoScrapper,
 } from '../../shared';
 
-import {BookReviewAsyncScrapper, BookReviewScrapperInfo} from '../BookReviewScrapper';
+import {
+  BookReviewAsyncScrapper,
+  BookReviewScrapperInfo,
+  BookReviewProcessResult,
+} from '../BookReviewScrapper';
+
 import {WykopAPI} from './api/WykopAPI';
 import {ScrapperWebsiteEntity} from '../../../entity';
 
@@ -21,8 +27,6 @@ import {ScrapperWebsiteEntity} from '../../../entity';
  * https://www.wykop.pl/wpis/51668249/133-1-134-tytul-piter-bitwa-blizniakow-autor-szymu/
  * https://www.wykop.pl/wpis/51623383/122-1-123-tytul-zabic-drozda-autor-harper-lee-gatu/
  */
-type BookReviewProcessResult = ScrapperResult<BookReviewScrapperInfo[], ScrapperBasicPagination>;
-
 type WykopBookReviewHeader = {
   title?: string,
   category?: string,
@@ -122,6 +126,23 @@ export class WykopScrapper extends BookReviewAsyncScrapper implements WebsiteInf
   }
 
   /**
+   * Fetches single post
+   *
+   * @param {ID} remoteId
+   * @returns {Promise<BookReviewScrapperInfo>}
+   * @memberof WykopScrapper
+   */
+  async fetchSingle(remoteId: ID): Promise<BookReviewScrapperInfo> {
+    const {data: result} = await this.api.call(
+      {
+        path: `Entries/Entry/${remoteId}`,
+      },
+    );
+
+    return this.mapPost(result);
+  }
+
+  /**
    * Loads array of reviews
    *
    * @protected
@@ -169,8 +190,6 @@ export class WykopScrapper extends BookReviewAsyncScrapper implements WebsiteInf
       return null;
 
     const {embed, body} = post;
-    console.info(body);
-
     if (!WykopScrapper.isTemplatePost(body))
       return null;
 

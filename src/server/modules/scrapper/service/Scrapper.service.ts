@@ -1,11 +1,16 @@
 import * as R from 'ramda';
 import {SqlEntityManager} from '@mikro-orm/postgresql';
-import {EntityRepository} from '@mikro-orm/core';
-import {InjectRepository} from '@mikro-orm/nestjs';
 import {Injectable, Logger} from '@nestjs/common';
 
-import {WebsiteBookReviewScrapper} from './scrappers/BookReviewScrapper';
+import {ID} from '@shared/types';
+
+import {
+  BookReviewScrapperInfo,
+  WebsiteBookReviewScrapper,
+} from './scrappers/BookReviewScrapper';
+
 import {WykopScrapper} from './scrappers';
+import {WebsiteInfoScrapperService} from './WebsiteInfoScrapper.service';
 import {
   ScrapperMetadataEntity,
   ScrapperMetadataStatus,
@@ -22,10 +27,22 @@ export class ScrapperService {
 
   constructor(
     private readonly em: SqlEntityManager,
-
-    @InjectRepository(ScrapperWebsiteEntity)
-    private readonly websiteRepository: EntityRepository<ScrapperWebsiteEntity>,
+    private readonly websiteInfoScrapper: WebsiteInfoScrapperService,
   ) {}
+
+  /**
+   * Find single scrapper by assigned website URL
+   *
+   * @param {string} url
+   * @returns {WebsiteBookReviewScrapper}
+   * @memberof ScrapperService
+   */
+  getScrapperByWebsiteURL(url: string): WebsiteBookReviewScrapper {
+    return R.find(
+      R.propEq('websiteURL', url) as any,
+      this.scrappers,
+    );
+  }
 
   /**
    * Fetch all scrappers website
@@ -53,6 +70,88 @@ export class ScrapperService {
   }
 
   /**
+   * Loads single
+   *
+   * @param {Object} params
+   * @memberof ScrapperService
+   */
+  async refreshSingle(
+    {
+      remoteId,
+      scrapper,
+    }: {
+      remoteId: ID,
+      scrapper: WebsiteBookReviewScrapper,
+    },
+  ) {
+    if (!scrapper)
+      throw new Error('Missing scrapper!');
+
+    const single = await scrapper.fetchSingle(remoteId);
+    console.info(remoteId, single);
+  }
+
+  /**
+   * Processes already fetched scrapper results page
+   *
+   * @private
+   * @param {Object} params
+   * @returns
+   * @memberof ScrapperService
+   */
+  private async processScrappedPage(
+    {
+      website,
+      scrappedPage,
+    }: {
+      website: ScrapperWebsiteEntity,
+      scrappedPage: BookReviewScrapperInfo[],
+    },
+  ) {
+    const {em} = this;
+
+    return em.transactional(async (transaction) => {
+      // detect which ids has been already scrapped
+      const scrappedIds = R.pluck(
+        'remoteId',
+        await (
+          transaction
+            .createQueryBuilder(ScrapperMetadataEntity)
+            .where(
+              {
+                remoteId: {
+                  $in: R.pluck('id', scrappedPage),
+                },
+              },
+            )
+            .select(['remoteId'])
+            .execute()
+        ) as any[],
+      );
+
+      // create new metadata records
+      R.forEach(
+        (item) => {
+          if (R.includes(item.id, scrappedIds))
+            return;
+
+          const metadata = new ScrapperMetadataEntity(
+            {
+              website,
+              remoteId: item.id,
+              status: ScrapperMetadataStatus.NEW,
+              content: item,
+            },
+          );
+
+          transaction.persist(metadata);
+        },
+        scrappedPage,
+      );
+    });
+  }
+
+  /**
    * Fetches data from single scrapper
    *
    * @private
@@ -68,62 +167,20 @@ export class ScrapperService {
       maxIterations?: number,
     },
   ) {
-    const {websiteRepository, logger, em} = this;
-    let website = await websiteRepository.findOne(
-      {
-        url: scrapper.websiteURL,
-      },
-    );
-
-    if (!website) {
-      website = await scrapper.fetchWebsiteEntity();
-      await em.persistAndFlush(website);
-    }
+    const {logger, websiteInfoScrapper} = this;
+    const website = await websiteInfoScrapper.findOrCreateWebsiteEntity(scrapper);
 
     // insert metadata
     let page = 0;
     for await (const scrappedPage of scrapper.iterator(maxIterations)) {
       logger.warn(`Scrapping ${++page} page of ${scrapper.websiteURL}!`);
 
-      await em.transactional(async (transaction) => {
-        // detect which ids has been already scrapped
-        const scrappedIds = R.pluck(
-          'remoteId',
-          await (
-            transaction
-              .createQueryBuilder(ScrapperMetadataEntity)
-              .where(
-                {
-                  remoteId: {
-                    $in: R.pluck('id', scrappedPage),
-                  },
-                },
-              )
-              .select(['remoteId'])
-              .execute()
-          ) as any[],
-        );
-
-        // create new metadata records
-        R.forEach(
-          (item) => {
-            if (R.includes(item.id, scrappedIds))
-              return;
-
-            const metadata = new ScrapperMetadataEntity(
-              {
-                website,
-                remoteId: item.id,
-                status: ScrapperMetadataStatus.NEW,
-                content: item,
-              },
-            );
-
-            transaction.persist(metadata);
-          },
+      this.processScrappedPage(
+        {
+          website,
           scrappedPage,
-        );
-      });
+        },
+      );
     }
   }
 }

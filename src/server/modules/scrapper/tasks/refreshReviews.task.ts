@@ -1,5 +1,6 @@
 import {NestFactory} from '@nestjs/core';
 import {TaskFunction} from 'gulp';
+import minimist from 'minimist';
 
 import {logger} from '@tasks/utils/logger';
 
@@ -46,4 +47,31 @@ export const refreshAllReviewsTask: TaskFunction = async () => {
     },
   );
   logger.log('Latest all refreshed!');
+};
+
+/**
+ * Loads single review
+ *
+ * @export
+ */
+export const refreshSingleTask: TaskFunction = async () => {
+  const {remoteId, website} = minimist(process.argv.slice(2));
+
+  logger.log('Refresh review...');
+  const app = await NestFactory.create(AppModule);
+  const scrapper: ScrapperService = (
+    app
+      .select(ScrapperModule)
+      .get(ScrapperService)
+  );
+
+  scrapper.refreshSingle(
+    {
+      scrapper: scrapper.getScrapperByWebsiteURL(website),
+      remoteId,
+    },
+  );
+
+  app.close();
+  logger.log('Review refreshed!');
 };

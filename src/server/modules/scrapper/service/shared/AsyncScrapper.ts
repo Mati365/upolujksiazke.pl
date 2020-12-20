@@ -1,5 +1,7 @@
 import * as R from 'ramda';
 
+import {ID, ArrayElement} from '@shared/types';
+
 import {collectAsyncIterator, timeout} from '@shared/helpers';
 import {Scrapper} from './Scrapper';
 
@@ -39,7 +41,9 @@ export function isValidScrappingResult<T>(result: T) {
  * @template Result
  * @template Page
  */
-export abstract class AsyncScrapper<Result, Page = ScrapperBasicPagination> implements Scrapper<Result, Page> {
+export abstract class AsyncScrapper<
+    Result extends readonly unknown[],
+    Page = ScrapperBasicPagination> implements Scrapper<Result, Page> {
   private pageProcessDelay: number = null;
 
   constructor(
@@ -126,6 +130,16 @@ export abstract class AsyncScrapper<Result, Page = ScrapperBasicPagination> impl
       yield mapped;
     }
   }
+
+  /**
+   * Fetches single item
+   *
+   * @abstract
+   * @param {ID} remoteId
+   * @returns {Promise<Result>}
+   * @memberof AsyncScrapper
+   */
+  abstract fetchSingle(remoteId: ID): Promise<ArrayElement<Result>>;
 
   /**
    * Fetches single page

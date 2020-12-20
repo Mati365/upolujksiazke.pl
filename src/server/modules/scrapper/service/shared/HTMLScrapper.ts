@@ -20,10 +20,10 @@ export type HTMLScrapperConfig = AsyncScrapperConfig & {
  * @export
  * @abstract
  * @class HTMLScrapper
- * @implements {Scrapper<T>}
+ * @extends {AsyncScrapper<T, string>}
  * @template T
  */
-export abstract class HTMLScrapper<T> extends AsyncScrapper<T, string> {
+export abstract class HTMLScrapper<T extends unknown[]> extends AsyncScrapper<T, string> {
   private readonly url: string;
 
   constructor({url, ...config}: HTMLScrapperConfig) {

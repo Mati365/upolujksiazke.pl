@@ -5,6 +5,7 @@ import {BookEntity} from '../book/Book.entity';
 import {BookReviewEntity} from '../book-review/BookReview.entity';
 
 import {
+  WebsiteInfoScrapperService,
   ScrapperCronService,
   ScrapperService,
 } from './service';
@@ -28,6 +29,7 @@ import {
     ],
     controllers: [],
     providers: [
+      WebsiteInfoScrapperService,
       ScrapperService,
       ScrapperCronService,
     ],

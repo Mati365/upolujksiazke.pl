@@ -7,6 +7,20 @@ import {
 } from './WykopEntryContentParser';
 
 /**
+ * Count all star characters
+ *
+ * @export
+ * @param {string} str
+ * @returns
+ */
+export function countStars(str: string) {
+  return R.countBy(
+    (val) => (val === '★' ? 'filled' : 'notFilled'),
+    str as any,
+  ).filled || 0;
+}
+
+/**
  * Primarly parses result of:
  * {@link https://bookmeter.ct8.pl/}
  *
@@ -31,10 +45,7 @@ export class WykopEntryLatestParser extends WykopEntryContentParser {
             return ((+match[1]) / (+match[2])) * 10;
 
           // count using stars
-          return R.countBy(
-            (val) => (val === '★' ? 'filled' : 'notFilled'),
-            score,
-          ).filled || 0;
+          return countStars(score);
         },
       },
     ),
@@ -61,7 +72,7 @@ export class WykopEntryLatestParser extends WykopEntryContentParser {
     R.map(
       (matches) => [matches[1], matches[2]],
     ),
-    (str: string) => Array.from(str.matchAll(/<strong>(.+):<\/strong>\s(.+)<br\s\/>/g)),
+    (str: string) => Array.from(str.matchAll(/(?:<strong>)?(.+):(?:<\/strong>)?\s(.+)<br\s\/>/g)),
   ) as any;
 
   /**
@@ -73,7 +84,12 @@ export class WykopEntryLatestParser extends WykopEntryContentParser {
    * @memberof WykopEntryLatestParser
    */
   protected matchProperties(body: string): WykopBookReviewHeader {
-    return WykopEntryLatestParser.propertiesExtractor(body);
+    const properties: WykopBookReviewHeader = WykopEntryLatestParser.propertiesExtractor(body);
+
+    if (R.isNil(properties.score) && /[☆★]/.test(body))
+      properties.score = countStars(body);
+
+    return properties;
   }
 
   /**
@@ -89,7 +105,7 @@ export class WykopEntryLatestParser extends WykopEntryContentParser {
       body
         .replace(/\n/g, '')
         // eslint-disable-next-line max-len
-        .match(/(?:[☆★]|\d+\s*\/\s*\d+(?:<br \/><br \/>[☆★]+)?)<br\s\/><br\s\/>(.*)(?:<br\s\/>)(?:<br\s\/>Wpis dodano za pomocą strony|<br\s\/>#<a href="#bookmeter">)/mi)
+        .match(/(?:[☆★]|\d+\s*\/\s*\d+(?:<br \/><br \/>[☆★]+)?)<br\s\/><br\s\/>(.+?)(?<!<a)<br \/><br \/>(?:Wpis dodano za pomocą stron|#?<a href="#).*/mi)
     )?.[1] ?? null;
 
     return match && R.trim(match);

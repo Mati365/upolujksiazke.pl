@@ -183,6 +183,6 @@ export class WykopScrapper extends BookReviewAsyncScrapper implements WebsiteInf
    * @memberof WykopScrapper
    */
   static isTemplatePost(content: string): boolean {
-    return R.includes('<strong>Tytuł:</strong> ', content);
+    return !!R.match(/(<strong>)?Tytuł:(<\/strong>)?\s/, content);
   }
 }

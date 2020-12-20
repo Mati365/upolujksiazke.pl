@@ -65,7 +65,7 @@ export const refreshSingleTask: TaskFunction = async () => {
       .get(ScrapperService)
   );
 
-  scrapper.refreshSingle(
+  await scrapper.refreshSingle(
     {
       scrapper: scrapper.getScrapperByWebsiteURL(website),
       remoteId,

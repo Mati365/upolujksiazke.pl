@@ -3,8 +3,6 @@ import * as R from 'ramda';
 import {ENV} from '@server/constants/env';
 import {ID} from '@shared/types';
 
-import {removeNullValues} from '@shared/helpers';
-
 import {
   fetchWebsiteInfo,
   ScrapperBasicPagination,
@@ -17,83 +15,21 @@ import {
   BookReviewProcessResult,
 } from '../BookReviewScrapper';
 
-import {WykopAPI} from './api/WykopAPI';
 import {ScrapperWebsiteEntity} from '../../../entity';
+import {WykopAPI} from './api/WykopAPI';
+import {
+  WykopEntryContentParser,
+  WykopEntryLatestParser,
+} from './content-parsers';
 
 /**
  * @todo
+ * https://www.wykop.pl/wpis/53839505/506-1-507-tytul-rhythm-of-war-autor-brandon-sander/
  * https://www.wykop.pl/wpis/51756185/143-1-144-tytul-portret-doriana-graya-autor-oscar-/
  * https://www.wykop.pl/wpis/51740461/142-1-143-tytul-problem-trzech-cial-autor-liu-cixi/
  * https://www.wykop.pl/wpis/51668249/133-1-134-tytul-piter-bitwa-blizniakow-autor-szymu/
  * https://www.wykop.pl/wpis/51623383/122-1-123-tytul-zabic-drozda-autor-harper-lee-gatu/
  */
-type WykopBookReviewHeader = {
-  title?: string,
-  category?: string,
-  isbn?: string,
-  authors?: string[],
-  score?: number,
-};
-
-/**
- * Matches using regex properties inside review
- */
-const matchContentProperties: (str: string) => WykopBookReviewHeader = R.compose(
-  R.evolve(
-    {
-      authors: (authors) => (
-        authors
-          .split(',')
-          .map(R.trim)
-          .filter(R.complement(R.isEmpty))
-      ),
-      score: (score) => R.countBy(
-        (val) => (val === '★' ? 'filled' : 'notFilled'),
-        score,
-      ).filled || 0,
-    },
-  ),
-  (obj): WykopBookReviewHeader => removeNullValues({
-    /* eslint-disable @typescript-eslint/dot-notation */
-    title: obj['tytuł'],
-    category: obj['gatunek'],
-    isbn: obj['isbn'],
-    authors: obj['autor'],
-    score: obj['ocena'],
-    /* eslint-enable @typescript-eslint/dot-notation */
-  }),
-  (array) => R.reduce(
-    (acc, [key, value]) => {
-      acc[R.toLower(key)] = value;
-      return acc;
-    },
-    {},
-    array as any,
-  ),
-  R.reject(
-    R.any(R.either(R.isNil, R.isEmpty)),
-  ),
-  R.map(
-    (matches) => [matches[1], matches[2]],
-  ),
-  (str: string) => Array.from(str.matchAll(/<strong>(.+):<\/strong>\s(.+)<br\s\/>/g)),
-) as any;
-
-/**
- * Extract review text
- *
- * @param str
- */
-const matchContentDescription = (str: string) => {
-  const match = (
-    str
-      .replace(/\n/g, '')
-      // eslint-disable-next-line max-len
-      .match(/[☆★]<br\s\/><br\s\/>(.*)(?:<br\s\/><br\s\/>Wpis dodano za pomocą strony|<br\s\/>#<a href="#bookmeter">)/mi)
-  )?.[1] ?? null;
-
-  return match && R.trim(match);
-};
 
 /**
  * Picks data from wykop
@@ -106,6 +42,11 @@ export class WykopScrapper extends BookReviewAsyncScrapper implements WebsiteInf
   public readonly websiteURL: string = 'https://wykop.pl';
 
   private api = new WykopAPI(ENV.server.parsers.wykop);
+  static contentParsers: Readonly<WykopEntryContentParser[]> = Object.freeze(
+    [
+      new WykopEntryLatestParser,
+    ],
+  );
 
   constructor() {
     super(
@@ -193,9 +134,12 @@ export class WykopScrapper extends BookReviewAsyncScrapper implements WebsiteInf
     if (!WykopScrapper.isTemplatePost(body))
       return null;
 
-    const properties = matchContentProperties(body);
-    const content = matchContentDescription(body);
-    if (!content)
+    const {
+      properties,
+      description,
+    } = WykopEntryContentParser.reduceContent(WykopScrapper.contentParsers, body);
+
+    if (!R.isEmpty(properties) && !description)
       return null;
 
     return {
@@ -212,7 +156,7 @@ export class WykopScrapper extends BookReviewAsyncScrapper implements WebsiteInf
         avatar: post.author.avatar,
       },
       score: properties.score,
-      content,
+      content: description,
       book: {
         title: properties.title,
         isbn: properties.isbn,

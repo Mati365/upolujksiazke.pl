@@ -31,6 +31,31 @@ export class ScrapperService {
   ) {}
 
   /**
+   * Wraps scrapper result into entity
+   *
+   * @static
+   * @param {ScrapperWebsiteEntity} website
+   * @param {BookReviewScrapperInfo} item
+   * @param {ScrapperMetadataStatus} [status=ScrapperMetadataStatus.NEW]
+   * @returns
+   * @memberof ScrapperService
+   */
+  static scrapperResultToMetadataEntity(
+    website: ScrapperWebsiteEntity,
+    item: BookReviewScrapperInfo,
+    status: ScrapperMetadataStatus = ScrapperMetadataStatus.NEW,
+  ) {
+    return new ScrapperMetadataEntity(
+      {
+        website,
+        status,
+        remoteId: item.id,
+        content: item,
+      },
+    );
+  }
+
+  /**
    * Find single scrapper by assigned website URL
    *
    * @param {string} url
@@ -73,6 +98,7 @@ export class ScrapperService {
    * Loads single
    *
    * @param {Object} params
+   * @returns {Promise<boolean>}
    * @memberof ScrapperService
    */
   async refreshSingle(
@@ -83,12 +109,30 @@ export class ScrapperService {
       remoteId: ID,
       scrapper: WebsiteBookReviewScrapper,
     },
-  ) {
+  ): Promise<BookReviewScrapperInfo> {
     if (!scrapper)
       throw new Error('Missing scrapper!');
 
-    const single = await scrapper.fetchSingle(remoteId);
-    console.info(remoteId, single);
+    const {em, websiteInfoScrapper} = this;
+    const item = await scrapper.fetchSingle(remoteId);
+    if (!item)
+      return Promise.resolve(null);
+
+    const website = await websiteInfoScrapper.findOrCreateWebsiteEntity(scrapper);
+    const updatedEntity = ScrapperService.scrapperResultToMetadataEntity(website, item);
+    delete updatedEntity.createdAt;
+
+    await em
+      .createQueryBuilder(ScrapperMetadataEntity)
+      .update(updatedEntity)
+      .where(
+        {
+          remoteId: item.id,
+        },
+      )
+      .execute();
+
+    return Promise.resolve(item);
   }
 
   /**
@@ -135,16 +179,9 @@ export class ScrapperService {
           if (R.includes(item.id, scrappedIds))
             return;
 
-          const metadata = new ScrapperMetadataEntity(
-            {
-              website,
-              remoteId: item.id,
-              status: ScrapperMetadataStatus.NEW,
-              content: item,
-            },
+          transaction.persist(
+            ScrapperService.scrapperResultToMetadataEntity(website, item),
           );
-
-          transaction.persist(metadata);
         },
         scrappedPage,
       );

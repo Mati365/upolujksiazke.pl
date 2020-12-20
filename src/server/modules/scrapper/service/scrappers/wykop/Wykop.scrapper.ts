@@ -52,7 +52,7 @@ export class WykopScrapper extends BookReviewAsyncScrapper implements WebsiteInf
   constructor() {
     super(
       {
-        pageProcessDelay: 20000,
+        pageProcessDelay: 30000,
       },
     );
   }

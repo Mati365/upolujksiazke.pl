@@ -113,6 +113,9 @@ export abstract class AsyncScrapper<Result, Page = ScrapperBasicPagination> impl
     };
 
     for await (const result of it) {
+      if (pageProcessDelay && maxIterations !== 1)
+        await timeout(pageProcessDelay);
+
       if (!isValidScrappingResult(result))
         continue;
 
@@ -121,9 +124,6 @@ export abstract class AsyncScrapper<Result, Page = ScrapperBasicPagination> impl
         continue;
 
       yield mapped;
-
-      if (pageProcessDelay && maxIterations !== 1)
-        await timeout(pageProcessDelay);
     }
   }
 

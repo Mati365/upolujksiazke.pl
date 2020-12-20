@@ -14,6 +14,13 @@ import {BookReviewAsyncScrapper, BookReviewScrapperInfo} from '../BookReviewScra
 import {WykopAPI} from './api/WykopAPI';
 import {ScrapperWebsiteEntity} from '../../../entity';
 
+/**
+ * @todo
+ * https://www.wykop.pl/wpis/51756185/143-1-144-tytul-portret-doriana-graya-autor-oscar-/
+ * https://www.wykop.pl/wpis/51740461/142-1-143-tytul-problem-trzech-cial-autor-liu-cixi/
+ * https://www.wykop.pl/wpis/51668249/133-1-134-tytul-piter-bitwa-blizniakow-autor-szymu/
+ * https://www.wykop.pl/wpis/51623383/122-1-123-tytul-zabic-drozda-autor-harper-lee-gatu/
+ */
 type BookReviewProcessResult = ScrapperResult<BookReviewScrapperInfo[], ScrapperBasicPagination>;
 
 type WykopBookReviewHeader = {
@@ -77,7 +84,8 @@ const matchContentDescription = (str: string) => {
   const match = (
     str
       .replace(/\n/g, '')
-      .match(/[☆★]<br\s\/><br\s\/>(.*)<br\s\/><br\s\/>Wpis dodano za pomocą strony/mi)
+      // eslint-disable-next-line max-len
+      .match(/[☆★]<br\s\/><br\s\/>(.*)(?:<br\s\/><br\s\/>Wpis dodano za pomocą strony|<br\s\/>#<a href="#bookmeter">)/mi)
   )?.[1] ?? null;
 
   return match && R.trim(match);
@@ -98,7 +106,7 @@ export class WykopScrapper extends BookReviewAsyncScrapper implements WebsiteInf
   constructor() {
     super(
       {
-        pageProcessDelay: 20000,
+        pageProcessDelay: 5000,
       },
     );
   }
@@ -122,7 +130,7 @@ export class WykopScrapper extends BookReviewAsyncScrapper implements WebsiteInf
    * @memberof WykopScrapper
    */
   protected async process(pagination: ScrapperBasicPagination): Promise<BookReviewProcessResult> {
-    const page = pagination?.page ?? 1;
+    const page = pagination?.page ?? 11;
     const result = await this.api.call(
       {
         path: `Tags/Entries/bookmeter/page/${page}/`,
@@ -140,7 +148,7 @@ export class WykopScrapper extends BookReviewAsyncScrapper implements WebsiteInf
         nextPage: (
           result.pagination.next
             ? {
-              page: (+page) + 1,
+              page: page + 1,
             }
             : null
         ),
@@ -161,6 +169,8 @@ export class WykopScrapper extends BookReviewAsyncScrapper implements WebsiteInf
       return null;
 
     const {embed, body} = post;
+    console.info(body);
+
     if (!WykopScrapper.isTemplatePost(body))
       return null;
 

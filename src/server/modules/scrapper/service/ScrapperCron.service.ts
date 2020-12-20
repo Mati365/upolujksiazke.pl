@@ -1,5 +1,5 @@
 import {Injectable} from '@nestjs/common';
-import {Cron} from '@nestjs/schedule';
+import {Cron, CronExpression} from '@nestjs/schedule';
 import {ScrapperService} from './Scrapper.service';
 
 @Injectable()
@@ -8,7 +8,7 @@ export class ScrapperCronService {
     private readonly scrapperService: ScrapperService,
   ) {}
 
-  @Cron('* * * * *')
+  @Cron(CronExpression.EVERY_5_MINUTES)
   fetchLatestReviews() {
     this.scrapperService.refreshLatest(
       {

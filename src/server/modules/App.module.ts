@@ -1,4 +1,5 @@
 import {Module} from '@nestjs/common';
+import {ScheduleModule} from '@nestjs/schedule';
 
 import {DatabaseModule} from './database/Database.module';
 import {FrontModule} from './front';
@@ -9,6 +10,7 @@ import {ScrapperModule} from './scrapper/Scrapper.module';
   {
     imports: [
       DatabaseModule,
+      ScheduleModule.forRoot(),
       ManifestModule.register(
         {
           file: 'public/files-manifest.json',

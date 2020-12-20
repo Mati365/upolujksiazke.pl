@@ -130,7 +130,7 @@ export class WykopScrapper extends BookReviewAsyncScrapper implements WebsiteInf
    * @memberof WykopScrapper
    */
   protected async process(pagination: ScrapperBasicPagination): Promise<BookReviewProcessResult> {
-    const page = pagination?.page ?? 11;
+    const page = pagination?.page ?? 1;
     const result = await this.api.call(
       {
         path: `Tags/Entries/bookmeter/page/${page}/`,

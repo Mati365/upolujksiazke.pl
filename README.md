@@ -4,6 +4,13 @@
 
 OpenSource platform that aggregates reviews and book ratings from all websites. Something like Metacritic / Digg for books.
 
+## Goals
+
+- [ ] Notifications about new reviews
+- [ ] Front page customization (pin sections)
+- [ ] Read list
+- [ ] Category books RSS
+
 ## Available websites
 
 - [x] Wykop.pl #bookmeter

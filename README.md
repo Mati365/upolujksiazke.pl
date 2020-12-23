@@ -2,7 +2,14 @@
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
-OpenSource platform that aggregates reviews and book ratings. Something like Metacritic for books.
+OpenSource platform that aggregates reviews and book ratings from all websites. Something like Metacritic / Digg for books.
+
+## Available websites
+
+- [x] Wykop.pl #bookmeter
+- [ ] Booklips.pl
+- [ ] Reddit
+- [ ] Goodreads
 
 ## Development
 

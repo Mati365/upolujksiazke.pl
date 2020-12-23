@@ -13,7 +13,7 @@ OpenSource platform that aggregates reviews and book ratings from all websites. 
 
 ## Development
 
-Setup:
+**Setup:**
 
 ```bash
 yarn install
@@ -22,7 +22,7 @@ mikro-orm schema:update -r
 gulp scrapper:refresh
 ```
 
-Tasks:
+**Tasks:**
 
 ```bash
 # Fetches single review by id

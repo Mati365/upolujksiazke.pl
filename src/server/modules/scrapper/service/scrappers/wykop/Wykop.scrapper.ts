@@ -32,6 +32,7 @@ import {
  * https://www.wykop.pl/wpis/51740461/142-1-143-tytul-problem-trzech-cial-autor-liu-cixi/
  * https://www.wykop.pl/wpis/51668249/133-1-134-tytul-piter-bitwa-blizniakow-autor-szymu/
  * https://www.wykop.pl/wpis/51623383/122-1-123-tytul-zabic-drozda-autor-harper-lee-gatu/
+ * https://www.wykop.pl/wpis/11633869/8-185-5-8-180-8185-1-8184-tytul-nowa-rebelia-autor/
  */
 
 /**
@@ -135,7 +136,7 @@ export class WykopScrapper extends BookReviewAsyncScrapper implements WebsiteInf
       ),
       ptr: {
         nextPage: (
-          result.pagination.next
+          result.pagination.next && result?.data?.length > 0
             ? {
               page: page + 1,
             }

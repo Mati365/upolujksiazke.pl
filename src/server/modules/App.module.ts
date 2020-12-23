@@ -10,7 +10,11 @@ import {ScrapperModule} from './scrapper/Scrapper.module';
   {
     imports: [
       DatabaseModule,
-      ScheduleModule.forRoot(),
+      ...(
+        +process.env.NODE_APP_INSTANCE === 0
+          ? [ScheduleModule.forRoot()]
+          : []
+      ),
       ManifestModule.register(
         {
           file: 'public/files-manifest.json',

@@ -78,33 +78,47 @@ export abstract class AsyncScrapper<
    */
   async collect(pages: number = 1): Promise<Result[]> {
     return collectAsyncIterator(
-      this.iterator(pages),
+      this.iterator(
+        {
+          maxIterations: pages,
+        },
+      ),
     );
   }
 
   /**
    * Iterates every page of fetched data
    *
-   * @param {number} [maxIterations=1]
-   * @param {Page} [page]
+   * @param {Object} attrs
    * @returns {AsyncGenerator<Result>}
    * @memberof AsyncScrapper
    */
-  async* iterator(maxIterations: number = 1, page?: Page): AsyncGenerator<Result> {
+  async* iterator(
+    {
+      maxIterations = 1,
+      initialPage,
+    }: {
+      maxIterations?: number,
+      initialPage?: Page,
+    } = {},
+  ): AsyncGenerator<Result> {
     const {pageProcessDelay} = this;
     let currentIterations = maxIterations;
 
     const it = {
       [Symbol.asyncIterator]: () => ({
         next: async () => {
-          if (page === null || currentIterations === 0) {
+          if (initialPage === null || currentIterations === 0) {
             return {
               done: true,
             };
           }
 
-          const {result, ptr} = await this.process(page);
-          page = ptr.nextPage ?? null;
+          if (pageProcessDelay && maxIterations !== 1)
+            await timeout(pageProcessDelay);
+
+          const {result, ptr} = await this.process(initialPage);
+          initialPage = ptr.nextPage ?? null;
           if (!Number.isNaN(currentIterations))
             currentIterations--;
 
@@ -117,9 +131,6 @@ export abstract class AsyncScrapper<
     };
 
     for await (const result of it) {
-      if (pageProcessDelay && maxIterations !== 1)
-        await timeout(pageProcessDelay);
-
       if (!isValidScrappingResult(result))
         continue;
 

@@ -1,4 +1,6 @@
 import * as R from 'ramda';
+import chalk from 'chalk';
+import {Logger} from '@nestjs/common';
 
 import {ENV} from '@server/constants/env';
 import {ID} from '@shared/types';
@@ -16,7 +18,7 @@ import {
 } from '../BookReviewScrapper';
 
 import {ScrapperWebsiteEntity} from '../../../entity';
-import {WykopAPI} from './api/WykopAPI';
+import {WykopAPI, WykopAPIResponse} from './api/WykopAPI';
 import {
   WykopEntryContentParser,
   WykopEntryLatestParser,
@@ -41,6 +43,7 @@ import {
  */
 export class WykopScrapper extends BookReviewAsyncScrapper implements WebsiteInfoScrapper {
   public readonly websiteURL: string = 'https://wykop.pl';
+  private readonly logger = new Logger(WykopScrapper.name);
 
   private api = new WykopAPI(ENV.server.parsers.wykop);
   static contentParsers: Readonly<WykopEntryContentParser[]> = Object.freeze(
@@ -52,7 +55,7 @@ export class WykopScrapper extends BookReviewAsyncScrapper implements WebsiteInf
   constructor() {
     super(
       {
-        pageProcessDelay: 30000,
+        pageProcessDelay: 25000,
       },
     );
   }
@@ -93,12 +96,35 @@ export class WykopScrapper extends BookReviewAsyncScrapper implements WebsiteInf
    * @memberof WykopScrapper
    */
   protected async process(pagination: ScrapperBasicPagination): Promise<BookReviewProcessResult> {
+    const {logger} = this;
     const page = pagination?.page ?? 1;
-    const result = await this.api.call(
-      {
-        path: `Tags/Entries/bookmeter/page/${page}/`,
-      },
-    );
+    let result: WykopAPIResponse = null;
+
+    try {
+      logger.warn(`Fetching ${chalk.white(`"Tags/Entries/bookmeter/page/${page}/"`)}!`);
+
+      result = await this.api.call(
+        {
+          path: `Tags/Entries/bookmeter/page/${page}/`,
+        },
+      );
+    } catch (e) {
+      /**
+       * Wykop API is a bit buggy.. sometimes it throws HTML
+       * from pagination and stops parser, just ignore broken pages
+       */
+      if (e.type === 'invalid-json') {
+        logger.warn(`Page no ${page} seems to be broken, skip!`);
+        result = {
+          data: [],
+          pagination: {
+            prev: null,
+            next: true,
+          },
+        };
+      } else
+        throw e;
+    }
 
     return {
       result: (

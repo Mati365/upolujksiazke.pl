@@ -1,4 +1,5 @@
 import * as R from 'ramda';
+import chalk from 'chalk';
 import {SqlEntityManager} from '@mikro-orm/postgresql';
 import {Injectable, Logger} from '@nestjs/common';
 
@@ -16,6 +17,8 @@ import {
   ScrapperMetadataStatus,
   ScrapperWebsiteEntity,
 } from '../entity';
+
+import {ScrapperBasicPagination} from './shared';
 
 @Injectable()
 export class ScrapperService {
@@ -136,14 +139,14 @@ export class ScrapperService {
   }
 
   /**
-   * Processes already fetched scrapper results page
+   * Saves already fetched scrapper results page
    *
    * @private
    * @param {Object} params
    * @returns
    * @memberof ScrapperService
    */
-  private async processScrappedPage(
+  private async storeScrappedPage(
     {
       website,
       scrappedPage,
@@ -191,28 +194,43 @@ export class ScrapperService {
   /**
    * Fetches data from single scrapper
    *
-   * @private
    * @param {Object} params
    * @memberof ScrapperService
    */
-  private async execScrapper(
+  async execScrapper<T extends WebsiteBookReviewScrapper>(
     {
-      scrapper,
       maxIterations = 1,
+      scrapper,
+      initialPage,
     }: {
-      scrapper: WebsiteBookReviewScrapper,
+      scrapper: T,
       maxIterations?: number,
+      initialPage?: ScrapperBasicPagination | string,
     },
   ) {
     const {logger, websiteInfoScrapper} = this;
     const website = await websiteInfoScrapper.findOrCreateWebsiteEntity(scrapper);
 
     // insert metadata
-    let page = 0;
-    for await (const scrappedPage of scrapper.iterator(maxIterations)) {
-      logger.warn(`Scrapping ${++page} page of ${scrapper.websiteURL}!`);
+    let pageCounter = (
+      typeof initialPage === 'string'
+        ? null
+        : initialPage?.page
+    ) ?? 1;
 
-      this.processScrappedPage(
+    const iterator = scrapper.iterator(
+      {
+        maxIterations,
+        initialPage: initialPage as any,
+      },
+    );
+
+    for await (const scrappedPage of iterator) {
+      logger.warn(
+        `Scrapping ${pageCounter++} page of ${chalk.white(scrapper.websiteURL)} (items: ${scrappedPage.length})!`,
+      );
+
+      this.storeScrappedPage(
         {
           website,
           scrappedPage,

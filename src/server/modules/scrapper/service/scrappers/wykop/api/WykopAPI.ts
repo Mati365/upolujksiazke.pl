@@ -23,8 +23,8 @@ export type WykopAPIAuthParams = {
 export type WykopAPIResponse = {
   data?: any,
   pagination?: {
-    next: string,
-    prev: string,
+    next: any,
+    prev: any,
   },
   errors?: {
     code: number,

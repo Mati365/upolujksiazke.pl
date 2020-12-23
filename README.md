@@ -18,9 +18,17 @@ gulp scrapper:refresh
 Tasks:
 
 ```bash
-gulp scrapper:refresh:single --remoteId 123 --website https://wykop.pl # Fetches single review by id
-gulp scrapper:refresh:latest # Refreshes only first remote page of reviews
-gulp scrapper:refresh:all # Refreshes all reviews on website
+# Fetches single review by id
+gulp scrapper:refresh:single --remoteId 123 --website https://wykop.pl
+
+# Fetches all reviews from scrapper
+gulp scrapper:refresh:all --initialPage 1 --website https://wykop.pl
+
+# Refreshes only first remote reviews page using all scrappers
+gulp scrapper:refresh:latest
+
+# Fetches all reviews pages from websites using all scrappers
+gulp scrapper:refresh:all
 ```
 
 ## Stack

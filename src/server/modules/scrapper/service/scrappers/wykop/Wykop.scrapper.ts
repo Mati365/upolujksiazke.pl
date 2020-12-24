@@ -62,6 +62,18 @@ export class WykopScrapper extends BookReviewAsyncScrapper implements WebsiteInf
   }
 
   /**
+   * Checks if post is using default bookmeter template
+   *
+   * @static
+   * @param {string} content
+   * @returns {boolean}
+   * @memberof WykopScrapper
+   */
+  static isTemplatePost(content: string): boolean {
+    return !!R.match(/(<strong>)?Tytuł:(<\/strong>)?\s/, content)?.length;
+  }
+
+  /**
    * Fetches website info
    *
    * @returns {Promise<ScrapperWebsiteEntity>}
@@ -72,89 +84,16 @@ export class WykopScrapper extends BookReviewAsyncScrapper implements WebsiteInf
   }
 
   /**
-   * Fetches single post
-   *
-   * @param {ID} remoteId
-   * @returns {Promise<BookReviewScrapperInfo>}
-   * @memberof WykopScrapper
-   */
-  async fetchSingle(remoteId: ID): Promise<BookReviewScrapperInfo> {
-    const {data: result} = await this.api.call(
-      {
-        path: `Entries/Entry/${remoteId}`,
-      },
-    );
-
-    return this.mapPost(result);
-  }
-
-  /**
-   * Loads array of reviews
-   *
-   * @protected
-   * @param {ScrapperBasicPagination} pagination
-   * @returns {Promise<BookReviewProcessResult>}
-   * @memberof WykopScrapper
-   */
-  protected async process(pagination: ScrapperBasicPagination): Promise<BookReviewProcessResult> {
-    const {logger} = this;
-    const page = pagination?.page ?? 1;
-    let result: WykopAPIResponse = null;
-
-    try {
-      logger.warn(`Fetching ${chalk.white(`"Tags/Entries/bookmeter/page/${page}/"`)}!`);
-
-      result = await this.api.call(
-        {
-          path: `Tags/Entries/bookmeter/page/${page}/`,
-        },
-      );
-    } catch (e) {
-      /**
-       * Wykop API is a bit buggy.. sometimes it throws HTML
-       * from pagination and stops parser, just ignore broken pages
-       */
-      if (e.type === 'invalid-json') {
-        logger.warn(`Page no ${page} seems to be broken, skip!`);
-        result = {
-          data: [],
-          pagination: {
-            prev: null,
-            next: true,
-          },
-        };
-      } else
-        throw e;
-    }
-
-    return {
-      result: (
-        result
-          .data
-          .map(this.mapPost.bind(this))
-          .filter(Boolean)
-      ),
-      ptr: {
-        nextPage: (
-          result.pagination.next && result?.data?.length > 0
-            ? {
-              page: page + 1,
-            }
-            : null
-        ),
-      },
-    };
-  }
-
-  /**
    * Picks basic review properties
    *
-   * @private
    * @param {any} post
    * @returns {BookReviewScrapperInfo}
    * @memberof WykopScrapper
    */
-  private mapPost(post: any): BookReviewScrapperInfo {
+  mapSingleItemResponse(post: any): BookReviewScrapperInfo {
+    if (typeof post === 'string')
+      post = JSON.parse(post);
+
     if (!post)
       return null;
 
@@ -202,14 +141,77 @@ export class WykopScrapper extends BookReviewAsyncScrapper implements WebsiteInf
   }
 
   /**
-   * Checks if post is using default bookmeter template
+   * Fetches single post
    *
-   * @static
-   * @param {string} content
-   * @returns {boolean}
+   * @param {ID} remoteId
+   * @returns {Promise<BookReviewScrapperInfo>}
    * @memberof WykopScrapper
    */
-  static isTemplatePost(content: string): boolean {
-    return !!R.match(/(<strong>)?Tytuł:(<\/strong>)?\s/, content);
+  async fetchSingle(remoteId: ID): Promise<BookReviewScrapperInfo> {
+    const {data: result} = await this.api.call(
+      {
+        path: `Entries/Entry/${remoteId}`,
+      },
+    );
+
+    return this.mapSingleItemResponse(result);
+  }
+
+  /**
+   * Loads array of reviews
+   *
+   * @protected
+   * @param {ScrapperBasicPagination} pagination
+   * @returns {Promise<BookReviewProcessResult>}
+   * @memberof WykopScrapper
+   */
+  protected async processPage(pagination: ScrapperBasicPagination): Promise<BookReviewProcessResult> {
+    const {logger} = this;
+    const page = pagination?.page ?? 1;
+    let result: WykopAPIResponse = null;
+
+    try {
+      logger.warn(`Fetching ${chalk.white(`"Tags/Entries/bookmeter/page/${page}/"`)}!`);
+
+      result = await this.api.call(
+        {
+          path: `Tags/Entries/bookmeter/page/${page}/`,
+        },
+      );
+    } catch (e) {
+      /**
+       * Wykop API is a bit buggy.. sometimes it throws HTML
+       * from pagination and stops parser, just ignore broken pages
+       */
+      if (e.type === 'invalid-json') {
+        logger.warn(`Page no ${page} seems to be broken, skip!`);
+        result = {
+          data: [],
+          pagination: {
+            prev: null,
+            next: true,
+          },
+        };
+      } else
+        throw e;
+    }
+
+    return {
+      result: (
+        result
+          .data
+          .map(this.mapSingleItemResponse.bind(this))
+          .filter(Boolean)
+      ),
+      ptr: {
+        nextPage: (
+          result.pagination.next && result?.data?.length > 0
+            ? {
+              page: page + 1,
+            }
+            : null
+        ),
+      },
+    };
   }
 }

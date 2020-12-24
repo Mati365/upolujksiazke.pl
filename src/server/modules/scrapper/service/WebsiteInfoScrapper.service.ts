@@ -14,6 +14,10 @@ export class WebsiteInfoScrapperService {
     private readonly websiteRepository: EntityRepository<ScrapperWebsiteEntity>,
   ) {}
 
+  getWebsiteRepository() {
+    return this.websiteRepository;
+  }
+
   /**
    * Loads or creates scrapper website
    *

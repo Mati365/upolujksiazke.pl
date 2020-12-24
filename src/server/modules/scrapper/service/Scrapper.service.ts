@@ -4,6 +4,7 @@ import {SqlEntityManager} from '@mikro-orm/postgresql';
 import {Injectable, Logger} from '@nestjs/common';
 
 import {ID} from '@shared/types';
+import {paginatedAsyncIterator} from '@server/helpers/paginatedAsyncIterator';
 
 import {
   BookReviewScrapperInfo,
@@ -19,6 +20,11 @@ import {
 } from '../entity';
 
 import {ScrapperBasicPagination} from './shared';
+
+export type ScrapperAnalyzerStats = {
+  updated: number,
+  removed: number,
+};
 
 @Injectable()
 export class ScrapperService {
@@ -136,6 +142,55 @@ export class ScrapperService {
       .execute();
 
     return Promise.resolve(item);
+  }
+
+  /**
+   * Iterates over database and reanalyzes data,
+   * if review does not pass check, remove it
+   *
+   * @returns {Promise<ScrapperAnalyzerStats>}
+   * @memberof ScrapperService
+   */
+  async reanalyze(): Promise<ScrapperAnalyzerStats> {
+    const {em} = this;
+    const stats = {
+      updated: 0,
+      removed: 0,
+    };
+
+    const allRecordsIterator = paginatedAsyncIterator(
+      {
+        limit: 70,
+        queryExecutor: ({limit, offset}) => (
+          em
+            .getRepository(ScrapperMetadataEntity)
+            .findAll(['website'], null, limit, offset)
+        ),
+      },
+    );
+
+    for await (const [, page] of allRecordsIterator) {
+      await em.transactional((transaction) => {
+        for (const item of page) {
+          const scrapper = this.getScrapperByWebsiteURL(item.website.url);
+          const parserInfo = scrapper.mapSingleItemResponse((item.content as BookReviewScrapperInfo).parserSource);
+
+          if (parserInfo) {
+            if (!R.equals(parserInfo, item.content)) {
+              stats.updated++;
+              item.content = parserInfo;
+            }
+          } else {
+            stats.removed++;
+            transaction.remove(item);
+          }
+        }
+
+        return Promise.resolve();
+      });
+    }
+
+    return stats;
   }
 
   /**

@@ -117,7 +117,7 @@ export abstract class AsyncScrapper<
           if (pageProcessDelay && maxIterations !== 1)
             await timeout(pageProcessDelay);
 
-          const {result, ptr} = await this.process(initialPage);
+          const {result, ptr} = await this.processPage(initialPage);
           initialPage = ptr.nextPage ?? null;
           if (!Number.isNaN(currentIterations))
             currentIterations--;
@@ -143,6 +143,15 @@ export abstract class AsyncScrapper<
   }
 
   /**
+   * Transforms single item into format stored in database
+   *
+   * @abstract
+   * @param {any} item
+   * @returns {ArrayElement<Result>}
+   */
+  abstract mapSingleItemResponse(item: any): ArrayElement<Result>;
+
+  /**
    * Fetches single item
    *
    * @abstract
@@ -161,5 +170,5 @@ export abstract class AsyncScrapper<
    * @returns {Promise<ScrapperResult<Result, Page>>}
    * @memberof AsyncScrapper
    */
-  protected abstract process(page: Page): Promise<ScrapperResult<Result, Page>>;
+  protected abstract processPage(page: Page): Promise<ScrapperResult<Result, Page>>;
 }

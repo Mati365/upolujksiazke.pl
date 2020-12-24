@@ -32,6 +32,8 @@ gulp scrapper:refresh
 
 **Tasks:**
 
+Fetchers:
+
 ```bash
 # Fetches single review by id
 gulp scrapper:refresh:single --remoteId 123 --website https://wykop.pl
@@ -44,6 +46,14 @@ gulp scrapper:refresh:latest
 
 # Fetches all reviews pages from websites using all scrappers
 gulp scrapper:refresh:all
+```
+
+Analyzers:
+
+```bash
+# Iteratores over all records and reparses them, dangerous!!
+# it removes records that are not classified as reviews after analyze
+gulp scrapper:reanalyze:all
 ```
 
 ## Stack

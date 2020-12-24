@@ -4,7 +4,7 @@ export type ID = string | number;
 
 export type CanBeArray<T> = T|T[];
 
-export type IdentifiedItem<R> = R & {
+export type IdentifiedItem<R = {}> = R & {
   id: ID,
 };
 

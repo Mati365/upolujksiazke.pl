@@ -168,7 +168,7 @@ export class WykopScrapper extends BookReviewAsyncScrapper implements WebsiteInf
   protected async processPage(pagination: ScrapperBasicPagination): Promise<BookReviewProcessResult> {
     const {logger} = this;
     const page = pagination?.page ?? 1;
-    let result: WykopAPIResponse = null;
+    let result: WykopAPIResponse & {ignore?: boolean} = null;
 
     try {
       logger.warn(`Fetching ${chalk.white(`"Tags/Entries/bookmeter/page/${page}/"`)}!`);
@@ -186,6 +186,7 @@ export class WykopScrapper extends BookReviewAsyncScrapper implements WebsiteInf
       if (e.type === 'invalid-json') {
         logger.warn(`Page no ${page} seems to be broken, skip!`);
         result = {
+          ignore: true,
           data: [],
           pagination: {
             prev: null,
@@ -205,7 +206,9 @@ export class WykopScrapper extends BookReviewAsyncScrapper implements WebsiteInf
       ),
       ptr: {
         nextPage: (
-          result.pagination.next && result?.data?.length > 0
+          result
+              && result.pagination.next
+              && (result.data?.length > 0 || result.ignore)
             ? {
               page: page + 1,
             }

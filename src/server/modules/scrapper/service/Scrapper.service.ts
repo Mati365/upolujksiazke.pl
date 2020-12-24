@@ -4,13 +4,8 @@ import {EntityRepository, SqlEntityManager} from '@mikro-orm/postgresql';
 import {Injectable, Logger} from '@nestjs/common';
 import {InjectRepository} from '@mikro-orm/nestjs';
 
-import {ID} from '@shared/types';
+import {ID, IdentifiedItem} from '@shared/types';
 import {paginatedAsyncIterator} from '@server/helpers/paginatedAsyncIterator';
-
-import {
-  BookReviewScrapperInfo,
-  WebsiteBookReviewScrapper,
-} from './scrappers/BookReviewScrapper';
 
 import {WykopScrapper} from './scrappers';
 import {WebsiteInfoScrapperService} from './WebsiteInfoScrapper.service';
@@ -21,7 +16,11 @@ import {
   ScrapperWebsiteEntity,
 } from '../entity';
 
-import {ScrapperBasicPagination} from './shared';
+import {
+  ScrapperBasicPagination,
+  WebsiteScrapper,
+  WebsiteScrapperItemInfo,
+} from './shared';
 
 export type ScrapperAnalyzerStats = {
   updated: number,
@@ -32,7 +31,7 @@ export type ScrapperAnalyzerStats = {
 export class ScrapperService {
   private readonly logger = new Logger(ScrapperService.name);
 
-  private scrappers: WebsiteBookReviewScrapper[] = [
+  private scrappers: WebsiteScrapper[] = [
     new WykopScrapper,
   ];
 
@@ -49,21 +48,21 @@ export class ScrapperService {
    *
    * @static
    * @param {ScrapperWebsiteEntity} website
-   * @param {BookReviewScrapperInfo} item
+   * @param {IdentifiedItem} item
    * @param {ScrapperMetadataStatus} [status=ScrapperMetadataStatus.NEW]
    * @returns
    * @memberof ScrapperService
    */
   static scrapperResultToMetadataEntity(
     website: ScrapperWebsiteEntity,
-    item: BookReviewScrapperInfo,
+    item: IdentifiedItem,
     status: ScrapperMetadataStatus = ScrapperMetadataStatus.NEW,
   ) {
     return new ScrapperMetadataEntity(
       {
         website,
         status,
-        remoteId: item.id,
+        remoteId: +item.id,
         content: item,
       },
     );
@@ -73,10 +72,10 @@ export class ScrapperService {
    * Find single scrapper by assigned website URL
    *
    * @param {string} url
-   * @returns {WebsiteBookReviewScrapper}
+   * @returns {WebsiteScrapper}
    * @memberof ScrapperService
    */
-  getScrapperByWebsiteURL(url: string): WebsiteBookReviewScrapper {
+  getScrapperByWebsiteURL(url: string): WebsiteScrapper {
     return R.find(
       R.propEq('websiteURL', url) as any,
       this.scrappers,
@@ -121,9 +120,9 @@ export class ScrapperService {
       scrapper,
     }: {
       remoteId: ID,
-      scrapper: WebsiteBookReviewScrapper,
+      scrapper: WebsiteScrapper,
     },
-  ): Promise<BookReviewScrapperInfo> {
+  ): Promise<IdentifiedItem> {
     if (!scrapper)
       throw new Error('Missing scrapper!');
 
@@ -178,7 +177,7 @@ export class ScrapperService {
       await em.transactional(() => {
         for (const item of page) {
           const scrapper = this.getScrapperByWebsiteURL(item.website.url);
-          const parserInfo = scrapper.mapSingleItemResponse((item.content as BookReviewScrapperInfo).parserSource);
+          const parserInfo = scrapper.mapSingleItemResponse((item.content as WebsiteScrapperItemInfo).parserSource);
 
           if (parserInfo && !R.equals(parserInfo, item.content)) {
             stats.updated++;
@@ -221,7 +220,7 @@ export class ScrapperService {
       scrappedPage,
     }: {
       website: ScrapperWebsiteEntity,
-      scrappedPage: BookReviewScrapperInfo[],
+      scrappedPage: IdentifiedItem[],
     },
   ) {
     const {em} = this;
@@ -266,7 +265,7 @@ export class ScrapperService {
    * @param {Object} params
    * @memberof ScrapperService
    */
-  async execScrapper<T extends WebsiteBookReviewScrapper>(
+  async execScrapper<T extends WebsiteScrapper>(
     {
       maxIterations = 1,
       scrapper,

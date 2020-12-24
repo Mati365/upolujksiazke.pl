@@ -3,12 +3,25 @@ import {
   AsyncScrapper, HTMLScrapper,
   ScrapperBasicPagination, ScrapperResult,
   WebsiteInfoScrapper,
+  WebsiteScrapperItemInfo,
 } from '../shared';
 
-export type BookReviewScrapperInfo = {
-  parserSource: string,
+export type BookScrapperInfo = {
+  title: string,
+  isbn: string,
+  authors: string[],
+  category: string,
+  description?: string,
+  cover?: {
+    nsfw: boolean,
+    ratio?: number,
+    source: string,
+    image: string,
+  },
+};
+
+export type BookReviewScrapperInfo = WebsiteScrapperItemInfo & {
   url: string,
-  id: number,
   date: Date,
   score: number,
   stats?: {
@@ -19,19 +32,8 @@ export type BookReviewScrapperInfo = {
     avatar: string,
   },
   content: string,
-  book: {
-    title: string,
-    isbn: string,
-    authors: string[],
-    category: string,
-    description?: string,
-    cover?: {
-      nsfw: boolean,
-      ratio?: number,
-      source: string,
-      image: string,
-    },
-  },
+  summaryContent?: string,
+  book: BookScrapperInfo,
 };
 
 export type BookReviewProcessResult = ScrapperResult<BookReviewScrapperInfo[], ScrapperBasicPagination>;

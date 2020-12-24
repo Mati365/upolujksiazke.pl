@@ -10,6 +10,7 @@ OpenSource platform that aggregates reviews and book ratings from all websites. 
 - [ ] Front page customization (pin sections)
 - [ ] Read list
 - [ ] Category books RSS
+- [ ] Allow users to books exchange
 
 ## Available websites
 

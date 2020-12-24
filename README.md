@@ -1,8 +1,10 @@
 # Bookmeter.org
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+![Website](https://img.shields.io/website?url=https%3A%2F%2Fbookmeter.org)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 
-OpenSource platform that aggregates reviews and book ratings from all websites. Something like Metacritic / Digg for books.
+OpenSource book reviews aggregator that helps with searching book reviews. Something like Metacritic / Digg for books.
 
 ## Goals
 
@@ -14,8 +16,14 @@ OpenSource platform that aggregates reviews and book ratings from all websites. 
 
 ## Available websites
 
-- [x] Wykop.pl #bookmeter
+🇵🇱 Poland
+
+- [x] Wykop.pl (#bookmeter tag)
 - [ ] Booklips.pl
+- [ ] Swiatksiazki.pl
+
+🌍 World
+
 - [ ] Reddit
 - [ ] Goodreads
 

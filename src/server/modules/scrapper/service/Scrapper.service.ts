@@ -284,7 +284,7 @@ export class ScrapperService {
       typeof initialPage === 'string'
         ? null
         : initialPage?.page
-    ) ?? 1;
+    ) ?? 0;
 
     const iterator = scrapper.iterator(
       {
@@ -295,7 +295,7 @@ export class ScrapperService {
 
     for await (const scrappedPage of iterator) {
       logger.warn(
-        `Scrapping ${pageCounter++} page of ${chalk.white(scrapper.websiteURL)} (items: ${scrappedPage.length})!`,
+        `Scrapping ${++pageCounter} page of ${chalk.white(scrapper.websiteURL)} (items: ${scrappedPage.length})!`,
       );
 
       this.storeScrappedPage(

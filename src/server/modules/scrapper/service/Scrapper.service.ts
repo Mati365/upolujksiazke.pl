@@ -1,7 +1,8 @@
 import * as R from 'ramda';
 import chalk from 'chalk';
-import {SqlEntityManager} from '@mikro-orm/postgresql';
+import {EntityRepository, SqlEntityManager} from '@mikro-orm/postgresql';
 import {Injectable, Logger} from '@nestjs/common';
+import {InjectRepository} from '@mikro-orm/nestjs';
 
 import {ID} from '@shared/types';
 import {paginatedAsyncIterator} from '@server/helpers/paginatedAsyncIterator';
@@ -14,6 +15,7 @@ import {
 import {WykopScrapper} from './scrappers';
 import {WebsiteInfoScrapperService} from './WebsiteInfoScrapper.service';
 import {
+  INVALID_METADATA_FILTERS,
   ScrapperMetadataEntity,
   ScrapperMetadataStatus,
   ScrapperWebsiteEntity,
@@ -37,6 +39,9 @@ export class ScrapperService {
   constructor(
     private readonly em: SqlEntityManager,
     private readonly websiteInfoScrapper: WebsiteInfoScrapperService,
+
+    @InjectRepository(ScrapperMetadataEntity)
+    private readonly metadataRepository: EntityRepository<ScrapperMetadataEntity>,
   ) {}
 
   /**
@@ -152,7 +157,7 @@ export class ScrapperService {
    * @memberof ScrapperService
    */
   async reanalyze(): Promise<ScrapperAnalyzerStats> {
-    const {em} = this;
+    const {em, metadataRepository} = this;
     const stats = {
       updated: 0,
       removed: 0,
@@ -170,25 +175,34 @@ export class ScrapperService {
     );
 
     for await (const [, page] of allRecordsIterator) {
-      await em.transactional((transaction) => {
+      await em.transactional(() => {
         for (const item of page) {
           const scrapper = this.getScrapperByWebsiteURL(item.website.url);
           const parserInfo = scrapper.mapSingleItemResponse((item.content as BookReviewScrapperInfo).parserSource);
 
-          if (parserInfo) {
-            if (!R.equals(parserInfo, item.content)) {
-              stats.updated++;
-              item.content = parserInfo;
-            }
-          } else {
-            stats.removed++;
-            transaction.remove(item);
+          if (parserInfo && !R.equals(parserInfo, item.content)) {
+            stats.updated++;
+            item.content = parserInfo;
           }
         }
 
         return Promise.resolve();
       });
     }
+
+    stats.removed = await (async () => {
+      const count = await metadataRepository.count({}, {filters: ['invalid']});
+
+      /**
+       * MikroORM is crashing when passing filters, use constants
+       *
+       * @see {@link https://github.com/mikro-orm/mikro-orm/issues/1236}
+       * @todo Fixme
+       */
+      await metadataRepository.nativeDelete(INVALID_METADATA_FILTERS);
+
+      return count;
+    })();
 
     return stats;
   }

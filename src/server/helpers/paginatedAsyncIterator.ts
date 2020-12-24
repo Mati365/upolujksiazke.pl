@@ -1,6 +1,7 @@
 type PaginatedAsyncIterator<T> = {
   offset?: number,
   limit: number,
+  increment?: boolean,
   queryExecutor(
     attrs: {
       limit: number,
@@ -19,6 +20,7 @@ type PaginatedAsyncIterator<T> = {
 export async function* paginatedAsyncIterator<T>(
   {
     offset = 0,
+    increment = true,
     limit,
     queryExecutor,
   }: PaginatedAsyncIterator<T>,
@@ -35,6 +37,8 @@ export async function* paginatedAsyncIterator<T>(
       return;
 
     yield [offset, result];
-    offset += limit;
+
+    if (increment)
+      offset += limit;
   }
 }

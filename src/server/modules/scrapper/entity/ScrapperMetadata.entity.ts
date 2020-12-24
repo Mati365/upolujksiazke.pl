@@ -1,5 +1,5 @@
 import {
-  Entity, Enum, Index,
+  Entity, Enum, expr, Filter, FilterQuery, Index,
   JsonType, ManyToOne,
   Property, Unique,
 } from '@mikro-orm/core';
@@ -13,6 +13,12 @@ export enum ScrapperMetadataStatus {
   NEW = 'new',
 }
 
+export const INVALID_METADATA_FILTERS: FilterQuery<any> = {
+  [expr('(content->>\'content\')::text')]: {
+    $eq: null,
+  },
+};
+
 /**
  * Saves already scrapped records (in case of improve scrappers)
  *
@@ -23,6 +29,13 @@ export enum ScrapperMetadataStatus {
 @Entity(
   {
     tableName: 'scrapper_metadata',
+  },
+)
+@Filter(
+  {
+    name: 'invalid',
+    args: false,
+    cond: INVALID_METADATA_FILTERS,
   },
 )
 export class ScrapperMetadataEntity extends DatedRecordEntity {

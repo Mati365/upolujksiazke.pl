@@ -106,7 +106,7 @@ export class WykopScrapper extends BookReviewAsyncScrapper implements WebsiteInf
       description,
     } = WykopEntryContentParser.reduceContent(WykopScrapper.contentParsers, body);
 
-    if (!R.isEmpty(properties) && !description)
+    if (R.isEmpty(properties) || !description)
       return null;
 
     return {

@@ -29,7 +29,7 @@ OpenSource book reviews aggregator that helps with searching book reviews. Somet
 
 ## Development
 
-**Setup:**
+### Setup
 
 ```bash
 yarn install
@@ -38,7 +38,7 @@ yarn run develop
 gulp scrapper:refresh
 ```
 
-**Tasks:**
+### Tasks
 
 Fetchers:
 
@@ -64,7 +64,7 @@ Analyzers:
 gulp scrapper:reanalyze:all
 ```
 
-**Scrappers:**
+### Scrappers
 
 Adding new scrapper:
 

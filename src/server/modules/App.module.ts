@@ -1,5 +1,8 @@
 import {Module} from '@nestjs/common';
 import {ScheduleModule} from '@nestjs/schedule';
+import {BullModule} from '@nestjs/bull';
+
+import {ENV} from '@server/constants/env';
 
 import {isRootClusterAppInstance} from '../common/helpers';
 
@@ -12,6 +15,11 @@ import {ImporterModule} from './importer';
   {
     imports: [
       DatabaseModule,
+      BullModule.forRoot(
+        {
+          redis: ENV.server.redisConfig,
+        },
+      ),
       ...(
         isRootClusterAppInstance()
           ? [ScheduleModule.forRoot()]

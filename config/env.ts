@@ -17,6 +17,11 @@ export type AppEnv = Partial<{
       port: number,
       address: string,
     },
+    redisConfig: {
+      port: number,
+      host: string,
+      prefix: string,
+    },
     dbConfig: {
       dbName: string,
       host: string,
@@ -46,6 +51,9 @@ const {
   APP_LISTEN_ADDRESS = 'localhost',
   HTTPS_KEY_PATH,
   HTTPS_CERT_PATH,
+  REDIS_PORT = '6379',
+  REDIS_HOST = 'localhost',
+  REDIS_PREFIX = 'bookmeter-queue',
   WYKOP_KEY,
   WYKOP_SECRET,
   WYKOP_ACCOUNT_NAME,
@@ -66,6 +74,11 @@ export const GLOBAL_CONFIG: Record<string, AppEnv> = {
       listen: {
         port: +APP_PORT,
         address: APP_LISTEN_ADDRESS,
+      },
+      redisConfig: {
+        port: +REDIS_PORT,
+        host: REDIS_HOST,
+        prefix: REDIS_PREFIX,
       },
       dbConfig: {
         dbName: DB_NAME,

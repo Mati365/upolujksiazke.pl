@@ -32,6 +32,7 @@ OpenSource book reviews aggregator that helps with searching book reviews. Somet
 ### Setup
 
 ```bash
+cp .env.example .env # edit .env config
 yarn install
 mikro-orm migration:up
 yarn run develop

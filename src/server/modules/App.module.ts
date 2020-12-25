@@ -1,6 +1,8 @@
 import {Module} from '@nestjs/common';
 import {ScheduleModule} from '@nestjs/schedule';
 
+import {isRootClusterAppInstance} from '../common/helpers';
+
 import {DatabaseModule} from './database/Database.module';
 import {FrontModule} from './front';
 import {ManifestModule} from './manifest';
@@ -11,7 +13,7 @@ import {ImporterModule} from './importer';
     imports: [
       DatabaseModule,
       ...(
-        +process.env.NODE_APP_INSTANCE === 0
+        isRootClusterAppInstance()
           ? [ScheduleModule.forRoot()]
           : []
       ),

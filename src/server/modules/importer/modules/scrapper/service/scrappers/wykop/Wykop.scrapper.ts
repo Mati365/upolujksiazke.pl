@@ -17,7 +17,7 @@ import {
   BookReviewProcessResult,
 } from '../BookReviewScrapper';
 
-import {ScrapperWebsiteEntity} from '../../../entity';
+import {ScrapperMetadataKind, ScrapperWebsiteEntity} from '../../../entity';
 import {WykopAPI, WykopAPIResponse} from './api/WykopAPI';
 import {
   WykopEntryContentParser,
@@ -110,6 +110,7 @@ export class WykopScrapper extends BookReviewAsyncScrapper implements WebsiteInf
       return null;
 
     return {
+      kind: ScrapperMetadataKind.BOOK_REVIEW,
       parserSource: JSON.stringify(post),
       url: `https://www.wykop.pl/wpis/${post.id}`,
       id: post.id,

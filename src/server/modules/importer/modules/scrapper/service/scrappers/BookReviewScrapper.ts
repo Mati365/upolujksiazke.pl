@@ -1,4 +1,5 @@
 import {Person} from '@shared/types';
+import {ScrapperMetadataKind} from '../../entity';
 import {
   AsyncScrapper, HTMLScrapper,
   ScrapperBasicPagination, ScrapperResult,
@@ -21,6 +22,7 @@ export type BookScrapperInfo = {
 };
 
 export type BookReviewScrapperInfo = WebsiteScrapperItemInfo & {
+  kind: ScrapperMetadataKind.BOOK_REVIEW,
   url: string,
   date: Date,
   score: number,

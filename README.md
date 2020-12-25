@@ -64,19 +64,27 @@ Analyzers:
 gulp scrapper:reanalyze:all
 ```
 
-### Scrappers
+### Importers
 
-Adding new scrapper:
+#### Flow
 
-1. Create scrapper file
+  1. Running `scrapper` tasks such as `refreshLatest`, `refreshSingle` triggers fetching new records into `scrapper_metadata` table. All of these functions are stored in `ServiceModule -> ScrapperService`. After successful fetching page of scrapped content `ScrapperService` creates new background job stored in redis that runs database and book matchers.
+
+  2. Each job is later executed and `MetadataDbLoaderService` tries to match book in database and saves it.
+
+#### Scrappers
+
+  Adding new scrapper:
+
+  1. Create scrapper file
 
   ```bash
-  cd ./src/server/modules/importer/modules/scrapper/service/scrappers/
-  mkdir example-scrapper/
-  touch example-scrapper/ExampleScrapper.ts
+    cd ./src/server/modules/importer/modules/scrapper/service/scrappers/
+    mkdir example-scrapper/
+    touch example-scrapper/ExampleScrapper.ts
   ```
 
-2. Assign scrapper to `scrappers` variable inside `ScrapperService`
+  2. Assign scrapper to `scrappers` variable inside `ScrapperService`
 
 ## Stack
 

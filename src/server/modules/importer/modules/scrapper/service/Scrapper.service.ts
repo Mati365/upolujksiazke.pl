@@ -5,7 +5,7 @@ import {Injectable, Logger} from '@nestjs/common';
 import {InjectRepository} from '@mikro-orm/nestjs';
 
 import {ID, IdentifiedItem} from '@shared/types';
-import {paginatedAsyncIterator} from '@server/helpers/paginatedAsyncIterator';
+import {paginatedAsyncIterator} from '@server/common/helpers/paginatedAsyncIterator';
 
 import {WykopScrapper} from './scrappers';
 import {WebsiteInfoScrapperService} from './WebsiteInfoScrapper.service';

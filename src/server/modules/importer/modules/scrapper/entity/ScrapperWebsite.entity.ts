@@ -1,5 +1,6 @@
 import {Collection, Entity, OneToMany, Property, Unique} from '@mikro-orm/core';
-import {DatedRecordEntity} from '../../database/DatedRecord.entity';
+
+import {DatedRecordEntity} from '@server/modules/database/DatedRecord.entity';
 import {ScrapperMetadataEntity} from './ScrapperMetadata.entity';
 
 @Entity(

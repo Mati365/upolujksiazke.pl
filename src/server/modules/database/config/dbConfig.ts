@@ -12,7 +12,7 @@ import {BookReviewEntity} from '../../book-review/BookReview.entity';
 import {
   ScrapperMetadataEntity,
   ScrapperWebsiteEntity,
-} from '../../scrapper/entity';
+} from '../../importer/modules/scrapper/entity';
 
 const logger = new Logger('MikroORM');
 

@@ -1,19 +1,19 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {ID} from '@shared/types';
-import {ScrapperWebsiteEntity} from '@server/modules/scrapper/entity';
+import {ScrapperWebsiteEntity} from '../../../entity';
 import {WebsiteInfoScrapper, fetchWebsiteInfo, HTMLParserAttrs, ScrapperResult} from '../../shared';
 import {BookReviewHTMLScrapper, BookReviewScrapperInfo} from '../BookReviewScrapper';
 
 /**
- * Picks data from booklips.pl
+ * Picks data from swiatksiazki.pl
  *
  * @export
- * @class BooklipsScrapper
+ * @class SwiatksiazkiScrapper
  * @extends {BookReviewHTMLScrapper}
  * @implements {WebsiteInfoScrapper}
  */
-export class BooklipsScrapper extends BookReviewHTMLScrapper implements WebsiteInfoScrapper {
-  public readonly websiteURL: string = 'https://booklips.pl/';
+export class SwiatksiazkiScrapper extends BookReviewHTMLScrapper implements WebsiteInfoScrapper {
+  public readonly websiteURL: string = 'https://www.swiatksiazki.pl/';
 
   /**
    * Fetches website info

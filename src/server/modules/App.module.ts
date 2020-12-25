@@ -4,7 +4,7 @@ import {ScheduleModule} from '@nestjs/schedule';
 import {DatabaseModule} from './database/Database.module';
 import {FrontModule} from './front';
 import {ManifestModule} from './manifest';
-import {ScrapperModule} from './scrapper/Scrapper.module';
+import {ImporterModule} from './importer';
 
 @Module(
   {
@@ -21,7 +21,7 @@ import {ScrapperModule} from './scrapper/Scrapper.module';
         },
       ),
       FrontModule,
-      ScrapperModule,
+      ImporterModule,
     ],
     controllers: [],
     providers: [],

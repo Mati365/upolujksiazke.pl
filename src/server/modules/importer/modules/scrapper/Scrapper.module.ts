@@ -1,8 +1,8 @@
 import {Module} from '@nestjs/common';
 import {MikroOrmModule} from '@mikro-orm/nestjs';
 
-import {BookEntity} from '../book/Book.entity';
-import {BookReviewEntity} from '../book-review/BookReview.entity';
+import {BookEntity} from '@server/modules/book/Book.entity';
+import {BookReviewEntity} from '@server/modules/book-review/BookReview.entity';
 
 import {
   WebsiteInfoScrapperService,

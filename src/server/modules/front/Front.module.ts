@@ -3,7 +3,7 @@ import useragent from 'express-useragent';
 import {APP_FILTER} from '@nestjs/core';
 import {PAGE_I18N} from '@client/i18n/packs';
 
-import {ServerExceptionFilter} from '@server/filters/ServerException.filter';
+import {ServerExceptionFilter} from '@server/common/filters/ServerException.filter';
 import {CacheModule, MiddlewareConsumer, Module} from '@nestjs/common';
 import {FrontController} from './Front.controller';
 import {I18nModule} from '../i18n';

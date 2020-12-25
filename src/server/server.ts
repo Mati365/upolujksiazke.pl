@@ -14,9 +14,9 @@ import {ClassSerializerInterceptor} from '@nestjs/common';
 
 import {AppEnv, ENV} from './constants/env';
 
-import {LoggerInterceptor} from './interceptors/Logger.interceptor';
+import {LoggerInterceptor} from './common/interceptors/Logger.interceptor';
+import {ClusterService} from './common/services/Cluster.service';
 import {AppModule} from './modules/App.module';
-import {ClusterService} from './services/Cluster.service';
 
 if (typeof File === 'undefined')
   (global as any).File = class {};

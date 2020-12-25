@@ -2,7 +2,7 @@ import React from 'react';
 import {Helmet} from 'react-helmet';
 import {Cache} from 'cache-manager';
 import {Response, Request} from 'express';
-import {Accepts} from '@server/decorators/Accepts.decorator';
+import {Accepts} from '@server/common/decorators/Accepts.decorator';
 import {
   CACHE_MANAGER,
   Controller, Get,

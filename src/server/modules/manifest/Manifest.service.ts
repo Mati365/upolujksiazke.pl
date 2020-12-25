@@ -1,8 +1,8 @@
 import path from 'path';
-import {loadFsJSON} from '@server/helpers/loadFsJSON';
-import {isDevMode} from '@shared/helpers';
-
 import {Inject, Injectable, Scope} from '@nestjs/common';
+
+import {loadFsJSON} from '@server/common/helpers/loadFsJSON';
+import {isDevMode} from '@shared/helpers';
 
 export type ManifestServiceOptions = {
   file: string,

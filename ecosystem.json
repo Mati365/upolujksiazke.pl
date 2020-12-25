@@ -19,6 +19,6 @@
         "NODE_ENV": "production",
         "APP_ENV": "production"
       }
-     }
+    }
   }
 }

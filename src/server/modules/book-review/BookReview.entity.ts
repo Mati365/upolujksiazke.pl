@@ -2,7 +2,7 @@ import {Entity, ManyToOne, OneToOne, Property} from '@mikro-orm/core';
 
 import {DatedRecordEntity} from '../database/DatedRecord.entity';
 import {BookEntity} from '../book/Book.entity';
-import {ScrapperMetadataEntity} from '../scrapper/entity';
+import {ScrapperMetadataEntity} from '../importer/modules/scrapper/entity';
 
 @Entity(
   {

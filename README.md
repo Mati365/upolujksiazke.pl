@@ -64,7 +64,23 @@ Analyzers:
 gulp scrapper:reanalyze:all
 ```
 
+**Scrappers:**
+
+Adding new scrapper:
+
+1. Create scrapper file
+
+  ```bash
+  cd ./src/server/modules/importer/modules/scrapper/service/scrappers/
+  mkdir example-scrapper/
+  touch example-scrapper/ExampleScrapper.ts
+  ```
+
+2. Assign scrapper to `scrappers` variable inside `ScrapperService`
+
 ## Stack
+
+Real World Nest.JS + MikroORM app.
 
 - Node.JS
 - Nest.JS

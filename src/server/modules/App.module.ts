@@ -23,8 +23,6 @@ import {ImporterModule} from './importer';
       FrontModule,
       ImporterModule,
     ],
-    controllers: [],
-    providers: [],
   },
 )
 export class AppModule {}

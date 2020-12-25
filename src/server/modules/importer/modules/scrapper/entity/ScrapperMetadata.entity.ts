@@ -43,6 +43,11 @@ export const INVALID_METADATA_FILTERS: FilterQuery<any> = {
     cond: INVALID_METADATA_FILTERS,
   },
 )
+@Unique(
+  {
+    properties: ['remoteId', 'website'],
+  },
+)
 export class ScrapperMetadataEntity extends DatedRecordEntity {
   @ManyToOne(() => ScrapperWebsiteEntity)
   website!: ScrapperWebsiteEntity;
@@ -52,7 +57,6 @@ export class ScrapperMetadataEntity extends DatedRecordEntity {
       columnType: 'integer',
     },
   )
-  @Unique()
   remoteId!: number; // identifier in remote website
 
   @Property(

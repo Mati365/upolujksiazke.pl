@@ -3,6 +3,7 @@ import {MikroOrmModule} from '@mikro-orm/nestjs';
 
 import {BookEntity} from '@server/modules/book/Book.entity';
 import {BookReviewEntity} from '@server/modules/book-review/BookReview.entity';
+import {MetadataDbLoaderModule} from '../metadata-db-loader/MetadataDbLoader.module';
 
 import {
   WebsiteInfoScrapperService,
@@ -18,6 +19,7 @@ import {
 @Module(
   {
     imports: [
+      MetadataDbLoaderModule,
       MikroOrmModule.forFeature(
         [
           BookEntity,
@@ -27,7 +29,6 @@ import {
         ],
       ),
     ],
-    controllers: [],
     providers: [
       WebsiteInfoScrapperService,
       ScrapperService,

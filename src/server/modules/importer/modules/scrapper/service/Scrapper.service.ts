@@ -3,6 +3,7 @@ import chalk from 'chalk';
 import {EntityRepository, SqlEntityManager} from '@mikro-orm/postgresql';
 import {Injectable, Logger} from '@nestjs/common';
 import {InjectRepository} from '@mikro-orm/nestjs';
+import {InjectQueue} from '@nestjs/bull';
 
 import {ID, IdentifiedItem} from '@shared/types';
 import {paginatedAsyncIterator} from '@server/common/helpers/paginatedAsyncIterator';
@@ -21,6 +22,11 @@ import {
   WebsiteScrapper,
   WebsiteScrapperItemInfo,
 } from './shared';
+
+import {
+  DbLoaderQueue,
+  SCRAPPER_METADATA_LOADER_QUEUE,
+} from '../../metadata-db-loader/processors/MetadataDbLoaderConsumer.processor';
 
 export type ScrapperAnalyzerStats = {
   updated: number,
@@ -41,6 +47,9 @@ export class ScrapperService {
 
     @InjectRepository(ScrapperMetadataEntity)
     private readonly metadataRepository: EntityRepository<ScrapperMetadataEntity>,
+
+    @InjectQueue(SCRAPPER_METADATA_LOADER_QUEUE)
+    private readonly dbLoaderQueue: DbLoaderQueue,
   ) {}
 
   /**
@@ -126,24 +135,47 @@ export class ScrapperService {
     if (!scrapper)
       throw new Error('Missing scrapper!');
 
-    const {em, websiteInfoScrapper} = this;
+    const {
+      em, websiteInfoScrapper,
+      metadataRepository, dbLoaderQueue,
+    } = this;
+
     const item = await scrapper.fetchSingle(remoteId);
     if (!item)
       return Promise.resolve(null);
 
     const website = await websiteInfoScrapper.findOrCreateWebsiteEntity(scrapper);
-    const updatedEntity = ScrapperService.scrapperResultToMetadataEntity(website, item);
-    delete updatedEntity.createdAt;
+    const prevEntity = await metadataRepository.findOne(
+      {
+        remoteId: +remoteId,
+      },
+    );
 
-    await em
-      .createQueryBuilder(ScrapperMetadataEntity)
-      .update(updatedEntity)
-      .where(
-        {
-          remoteId: item.id,
-        },
-      )
-      .execute();
+    const updatedEntity = await (async () => {
+      // update
+      if (prevEntity) {
+        metadataRepository.assign(
+          prevEntity,
+          {
+            content: item,
+          },
+        );
+        await metadataRepository.persistAndFlush(prevEntity);
+        return prevEntity;
+      }
+
+      // create new
+      const newEntity = ScrapperService.scrapperResultToMetadataEntity(website, item);
+      await em.persistAndFlush(newEntity);
+      return newEntity;
+    })();
+
+    // add job for processing entity
+    await dbLoaderQueue.add(
+      {
+        metadataId: updatedEntity.id,
+      },
+    );
 
     return Promise.resolve(item);
   }
@@ -223,9 +255,8 @@ export class ScrapperService {
       scrappedPage: IdentifiedItem[],
     },
   ) {
-    const {em} = this;
-
-    return em.transactional(async (transaction) => {
+    const {em, dbLoaderQueue} = this;
+    const entities = await em.transactional(async (transaction) => {
       // detect which ids has been already scrapped
       const scrappedIds = R.pluck(
         'remoteId',
@@ -245,21 +276,34 @@ export class ScrapperService {
       );
 
       // create new metadata records
-      R.forEach(
+      return R.map(
         (item) => {
           if (R.includes(item.id, scrappedIds))
-            return;
+            return null;
 
-          transaction.persist(
-            ScrapperService.scrapperResultToMetadataEntity(website, item),
-          );
+          const entity = ScrapperService.scrapperResultToMetadataEntity(website, item);
+          transaction.persist(entity);
+          return entity;
         },
         scrappedPage,
       );
     });
+
+    // load to database
+    dbLoaderQueue.addBulk(
+      entities
+        .filter(Boolean)
+        .map(
+          ({id}) => ({
+            data: {
+              metadataId: id,
+            },
+          }),
+        ),
+    );
   }
 
-  /**
+  /*==================
    * Fetches data from single scrapper
    *
    * @param {Object} params

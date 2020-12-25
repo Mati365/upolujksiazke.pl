@@ -8,6 +8,7 @@ OpenSource book reviews aggregator that helps with searching book reviews. Somet
 
 ## Goals
 
+- [ ] Automatic daily summary tag posting (wykop.pl, #bookmeter tag)
 - [ ] Notifications about new reviews
 - [ ] Front page customization (pin sections)
 - [ ] Read list

@@ -33,8 +33,8 @@ OpenSource book reviews aggregator that helps with searching book reviews. Somet
 
 ```bash
 yarn install
+mikro-orm migration:up
 yarn run develop
-mikro-orm schema:update -r
 gulp scrapper:refresh
 ```
 

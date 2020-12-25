@@ -7,10 +7,15 @@ import {
 import {DatedRecordEntity} from '../../database/DatedRecord.entity';
 import {ScrapperWebsiteEntity} from './ScrapperWebsite.entity';
 
+export enum ScrapperMetadataKind {
+  BOOK_REVIEW = 1,
+  BOOK = 2,
+}
+
 export enum ScrapperMetadataStatus {
-  IMPORTED = 'imported',
-  PROCESSING = 'processing',
-  NEW = 'new',
+  IMPORTED = 1,
+  PROCESSING = 2,
+  NEW = 3,
 }
 
 export const INVALID_METADATA_FILTERS: FilterQuery<any> = {
@@ -58,7 +63,21 @@ export class ScrapperMetadataEntity extends DatedRecordEntity {
   content!: object;
 
   @Index()
-  @Enum(() => ScrapperMetadataStatus)
+  @Enum(
+    {
+      items: () => ScrapperMetadataKind,
+      default: ScrapperMetadataKind.BOOK_REVIEW,
+    },
+  )
+  kind: ScrapperMetadataKind = ScrapperMetadataKind.BOOK_REVIEW;
+
+  @Index()
+  @Enum(
+    {
+      items: () => ScrapperMetadataStatus,
+      default: ScrapperMetadataStatus.NEW,
+    },
+  )
   status: ScrapperMetadataStatus = ScrapperMetadataStatus.NEW;
 
   constructor(partial: Partial<ScrapperMetadataEntity>) {

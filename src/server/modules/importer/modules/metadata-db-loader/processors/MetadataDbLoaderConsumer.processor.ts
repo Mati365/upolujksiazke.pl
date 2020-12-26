@@ -3,10 +3,11 @@ import {Processor, Process, OnQueueActive} from '@nestjs/bull';
 import {InjectRepository} from '@mikro-orm/nestjs';
 import {EntityRepository} from '@mikro-orm/postgresql';
 import {Job, Queue} from 'bull';
+import chalk from 'chalk';
 
 import {ID} from '@shared/types';
 import {ScrapperMetadataEntity} from '../../scrapper/entity';
-// import {WebsiteScrapperItemInfo} from '../../scrapper/service/shared';
+import {MetadataDbLoaderService} from '../services/MetadataDbLoader.service';
 
 export const SCRAPPER_METADATA_LOADER_QUEUE = 'scrapper_metadata_loader';
 
@@ -27,6 +28,8 @@ export class MetadataDbLoaderConsumerProcessor {
   private readonly logger = new Logger(MetadataDbLoaderConsumerProcessor.name);
 
   constructor(
+    private readonly metadataDbLoaderService: MetadataDbLoaderService,
+
     @InjectRepository(ScrapperMetadataEntity)
     private readonly metadataRepository: EntityRepository<ScrapperMetadataEntity>,
   ) {}
@@ -42,15 +45,19 @@ export class MetadataDbLoaderConsumerProcessor {
 
   @Process()
   async process(job: Job<DbLoaderJobValue>) {
-    const {metadataRepository, logger} = this;
+    const {
+      metadataDbLoaderService,
+      metadataRepository,
+      logger,
+    } = this;
 
     const {metadataId} = job.data;
     const metadata = await metadataRepository.findOne(+metadataId);
     if (!metadata) {
-      logger.warn(`Metadata item with ID: ${metadataId} is not present! Skipping!`);
+      logger.warn(`Metadata item with ID: ${chalk.bold(metadataId)} is not present! Skipping!`);
       return;
     }
 
-    console.info(metadata.content);
+    await metadataDbLoaderService.loadMetadataToDb(metadata);
   }
 }

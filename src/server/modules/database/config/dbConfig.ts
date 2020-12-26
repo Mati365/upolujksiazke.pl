@@ -8,6 +8,7 @@ import {isDevMode} from '@shared/helpers';
 import {AuthorEntity} from '../../author/Author.entity';
 import {BookEntity} from '../../book/Book.entity';
 import {BookReviewEntity} from '../../book-review/BookReview.entity';
+import {BookCategoryEntity} from '../../book-category/BookCategory.entity';
 
 import {
   ScrapperMetadataEntity,
@@ -29,6 +30,7 @@ export const DB_CONFIG: MikroOrmModuleSyncOptions = {
     AuthorEntity,
     BookEntity,
     BookReviewEntity,
+    BookCategoryEntity,
     ScrapperMetadataEntity,
     ScrapperWebsiteEntity,
   ],

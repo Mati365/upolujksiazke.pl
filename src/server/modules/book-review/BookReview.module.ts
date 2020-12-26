@@ -7,8 +7,6 @@ import {BookReviewEntity} from './BookReview.entity';
     imports: [
       MikroOrmModule.forFeature([BookReviewEntity]),
     ],
-    providers: [],
-    controllers: [],
   },
 )
 export class BookReviewModule {}

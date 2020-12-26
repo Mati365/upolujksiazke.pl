@@ -5,13 +5,13 @@ import {DatedRecordEntity} from '../database/DatedRecord.entity';
 
 @Entity(
   {
-    tableName: 'author',
+    tableName: 'book_category',
   },
 )
-export class AuthorEntity extends DatedRecordEntity {
+export class BookCategoryEntity extends DatedRecordEntity {
   @Property()
   name: string;
 
-  @ManyToMany(() => BookEntity, (book) => book.authors)
+  @ManyToMany(() => BookEntity, (book) => book.categories)
   books = new Collection<BookEntity>(this);
 }

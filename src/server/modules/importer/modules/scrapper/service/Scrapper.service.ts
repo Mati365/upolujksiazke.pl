@@ -211,7 +211,7 @@ export class ScrapperService {
           const scrapper = this.getScrapperByWebsiteURL(item.website.url);
           const parserInfo = scrapper.mapSingleItemResponse((item.content as WebsiteScrapperItemInfo).parserSource);
 
-          if (parserInfo && !R.equals(parserInfo, item.content)) {
+          if (parserInfo) {
             stats.updated++;
             item.content = parserInfo;
           }

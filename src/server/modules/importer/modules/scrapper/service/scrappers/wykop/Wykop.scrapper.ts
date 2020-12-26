@@ -3,7 +3,7 @@ import chalk from 'chalk';
 import {Logger} from '@nestjs/common';
 
 import {ENV} from '@server/constants/env';
-import {ID} from '@shared/types';
+import {Gender, RemoteID} from '@shared/types';
 
 import {
   fetchWebsiteInfo,
@@ -109,6 +109,20 @@ export class WykopScrapper extends BookReviewAsyncScrapper implements WebsiteInf
     if (R.isEmpty(properties) || !description)
       return null;
 
+    const {author} = post;
+    const gender = (() => {
+      switch (author.sex) {
+        case 'female':
+          return Gender.FEMALE;
+
+        case 'male':
+          return Gender.MALE;
+
+        default:
+          return Gender.UNKNOWN;
+      }
+    })();
+
     return {
       kind: ScrapperMetadataKind.BOOK_REVIEW,
       parserSource: JSON.stringify(post),
@@ -120,8 +134,9 @@ export class WykopScrapper extends BookReviewAsyncScrapper implements WebsiteInf
         comments: post.comments_count,
       },
       author: {
-        name: post.author.login,
-        avatar: post.author.avatar,
+        name: author.login,
+        avatar: author.avatar,
+        gender,
       },
       score: properties.score,
       content: description,
@@ -144,11 +159,11 @@ export class WykopScrapper extends BookReviewAsyncScrapper implements WebsiteInf
   /**
    * Fetches single post
    *
-   * @param {ID} remoteId
+   * @param {RemoteID} remoteId
    * @returns {Promise<BookReviewScrapperInfo>}
    * @memberof WykopScrapper
    */
-  async fetchSingle(remoteId: ID): Promise<BookReviewScrapperInfo> {
+  async fetchSingle(remoteId: RemoteID): Promise<BookReviewScrapperInfo> {
     const {data: result} = await this.api.call(
       {
         path: `Entries/Entry/${remoteId}`,

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import {ID} from '@shared/types';
+import {RemoteID} from '@shared/types';
 import {ScrapperWebsiteEntity} from '../../../entity';
 import {WebsiteInfoScrapper, fetchWebsiteInfo, HTMLParserAttrs, ScrapperResult} from '../../shared';
 import {BookReviewHTMLScrapper, BookReviewScrapperInfo} from '../BookReviewScrapper';
@@ -33,7 +33,7 @@ export class SwiatksiazkiScrapper extends BookReviewHTMLScrapper implements Webs
     throw new Error('Method not implemented.');
   }
 
-  fetchSingle(remoteId: ID): Promise<BookReviewScrapperInfo> {
+  fetchSingle(remoteId: RemoteID): Promise<BookReviewScrapperInfo> {
     throw new Error('Method not implemented.');
   }
 

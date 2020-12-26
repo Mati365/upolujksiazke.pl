@@ -1,6 +1,6 @@
 import * as R from 'ramda';
 
-import {ID, ArrayElement} from '@shared/types';
+import {RemoteID, ArrayElement} from '@shared/types';
 
 import {collectAsyncIterator, timeout} from '@shared/helpers';
 import {Scrapper} from './Scrapper';
@@ -155,11 +155,11 @@ export abstract class AsyncScrapper<
    * Fetches single item
    *
    * @abstract
-   * @param {ID} remoteId
+   * @param {RemoteID} remoteId
    * @returns {Promise<Result>}
    * @memberof AsyncScrapper
    */
-  abstract fetchSingle(remoteId: ID): Promise<ArrayElement<Result>>;
+  abstract fetchSingle(remoteId: RemoteID): Promise<ArrayElement<Result>>;
 
   /**
    * Fetches single page

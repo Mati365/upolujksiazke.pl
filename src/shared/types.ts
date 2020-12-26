@@ -2,10 +2,12 @@ export type AnyCallback = (...args: any[]) => any;
 
 export type ID = string | number;
 
+export type RemoteID = string;
+
 export type CanBeArray<T> = T|T[];
 
-export type IdentifiedItem<R = {}> = R & {
-  id: ID,
+export type IdentifiedItem<I = ID, R = {}> = R & {
+  id: I,
 };
 
 export type Overwrite<T, U> = Pick<T, Exclude<keyof T, keyof U>> & U;
@@ -33,6 +35,12 @@ export enum SortDirection {
   NORMAL = '',
 }
 
+export enum Gender {
+  UNKNOWN = 1,
+  FEMALE = 2,
+  MALE = 3,
+}
+
 export type Vec2 = {
   x?: number,
   y?: number,
@@ -49,4 +57,5 @@ export type SortKeys = {
 
 export type Person = {
   name: string,
+  gender?: Gender,
 };

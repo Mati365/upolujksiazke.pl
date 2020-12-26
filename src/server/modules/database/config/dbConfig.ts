@@ -9,7 +9,9 @@ import {AuthorEntity} from '../../author/Author.entity';
 import {BookEntity} from '../../book/Book.entity';
 import {BookReviewEntity} from '../../book-review/BookReview.entity';
 import {BookCategoryEntity} from '../../book-category/BookCategory.entity';
+import {BookReviewerEntity} from '../../book-reviewer/BookReviewer.entity';
 
+import {ScrapperRemoteEntity} from '../../importer/modules/scrapper/embeddables/ScrapperRemoteEntity.embeddable';
 import {
   ScrapperMetadataEntity,
   ScrapperWebsiteEntity,
@@ -31,8 +33,10 @@ export const DB_CONFIG: MikroOrmModuleSyncOptions = {
     BookEntity,
     BookReviewEntity,
     BookCategoryEntity,
+    BookReviewerEntity,
     ScrapperMetadataEntity,
     ScrapperWebsiteEntity,
+    ScrapperRemoteEntity,
   ],
   migrations: {
     path: './src/server/migrations',

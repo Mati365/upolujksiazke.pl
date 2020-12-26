@@ -5,7 +5,7 @@ import {Injectable, Logger} from '@nestjs/common';
 import {InjectRepository} from '@mikro-orm/nestjs';
 import {InjectQueue} from '@nestjs/bull';
 
-import {ID, IdentifiedItem} from '@shared/types';
+import {RemoteID, IdentifiedItem} from '@shared/types';
 import {paginatedAsyncIterator} from '@server/common/helpers/paginatedAsyncIterator';
 
 import {WykopScrapper} from './scrappers';
@@ -57,21 +57,21 @@ export class ScrapperService {
    *
    * @static
    * @param {ScrapperWebsiteEntity} website
-   * @param {IdentifiedItem} item
+   * @param {IdentifiedItem<RemoteID>} item
    * @param {ScrapperMetadataStatus} [status=ScrapperMetadataStatus.NEW]
    * @returns
    * @memberof ScrapperService
    */
   static scrapperResultToMetadataEntity(
     website: ScrapperWebsiteEntity,
-    item: IdentifiedItem,
+    item: IdentifiedItem<RemoteID>,
     status: ScrapperMetadataStatus = ScrapperMetadataStatus.NEW,
   ) {
     return new ScrapperMetadataEntity(
       {
         website,
         status,
-        remoteId: +item.id,
+        remoteId: item.id,
         content: item,
       },
     );
@@ -128,7 +128,7 @@ export class ScrapperService {
       remoteId,
       scrapper,
     }: {
-      remoteId: ID,
+      remoteId: RemoteID,
       scrapper: WebsiteScrapper,
     },
   ): Promise<IdentifiedItem> {
@@ -147,7 +147,7 @@ export class ScrapperService {
     const website = await websiteInfoScrapper.findOrCreateWebsiteEntity(scrapper);
     const prevEntity = await metadataRepository.findOne(
       {
-        remoteId: +remoteId,
+        remoteId,
       },
     );
 
@@ -252,7 +252,7 @@ export class ScrapperService {
       scrappedPage,
     }: {
       website: ScrapperWebsiteEntity,
-      scrappedPage: IdentifiedItem[],
+      scrappedPage: IdentifiedItem<RemoteID>[],
     },
   ) {
     const {em, dbLoaderQueue} = this;

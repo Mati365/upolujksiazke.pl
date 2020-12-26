@@ -52,12 +52,8 @@ export class ScrapperMetadataEntity extends DatedRecordEntity {
   @ManyToOne(() => ScrapperWebsiteEntity)
   website!: ScrapperWebsiteEntity;
 
-  @Property(
-    {
-      columnType: 'integer',
-    },
-  )
-  remoteId!: number; // identifier in remote website
+  @Property()
+  remoteId!: string; // identifier in remote website
 
   @Property(
     {

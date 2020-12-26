@@ -10,12 +10,17 @@ server {
         ssl_certificate /var/www/bookmeter.org/ssl/bookmeter.org.crt;
         ssl_certificate_key /var/www/bookmeter.org/ssl/bookmeter.org.key;
         server_name bookmeter.org;
+
+        location /cdn/ {
+                alias /var/www/cdn.bookmeter.org/;
+                include includes/static-assets.conf;
+        }
+
         location /public/ {
                 root /var/www/bookmeter.org/current/dist;
-                gzip_static on;
-                expires max;
-                add_header Cache-Control public;
+                include includes/static-assets.conf;
         }
+
         location / {
                 proxy_pass http://0.0.0.0:3000;
                 proxy_http_version 1.1;

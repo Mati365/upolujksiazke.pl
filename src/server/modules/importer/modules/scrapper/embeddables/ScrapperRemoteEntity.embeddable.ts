@@ -5,7 +5,7 @@ import {ScrapperWebsiteEntity} from '@server/modules/importer/modules/scrapper/e
 export class ScrapperRemoteEntity {
   @Index()
   @Property()
-  remoteId!: string;
+  id!: string;
 
   @ManyToOne(() => ScrapperWebsiteEntity)
   website!: ScrapperWebsiteEntity;

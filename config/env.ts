@@ -29,6 +29,10 @@ export type AppEnv = Partial<{
       password: string,
       port: number,
     },
+    cdn: {
+      publicUrl: string,
+      localPath: string,
+    },
     parsers: {
       wykop: WykopAPIAuthParams,
     },
@@ -58,6 +62,8 @@ const {
   WYKOP_SECRET,
   WYKOP_ACCOUNT_NAME,
   WYKOP_ACCOUNT_KEY,
+  CDN_PUBLIC_URL,
+  CDN_LOCAL_PATH,
 } = process.env;
 
 export const GLOBAL_CONFIG: Record<string, AppEnv> = {
@@ -86,6 +92,10 @@ export const GLOBAL_CONFIG: Record<string, AppEnv> = {
         user: DB_USER,
         password: DB_PASS,
         port: +DB_PORT,
+      },
+      cdn: {
+        publicUrl: CDN_PUBLIC_URL,
+        localPath: CDN_LOCAL_PATH,
       },
       parsers: {
         wykop: {

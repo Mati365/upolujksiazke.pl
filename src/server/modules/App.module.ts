@@ -9,6 +9,7 @@ import {isRootClusterAppInstance} from '../common/helpers';
 import {DatabaseModule} from './database/Database.module';
 import {FrontModule} from './front';
 import {ManifestModule} from './manifest';
+import {CdnModule} from './cdn';
 import {ImporterModule} from './importer';
 
 @Module(
@@ -24,6 +25,11 @@ import {ImporterModule} from './importer';
         isRootClusterAppInstance()
           ? [ScheduleModule.forRoot()]
           : []
+      ),
+      CdnModule.register(
+        {
+          uploadRootDir: ENV.server.cdn.localPath,
+        },
       ),
       ManifestModule.register(
         {

@@ -4,6 +4,8 @@ import {Inject, Injectable, Scope} from '@nestjs/common';
 import {loadFsJSON} from '@server/common/helpers/loadFsJSON';
 import {isDevMode} from '@shared/helpers';
 
+import {MANIFEST_OPTIONS} from './Manifest.module';
+
 export type ManifestServiceOptions = {
   file: string,
 };
@@ -21,7 +23,7 @@ export class ManifestService {
   private readonly manifest: object;
 
   constructor(
-    @Inject('MANIFEST_OPTIONS') private options: ManifestServiceOptions,
+    @Inject(MANIFEST_OPTIONS) readonly options: ManifestServiceOptions,
   ) {
     this.manifest = loadFsJSON(
       path.resolve(__dirname, options.file),

@@ -25,14 +25,12 @@ export class MetadataDbLoaderQueueService {
         .filter(Boolean)
         .map(
           ({id}) => ({
-            data: {
-              metadataId: id,
-            },
+            metadataId: id,
           }),
         )
     );
 
-    return this.dbLoaderQueue.addBulk(mappedItems);
+    return this.dbLoaderQueue.add(mappedItems);
   }
 
   /**
@@ -42,11 +40,7 @@ export class MetadataDbLoaderQueueService {
    * @returns
    * @memberof MetadataDbLoaderService
    */
-  addMetadataToQueue({id}: EntityData<ScrapperMetadataEntity>) {
-    return this.dbLoaderQueue.add(
-      {
-        metadataId: id,
-      },
-    );
+  addMetadataToQueue(item: EntityData<ScrapperMetadataEntity>) {
+    return this.addBulkMetadataToQueue([item]);
   }
 }

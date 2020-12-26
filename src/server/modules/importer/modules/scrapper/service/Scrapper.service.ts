@@ -33,6 +33,7 @@ export type ScrapperAnalyzerStats = {
 @Injectable()
 export class ScrapperService {
   private readonly logger = new Logger(ScrapperService.name);
+  private readonly analyzerRecordsPageSize = 100;
 
   private scrappers: WebsiteScrapper[] = [
     new WykopScrapper,
@@ -164,7 +165,13 @@ export class ScrapperService {
    * @memberof ScrapperService
    */
   async reanalyze(): Promise<ScrapperAnalyzerStats> {
-    const {em, metadataRepository, dbLoaderQueueService} = this;
+    const {
+      em,
+      metadataRepository,
+      dbLoaderQueueService,
+      analyzerRecordsPageSize,
+    } = this;
+
     const stats = {
       updated: 0,
       removed: 0,
@@ -172,7 +179,7 @@ export class ScrapperService {
 
     const allRecordsIterator = paginatedAsyncIterator(
       {
-        limit: 70,
+        limit: analyzerRecordsPageSize,
         queryExecutor: ({limit, offset}) => (
           em
             .getRepository(ScrapperMetadataEntity)

@@ -5,6 +5,7 @@ import {Injectable} from '@nestjs/common';
 import {findOrCreateBy} from '@server/common/helpers/db';
 
 import {BookReviewerEntity} from '@server/modules/book-reviewer/BookReviewer.entity';
+import {ScrapperRemoteEntity} from '../../scrapper/embeddables/ScrapperRemoteEntity.embeddable';
 import {ScrapperMetadataEntity, ScrapperWebsiteEntity} from '../../scrapper/entity';
 
 import {BookReviewAuthor, BookReviewScrapperInfo} from '../../scrapper/service/scrappers/BookReviewScrapper';
@@ -49,10 +50,12 @@ export class BookReviewDbLoader implements MetadataDbLoader {
           {
             gender: author.gender,
             name: author.name,
-            remoteEntity: {
-              id,
-              website,
-            },
+            remoteEntity: new ScrapperRemoteEntity(
+              {
+                id,
+                website: website.id as any, // fixme: using plain website cases mem leak
+              },
+            ),
           },
         ),
         where: {

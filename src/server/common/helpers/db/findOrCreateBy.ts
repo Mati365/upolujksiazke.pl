@@ -9,7 +9,7 @@ import {upsert, UpsertAttrs} from './upsert';
  * @param {UpsertAttrs<T>} attrs
  * @returns
  */
-export async function findOrCreateBy<T extends {id?: ID}>(attrs: UpsertAttrs<T>) {
+export function findOrCreateBy<T extends {id?: ID}>(attrs: UpsertAttrs<T>) {
   return upsert<T>(
     {
       ...attrs,

@@ -19,6 +19,14 @@ import {ImporterModule} from './importer';
       BullModule.forRoot(
         {
           redis: ENV.server.redisConfig,
+          limiter: {
+            max: 5,
+            duration: 1500,
+          },
+          defaultJobOptions: {
+            removeOnComplete: true,
+            removeOnFail: true,
+          },
         },
       ),
       ...(

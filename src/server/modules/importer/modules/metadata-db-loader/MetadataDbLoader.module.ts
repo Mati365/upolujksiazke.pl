@@ -2,6 +2,7 @@ import {Module} from '@nestjs/common';
 import {BullModule} from '@nestjs/bull';
 import {MikroOrmModule} from '@mikro-orm/nestjs';
 
+import {BookCategoryEntity} from '@server/modules/book-category/BookCategory.entity';
 import {BookReviewerEntity} from '@server/modules/book-reviewer/BookReviewer.entity';
 import {ScrapperMetadataEntity} from '../scrapper/entity';
 import {BookReviewDbLoader} from './loaders';
@@ -22,13 +23,11 @@ import {
       BullModule.registerQueue(
         {
           name: SCRAPPER_METADATA_LOADER_QUEUE,
-          defaultJobOptions: {
-            removeOnComplete: true,
-          },
         },
       ),
       MikroOrmModule.forFeature(
         [
+          BookCategoryEntity,
           BookReviewerEntity,
           ScrapperMetadataEntity,
         ],

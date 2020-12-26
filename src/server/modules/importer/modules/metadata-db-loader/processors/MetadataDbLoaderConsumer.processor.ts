@@ -1,18 +1,20 @@
 import {Logger} from '@nestjs/common';
-import {Processor, Process, OnQueueActive} from '@nestjs/bull';
+import {Processor, Process, OnQueueActive, OnQueueCompleted} from '@nestjs/bull';
 import {InjectRepository} from '@mikro-orm/nestjs';
 import {EntityRepository} from '@mikro-orm/postgresql';
 import {Job, Queue} from 'bull';
 import chalk from 'chalk';
+import PromisePool from 'es6-promise-pool';
+import * as R from 'ramda';
 
 import {ScrapperMetadataEntity} from '../../scrapper/entity';
 import {MetadataDbLoaderService} from '../services/MetadataDbLoader.service';
 
 export const SCRAPPER_METADATA_LOADER_QUEUE = 'scrapper_metadata_loader';
 
-export type DbLoaderJobValue = {
+export type DbLoaderJobValue = ({
   metadataId: number,
-};
+})[];
 
 export type DbLoaderQueue = Queue<DbLoaderJobValue>;
 
@@ -41,10 +43,8 @@ export class MetadataDbLoaderConsumerProcessor {
    */
   @OnQueueActive()
   onActive(job: Job<DbLoaderJobValue>) {
-    const {metadataId} = job.data;
-
     this.logger.log(
-      `Processing job ${job.id} with metadata item (id: ${metadataId})...`,
+      `Processing job ${job.id} with ${job.data.length} metadata items...`,
     );
   }
 
@@ -63,16 +63,41 @@ export class MetadataDbLoaderConsumerProcessor {
       logger,
     } = this;
 
-    const {metadataId} = job.data;
-    console.info(metadataId);
+    const metadataItems = await metadataRepository.find(
+      {
+        id: {
+          $in: R.pluck('metadataId', job.data),
+        },
+      },
+    );
 
-    const metadata = await metadataRepository.findOne(metadataId);
+    const processMetadata = async (id: number, metadata: ScrapperMetadataEntity) => {
+      if (!metadata) {
+        logger.warn(`Metadata item with ID: ${chalk.bold(id)} is not present! Skipping!`);
+        return;
+      }
 
-    if (!metadata) {
-      logger.warn(`Metadata item with ID: ${chalk.bold(metadataId)} is not present! Skipping!`);
-      return;
-    }
+      await metadataDbLoaderService.extractMetadataToDb(metadata);
+    };
 
-    await metadataDbLoaderService.extractMetadataToDb(metadata);
+    const promiseIterator = function* generatePromises() {
+      for (let i = 0; i < metadataItems.length; ++i)
+        yield processMetadata(job.data[i].metadataId, metadataItems[i]);
+    };
+
+    return new PromisePool(promiseIterator() as any, 5).start();
+  }
+
+  /**
+   * Done logs
+   *
+   * @param {Job<DbLoaderJobValue>} job
+   * @memberof MetadataDbLoaderConsumerProcessor
+   */
+  @OnQueueCompleted()
+  onCompleted(job: Job<DbLoaderJobValue>) {
+    this.logger.log(
+      `Job ${job.id} with ${job.data.length} metadata items has been processed!`,
+    );
   }
 }

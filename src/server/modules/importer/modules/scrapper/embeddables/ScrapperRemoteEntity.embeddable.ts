@@ -9,4 +9,8 @@ export class ScrapperRemoteEntity {
 
   @ManyToOne(() => ScrapperWebsiteEntity)
   website!: ScrapperWebsiteEntity;
+
+  constructor(partial: Partial<ScrapperRemoteEntity> = {}) {
+    Object.assign(this, partial);
+  }
 }

@@ -1,7 +1,5 @@
-import * as R from 'ramda';
-
 import {ID} from '@shared/types';
-import {EntityData, FilterQuery} from '@mikro-orm/core';
+import {EntityData, FilterQuery, wrap} from '@mikro-orm/core';
 import {EntityRepository} from '@mikro-orm/postgresql';
 
 export type UpsertAttrs<T> = {
@@ -34,7 +32,7 @@ export async function upsert<T extends {id?: ID}>(
   // update
   if (prevEntity) {
     if (update) {
-      repository.assign(prevEntity, R.omit(['createdAt'], data) as any);
+      wrap(prevEntity).assign(data);
       await repository.persistAndFlush(prevEntity);
     }
 
@@ -42,6 +40,8 @@ export async function upsert<T extends {id?: ID}>(
   }
 
   // create new
-  await repository.persistAndFlush(data);
+  await repository.persistAndFlush(
+    repository.create(data),
+  );
   return data;
 }

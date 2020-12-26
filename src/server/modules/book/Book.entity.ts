@@ -41,4 +41,9 @@ export class BookEntity extends DatedRecordEntity {
 
   @ManyToMany(() => BookReviewerEntity)
   reviewers: Collection<BookReviewerEntity> = new Collection<BookReviewerEntity>(this);
+
+  constructor(partial: Partial<BookEntity>) {
+    super();
+    Object.assign(this, partial);
+  }
 }

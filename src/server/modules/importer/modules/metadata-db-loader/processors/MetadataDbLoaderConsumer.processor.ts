@@ -5,14 +5,13 @@ import {EntityRepository} from '@mikro-orm/postgresql';
 import {Job, Queue} from 'bull';
 import chalk from 'chalk';
 
-import {ID} from '@shared/types';
 import {ScrapperMetadataEntity} from '../../scrapper/entity';
 import {MetadataDbLoaderService} from '../services/MetadataDbLoader.service';
 
 export const SCRAPPER_METADATA_LOADER_QUEUE = 'scrapper_metadata_loader';
 
 export type DbLoaderJobValue = {
-  metadataId: ID,
+  metadataId: number,
 };
 
 export type DbLoaderQueue = Queue<DbLoaderJobValue>;
@@ -34,6 +33,12 @@ export class MetadataDbLoaderConsumerProcessor {
     private readonly metadataRepository: EntityRepository<ScrapperMetadataEntity>,
   ) {}
 
+  /**
+   * On start firs record extract
+   *
+   * @param {Job<DbLoaderJobValue>} job
+   * @memberof MetadataDbLoaderConsumerProcessor
+   */
   @OnQueueActive()
   onActive(job: Job<DbLoaderJobValue>) {
     const {metadataId} = job.data;
@@ -43,6 +48,13 @@ export class MetadataDbLoaderConsumerProcessor {
     );
   }
 
+  /**
+   * Extract single record
+   *
+   * @param {Job<DbLoaderJobValue>} job
+   * @returns
+   * @memberof MetadataDbLoaderConsumerProcessor
+   */
   @Process()
   async process(job: Job<DbLoaderJobValue>) {
     const {
@@ -52,12 +64,15 @@ export class MetadataDbLoaderConsumerProcessor {
     } = this;
 
     const {metadataId} = job.data;
-    const metadata = await metadataRepository.findOne(+metadataId);
+    console.info(metadataId);
+
+    const metadata = await metadataRepository.findOne(metadataId);
+
     if (!metadata) {
       logger.warn(`Metadata item with ID: ${chalk.bold(metadataId)} is not present! Skipping!`);
       return;
     }
 
-    await metadataDbLoaderService.loadMetadataToDb(metadata);
+    await metadataDbLoaderService.extractMetadataToDb(metadata);
   }
 }

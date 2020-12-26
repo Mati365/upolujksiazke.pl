@@ -24,7 +24,7 @@ export class MetadataDbLoaderService implements MetadataDbLoader {
    * @param {ScrapperMetadataEntity} metadata
    * @memberof MetadataDbLoaderService
    */
-  async loadMetadataToDb(metadata: ScrapperMetadataEntity) {
+  async extractMetadataToDb(metadata: ScrapperMetadataEntity) {
     const {logger, resourceLoaders} = this;
     const loader = resourceLoaders[metadata.kind];
 
@@ -32,6 +32,6 @@ export class MetadataDbLoaderService implements MetadataDbLoader {
       throw new Error('Unknown entity loader!');
 
     logger.warn(`Loading metadata entity with ID: ${chalk.bold(metadata.id)} to DB!`);
-    await loader.loadMetadataToDb(metadata);
+    await loader.extractMetadataToDb(metadata);
   }
 }

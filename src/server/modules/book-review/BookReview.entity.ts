@@ -40,4 +40,9 @@ export class BookReviewEntity extends DatedRecordEntity {
 
   @Embedded()
   remoteEntity!: ScrapperRemoteEntity;
+
+  constructor(partial: Partial<BookReviewEntity>) {
+    super();
+    Object.assign(this, partial);
+  }
 }

@@ -1,6 +1,7 @@
 import {SqlHighlighter} from '@mikro-orm/sql-highlighter';
 import {MikroOrmModuleSyncOptions} from '@mikro-orm/nestjs';
 import {Logger} from '@nestjs/common';
+import {LoadStrategy} from '@mikro-orm/core';
 
 import {ENV} from '@server/constants/env';
 import {isDevMode} from '@shared/helpers';
@@ -28,6 +29,7 @@ export const DB_CONFIG: MikroOrmModuleSyncOptions = {
   discovery: {
     disableDynamicFileAccess: true,
   },
+  loadStrategy: LoadStrategy.JOINED,
   entities: [
     AuthorEntity,
     BookEntity,

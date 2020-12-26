@@ -3,11 +3,13 @@ import chalk from 'chalk';
 import {EntityRepository, SqlEntityManager} from '@mikro-orm/postgresql';
 import {Injectable, Logger} from '@nestjs/common';
 import {InjectRepository} from '@mikro-orm/nestjs';
-import {InjectQueue} from '@nestjs/bull';
 
-import {ID, RemoteID, IdentifiedItem} from '@shared/types';
+import {upsert} from '@server/common/helpers/db/upsert';
+
+import {RemoteID, IdentifiedItem} from '@shared/types';
 import {paginatedAsyncIterator} from '@server/common/helpers/paginatedAsyncIterator';
 
+import {MetadataDbLoaderQueueService} from '../../metadata-db-loader/services';
 import {WykopScrapper} from './scrappers';
 import {WebsiteInfoScrapperService} from './WebsiteInfoScrapper.service';
 import {
@@ -22,11 +24,6 @@ import {
   WebsiteScrapper,
   WebsiteScrapperItemInfo,
 } from './shared';
-
-import {
-  DbLoaderQueue,
-  SCRAPPER_METADATA_LOADER_QUEUE,
-} from '../../metadata-db-loader/processors/MetadataDbLoaderConsumer.processor';
 
 export type ScrapperAnalyzerStats = {
   updated: number,
@@ -44,12 +41,10 @@ export class ScrapperService {
   constructor(
     private readonly em: SqlEntityManager,
     private readonly websiteInfoScrapper: WebsiteInfoScrapperService,
+    private readonly dbLoaderQueueService: MetadataDbLoaderQueueService,
 
     @InjectRepository(ScrapperMetadataEntity)
     private readonly metadataRepository: EntityRepository<ScrapperMetadataEntity>,
-
-    @InjectQueue(SCRAPPER_METADATA_LOADER_QUEUE)
-    private readonly dbLoaderQueue: DbLoaderQueue,
   ) {}
 
   /**
@@ -64,7 +59,7 @@ export class ScrapperService {
    */
   static scrapperResultToMetadataEntity(
     website: ScrapperWebsiteEntity,
-    item: IdentifiedItem<ID>,
+    item: WebsiteScrapperItemInfo,
     status: ScrapperMetadataStatus = ScrapperMetadataStatus.NEW,
   ) {
     return new ScrapperMetadataEntity(
@@ -136,47 +131,28 @@ export class ScrapperService {
       throw new Error('Missing scrapper!');
 
     const {
-      em, websiteInfoScrapper,
-      metadataRepository, dbLoaderQueue,
+      websiteInfoScrapper,
+      metadataRepository,
+      dbLoaderQueueService,
     } = this;
 
-    const item = await scrapper.fetchSingle(remoteId);
+    const item: WebsiteScrapperItemInfo = await scrapper.fetchSingle(remoteId);
     if (!item)
       return Promise.resolve(null);
 
     const website = await websiteInfoScrapper.findOrCreateWebsiteEntity(scrapper);
-    const prevEntity = await metadataRepository.findOne(
+    const updatedEntity = await upsert(
       {
-        remoteId,
+        repository: metadataRepository,
+        data: ScrapperService.scrapperResultToMetadataEntity(website, item),
+        where: {
+          remoteId,
+        },
       },
     );
-
-    const updatedEntity = await (async () => {
-      // update
-      if (prevEntity) {
-        metadataRepository.assign(
-          prevEntity,
-          {
-            content: item,
-          },
-        );
-        await metadataRepository.persistAndFlush(prevEntity);
-        return prevEntity;
-      }
-
-      // create new
-      const newEntity = ScrapperService.scrapperResultToMetadataEntity(website, item);
-      await em.persistAndFlush(newEntity);
-      return newEntity;
-    })();
 
     // add job for processing entity
-    await dbLoaderQueue.add(
-      {
-        metadataId: updatedEntity.id,
-      },
-    );
-
+    await dbLoaderQueueService.addMetadataToQueue(updatedEntity);
     return Promise.resolve(item);
   }
 
@@ -188,7 +164,7 @@ export class ScrapperService {
    * @memberof ScrapperService
    */
   async reanalyze(): Promise<ScrapperAnalyzerStats> {
-    const {em, metadataRepository} = this;
+    const {em, metadataRepository, dbLoaderQueueService} = this;
     const stats = {
       updated: 0,
       removed: 0,
@@ -219,6 +195,9 @@ export class ScrapperService {
 
         return Promise.resolve();
       });
+
+      // load to database
+      await dbLoaderQueueService.addBulkMetadataToQueue(page);
     }
 
     stats.removed = await (async () => {
@@ -252,10 +231,10 @@ export class ScrapperService {
       scrappedPage,
     }: {
       website: ScrapperWebsiteEntity,
-      scrappedPage: IdentifiedItem<ID>[],
+      scrappedPage: WebsiteScrapperItemInfo[],
     },
   ) {
-    const {em, dbLoaderQueue} = this;
+    const {em, dbLoaderQueueService} = this;
     const entities = await em.transactional(async (transaction) => {
       // detect which ids has been already scrapped
       const scrappedIds = R.pluck(
@@ -276,34 +255,29 @@ export class ScrapperService {
       );
 
       // create new metadata records
-      return R.map(
-        (item) => {
-          if (R.includes(R.toString(item.id), scrappedIds))
-            return null;
+      return (
+        R
+          .map(
+            (item) => {
+              if (R.includes(R.toString(item.id), scrappedIds))
+                return null;
 
-          const entity = ScrapperService.scrapperResultToMetadataEntity(website, item);
-          transaction.persist(entity);
-          return entity;
-        },
-        scrappedPage,
+              const entity = ScrapperService.scrapperResultToMetadataEntity(website, item);
+              transaction.persist(entity);
+              return entity;
+            },
+            scrappedPage,
+          )
+          .filter(Boolean)
       );
     });
 
     // load to database
-    await dbLoaderQueue.addBulk(
-      entities
-        .filter(Boolean)
-        .map(
-          ({id}) => ({
-            data: {
-              metadataId: id,
-            },
-          }),
-        ),
-    );
+    if (entities.length)
+      await dbLoaderQueueService.addBulkMetadataToQueue(entities);
   }
 
-  /*==================
+  /**
    * Fetches data from single scrapper
    *
    * @param {Object} params

@@ -5,6 +5,7 @@ import {
 } from '@mikro-orm/core';
 
 import {DatedRecordEntity} from '@server/modules/database/DatedRecord.entity';
+import {WebsiteScrapperItemInfo} from '../service/shared';
 import {ScrapperWebsiteEntity} from './ScrapperWebsite.entity';
 
 export enum ScrapperMetadataKind {
@@ -59,7 +60,7 @@ export class ScrapperMetadataEntity extends DatedRecordEntity {
       type: JsonType,
     },
   )
-  content!: object;
+  content!: WebsiteScrapperItemInfo;
 
   @Index()
   @Enum(

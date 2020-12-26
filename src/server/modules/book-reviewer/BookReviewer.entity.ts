@@ -26,4 +26,9 @@ export class BookReviewerEntity extends DatedRecordEntity {
 
   @Embedded()
   remoteEntity!: ScrapperRemoteEntity;
+
+  constructor(partial: Partial<BookReviewerEntity>) {
+    super();
+    Object.assign(this, partial);
+  }
 }

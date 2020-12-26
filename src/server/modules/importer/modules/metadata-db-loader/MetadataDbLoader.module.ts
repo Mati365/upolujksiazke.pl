@@ -2,10 +2,15 @@ import {Module} from '@nestjs/common';
 import {BullModule} from '@nestjs/bull';
 import {MikroOrmModule} from '@mikro-orm/nestjs';
 
+import {BookReviewerEntity} from '@server/modules/book-reviewer/BookReviewer.entity';
 import {ScrapperMetadataEntity} from '../scrapper/entity';
-
-import {MetadataDbLoaderService} from './services/MetadataDbLoader.service';
 import {BookReviewDbLoader} from './loaders';
+
+import {
+  MetadataDbLoaderService,
+  MetadataDbLoaderQueueService,
+} from './services';
+
 import {
   SCRAPPER_METADATA_LOADER_QUEUE,
   MetadataDbLoaderConsumerProcessor,
@@ -24,6 +29,7 @@ import {
       ),
       MikroOrmModule.forFeature(
         [
+          BookReviewerEntity,
           ScrapperMetadataEntity,
         ],
       ),
@@ -31,12 +37,11 @@ import {
     providers: [
       MetadataDbLoaderConsumerProcessor,
       MetadataDbLoaderService,
+      MetadataDbLoaderQueueService,
       BookReviewDbLoader,
     ],
     exports: [
-      BullModule,
-      MetadataDbLoaderService,
-      MetadataDbLoaderConsumerProcessor,
+      MetadataDbLoaderQueueService,
     ],
   },
 )

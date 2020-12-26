@@ -1,4 +1,4 @@
-import {Person} from '@shared/types';
+import {Person, RemoteID} from '@shared/types';
 import {ScrapperMetadataKind} from '../../entity';
 import {
   AsyncScrapper, HTMLScrapper,
@@ -21,6 +21,11 @@ export type BookScrapperInfo = {
   },
 };
 
+export type BookReviewAuthor = Person & {
+  id?: RemoteID,
+  avatar: string,
+};
+
 export type BookReviewScrapperInfo = WebsiteScrapperItemInfo & {
   kind: ScrapperMetadataKind.BOOK_REVIEW,
   url: string,
@@ -30,11 +35,9 @@ export type BookReviewScrapperInfo = WebsiteScrapperItemInfo & {
     votes?: number,
     comments?: number,
   },
-  author: Person & {
-    avatar: string,
-  },
   content: string,
   summaryContent?: string,
+  author: BookReviewAuthor,
   book: BookScrapperInfo,
 };
 

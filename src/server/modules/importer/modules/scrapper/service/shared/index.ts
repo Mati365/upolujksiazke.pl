@@ -1,3 +1,4 @@
+import {ID} from '@shared/types';
 import {ScrapperMetadataKind} from '../../entity';
 import {AsyncScrapper} from './AsyncScrapper';
 import {HTMLScrapper} from './HTMLScrapper';
@@ -13,7 +14,7 @@ export type WebsiteScrapper<T extends unknown[] = any[]> = (
 );
 
 export type WebsiteScrapperItemInfo = {
-  id: number,
+  id: ID,
   parserSource: string,
   kind: ScrapperMetadataKind,
 };

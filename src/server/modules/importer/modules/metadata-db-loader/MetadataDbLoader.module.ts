@@ -5,6 +5,7 @@ import {MikroOrmModule} from '@mikro-orm/nestjs';
 import {ScrapperMetadataEntity} from '../scrapper/entity';
 
 import {MetadataDbLoaderService} from './services/MetadataDbLoader.service';
+import {BookReviewDbLoader} from './loaders';
 import {
   SCRAPPER_METADATA_LOADER_QUEUE,
   MetadataDbLoaderConsumerProcessor,
@@ -30,6 +31,7 @@ import {
     providers: [
       MetadataDbLoaderConsumerProcessor,
       MetadataDbLoaderService,
+      BookReviewDbLoader,
     ],
     exports: [
       BullModule,

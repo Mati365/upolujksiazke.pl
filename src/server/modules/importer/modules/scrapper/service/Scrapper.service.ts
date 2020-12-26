@@ -5,7 +5,7 @@ import {Injectable, Logger} from '@nestjs/common';
 import {InjectRepository} from '@mikro-orm/nestjs';
 import {InjectQueue} from '@nestjs/bull';
 
-import {RemoteID, IdentifiedItem} from '@shared/types';
+import {ID, RemoteID, IdentifiedItem} from '@shared/types';
 import {paginatedAsyncIterator} from '@server/common/helpers/paginatedAsyncIterator';
 
 import {WykopScrapper} from './scrappers';
@@ -64,14 +64,14 @@ export class ScrapperService {
    */
   static scrapperResultToMetadataEntity(
     website: ScrapperWebsiteEntity,
-    item: IdentifiedItem<RemoteID>,
+    item: IdentifiedItem<ID>,
     status: ScrapperMetadataStatus = ScrapperMetadataStatus.NEW,
   ) {
     return new ScrapperMetadataEntity(
       {
         website,
         status,
-        remoteId: item.id,
+        remoteId: R.toString(item.id),
         content: item,
       },
     );
@@ -252,7 +252,7 @@ export class ScrapperService {
       scrappedPage,
     }: {
       website: ScrapperWebsiteEntity,
-      scrappedPage: IdentifiedItem<RemoteID>[],
+      scrappedPage: IdentifiedItem<ID>[],
     },
   ) {
     const {em, dbLoaderQueue} = this;
@@ -266,7 +266,7 @@ export class ScrapperService {
             .where(
               {
                 remoteId: {
-                  $in: R.pluck('id', scrappedPage),
+                  $in: R.pluck('id', scrappedPage).map(R.toString),
                 },
               },
             )
@@ -278,7 +278,7 @@ export class ScrapperService {
       // create new metadata records
       return R.map(
         (item) => {
-          if (R.includes(item.id, scrappedIds))
+          if (R.includes(R.toString(item.id), scrappedIds))
             return null;
 
           const entity = ScrapperService.scrapperResultToMetadataEntity(website, item);
@@ -290,7 +290,7 @@ export class ScrapperService {
     });
 
     // load to database
-    dbLoaderQueue.addBulk(
+    await dbLoaderQueue.addBulk(
       entities
         .filter(Boolean)
         .map(
@@ -342,7 +342,7 @@ export class ScrapperService {
         `Scrapping ${++pageCounter} page of ${chalk.white(scrapper.websiteURL)} (items: ${scrappedPage.length})!`,
       );
 
-      this.storeScrappedPage(
+      await this.storeScrappedPage(
         {
           website,
           scrappedPage,

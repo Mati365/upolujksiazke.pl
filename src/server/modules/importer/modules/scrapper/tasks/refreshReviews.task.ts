@@ -1,6 +1,7 @@
 import {NestFactory} from '@nestjs/core';
 import {TaskFunction} from 'gulp';
 import minimist from 'minimist';
+import * as R from 'ramda';
 
 import {logger} from '@tasks/utils/logger';
 
@@ -122,7 +123,7 @@ export const refreshSingleTask: TaskFunction = async () => {
   await scrapper.refreshSingle(
     {
       scrapper: scrapper.getScrapperByWebsiteURL(website),
-      remoteId,
+      remoteId: R.toString(remoteId),
     },
   );
 

@@ -1,9 +1,8 @@
 import * as R from 'ramda';
 import chalk from 'chalk';
 import pLimit from 'p-limit';
-import {EntityRepository, SqlEntityManager} from '@mikro-orm/postgresql';
 import {Injectable, Logger} from '@nestjs/common';
-import {InjectRepository} from '@mikro-orm/nestjs';
+import {Connection, In} from 'typeorm';
 
 import {upsert} from '@server/common/helpers/db/upsert';
 
@@ -13,10 +12,10 @@ import {paginatedAsyncIterator} from '@server/common/helpers/paginatedAsyncItera
 import {MetadataDbLoaderQueueService} from '../../metadata-db-loader/services';
 import {WebsiteInfoScrapperService} from './WebsiteInfoScrapper.service';
 import {
-  INVALID_METADATA_FILTERS,
   ScrapperMetadataEntity,
   ScrapperMetadataKind,
   ScrapperMetadataStatus,
+  ScrapperRemoteEntity,
   ScrapperWebsiteEntity,
 } from '../entity';
 
@@ -43,12 +42,9 @@ export class ScrapperService {
   ];
 
   constructor(
-    private readonly em: SqlEntityManager,
+    private readonly connection: Connection,
     private readonly websiteInfoScrapperService: WebsiteInfoScrapperService,
     private readonly dbLoaderQueueService: MetadataDbLoaderQueueService,
-
-    @InjectRepository(ScrapperMetadataEntity)
-    private readonly metadataRepository: EntityRepository<ScrapperMetadataEntity>,
   ) {}
 
   /**
@@ -68,10 +64,14 @@ export class ScrapperService {
   ) {
     return new ScrapperMetadataEntity(
       {
-        website,
         status,
-        remoteId: R.toString(item.id),
         content: item,
+        remote: new ScrapperRemoteEntity(
+          {
+            remoteId: R.toString(item.id),
+            website,
+          },
+        ),
       },
     );
   }
@@ -148,30 +148,28 @@ export class ScrapperService {
     if (!kind)
       throw new Error('Missing kind!');
 
-    const {
-      websiteInfoScrapperService,
-      metadataRepository,
-      dbLoaderQueueService,
-    } = this;
-
     const item: WebsiteScrapperItemInfo = await scrappersGroup.scrappers[kind].fetchSingle(remoteId);
     if (!item)
       return Promise.resolve(null);
 
+    const {
+      connection,
+      dbLoaderQueueService,
+      websiteInfoScrapperService,
+    } = this;
+
     const website = await websiteInfoScrapperService.findOrCreateWebsiteEntity(scrappersGroup.websiteInfoScrapper);
-    const updatedEntity = await upsert(
+    const [updatedEntity] = await upsert(
       {
-        repository: metadataRepository,
+        connection,
+        Entity: ScrapperMetadataEntity,
+        primaryKey: ['remoteId'],
         data: ScrapperService.scrapperResultToMetadataEntity(website, item),
-        where: {
-          remoteId,
-        },
       },
     );
 
-    // add job for processing entity
     await dbLoaderQueueService.addMetadataToQueue(updatedEntity);
-    return Promise.resolve(item);
+    return updatedEntity;
   }
 
   /**
@@ -183,8 +181,7 @@ export class ScrapperService {
    */
   async reanalyze(): Promise<ScrapperAnalyzerStats> {
     const {
-      em,
-      metadataRepository,
+      connection,
       dbLoaderQueueService,
       analyzerRecordsPageSize,
     } = this;
@@ -197,18 +194,20 @@ export class ScrapperService {
     const allRecordsIterator = paginatedAsyncIterator(
       {
         limit: analyzerRecordsPageSize,
-        queryExecutor: ({limit, offset}) => (
-          em
-            .getRepository(ScrapperMetadataEntity)
-            .findAll(['website'], null, limit, offset)
+        queryExecutor: ({limit, offset}) => ScrapperMetadataEntity.find(
+          {
+            relations: ['website', 'remote'],
+            skip: offset,
+            take: limit,
+          },
         ),
       },
     );
 
     for await (const [, page] of allRecordsIterator) {
-      await em.transactional(() => {
+      await connection.transaction(async (transaction) => {
         for (const item of page) {
-          const scrappersGroup = this.getScrappersGroupByWebsiteURL(item.website.url);
+          const scrappersGroup = this.getScrappersGroupByWebsiteURL(item.remote.website.url);
           const parserInfo = (
             scrappersGroup
               .scrappers[item.kind]
@@ -217,11 +216,16 @@ export class ScrapperService {
 
           if (parserInfo) {
             stats.updated++;
-            item.content = parserInfo;
+            await transaction.getRepository(ScrapperMetadataEntity).update(
+              item.id,
+              new ScrapperMetadataEntity(
+                {
+                  content: parserInfo,
+                },
+              ),
+            );
           }
         }
-
-        return Promise.resolve();
       });
 
       // load to database
@@ -229,15 +233,8 @@ export class ScrapperService {
     }
 
     stats.removed = await (async () => {
-      const count = await metadataRepository.count({}, {filters: ['invalid']});
-
-      /**
-       * MikroORM is crashing when passing filters, use constants
-       *
-       * @see {@link https://github.com/mikro-orm/mikro-orm/issues/1236}
-       * @todo Fixme
-       */
-      await metadataRepository.nativeDelete(INVALID_METADATA_FILTERS);
+      const count = await ScrapperMetadataEntity.inactive.getCount();
+      await ScrapperMetadataEntity.inactive.delete().execute();
 
       return count;
     })();
@@ -262,42 +259,41 @@ export class ScrapperService {
       scrappedPage: WebsiteScrapperItemInfo[],
     },
   ) {
-    const {em, dbLoaderQueueService} = this;
-    const entities = await em.transactional(async (transaction) => {
+    const {
+      connection,
+      dbLoaderQueueService,
+    } = this;
+
+    const entities = await connection.transaction(async (transaction) => {
       // detect which ids has been already scrapped
-      const scrappedIds = R.pluck(
-        'remoteId',
-        await (
-          transaction
-            .createQueryBuilder(ScrapperMetadataEntity)
-            .where(
-              {
-                remoteId: {
-                  $in: R.pluck('id', scrappedPage).map(R.toString),
-                },
+      const scrappedIds = R.map(
+        // todo: migrate
+        ({remote}) => remote.remoteId,
+        await ScrapperMetadataEntity.find(
+          {
+            relations: ['remote'],
+            where: {
+              remote: {
+                id: In(R.pluck('id', scrappedPage).map(R.toString)),
               },
-            )
-            .select(['remoteId'])
-            .execute()
-        ) as any[],
+            },
+          },
+        ),
       );
 
       // create new metadata records
-      return (
+      return transaction.save((
         R
           .map(
-            (item) => {
-              if (R.includes(R.toString(item.id), scrappedIds))
-                return null;
-
-              const entity = ScrapperService.scrapperResultToMetadataEntity(website, item);
-              transaction.persist(entity);
-              return entity;
-            },
+            (item) => (
+              R.includes(R.toString(item.id), scrappedIds)
+                ? null
+                : ScrapperService.scrapperResultToMetadataEntity(website, item)
+            ),
             scrappedPage,
           )
           .filter(Boolean)
-      );
+      ));
     });
 
     // load to database

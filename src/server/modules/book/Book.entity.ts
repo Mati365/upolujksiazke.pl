@@ -1,8 +1,7 @@
 import {
-  Collection, Entity, ManyToMany,
-  OneToMany,
-  Property, Unique,
-} from '@mikro-orm/core';
+  Entity, Column, Index,
+  ManyToMany, OneToMany, JoinTable,
+} from 'typeorm';
 
 import {DatedRecordEntity} from '../database/DatedRecord.entity';
 import {AuthorEntity} from '../author/Author.entity';
@@ -12,35 +11,38 @@ import {BookReviewerEntity} from '../book-reviewer/BookReviewer.entity';
 
 @Entity(
   {
-    tableName: 'book',
+    name: 'book',
   },
 )
 export class BookEntity extends DatedRecordEntity {
-  @Property()
+  @Column('text')
   title!: string;
 
-  @Property()
-  @Unique()
-  isbn!: string;
-
-  @Property(
+  @Index(
     {
-      columnType: 'text',
+      unique: true,
     },
   )
+  @Column('text')
+  isbn!: string;
+
+  @Column('text')
   description: string;
 
-  @ManyToMany(() => AuthorEntity)
-  authors: Collection<AuthorEntity> = new Collection<AuthorEntity>(this);
+  @JoinTable()
+  @ManyToMany(() => AuthorEntity, (author) => author.books)
+  authors: AuthorEntity[];
 
-  @ManyToMany(() => BookCategoryEntity)
-  categories: Collection<BookReviewEntity> = new Collection<BookReviewEntity>(this);
+  @JoinTable()
+  @ManyToMany(() => BookCategoryEntity, (categoryEntity) => categoryEntity.books)
+  categories: BookCategoryEntity[];
 
-  @OneToMany(() => BookReviewEntity, (b) => b.book)
-  reviews: Collection<BookReviewEntity> = new Collection<BookReviewEntity>(this);
+  @OneToMany(() => BookReviewEntity, (review) => review.book)
+  reviews: BookReviewEntity[];
 
-  @ManyToMany(() => BookReviewerEntity)
-  reviewers: Collection<BookReviewerEntity> = new Collection<BookReviewerEntity>(this);
+  @JoinTable()
+  @ManyToMany(() => BookReviewerEntity, (reviewer) => reviewer.books)
+  reviewers: BookReviewerEntity[];
 
   constructor(partial: Partial<BookEntity>) {
     super();

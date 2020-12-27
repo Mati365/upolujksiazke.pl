@@ -1,12 +1,8 @@
-import {
-  Entity, Enum, expr, Filter, FilterQuery, Index,
-  JsonType, ManyToOne,
-  Property, Unique,
-} from '@mikro-orm/core';
+import {Column, Entity, Index, OneToOne} from 'typeorm';
 
 import {DatedRecordEntity} from '@server/modules/database/DatedRecord.entity';
 import {WebsiteScrapperItemInfo} from '../service/shared';
-import {ScrapperWebsiteEntity} from './ScrapperWebsite.entity';
+import {ScrapperRemoteEntity} from './ScrapperRemote.entity';
 
 export enum ScrapperMetadataKind {
   BOOK_REVIEW = 1,
@@ -18,12 +14,6 @@ export enum ScrapperMetadataStatus {
   NEW = 3,
 }
 
-export const INVALID_METADATA_FILTERS: FilterQuery<any> = {
-  [expr('(content->>\'content\')::text')]: {
-    $eq: null,
-  },
-};
-
 /**
  * Saves already scrapped records (in case of improve scrappers)
  *
@@ -33,52 +23,43 @@ export const INVALID_METADATA_FILTERS: FilterQuery<any> = {
  */
 @Entity(
   {
-    tableName: 'scrapper_metadata',
-  },
-)
-@Filter(
-  {
-    name: 'invalid',
-    args: false,
-    cond: INVALID_METADATA_FILTERS,
-  },
-)
-@Unique(
-  {
-    properties: ['remoteId', 'website'],
+    name: 'scrapper_metadata',
   },
 )
 export class ScrapperMetadataEntity extends DatedRecordEntity {
-  @ManyToOne(() => ScrapperWebsiteEntity)
-  website!: ScrapperWebsiteEntity;
+  static get inactive() {
+    return (
+      ScrapperMetadataEntity
+        .createQueryBuilder()
+        .where('(content->>\'content\')::text is null')
+    );
+  }
 
-  @Property()
-  remoteId!: string; // identifier in remote website
-
-  @Property(
-    {
-      type: JsonType,
-    },
-  )
+  @Column('jsonb')
   content!: WebsiteScrapperItemInfo;
 
   @Index()
-  @Enum(
+  @Column(
     {
-      items: () => ScrapperMetadataKind,
+      type: 'enum',
+      enum: ScrapperMetadataKind,
       default: ScrapperMetadataKind.BOOK_REVIEW,
     },
   )
-  kind: ScrapperMetadataKind = ScrapperMetadataKind.BOOK_REVIEW;
+  kind: ScrapperMetadataKind;
 
   @Index()
-  @Enum(
+  @Column(
     {
-      items: () => ScrapperMetadataStatus,
+      type: 'enum',
+      enum: ScrapperMetadataStatus,
       default: ScrapperMetadataStatus.NEW,
     },
   )
-  status: ScrapperMetadataStatus = ScrapperMetadataStatus.NEW;
+  status: ScrapperMetadataStatus;
+
+  @OneToOne(() => ScrapperRemoteEntity)
+  remote: ScrapperRemoteEntity;
 
   constructor(partial: Partial<ScrapperMetadataEntity>) {
     super();

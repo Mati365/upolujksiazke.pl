@@ -1,63 +1,53 @@
-import {EntityData, FilterQuery, UniqueConstraintViolationException, wrap} from '@mikro-orm/core';
-import {EntityRepository} from '@mikro-orm/postgresql';
+import {EntityTarget, Connection, getRepository} from 'typeorm';
 
-import {ID} from '@shared/types';
+import {safeArray} from '@shared/helpers/safeArray';
+import {CanBeArray} from '@shared/types';
 
-export type UpsertAttrs<T> = {
-  repository: EntityRepository<T>,
-  where?: FilterQuery<T>,
-  data: EntityData<T>,
-  update?: boolean,
-};
-
-/**
- * Updates or creates object based on data.id or where condition.
- *
- * @todo
- *  Use ON CONFLICT in create after fix this issue:
- *  {@link https://github.com/mikro-orm/mikro-orm/issues/1240}
- *
- * @export
- * @template T
- * @param {UpsertAttrs<T>} attrs
- * @returns
- */
-export async function upsert<T extends {id?: ID}>(
+export async function upsert<T>(
   {
-    update = true,
-    repository,
-    where,
+    Entity,
+    connection,
     data,
-  }: UpsertAttrs<T>,
-) {
-  const prevEntity = await repository.findOne(
-    where ?? data.id,
+    constraint,
+    primaryKey,
+  }: {
+    connection: Connection,
+    Entity: EntityTarget<T>,
+    data: CanBeArray<T>,
+    constraint?: string,
+    primaryKey?: CanBeArray<(string & keyof T) | `${string & keyof T}Id`>,
+  },
+): Promise<T[]> {
+  const repo = getRepository(Entity);
+  const updateStr = (
+    connection
+      .getMetadata(Entity)
+      .columns
+      .map(({databaseName: key}) => `"${key}" = EXCLUDED."${key}"`)
+      .join(',')
   );
 
-  // update
-  if (prevEntity) {
-    if (update) {
-      wrap(prevEntity).assign(data);
-      await repository.persistAndFlush(prevEntity);
-    }
+  const conflictKeys = (
+    constraint
+      ? `on constraint ${constraint}`
+      : `(${safeArray(primaryKey).map((col) => `"${col}"`).join(',')})`
+  );
 
-    return prevEntity;
+  const result = await (
+    repo
+      .createQueryBuilder()
+      .insert()
+      .values(data)
+      .onConflict(`${conflictKeys} DO UPDATE SET ${updateStr}`)
+      .execute()
+  );
+
+  if (result.identifiers) {
+    safeArray(data).forEach((source) => {
+      if ('id' in source)
+        (source as any).id = result.identifiers[0].id;
+    });
   }
 
-  // create new
-  try {
-    await repository.persistAndFlush(
-      repository.create(data),
-    );
-  } catch (e) {
-    if (e instanceof UniqueConstraintViolationException) {
-      return repository.findOne(
-        where ?? data.id,
-      );
-    }
-
-    throw e;
-  }
-
-  return data;
+  return safeArray(data);
 }

@@ -1,45 +1,35 @@
 import {
-  Embedded, Entity, ManyToOne,
-  OneToOne, Property,
-} from '@mikro-orm/core';
+  Entity, Column,
+  ManyToOne, OneToOne,
+} from 'typeorm';
 
-import {DatedRecordEntity} from '../database/DatedRecord.entity';
 import {BookEntity} from '../book/Book.entity';
-
-import {ScrapperMetadataEntity} from '../importer/modules/scrapper/entity';
-import {ScrapperRemoteEntity} from '../importer/modules/scrapper/embeddables/ScrapperRemoteEntity.embeddable';
+import {DatedRecordEntity} from '../database/DatedRecord.entity';
+import {ScrapperMetadataEntity, ScrapperRemoteEntity} from '../importer/modules/scrapper/entity';
 
 @Entity(
   {
-    tableName: 'book_review',
+    name: 'book_review',
   },
 )
 export class BookReviewEntity extends DatedRecordEntity {
-  @Property()
+  @Column('text')
   nick!: string;
 
-  @Property(
-    {
-      columnType: 'text',
-    },
-  )
+  @Column('text')
   description!: string;
 
-  @Property(
-    {
-      columnType: 'smallint',
-    },
-  )
+  @Column('smallint')
   rating: number;
 
-  @ManyToOne(() => BookEntity)
+  @ManyToOne(() => BookEntity, (book) => book.reviews)
   book!: BookEntity;
 
   @OneToOne(() => ScrapperMetadataEntity)
   scrapperMetadata!: ScrapperMetadataEntity;
 
-  @Embedded()
-  remoteEntity!: ScrapperRemoteEntity;
+  @OneToOne(() => ScrapperRemoteEntity)
+  remote: ScrapperRemoteEntity;
 
   constructor(partial: Partial<BookReviewEntity>) {
     super();

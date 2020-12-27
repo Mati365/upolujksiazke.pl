@@ -1,5 +1,5 @@
 import {Module} from '@nestjs/common';
-import {MikroOrmModule} from '@mikro-orm/nestjs';
+import {TypeOrmModule} from '@nestjs/typeorm';
 
 import {BookEntity} from '@server/modules/book/Book.entity';
 import {BookReviewEntity} from '@server/modules/book-review/BookReview.entity';
@@ -20,7 +20,7 @@ import {
   {
     imports: [
       MetadataDbLoaderModule,
-      MikroOrmModule.forFeature(
+      TypeOrmModule.forFeature(
         [
           BookEntity,
           BookReviewEntity,

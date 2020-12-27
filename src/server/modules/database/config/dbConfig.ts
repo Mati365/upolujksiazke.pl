@@ -1,7 +1,4 @@
-import {SqlHighlighter} from '@mikro-orm/sql-highlighter';
-import {MikroOrmModuleSyncOptions} from '@mikro-orm/nestjs';
-import {Logger} from '@nestjs/common';
-import {LoadStrategy} from '@mikro-orm/core';
+import {TypeOrmModuleOptions} from '@nestjs/typeorm';
 
 import {ENV} from '@server/constants/env';
 import {isDevMode} from '@shared/helpers';
@@ -12,24 +9,22 @@ import {BookReviewEntity} from '../../book-review/BookReview.entity';
 import {BookCategoryEntity} from '../../book-category/BookCategory.entity';
 import {BookReviewerEntity} from '../../book-reviewer/BookReviewer.entity';
 
-import {ScrapperRemoteEntity} from '../../importer/modules/scrapper/embeddables/ScrapperRemoteEntity.embeddable';
 import {
   ScrapperMetadataEntity,
+  ScrapperRemoteEntity,
   ScrapperWebsiteEntity,
 } from '../../importer/modules/scrapper/entity';
 
-const logger = new Logger('MikroORM');
-
-export const DB_CONFIG: MikroOrmModuleSyncOptions = {
+export const DB_CONFIG: TypeOrmModuleOptions = {
   ...ENV.server.dbConfig,
-  type: 'postgresql',
-  highlighter: new SqlHighlighter,
-  logger: logger.log.bind(logger),
-  debug: isDevMode(),
-  discovery: {
-    disableDynamicFileAccess: true,
-  },
-  loadStrategy: LoadStrategy.JOINED,
+  type: 'postgres',
+  logger: 'advanced-console',
+  logging: (
+    isDevMode()
+      ? 'all'
+      : false
+  ),
+  synchronize: true,
   entities: [
     AuthorEntity,
     BookEntity,
@@ -40,10 +35,4 @@ export const DB_CONFIG: MikroOrmModuleSyncOptions = {
     ScrapperWebsiteEntity,
     ScrapperRemoteEntity,
   ],
-  migrations: {
-    path: './src/server/migrations',
-    pattern: /^\d+-[\w-]+\.migration\.ts$/,
-    disableForeignKeys: false,
-    transactional: true,
-  },
 };

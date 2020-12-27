@@ -1,19 +1,19 @@
-import {Collection, Entity, ManyToMany, Property} from '@mikro-orm/core';
+import {Entity, Column, ManyToMany} from 'typeorm';
 
 import {BookEntity} from '../book/Book.entity';
 import {DatedRecordEntity} from '../database/DatedRecord.entity';
 
 @Entity(
   {
-    tableName: 'book_category',
+    name: 'book_category',
   },
 )
 export class BookCategoryEntity extends DatedRecordEntity {
-  @Property()
+  @Column('text')
   name: string;
 
   @ManyToMany(() => BookEntity, (book) => book.categories)
-  books = new Collection<BookEntity>(this);
+  books: BookEntity[];
 
   constructor(partial: Partial<BookCategoryEntity>) {
     super();

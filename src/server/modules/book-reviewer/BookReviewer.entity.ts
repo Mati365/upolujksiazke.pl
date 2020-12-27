@@ -1,31 +1,33 @@
-import {
-  Collection, Embedded, Entity,
-  Enum, ManyToMany, Property,
-} from '@mikro-orm/core';
+import {Entity, Column, ManyToMany, OneToOne} from 'typeorm';
 
 import {Gender} from '@shared/types';
-
 import {BookEntity} from '../book/Book.entity';
 import {DatedRecordEntity} from '../database/DatedRecord.entity';
-import {ScrapperRemoteEntity} from '../importer/modules/scrapper/embeddables/ScrapperRemoteEntity.embeddable';
+import {ScrapperRemoteEntity} from '../importer/modules/scrapper/entity';
 
 @Entity(
   {
-    tableName: 'book_reviewer',
+    name: 'book_reviewer',
   },
 )
 export class BookReviewerEntity extends DatedRecordEntity {
-  @Property()
+  @Column('text')
   name: string;
 
-  @Enum(() => Gender)
+  @Column(
+    {
+      type: 'enum',
+      enum: Gender,
+      default: Gender.UNKNOWN,
+    },
+  )
   gender?: Gender;
 
   @ManyToMany(() => BookEntity, (book) => book.reviewers)
-  books = new Collection<BookEntity>(this);
+  books: BookEntity[];
 
-  @Embedded()
-  remoteEntity!: ScrapperRemoteEntity;
+  @OneToOne(() => ScrapperRemoteEntity)
+  remote: ScrapperRemoteEntity;
 
   constructor(partial: Partial<BookReviewerEntity>) {
     super();

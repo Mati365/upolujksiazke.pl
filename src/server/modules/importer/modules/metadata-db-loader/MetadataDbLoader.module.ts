@@ -1,6 +1,6 @@
 import {Module} from '@nestjs/common';
 import {BullModule} from '@nestjs/bull';
-import {MikroOrmModule} from '@mikro-orm/nestjs';
+import {TypeOrmModule} from '@nestjs/typeorm';
 
 import {BookCategoryEntity} from '@server/modules/book-category/BookCategory.entity';
 import {BookReviewerEntity} from '@server/modules/book-reviewer/BookReviewer.entity';
@@ -25,7 +25,7 @@ import {
           name: SCRAPPER_METADATA_LOADER_QUEUE,
         },
       ),
-      MikroOrmModule.forFeature(
+      TypeOrmModule.forFeature(
         [
           BookCategoryEntity,
           BookReviewerEntity,

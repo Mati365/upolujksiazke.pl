@@ -1,7 +1,6 @@
 import {Logger} from '@nestjs/common';
 import {Processor, Process, OnQueueActive, OnQueueCompleted} from '@nestjs/bull';
-import {InjectRepository} from '@mikro-orm/nestjs';
-import {EntityRepository} from '@mikro-orm/postgresql';
+import {In} from 'typeorm';
 import {Job, Queue} from 'bull';
 import pLimit from 'p-limit';
 import * as R from 'ramda';
@@ -29,9 +28,6 @@ export class MetadataDbLoaderConsumerProcessor {
 
   constructor(
     private readonly metadataDbLoaderService: MetadataDbLoaderService,
-
-    @InjectRepository(ScrapperMetadataEntity)
-    private readonly metadataRepository: EntityRepository<ScrapperMetadataEntity>,
   ) {}
 
   /**
@@ -56,19 +52,17 @@ export class MetadataDbLoaderConsumerProcessor {
    */
   @Process()
   async process(job: Job<DbLoaderJobValue>) {
-    const {
-      metadataDbLoaderService,
-      metadataRepository,
-    } = this;
-
-    const metadataItems = await metadataRepository.find(
+    const {metadataDbLoaderService} = this;
+    const metadataItems = await ScrapperMetadataEntity.find(
       {
-        id: {
-          $in: R.pluck('metadataId', job.data),
+        relations: ['website'],
+        where: {
+          id: In(R.pluck('metadataId', job.data)),
         },
       },
     );
 
+    console.info(metadataItems);
     const limit = pLimit(5);
     await Promise.all(
       metadataItems.map(

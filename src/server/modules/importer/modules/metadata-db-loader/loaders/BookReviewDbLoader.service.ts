@@ -1,13 +1,13 @@
-import {EntityManager} from '@mikro-orm/core';
-import {InjectRepository} from '@mikro-orm/nestjs';
-import {EntityRepository} from '@mikro-orm/postgresql';
+import {Connection} from 'typeorm';
 import {Injectable} from '@nestjs/common';
 
-import {findOrCreateBy} from '@server/common/helpers/db';
+import {upsert} from '@server/common/helpers/db';
 
 import {BookReviewerEntity} from '@server/modules/book-reviewer/BookReviewer.entity';
-import {ScrapperRemoteEntity} from '../../scrapper/embeddables/ScrapperRemoteEntity.embeddable';
-import {ScrapperMetadataEntity, ScrapperWebsiteEntity} from '../../scrapper/entity';
+import {
+  ScrapperMetadataEntity,
+  ScrapperWebsiteEntity,
+} from '../../scrapper/entity';
 
 import {BookReviewAuthor, BookReviewScrapperInfo} from '../../scrapper/service/scrappers/BookReviewScrapper';
 import {MetadataDbLoader} from '../MetadataDbLoader.interface';
@@ -15,9 +15,7 @@ import {MetadataDbLoader} from '../MetadataDbLoader.interface';
 @Injectable()
 export class BookReviewDbLoader implements MetadataDbLoader {
   constructor(
-    @InjectRepository(BookReviewerEntity)
-    private readonly bookReviewerRepository: EntityRepository<BookReviewerEntity>,
-    private readonly em: EntityManager,
+    private readonly connection: Connection,
   ) {}
 
   async extractMetadataToDb(metadata: ScrapperMetadataEntity) {
@@ -36,8 +34,6 @@ export class BookReviewDbLoader implements MetadataDbLoader {
         this.extractBookToDb(),
       ],
     );
-
-    this.em.clear();
   }
 
   /**
@@ -50,35 +46,29 @@ export class BookReviewDbLoader implements MetadataDbLoader {
    */
   private extractReviewerToDb(
     {
-      author,
-      website,
+      author, // eslint-disable-line
+      website, // eslint-disable-line
     }: {
       author: BookReviewAuthor,
       website: ScrapperWebsiteEntity,
     },
   ) {
+    const {connection} = this;
     const id = author.id ?? author.name;
 
-    return findOrCreateBy<BookReviewerEntity>(
+    return upsert(
       {
-        repository: this.em.fork(true).getRepository(BookReviewerEntity),
+        connection,
+        Entity: BookReviewerEntity,
+        constraint: 'unique_remote_entry',
         data: new BookReviewerEntity(
           {
             gender: author.gender,
             name: author.name,
-            remoteEntity: new ScrapperRemoteEntity(
-              {
-                id,
-                website: website.id as any, // fixme: using plain website cases mem leak
-              },
-            ),
+            remoteId: id,
+            website,
           },
         ),
-        where: {
-          remoteEntity: {
-            id,
-          },
-        },
       },
     );
   }

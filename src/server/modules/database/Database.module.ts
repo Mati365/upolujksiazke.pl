@@ -1,15 +1,15 @@
 import {Module} from '@nestjs/common';
-import {MikroOrmModule} from '@mikro-orm/nestjs';
+import {TypeOrmModule} from '@nestjs/typeorm';
 
 import {DB_CONFIG} from './config/dbConfig';
 
 @Module(
   {
     imports: [
-      MikroOrmModule.forRoot(DB_CONFIG),
+      TypeOrmModule.forRoot(DB_CONFIG),
     ],
     exports: [
-      MikroOrmModule,
+      TypeOrmModule,
     ],
   },
 )

@@ -1,11 +1,11 @@
 import {Module} from '@nestjs/common';
-import {MikroOrmModule} from '@mikro-orm/nestjs';
+import {TypeOrmModule} from '@nestjs/typeorm';
 import {BookReviewerEntity} from './BookReviewer.entity';
 
 @Module(
   {
     imports: [
-      MikroOrmModule.forFeature([BookReviewerEntity]),
+      TypeOrmModule.forFeature([BookReviewerEntity]),
     ],
   },
 )

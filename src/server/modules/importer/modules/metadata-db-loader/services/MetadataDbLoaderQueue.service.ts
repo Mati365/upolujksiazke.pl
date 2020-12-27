@@ -1,5 +1,4 @@
 import {Injectable} from '@nestjs/common';
-import {EntityData} from '@mikro-orm/core';
 import {InjectQueue} from '@nestjs/bull';
 
 import {ScrapperMetadataEntity} from '../../scrapper/entity';
@@ -15,11 +14,11 @@ export class MetadataDbLoaderQueueService {
   /**
    * Adds array of metadata items into queue
    *
-   * @param {EntityData<ScrapperMetadataEntity>[]} items
+   * @param {ScrapperMetadataEntity[]} items
    * @returns
    * @memberof MetadataDbLoaderService
    */
-  addBulkMetadataToQueue(items: EntityData<ScrapperMetadataEntity>[]) {
+  addBulkMetadataToQueue(items: ScrapperMetadataEntity[]) {
     const mappedItems = (
       items
         .filter(Boolean)
@@ -36,11 +35,11 @@ export class MetadataDbLoaderQueueService {
   /**
    * Add single item into queue
    *
-   * @param {EntityData<ScrapperMetadataEntity>} {id}
+   * @param {ScrapperMetadataEntity} {id}
    * @returns
    * @memberof MetadataDbLoaderService
    */
-  addMetadataToQueue(item: EntityData<ScrapperMetadataEntity>) {
+  addMetadataToQueue(item: ScrapperMetadataEntity) {
     return this.addBulkMetadataToQueue([item]);
   }
 }

@@ -23,9 +23,9 @@ export type AppEnv = Partial<{
       prefix: string,
     },
     dbConfig: {
-      dbName: string,
+      database: string,
       host: string,
-      user: string,
+      username: string,
       password: string,
       port: number,
     },
@@ -87,9 +87,9 @@ export const GLOBAL_CONFIG: Record<string, AppEnv> = {
         prefix: REDIS_PREFIX,
       },
       dbConfig: {
-        dbName: DB_NAME,
+        database: DB_NAME,
         host: DB_HOST,
-        user: DB_USER,
+        username: DB_USER,
         password: DB_PASS,
         port: +DB_PORT,
       },

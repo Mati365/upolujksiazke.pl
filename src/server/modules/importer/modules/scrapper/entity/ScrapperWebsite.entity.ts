@@ -1,29 +1,33 @@
-import {Collection, Entity, OneToMany, Property, Unique} from '@mikro-orm/core';
+import {Column, Entity, Index, OneToMany} from 'typeorm';
 
 import {DatedRecordEntity} from '@server/modules/database/DatedRecord.entity';
-import {ScrapperMetadataEntity} from './ScrapperMetadata.entity';
+import {ScrapperRemoteEntity} from './ScrapperRemote.entity';
 
 @Entity(
   {
-    tableName: 'scrapper_website',
+    name: 'scrapper_website',
   },
 )
 export class ScrapperWebsiteEntity extends DatedRecordEntity {
-  @Property()
-  @Unique()
+  @Column()
+  @Index(
+    {
+      unique: true,
+    },
+  )
   url!: string;
 
-  @Property()
+  @Column('text')
   description: string;
 
-  @Property()
+  @Column('text')
   title!: string;
 
-  @Property()
+  @Column('text')
   faviconUrl: string;
 
-  @OneToMany(() => ScrapperMetadataEntity, (m) => m.website)
-  metadata: Collection<ScrapperMetadataEntity> = new Collection<ScrapperMetadataEntity>(this);
+  @OneToMany(() => ScrapperRemoteEntity, (remote) => remote.website)
+  remoteRecords: ScrapperRemoteEntity[];
 
   constructor(partial: Partial<ScrapperWebsiteEntity>) {
     super();

@@ -1,16 +1,34 @@
-import {Property, PrimaryKey} from '@mikro-orm/core';
+import {
+  BaseEntity,
+  BeforeInsert, BeforeUpdate,
+  CreateDateColumn, PrimaryGeneratedColumn,
+} from 'typeorm';
 
-export abstract class DatedRecordEntity {
-  @PrimaryKey()
-  id!: number;
+export class DatedRecordEntity extends BaseEntity {
+  @PrimaryGeneratedColumn()
+  id: number;
 
-  @Property()
-  createdAt: Date = new Date;
-
-  @Property(
+  @CreateDateColumn(
     {
-      onUpdate: () => new Date,
+      type: 'timestamp',
     },
   )
-  updatedAt: Date = new Date;
+  createdAt: Date;
+
+  @CreateDateColumn(
+    {
+      type: 'timestamp',
+    },
+  )
+  updatedAt?: Date;
+
+  @BeforeInsert()
+  updateDateCreation() {
+    this.createdAt = new Date;
+  }
+
+  @BeforeUpdate()
+  updateDateUpdate() {
+    this.updatedAt = new Date;
+  }
 }

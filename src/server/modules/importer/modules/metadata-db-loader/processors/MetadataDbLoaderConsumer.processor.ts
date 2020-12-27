@@ -3,7 +3,6 @@ import {Processor, Process, OnQueueActive, OnQueueCompleted} from '@nestjs/bull'
 import {InjectRepository} from '@mikro-orm/nestjs';
 import {EntityRepository} from '@mikro-orm/postgresql';
 import {Job, Queue} from 'bull';
-import chalk from 'chalk';
 import pLimit from 'p-limit';
 import * as R from 'ramda';
 
@@ -60,7 +59,6 @@ export class MetadataDbLoaderConsumerProcessor {
     const {
       metadataDbLoaderService,
       metadataRepository,
-      logger,
     } = this;
 
     const metadataItems = await metadataRepository.find(
@@ -71,19 +69,10 @@ export class MetadataDbLoaderConsumerProcessor {
       },
     );
 
-    const processMetadata = async (id: number, metadata: ScrapperMetadataEntity) => {
-      if (!metadata) {
-        logger.warn(`Metadata item with ID: ${chalk.bold(id)} is not present! Skipping!`);
-        return;
-      }
-
-      await metadataDbLoaderService.extractMetadataToDb(metadata);
-    };
-
     const limit = pLimit(5);
-    return Promise.all(
+    await Promise.all(
       metadataItems.map(
-        (item, index) => limit(() => processMetadata(job.data[index].metadataId, item)),
+        (item) => limit(() => metadataDbLoaderService.extractMetadataToDb(item)),
       ),
     );
   }

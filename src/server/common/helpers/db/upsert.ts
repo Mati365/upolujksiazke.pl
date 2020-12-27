@@ -51,11 +51,12 @@ export async function upsert<T extends {id?: ID}>(
     );
   } catch (e) {
     if (e instanceof UniqueConstraintViolationException) {
-      data = await repository.findOne(
+      return repository.findOne(
         where ?? data.id,
       );
-    } else
-      throw e;
+    }
+
+    throw e;
   }
 
   return data;

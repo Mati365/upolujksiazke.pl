@@ -1,3 +1,4 @@
+import {EntityManager} from '@mikro-orm/core';
 import {InjectRepository} from '@mikro-orm/nestjs';
 import {EntityRepository} from '@mikro-orm/postgresql';
 import {Injectable} from '@nestjs/common';
@@ -16,13 +17,14 @@ export class BookReviewDbLoader implements MetadataDbLoader {
   constructor(
     @InjectRepository(BookReviewerEntity)
     private readonly bookReviewerRepository: EntityRepository<BookReviewerEntity>,
+    private readonly em: EntityManager,
   ) {}
 
   async extractMetadataToDb(metadata: ScrapperMetadataEntity) {
     const content = metadata.content as BookReviewScrapperInfo;
     const {website} = metadata;
 
-    const [authorEntity] = await Promise.all(
+    await Promise.all(
       [
         this.extractReviewerToDb(
           {
@@ -35,7 +37,7 @@ export class BookReviewDbLoader implements MetadataDbLoader {
       ],
     );
 
-    console.info(authorEntity.id, authorEntity.remoteEntity);
+    this.em.clear();
   }
 
   /**
@@ -55,12 +57,11 @@ export class BookReviewDbLoader implements MetadataDbLoader {
       website: ScrapperWebsiteEntity,
     },
   ) {
-    const {bookReviewerRepository} = this;
     const id = author.id ?? author.name;
 
-    return findOrCreateBy(
+    return findOrCreateBy<BookReviewerEntity>(
       {
-        repository: bookReviewerRepository,
+        repository: this.em.fork(true).getRepository(BookReviewerEntity),
         data: new BookReviewerEntity(
           {
             gender: author.gender,

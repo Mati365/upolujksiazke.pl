@@ -210,7 +210,9 @@ export class ScrapperService {
         for (const item of page) {
           const scrappersGroup = this.getScrappersGroupByWebsiteURL(item.website.url);
           const parserInfo = (
-            scrappersGroup[item.kind].mapSingleItemResponse((item.content as WebsiteScrapperItemInfo).parserSource)
+            scrappersGroup
+              .scrappers[item.kind]
+              .mapSingleItemResponse((item.content as WebsiteScrapperItemInfo).parserSource)
           );
 
           if (parserInfo) {

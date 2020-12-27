@@ -84,10 +84,10 @@ gulp scrapper:reanalyze:all
   ```bash
     cd ./src/server/modules/importer/modules/scrapper/service/scrappers/
     mkdir example-scrapper/
-    touch example-scrapper/ExampleScrapper.ts
+    touch example-scrapper/ExampleScrapperGroup.ts
   ```
 
-  2. Assign scrapper to `scrappers` variable inside `ScrapperService`
+  2. Assign scrapper to `scrappersGroups` variable inside `ScrapperService`
 
 ## Stack
 

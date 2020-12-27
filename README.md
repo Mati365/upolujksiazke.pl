@@ -91,7 +91,7 @@ gulp scrapper:reanalyze:all
 
 ## Stack
 
-Real World Nest.JS + MikroORM app.
+Real World Nest.JS + TypeORM app.
 
 - Node.JS
 - Nest.JS

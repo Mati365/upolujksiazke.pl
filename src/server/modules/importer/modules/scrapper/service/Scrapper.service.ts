@@ -1,5 +1,6 @@
 import * as R from 'ramda';
 import chalk from 'chalk';
+import pLimit from 'p-limit';
 import {EntityRepository, SqlEntityManager} from '@mikro-orm/postgresql';
 import {Injectable, Logger} from '@nestjs/common';
 import {InjectRepository} from '@mikro-orm/nestjs';
@@ -101,15 +102,18 @@ export class ScrapperService {
     } = {},
   ) {
     const {scrappers} = this;
+    const limit = pLimit(2);
 
-    for (const scrapper of scrappers) {
-      await this.execScrapper(
-        {
-          maxIterations,
-          scrapper,
-        },
-      );
-    }
+    return Promise.all(
+      scrappers.map(
+        (scrapper) => limit(() => this.execScrapper(
+          {
+            maxIterations,
+            scrapper,
+          },
+        )),
+      ),
+    );
   }
 
   /**

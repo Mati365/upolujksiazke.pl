@@ -4,7 +4,7 @@ import {InjectRepository} from '@mikro-orm/nestjs';
 import {EntityRepository} from '@mikro-orm/postgresql';
 import {Job, Queue} from 'bull';
 import chalk from 'chalk';
-import PromisePool from 'es6-promise-pool';
+import pLimit from 'p-limit';
 import * as R from 'ramda';
 
 import {ScrapperMetadataEntity} from '../../scrapper/entity';
@@ -80,12 +80,12 @@ export class MetadataDbLoaderConsumerProcessor {
       await metadataDbLoaderService.extractMetadataToDb(metadata);
     };
 
-    const promiseIterator = function* generatePromises() {
-      for (let i = 0; i < metadataItems.length; ++i)
-        yield processMetadata(job.data[i].metadataId, metadataItems[i]);
-    };
-
-    return new PromisePool(promiseIterator() as any, 5).start();
+    const limit = pLimit(5);
+    return Promise.all(
+      metadataItems.map(
+        (item, index) => limit(() => processMetadata(job.data[index].metadataId, item)),
+      ),
+    );
   }
 
   /**

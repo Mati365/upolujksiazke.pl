@@ -1,6 +1,7 @@
-import {ID} from '@shared/types';
-import {EntityData, FilterQuery, wrap} from '@mikro-orm/core';
+import {EntityData, FilterQuery, UniqueConstraintViolationException, wrap} from '@mikro-orm/core';
 import {EntityRepository} from '@mikro-orm/postgresql';
+
+import {ID} from '@shared/types';
 
 export type UpsertAttrs<T> = {
   repository: EntityRepository<T>,
@@ -11,6 +12,10 @@ export type UpsertAttrs<T> = {
 
 /**
  * Updates or creates object based on data.id or where condition.
+ *
+ * @todo
+ *  Use ON CONFLICT in create after fix this issue:
+ *  {@link https://github.com/mikro-orm/mikro-orm/issues/1240}
  *
  * @export
  * @template T
@@ -40,8 +45,18 @@ export async function upsert<T extends {id?: ID}>(
   }
 
   // create new
-  await repository.persistAndFlush(
-    repository.create(data),
-  );
+  try {
+    await repository.persistAndFlush(
+      repository.create(data),
+    );
+  } catch (e) {
+    if (e instanceof UniqueConstraintViolationException) {
+      data = await repository.findOne(
+        where ?? data.id,
+      );
+    } else
+      throw e;
+  }
+
   return data;
 }

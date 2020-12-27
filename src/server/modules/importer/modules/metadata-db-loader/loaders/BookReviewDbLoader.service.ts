@@ -21,17 +21,32 @@ export class BookReviewDbLoader implements MetadataDbLoader {
   async extractMetadataToDb(metadata: ScrapperMetadataEntity) {
     const content = metadata.content as BookReviewScrapperInfo;
     const {website} = metadata;
-    const {author} = content;
 
-    await this.extractAuthorToDb(
-      {
-        author,
-        website,
-      },
+    const [authorEntity] = await Promise.all(
+      [
+        this.extractReviewerToDb(
+          {
+            author: content.author,
+            website,
+          },
+        ),
+
+        this.extractBookToDb(),
+      ],
     );
+
+    console.info(authorEntity.id, authorEntity.remoteEntity);
   }
 
-  private extractAuthorToDb(
+  /**
+   * Finds or creates reviewer record in DB
+   *
+   * @private
+   * @param {Object} attrs
+   * @returns
+   * @memberof BookReviewDbLoader
+   */
+  private extractReviewerToDb(
     {
       author,
       website,
@@ -65,5 +80,16 @@ export class BookReviewDbLoader implements MetadataDbLoader {
         },
       },
     );
+  }
+
+  /**
+   * Finds or creates book record in db
+   *
+   * @private
+   * @returns
+   * @memberof BookReviewDbLoader
+   */
+  private extractBookToDb() {
+    return null;
   }
 }

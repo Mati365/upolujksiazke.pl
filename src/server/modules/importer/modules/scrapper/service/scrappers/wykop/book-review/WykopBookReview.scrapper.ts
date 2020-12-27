@@ -3,22 +3,17 @@ import chalk from 'chalk';
 import {Logger} from '@nestjs/common';
 
 import {ENV} from '@server/constants/env';
+
 import {Gender, RemoteID} from '@shared/types';
+import {ScrapperMetadataKind} from '@server/modules/importer/modules/scrapper/entity';
+import {AsyncScrapper, ScrapperBasicPagination} from '@server/modules/importer/modules/scrapper/service/shared';
 
 import {
-  fetchWebsiteInfo,
-  ScrapperBasicPagination,
-  WebsiteInfoScrapper,
-} from '../../shared';
-
-import {
-  BookReviewAsyncScrapper,
   BookReviewScrapperInfo,
   BookReviewProcessResult,
-} from '../BookReviewScrapper';
+} from '../../BookReviewScrapper';
 
-import {ScrapperMetadataKind, ScrapperWebsiteEntity} from '../../../entity';
-import {WykopAPI, WykopAPIResponse} from './api/WykopAPI';
+import {WykopAPI, WykopAPIResponse} from '../api/WykopAPI';
 import {
   WykopEntryContentParser,
   WykopEntryLatestParser,
@@ -34,32 +29,15 @@ import {
  * https://www.wykop.pl/wpis/51623383/122-1-123-tytul-zabic-drozda-autor-harper-lee-gatu/
  * https://www.wykop.pl/wpis/11633869/8-185-5-8-180-8185-1-8184-tytul-nowa-rebelia-autor/
  */
+export class WykopBookReviewScrapper extends AsyncScrapper<BookReviewScrapperInfo[]> {
+  protected readonly logger = new Logger(WykopBookReviewScrapper.name);
+  protected api = new WykopAPI(ENV.server.parsers.wykop);
 
-/**
- * Picks data from wykop
- *
- * @export
- * @class WykopScrapper
- * @extends {BookReviewAsyncScrapper}
- */
-export class WykopScrapper extends BookReviewAsyncScrapper implements WebsiteInfoScrapper {
-  public readonly websiteURL: string = 'https://wykop.pl';
-  private readonly logger = new Logger(WykopScrapper.name);
-
-  private api = new WykopAPI(ENV.server.parsers.wykop);
   static contentParsers: Readonly<WykopEntryContentParser[]> = Object.freeze(
     [
       new WykopEntryLatestParser,
     ],
   );
-
-  constructor() {
-    super(
-      {
-        pageProcessDelay: 25000,
-      },
-    );
-  }
 
   /**
    * Checks if post is using default bookmeter template
@@ -71,16 +49,6 @@ export class WykopScrapper extends BookReviewAsyncScrapper implements WebsiteInf
    */
   static isTemplatePost(content: string): boolean {
     return !!R.match(/(<strong>)?Tytuł:(<\/strong>)?\s/, content)?.length;
-  }
-
-  /**
-   * Fetches website info
-   *
-   * @returns {Promise<ScrapperWebsiteEntity>}
-   * @memberof WykopScrapper
-   */
-  async fetchWebsiteEntity(): Promise<ScrapperWebsiteEntity> {
-    return fetchWebsiteInfo(this.websiteURL);
   }
 
   /**
@@ -98,13 +66,13 @@ export class WykopScrapper extends BookReviewAsyncScrapper implements WebsiteInf
       return null;
 
     const {embed, body} = post;
-    if (!WykopScrapper.isTemplatePost(body))
+    if (!WykopBookReviewScrapper.isTemplatePost(body))
       return null;
 
     const {
       properties,
       description,
-    } = WykopEntryContentParser.reduceContent(WykopScrapper.contentParsers, body);
+    } = WykopEntryContentParser.reduceContent(WykopBookReviewScrapper.contentParsers, body);
 
     if (R.isEmpty(properties) || !description)
       return null;
@@ -182,14 +150,14 @@ export class WykopScrapper extends BookReviewAsyncScrapper implements WebsiteInf
    * @memberof WykopScrapper
    */
   protected async processPage(pagination: ScrapperBasicPagination): Promise<BookReviewProcessResult> {
-    const {logger} = this;
+    const {logger, api} = this;
     const page = pagination?.page ?? 1;
     let result: WykopAPIResponse & {ignore?: boolean} = null;
 
     try {
       logger.warn(`Fetching ${chalk.white(`"Tags/Entries/bookmeter/page/${page}/"`)}!`);
 
-      result = await this.api.call(
+      result = await api.call(
         {
           path: `Tags/Entries/bookmeter/page/${page}/`,
         },

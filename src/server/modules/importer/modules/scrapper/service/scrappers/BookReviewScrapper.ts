@@ -1,9 +1,8 @@
 import {Person, RemoteID} from '@shared/types';
 import {ScrapperMetadataKind} from '../../entity';
 import {
-  AsyncScrapper, HTMLScrapper,
-  ScrapperBasicPagination, ScrapperResult,
-  WebsiteInfoScrapper,
+  ScrapperBasicPagination,
+  ScrapperResult,
   WebsiteScrapperItemInfo,
 } from '../shared';
 
@@ -42,9 +41,3 @@ export type BookReviewScrapperInfo = WebsiteScrapperItemInfo & {
 };
 
 export type BookReviewProcessResult = ScrapperResult<BookReviewScrapperInfo[], ScrapperBasicPagination>;
-
-export abstract class BookReviewAsyncScrapper extends AsyncScrapper<BookReviewScrapperInfo[]> {}
-
-export abstract class BookReviewHTMLScrapper extends HTMLScrapper<BookReviewScrapperInfo[]> {}
-
-export type WebsiteBookReviewScrapper = (BookReviewAsyncScrapper | BookReviewHTMLScrapper) & WebsiteInfoScrapper;

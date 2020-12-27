@@ -11,20 +11,22 @@ import {RemoteID, IdentifiedItem} from '@shared/types';
 import {paginatedAsyncIterator} from '@server/common/helpers/paginatedAsyncIterator';
 
 import {MetadataDbLoaderQueueService} from '../../metadata-db-loader/services';
-import {WykopScrapper} from './scrappers';
 import {WebsiteInfoScrapperService} from './WebsiteInfoScrapper.service';
 import {
   INVALID_METADATA_FILTERS,
   ScrapperMetadataEntity,
+  ScrapperMetadataKind,
   ScrapperMetadataStatus,
   ScrapperWebsiteEntity,
 } from '../entity';
 
 import {
   ScrapperBasicPagination,
-  WebsiteScrapper,
   WebsiteScrapperItemInfo,
+  WebsiteScrappersGroup,
 } from './shared';
+
+import {WykopScrappersGroup} from './scrappers';
 
 export type ScrapperAnalyzerStats = {
   updated: number,
@@ -36,13 +38,13 @@ export class ScrapperService {
   private readonly logger = new Logger(ScrapperService.name);
   private readonly analyzerRecordsPageSize = 100;
 
-  private scrappers: WebsiteScrapper[] = [
-    new WykopScrapper,
+  private scrappersGroups: WebsiteScrappersGroup[] = [
+    new WykopScrappersGroup,
   ];
 
   constructor(
     private readonly em: SqlEntityManager,
-    private readonly websiteInfoScrapper: WebsiteInfoScrapperService,
+    private readonly websiteInfoScrapperService: WebsiteInfoScrapperService,
     private readonly dbLoaderQueueService: MetadataDbLoaderQueueService,
 
     @InjectRepository(ScrapperMetadataEntity)
@@ -78,13 +80,13 @@ export class ScrapperService {
    * Find single scrapper by assigned website URL
    *
    * @param {string} url
-   * @returns {WebsiteScrapper}
+   * @returns {WebsiteScrappersGroup}
    * @memberof ScrapperService
    */
-  getScrapperByWebsiteURL(url: string): WebsiteScrapper {
+  getScrappersGroupByWebsiteURL(url: string): WebsiteScrappersGroup {
     return R.find(
-      R.propEq('websiteURL', url) as any,
-      this.scrappers,
+      (scrapper) => scrapper.websiteURL === url,
+      this.scrappersGroups,
     );
   }
 
@@ -97,19 +99,25 @@ export class ScrapperService {
   async refreshLatest(
     {
       maxIterations = 1,
+      kind,
     }: {
       maxIterations?: number,
-    } = {},
+      kind: ScrapperMetadataKind,
+    },
   ) {
-    const {scrappers} = this;
+    if (!kind)
+      throw new Error('Missing kind!');
+
+    const {scrappersGroups} = this;
     const limit = pLimit(2);
 
     return Promise.all(
-      scrappers.map(
-        (scrapper) => limit(() => this.execScrapper(
+      scrappersGroups.map(
+        (scrappersGroup) => limit(() => this.execScrapper(
           {
             maxIterations,
-            scrapper,
+            scrappersGroup,
+            kind,
           },
         )),
       ),
@@ -126,26 +134,31 @@ export class ScrapperService {
   async refreshSingle(
     {
       remoteId,
-      scrapper,
+      scrappersGroup,
+      kind,
     }: {
       remoteId: RemoteID,
-      scrapper: WebsiteScrapper,
+      scrappersGroup: WebsiteScrappersGroup,
+      kind: ScrapperMetadataKind,
     },
   ): Promise<IdentifiedItem> {
-    if (!scrapper)
-      throw new Error('Missing scrapper!');
+    if (!scrappersGroup)
+      throw new Error('Missing scrappers group!');
+
+    if (!kind)
+      throw new Error('Missing kind!');
 
     const {
-      websiteInfoScrapper,
+      websiteInfoScrapperService,
       metadataRepository,
       dbLoaderQueueService,
     } = this;
 
-    const item: WebsiteScrapperItemInfo = await scrapper.fetchSingle(remoteId);
+    const item: WebsiteScrapperItemInfo = await scrappersGroup.scrappers[kind].fetchSingle(remoteId);
     if (!item)
       return Promise.resolve(null);
 
-    const website = await websiteInfoScrapper.findOrCreateWebsiteEntity(scrapper);
+    const website = await websiteInfoScrapperService.findOrCreateWebsiteEntity(scrappersGroup.websiteInfoScrapper);
     const updatedEntity = await upsert(
       {
         repository: metadataRepository,
@@ -195,8 +208,10 @@ export class ScrapperService {
     for await (const [, page] of allRecordsIterator) {
       await em.transactional(() => {
         for (const item of page) {
-          const scrapper = this.getScrapperByWebsiteURL(item.website.url);
-          const parserInfo = scrapper.mapSingleItemResponse((item.content as WebsiteScrapperItemInfo).parserSource);
+          const scrappersGroup = this.getScrappersGroupByWebsiteURL(item.website.url);
+          const parserInfo = (
+            scrappersGroup[item.kind].mapSingleItemResponse((item.content as WebsiteScrapperItemInfo).parserSource)
+          );
 
           if (parserInfo) {
             stats.updated++;
@@ -294,19 +309,21 @@ export class ScrapperService {
    * @param {Object} params
    * @memberof ScrapperService
    */
-  async execScrapper<T extends WebsiteScrapper>(
+  async execScrapper(
     {
       maxIterations = 1,
-      scrapper,
+      scrappersGroup,
       initialPage,
+      kind,
     }: {
-      scrapper: T,
+      scrappersGroup: WebsiteScrappersGroup,
       maxIterations?: number,
       initialPage?: ScrapperBasicPagination | string,
+      kind: ScrapperMetadataKind,
     },
   ) {
-    const {logger, websiteInfoScrapper} = this;
-    const website = await websiteInfoScrapper.findOrCreateWebsiteEntity(scrapper);
+    const {logger, websiteInfoScrapperService} = this;
+    const website = await websiteInfoScrapperService.findOrCreateWebsiteEntity(scrappersGroup.websiteInfoScrapper);
 
     // insert metadata
     let pageCounter = (
@@ -315,7 +332,7 @@ export class ScrapperService {
         : initialPage?.page
     ) ?? 0;
 
-    const iterator = scrapper.iterator(
+    const iterator = scrappersGroup.scrappers[kind].iterator(
       {
         maxIterations,
         initialPage: initialPage as any,
@@ -324,7 +341,7 @@ export class ScrapperService {
 
     for await (const scrappedPage of iterator) {
       logger.warn(
-        `Scrapping ${++pageCounter} page of ${chalk.white(scrapper.websiteURL)} (items: ${scrappedPage.length})!`,
+        `Scrapping ${++pageCounter} page of ${chalk.white(scrappersGroup.websiteURL)} (items: ${scrappedPage.length})!`,
       );
 
       await this.storeScrappedPage(

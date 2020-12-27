@@ -4,6 +4,7 @@ import {RemoteID, ArrayElement} from '@shared/types';
 
 import {collectAsyncIterator, timeout} from '@shared/helpers';
 import {Scrapper} from './Scrapper';
+import {WebsiteScrappersGroup} from './WebsiteScrappersGroup';
 
 export type ScrapperResult<T, P> = {
   result: T,
@@ -45,6 +46,7 @@ export abstract class AsyncScrapper<
     Result extends readonly unknown[],
     Page = ScrapperBasicPagination> implements Scrapper<Result, Page> {
   private pageProcessDelay: number = null;
+  protected group: WebsiteScrappersGroup = null;
 
   constructor(
     {
@@ -52,6 +54,10 @@ export abstract class AsyncScrapper<
     }: AsyncScrapperConfig = {},
   ) {
     this.pageProcessDelay = pageProcessDelay;
+  }
+
+  setParentGroup(group: WebsiteScrappersGroup) {
+    this.group = group;
   }
 
   setPageProcessDelay(delay: number) {

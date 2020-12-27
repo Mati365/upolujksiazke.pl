@@ -1,17 +1,11 @@
 import {ID} from '@shared/types';
 import {ScrapperMetadataKind} from '../../entity';
-import {AsyncScrapper} from './AsyncScrapper';
-import {HTMLScrapper} from './HTMLScrapper';
-import {WebsiteInfoScrapper} from './WebsiteInfoScrapper';
 
+export * from './Scrapper';
 export * from './AsyncScrapper';
 export * from './HTMLScrapper';
-export * from './Scrapper';
 export * from './WebsiteInfoScrapper';
-
-export type WebsiteScrapper<T extends unknown[] = any[]> = (
-  (AsyncScrapper<T> | HTMLScrapper<T>) & WebsiteInfoScrapper
-);
+export * from './WebsiteScrappersGroup';
 
 export type WebsiteScrapperItemInfo = {
   id: ID,

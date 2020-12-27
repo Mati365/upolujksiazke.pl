@@ -47,16 +47,16 @@ Fetchers:
 
 ```bash
 # Fetches single review by id
-gulp scrapper:refresh:single --remoteId 123 --website https://wykop.pl
+gulp scrapper:refresh:single --kind BOOK_REVIEW --remoteId 123 --website https://wykop.pl
 
 # Fetches all reviews from scrapper
-gulp scrapper:refresh:all --initialPage 1 --website https://wykop.pl
+gulp scrapper:refresh:all --kind BOOK_REVIEW --initialPage 1 --website https://wykop.pl
 
 # Refreshes only first remote reviews page using all scrappers
-gulp scrapper:refresh:latest
+gulp scrapper:refresh:latest --kind BOOK_REVIEW
 
 # Fetches all reviews pages from websites using all scrappers
-gulp scrapper:refresh:all
+gulp scrapper:refresh:all --kind BOOK_REVIEW
 ```
 
 Analyzers:

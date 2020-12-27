@@ -8,6 +8,7 @@ import {logger} from '@tasks/utils/logger';
 import {AppModule} from '@server/modules/App.module';
 import {ScrapperModule} from '../Scrapper.module';
 import {ScrapperService} from '../service/Scrapper.service';
+import {ScrapperMetadataKind} from '../entity';
 
 /**
  * Refreshes all reviews
@@ -36,9 +37,11 @@ async function refreshScrapperReviews(
   {
     page,
     website,
+    kind,
   }: {
     page: number,
     website: string,
+    kind: ScrapperMetadataKind,
   },
 ) {
   const app = await NestFactory.create(AppModule);
@@ -50,7 +53,8 @@ async function refreshScrapperReviews(
 
   await scrapper.execScrapper(
     {
-      scrapper: scrapper.getScrapperByWebsiteURL(website),
+      kind,
+      scrappersGroup: scrapper.getScrappersGroupByWebsiteURL(website),
       maxIterations: null,
       initialPage: {
         page,
@@ -67,9 +71,12 @@ async function refreshScrapperReviews(
  * @export
  */
 export const refreshLatestReviewsTask: TaskFunction = async () => {
+  const {kind} = minimist(process.argv.slice(2));
+
   logger.log('Refreshing latest reviews...');
   await refreshReviews(
     {
+      kind: +ScrapperMetadataKind[kind],
       maxIterations: 1,
     },
   );
@@ -82,13 +89,14 @@ export const refreshLatestReviewsTask: TaskFunction = async () => {
  * @export
  */
 export const refreshAllReviewsTask: TaskFunction = async () => {
-  const {initialPage, website} = minimist(process.argv.slice(2));
+  const {initialPage, website, kind} = minimist(process.argv.slice(2));
 
   logger.log('Refreshing all reviews...');
 
   if (website) {
     await refreshScrapperReviews(
       {
+        kind: +ScrapperMetadataKind[kind],
         page: (+initialPage) || 1,
         website,
       },
@@ -96,6 +104,7 @@ export const refreshAllReviewsTask: TaskFunction = async () => {
   } else {
     await refreshReviews(
       {
+        kind: +ScrapperMetadataKind[kind],
         maxIterations: null,
       },
     );
@@ -110,7 +119,7 @@ export const refreshAllReviewsTask: TaskFunction = async () => {
  * @export
  */
 export const refreshSingleTask: TaskFunction = async () => {
-  const {remoteId, website} = minimist(process.argv.slice(2));
+  const {remoteId, website, kind} = minimist(process.argv.slice(2));
 
   logger.log('Refresh review...');
   const app = await NestFactory.create(AppModule);
@@ -122,8 +131,9 @@ export const refreshSingleTask: TaskFunction = async () => {
 
   await scrapper.refreshSingle(
     {
-      scrapper: scrapper.getScrapperByWebsiteURL(website),
+      kind: +ScrapperMetadataKind[kind],
       remoteId: R.toString(remoteId),
+      scrappersGroup: scrapper.getScrappersGroupByWebsiteURL(website),
     },
   );
 

@@ -17,6 +17,7 @@ OpenSource book reviews aggregator that helps with searching book reviews. Somet
 - [ ] Price, activity diagram, notifications
 - [ ] Category filters
 - [ ] Mobile APP
+- [ ] Trending books
 
 ## Available websites
 

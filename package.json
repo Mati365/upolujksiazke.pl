@@ -6,7 +6,15 @@
   "scripts": {
     "start": "node ./dist/server.js",
     "develop": "rm -rf ./dist && APP_ENV=development NODE_ENV=development node_modules/.bin/webpack --watch --config=config/webpack.config.js",
-    "build:production": "rm -rf ./dist && NODE_ENV=production node_modules/.bin/webpack --mode=production --config=config/webpack.config.js"
+    "build:production": "rm -rf ./dist && NODE_ENV=production node_modules/.bin/webpack --mode=production --config=config/webpack.config.js",
+    "migration:revert": "node_modules/.bin/ts-node --project tsconfig.json -r tsconfig-paths/register ./node_modules/.bin/typeorm migration:revert --config src/server/ormconfig.js",
+    "migration:run": "node_modules/.bin/ts-node --project tsconfig.json -r tsconfig-paths/register ./node_modules/.bin/typeorm migration:run --config src/server/ormconfig.js",
+    "migration:create": "node_modules/.bin/ts-node --project tsconfig.json -r tsconfig-paths/register ./node_modules/.bin/typeorm migration:create --config src/server/ormconfig.js",
+    "migration:generate": "node_modules/.bin/ts-node --project tsconfig.json -r tsconfig-paths/register ./node_modules/.bin/typeorm migration:generate --config src/server/ormconfig.js",
+    "schema:sync": "node_modules/.bin/ts-node --project tsconfig.json -r tsconfig-paths/register ./node_modules/.bin/typeorm schema:sync --config src/server/ormconfig.js",
+    "schema:migrate": "node_modules/.bin/ts-node --project tsconfig.json -r tsconfig-paths/register ./node_modules/.bin/typeorm migration:run --config src/server/ormconfig.js",
+    "seed:config": "node_modules/.bin/ts-node --project tsconfig.json -r tsconfig-paths/register ./node_modules/typeorm-seeding/dist/cli.js config --config src/server/ormconfig.js",
+    "seed:run": "node_modules/.bin/ts-node --project tsconfig.json -r tsconfig-paths/register ./node_modules/typeorm-seeding/dist/cli.js seed --config src/server/ormconfig.js"
   },
   "repository": {
     "type": "git",

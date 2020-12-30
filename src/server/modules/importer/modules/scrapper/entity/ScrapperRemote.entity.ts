@@ -1,4 +1,7 @@
-import {Column, Unique, ManyToOne, Entity} from 'typeorm';
+import {
+  Column, Unique, ManyToOne,
+  Entity, JoinColumn, RelationId,
+} from 'typeorm';
 
 import {DatedRecordEntity} from '@server/modules/database/DatedRecord.entity';
 import {ScrapperWebsiteEntity} from './ScrapperWebsite.entity';
@@ -14,7 +17,12 @@ export class ScrapperRemoteEntity extends DatedRecordEntity {
   remoteId!: string;
 
   @ManyToOne(() => ScrapperWebsiteEntity)
+  @JoinColumn({name: 'websiteId'})
   website!: ScrapperWebsiteEntity;
+
+  @Column()
+  @RelationId((entity: ScrapperRemoteEntity) => entity.website)
+  websiteId: number;
 
   constructor(partial: Partial<ScrapperRemoteEntity>) {
     super();

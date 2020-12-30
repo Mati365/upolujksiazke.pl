@@ -1,4 +1,7 @@
-import {Column, Entity, Index, OneToOne} from 'typeorm';
+import {
+  Column, Entity, Index,
+  JoinColumn, OneToOne,
+} from 'typeorm';
 
 import {DatedRecordEntity} from '@server/modules/database/DatedRecord.entity';
 import {WebsiteScrapperItemInfo} from '../service/shared';
@@ -58,7 +61,8 @@ export class ScrapperMetadataEntity extends DatedRecordEntity {
   )
   status: ScrapperMetadataStatus;
 
-  @OneToOne(() => ScrapperRemoteEntity)
+  @OneToOne(() => ScrapperRemoteEntity, {onDelete: 'CASCADE'})
+  @JoinColumn()
   remote: ScrapperRemoteEntity;
 
   constructor(partial: Partial<ScrapperMetadataEntity>) {

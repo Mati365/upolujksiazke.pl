@@ -39,6 +39,14 @@ export class WykopBookReviewScrapper extends AsyncScrapper<BookReviewScrapperInf
     ],
   );
 
+  constructor() {
+    super(
+      {
+        pageProcessDelay: 13000,
+      },
+    );
+  }
+
   /**
    * Checks if post is using default bookmeter template
    *

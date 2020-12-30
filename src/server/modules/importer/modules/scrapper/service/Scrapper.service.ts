@@ -2,7 +2,7 @@ import * as R from 'ramda';
 import chalk from 'chalk';
 import pLimit from 'p-limit';
 import {Injectable, Logger} from '@nestjs/common';
-import {Connection, In} from 'typeorm';
+import {Connection, Equal, In} from 'typeorm';
 
 import {upsert} from '@server/common/helpers/db/upsert';
 
@@ -159,7 +159,7 @@ export class ScrapperService {
     } = this;
 
     const website = await websiteInfoScrapperService.findOrCreateWebsiteEntity(scrappersGroup.websiteInfoScrapper);
-    const [updatedEntity] = await upsert(
+    const updatedEntity = await upsert(
       {
         connection,
         Entity: ScrapperMetadataEntity,
@@ -196,7 +196,7 @@ export class ScrapperService {
         limit: analyzerRecordsPageSize,
         queryExecutor: ({limit, offset}) => ScrapperMetadataEntity.find(
           {
-            relations: ['website', 'remote'],
+            relations: ['remote', 'remote.website'],
             skip: offset,
             take: limit,
           },
@@ -264,41 +264,42 @@ export class ScrapperService {
       dbLoaderQueueService,
     } = this;
 
-    const entities = await connection.transaction(async (transaction) => {
-      // detect which ids has been already scrapped
-      const scrappedIds = R.map(
-        // todo: migrate
-        ({remote}) => remote.remoteId,
-        await ScrapperMetadataEntity.find(
-          {
-            relations: ['remote'],
-            where: {
-              remote: {
-                id: In(R.pluck('id', scrappedPage).map(R.toString)),
-              },
-            },
+    // detect which ids has been already scrapped
+    const scrappedIds = R.pluck(
+      'remoteId',
+      await ScrapperRemoteEntity.find(
+        {
+          where: {
+            websiteId: Equal(website.id),
+            remoteId: In(R.pluck('id', scrappedPage).map(R.toString)),
           },
-        ),
-      );
+        },
+      ),
+    );
 
-      // create new metadata records
-      return transaction.save((
-        R
-          .map(
-            (item) => (
-              R.includes(R.toString(item.id), scrappedIds)
-                ? null
-                : ScrapperService.scrapperResultToMetadataEntity(website, item)
-            ),
-            scrappedPage,
-          )
-          .filter(Boolean)
-      ));
-    });
+    // create new metadata records
+    const metadataEntities = (
+      R
+        .map(
+          (item) => (
+            R.includes(R.toString(item.id), scrappedIds)
+              ? null
+              : ScrapperService.scrapperResultToMetadataEntity(website, item)
+          ),
+          scrappedPage,
+        )
+        .filter(Boolean)
+    );
 
     // load to database
-    if (entities.length)
-      await dbLoaderQueueService.addBulkMetadataToQueue(entities);
+    if (metadataEntities.length) {
+      await connection.transaction(async (transaction) => {
+        await transaction.save(R.pluck('remote', metadataEntities));
+        await transaction.save(metadataEntities);
+      });
+
+      await dbLoaderQueueService.addBulkMetadataToQueue(metadataEntities);
+    }
   }
 
   /**

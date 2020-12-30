@@ -129,7 +129,7 @@ export abstract class AsyncScrapper<
             currentIterations--;
 
           return {
-            done: false,
+            done: !result?.length,
             value: result,
           };
         },

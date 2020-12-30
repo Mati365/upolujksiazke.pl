@@ -40,7 +40,7 @@ OpenSource book reviews aggregator that helps with searching book reviews. Somet
 ```bash
 cp .env.example .env # edit .env config
 yarn install
-mikro-orm migration:up
+yarn run migration:up
 yarn run develop
 gulp scrapper:refresh
 ```
@@ -99,6 +99,6 @@ Real World Nest.JS + TypeORM app.
 
 - Node.JS
 - Nest.JS
-- Mikro-orm
+- TypeORM
 - React
 - nginx

@@ -1,6 +1,6 @@
 import {
-  Entity, Column,
-  ManyToOne, OneToOne,
+  Entity, Column, ManyToOne,
+  OneToOne, JoinColumn,
 } from 'typeorm';
 
 import {BookEntity} from '../book/Book.entity';
@@ -26,9 +26,11 @@ export class BookReviewEntity extends DatedRecordEntity {
   book!: BookEntity;
 
   @OneToOne(() => ScrapperMetadataEntity)
+  @JoinColumn()
   scrapperMetadata!: ScrapperMetadataEntity;
 
   @OneToOne(() => ScrapperRemoteEntity)
+  @JoinColumn()
   remote: ScrapperRemoteEntity;
 
   constructor(partial: Partial<BookReviewEntity>) {

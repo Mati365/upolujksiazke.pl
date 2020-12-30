@@ -55,14 +55,13 @@ export class MetadataDbLoaderConsumerProcessor {
     const {metadataDbLoaderService} = this;
     const metadataItems = await ScrapperMetadataEntity.find(
       {
-        relations: ['website'],
+        relations: ['remote'],
         where: {
           id: In(R.pluck('metadataId', job.data)),
         },
       },
     );
 
-    console.info(metadataItems);
     const limit = pLimit(5);
     await Promise.all(
       metadataItems.map(

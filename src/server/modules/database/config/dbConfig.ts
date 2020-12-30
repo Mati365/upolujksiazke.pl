@@ -24,7 +24,7 @@ export const DB_CONFIG: TypeOrmModuleOptions = {
       ? 'all'
       : false
   ),
-  synchronize: true,
+  synchronize: false,
   entities: [
     AuthorEntity,
     BookEntity,

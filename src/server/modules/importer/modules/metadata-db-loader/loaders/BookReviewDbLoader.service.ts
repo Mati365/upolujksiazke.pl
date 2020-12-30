@@ -6,7 +6,7 @@ import {upsert} from '@server/common/helpers/db';
 import {BookReviewerEntity} from '@server/modules/book-reviewer/BookReviewer.entity';
 import {
   ScrapperMetadataEntity,
-  ScrapperWebsiteEntity,
+  ScrapperRemoteEntity,
 } from '../../scrapper/entity';
 
 import {BookReviewAuthor, BookReviewScrapperInfo} from '../../scrapper/service/scrappers/BookReviewScrapper';
@@ -20,18 +20,16 @@ export class BookReviewDbLoader implements MetadataDbLoader {
 
   async extractMetadataToDb(metadata: ScrapperMetadataEntity) {
     const content = metadata.content as BookReviewScrapperInfo;
-    const {website} = metadata;
+    const {websiteId} = metadata.remote;
 
     await Promise.all(
       [
         this.extractReviewerToDb(
           {
             author: content.author,
-            website,
+            websiteId,
           },
         ),
-
-        this.extractBookToDb(),
       ],
     );
   }
@@ -44,43 +42,53 @@ export class BookReviewDbLoader implements MetadataDbLoader {
    * @returns
    * @memberof BookReviewDbLoader
    */
-  private extractReviewerToDb(
+  private async extractReviewerToDb(
     {
-      author, // eslint-disable-line
-      website, // eslint-disable-line
+      author,
+      websiteId,
     }: {
       author: BookReviewAuthor,
-      website: ScrapperWebsiteEntity,
+      websiteId: number,
     },
   ) {
     const {connection} = this;
     const id = author.id ?? author.name;
 
+    const remoteEntity = await upsert(
+      {
+        connection,
+        Entity: ScrapperRemoteEntity,
+        constraint: 'unique_remote_entry',
+        data: new ScrapperRemoteEntity(
+          {
+            remoteId: id,
+            websiteId,
+          },
+        ),
+      },
+    );
+
     return upsert(
       {
         connection,
         Entity: BookReviewerEntity,
-        constraint: 'unique_remote_entry',
+        primaryKey: 'remoteId',
         data: new BookReviewerEntity(
           {
             gender: author.gender,
             name: author.name,
-            remoteId: id,
-            website,
+            remote: remoteEntity,
           },
         ),
       },
     );
   }
-
-  /**
-   * Finds or creates book record in db
-   *
-   * @private
-   * @returns
-   * @memberof BookReviewDbLoader
-   */
-  private extractBookToDb() {
-    return null;
-  }
 }
+
+console.info(Object.keys(new BookReviewerEntity(
+  {
+    gender: null,
+    name: null,
+    remote: null,
+  },
+)));

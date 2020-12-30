@@ -1,4 +1,7 @@
-import {Entity, Column, ManyToMany, OneToOne} from 'typeorm';
+import {
+  Entity, Column, ManyToMany,
+  OneToOne, JoinColumn, RelationId,
+} from 'typeorm';
 
 import {Gender} from '@shared/types';
 import {BookEntity} from '../book/Book.entity';
@@ -26,8 +29,13 @@ export class BookReviewerEntity extends DatedRecordEntity {
   @ManyToMany(() => BookEntity, (book) => book.reviewers)
   books: BookEntity[];
 
-  @OneToOne(() => ScrapperRemoteEntity)
+  @OneToOne(() => ScrapperRemoteEntity, {onDelete: 'CASCADE'})
+  @JoinColumn({name: 'remoteId'})
   remote: ScrapperRemoteEntity;
+
+  @Column()
+  @RelationId((entity: BookReviewerEntity) => entity.remote)
+  remoteId: number;
 
   constructor(partial: Partial<BookReviewerEntity>) {
     super();

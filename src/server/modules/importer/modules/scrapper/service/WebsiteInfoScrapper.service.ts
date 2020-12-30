@@ -21,7 +21,7 @@ export class WebsiteInfoScrapperService {
 
     if (!website) {
       website = await scrapper.fetchWebsiteEntity();
-      website.save();
+      await website.save();
     }
 
     return website;

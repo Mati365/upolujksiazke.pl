@@ -11,12 +11,13 @@ import {ScrapperService} from '../service/Scrapper.service';
 import {ScrapperMetadataKind} from '../entity';
 
 /**
- * Refreshes all reviews
+ * Refreshes all latest entities
  *
  * @param {Parameters<ScrapperService['refreshLatest']>[0]} config
  */
-async function refreshReviews(config: Parameters<ScrapperService['refreshLatest']>[0]) {
+async function refreshLatest(config: Parameters<ScrapperService['refreshLatest']>[0]) {
   const app = await NestFactory.create(AppModule);
+  app.enableShutdownHooks();
 
   await (
     app
@@ -29,11 +30,11 @@ async function refreshReviews(config: Parameters<ScrapperService['refreshLatest'
 }
 
 /**
- * Refreshes all reviews from single scrapper
+ * Refreshes all from single scrapper
  *
  * @param {Object} attrs
  */
-async function refreshScrapperReviews(
+async function refreshScrapper(
   {
     page,
     website,
@@ -45,6 +46,8 @@ async function refreshScrapperReviews(
   },
 ) {
   const app = await NestFactory.create(AppModule);
+  app.enableShutdownHooks();
+
   const scrapper = (
     app
       .select(ScrapperModule)
@@ -73,14 +76,14 @@ async function refreshScrapperReviews(
 export const refreshLatestReviewsTask: TaskFunction = async () => {
   const {kind} = minimist(process.argv.slice(2));
 
-  logger.log('Refreshing latest reviews...');
-  await refreshReviews(
+  logger.log('Refreshing latest items...');
+  await refreshLatest(
     {
       kind: +ScrapperMetadataKind[kind],
       maxIterations: 1,
     },
   );
-  logger.log('Latest reviews refreshed!');
+  logger.log('Latest items refreshed!');
 };
 
 /**
@@ -91,10 +94,10 @@ export const refreshLatestReviewsTask: TaskFunction = async () => {
 export const refreshAllReviewsTask: TaskFunction = async () => {
   const {initialPage, website, kind} = minimist(process.argv.slice(2));
 
-  logger.log('Refreshing all reviews...');
+  logger.log('Refreshing all items...');
 
   if (website) {
-    await refreshScrapperReviews(
+    await refreshScrapper(
       {
         kind: +ScrapperMetadataKind[kind],
         page: (+initialPage) || 1,
@@ -102,7 +105,7 @@ export const refreshAllReviewsTask: TaskFunction = async () => {
       },
     );
   } else {
-    await refreshReviews(
+    await refreshLatest(
       {
         kind: +ScrapperMetadataKind[kind],
         maxIterations: null,
@@ -110,19 +113,22 @@ export const refreshAllReviewsTask: TaskFunction = async () => {
     );
   }
 
-  logger.log('Latest all refreshed!');
+  logger.log('All items refreshed!');
 };
 
 /**
- * Loads single review
+ * Loads single item
  *
  * @export
  */
 export const refreshSingleTask: TaskFunction = async () => {
   const {remoteId, website, kind} = minimist(process.argv.slice(2));
 
-  logger.log('Refresh review...');
+  logger.log('Refresh item...');
+
   const app = await NestFactory.create(AppModule);
+  app.enableShutdownHooks();
+
   const scrapper: ScrapperService = (
     app
       .select(ScrapperModule)
@@ -138,5 +144,5 @@ export const refreshSingleTask: TaskFunction = async () => {
   );
 
   app.close();
-  logger.log('Review refreshed!');
+  logger.log('Item refreshed!');
 };

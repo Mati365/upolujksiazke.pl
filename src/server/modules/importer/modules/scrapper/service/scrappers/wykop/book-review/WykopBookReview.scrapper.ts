@@ -11,7 +11,7 @@ import {AsyncScrapper, ScrapperBasicPagination} from '@server/modules/importer/m
 import {
   BookReviewScrapperInfo,
   BookReviewProcessResult,
-} from '../../BookReviewScrapper';
+} from '../../BookReview.scrapper';
 
 import {WykopAPI, WykopAPIResponse} from '../api/WykopAPI';
 import {

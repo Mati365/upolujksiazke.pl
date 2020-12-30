@@ -42,6 +42,7 @@ async function forkApp(
   );
 
   app
+    .enableShutdownHooks()
     .use(
       express.static(path.resolve(__dirname, 'public/no-prefix')),
     )

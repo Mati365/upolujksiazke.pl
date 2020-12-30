@@ -16,6 +16,8 @@ export const reanalyzeAllReviewsTask: TaskFunction = async () => {
   logger.log('Reanalyzing all reviews...');
 
   const app = await NestFactory.create(AppModule);
+  app.enableShutdownHooks();
+
   const {removed, updated} = await (
     app
       .select(ScrapperModule)

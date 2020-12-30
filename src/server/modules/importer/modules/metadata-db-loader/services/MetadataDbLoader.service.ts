@@ -2,8 +2,11 @@ import {Injectable, Logger} from '@nestjs/common';
 import chalk from 'chalk';
 
 import {ScrapperMetadataEntity, ScrapperMetadataKind} from '../../scrapper/entity';
-import {BookReviewDbLoader} from '../loaders';
 import {MetadataDbLoader} from '../MetadataDbLoader.interface';
+import {
+  BookDbLoader,
+  BookReviewDbLoader,
+} from '../loaders';
 
 @Injectable()
 export class MetadataDbLoaderService implements MetadataDbLoader {
@@ -12,9 +15,11 @@ export class MetadataDbLoaderService implements MetadataDbLoader {
 
   constructor(
     readonly bookReviewDbLoader: BookReviewDbLoader,
+    readonly bookDbLoader: BookDbLoader,
   ) {
     this.resourceLoaders = {
       [ScrapperMetadataKind.BOOK_REVIEW]: bookReviewDbLoader,
+      [ScrapperMetadataKind.BOOK]: bookDbLoader,
     };
   }
 

@@ -6,19 +6,7 @@ import {
   WebsiteScrapperItemInfo,
 } from '../shared';
 
-export type BookScrapperInfo = {
-  title: string,
-  isbn: string,
-  authors: string[],
-  category: string,
-  description?: string,
-  cover?: {
-    nsfw: boolean,
-    ratio?: number,
-    source: string,
-    image: string,
-  },
-};
+import {BookScrapperInfo} from './Book.scrapper';
 
 export type BookReviewAuthor = Person & {
   id?: RemoteID,

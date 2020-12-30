@@ -1,10 +1,12 @@
 import * as R from 'ramda';
 
+import {PartialRecord} from '@shared/types';
+
 import {ScrapperMetadataKind} from '../../entity/ScrapperMetadata.entity';
 import {AsyncScrapper} from './AsyncScrapper';
 import {WebsiteInfoScrapper} from './WebsiteInfoScrapper';
 
-export type WebsiteScrappersKindMap = Record<ScrapperMetadataKind, AsyncScrapper<any, any>>;
+export type WebsiteScrappersKindMap = PartialRecord<ScrapperMetadataKind, AsyncScrapper<any, any>>;
 
 export type ScrappersGroupInitializer<W extends WebsiteInfoScrapper> = {
   websiteInfoScrapper?: W,

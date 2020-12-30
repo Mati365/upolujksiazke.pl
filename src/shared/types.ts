@@ -4,10 +4,16 @@ export type ID = string | number;
 
 export type RemoteID = string;
 
-export type CanBeArray<T> = T|T[];
+export type CanBeArray<T> = T | T[];
+
+export type CanBePromise<T> = T | Promise<T>;
 
 export type IdentifiedItem<I = ID, R = {}> = R & {
   id: I,
+};
+
+export type PartialRecord<K extends keyof any, T> = {
+  [P in K]?: T;
 };
 
 export type Overwrite<T, U> = Pick<T, Exclude<keyof T, keyof U>> & U;
@@ -35,12 +41,6 @@ export enum SortDirection {
   NORMAL = '',
 }
 
-export enum Gender {
-  UNKNOWN = 1,
-  FEMALE = 2,
-  MALE = 3,
-}
-
 export type Vec2 = {
   x?: number,
   y?: number,
@@ -55,6 +55,11 @@ export type SortKeys = {
   [key: string]: SortDirection,
 };
 
+export enum Gender {
+  UNKNOWN = 1,
+  FEMALE = 2,
+  MALE = 3,
+}
 export type Person = {
   name: string,
   gender?: Gender,

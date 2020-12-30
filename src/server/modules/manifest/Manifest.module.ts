@@ -1,7 +1,9 @@
 import {DynamicModule, Global, Module} from '@nestjs/common';
-import {ManifestService, ManifestServiceOptions} from './Manifest.service';
-
-export const MANIFEST_OPTIONS = 'MANIFEST_OPTIONS';
+import {
+  ManifestService,
+  ManifestServiceOptions,
+  MANIFEST_OPTIONS,
+} from './Manifest.service';
 
 @Global()
 @Module({})

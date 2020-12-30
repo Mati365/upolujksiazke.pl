@@ -9,7 +9,7 @@ import {
   ScrapperRemoteEntity,
 } from '../../scrapper/entity';
 
-import {BookReviewAuthor, BookReviewScrapperInfo} from '../../scrapper/service/scrappers/BookReviewScrapper';
+import {BookReviewAuthor, BookReviewScrapperInfo} from '../../scrapper/service/scrappers/BookReview.scrapper';
 import {MetadataDbLoader} from '../MetadataDbLoader.interface';
 
 @Injectable()
@@ -84,11 +84,3 @@ export class BookReviewDbLoader implements MetadataDbLoader {
     );
   }
 }
-
-console.info(Object.keys(new BookReviewerEntity(
-  {
-    gender: null,
-    name: null,
-    remote: null,
-  },
-)));

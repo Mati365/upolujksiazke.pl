@@ -15,15 +15,15 @@ export class ScrapperWebsiteEntity extends DatedRecordEntity {
       unique: true,
     },
   )
-  url!: string;
+  url: string;
 
-  @Column('text')
+  @Column('text', {nullable: true})
   description: string;
 
-  @Column('text')
-  title!: string;
+  @Column('text', {nullable: true})
+  title: string;
 
-  @Column('text')
+  @Column('text', {nullable: true})
   faviconUrl: string;
 
   @OneToMany(() => ScrapperRemoteEntity, (remote) => remote.website)

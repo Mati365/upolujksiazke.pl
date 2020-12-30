@@ -9,6 +9,7 @@ import {upsert} from '@server/common/helpers/db/upsert';
 import {RemoteID, IdentifiedItem} from '@shared/types';
 import {paginatedAsyncIterator} from '@server/common/helpers/paginatedAsyncIterator';
 
+import {TmpDirService} from '@server/modules/tmp-dir/TmpDir.service';
 import {MetadataDbLoaderQueueService} from '../../metadata-db-loader/services';
 import {WebsiteInfoScrapperService} from './WebsiteInfoScrapper.service';
 import {
@@ -25,7 +26,10 @@ import {
   WebsiteScrappersGroup,
 } from './shared';
 
-import {WykopScrappersGroup} from './scrappers';
+import {
+  EIsbnScrappersGroup,
+  WykopScrappersGroup,
+} from './scrappers';
 
 export type ScrapperAnalyzerStats = {
   updated: number,
@@ -36,16 +40,23 @@ export type ScrapperAnalyzerStats = {
 export class ScrapperService {
   private readonly logger = new Logger(ScrapperService.name);
   private readonly analyzerRecordsPageSize = 100;
-
-  private scrappersGroups: WebsiteScrappersGroup[] = [
-    new WykopScrappersGroup,
-  ];
+  private scrappersGroups: WebsiteScrappersGroup[] = null;
 
   constructor(
     private readonly connection: Connection,
     private readonly websiteInfoScrapperService: WebsiteInfoScrapperService,
     private readonly dbLoaderQueueService: MetadataDbLoaderQueueService,
-  ) {}
+    tmpDirService: TmpDirService,
+  ) {
+    this.scrappersGroups = [
+      new WykopScrappersGroup,
+      new EIsbnScrappersGroup(
+        {
+          tmpDirService,
+        },
+      ),
+    ];
+  }
 
   /**
    * Wraps scrapper result into entity
@@ -331,12 +342,15 @@ export class ScrapperService {
         : initialPage?.page
     ) ?? 0;
 
-    const iterator = scrappersGroup.scrappers[kind].iterator(
+    const iterator = scrappersGroup.scrappers[kind]?.iterator(
       {
         maxIterations,
         initialPage: initialPage as any,
       },
     );
+
+    if (!iterator)
+      return;
 
     for await (const scrappedPage of iterator) {
       logger.warn(

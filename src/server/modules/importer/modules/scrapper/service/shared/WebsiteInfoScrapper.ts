@@ -1,29 +1,41 @@
 import cheerio from 'cheerio';
 import {ScrapperWebsiteEntity} from '../../entity';
 
-export interface WebsiteInfoScrapper {
-  readonly websiteURL: string;
-  fetchWebsiteEntity(): Promise<ScrapperWebsiteEntity>
-}
-
 /**
- * Fetch basic info about website from meta tags
+ * Basic async scrapper that loads meta info from website
  *
  * @export
- * @param {string} url
- * @returns {Promise<ScrapperWebsiteEntity>}
+ * @class WebsiteInfoScrapper
  */
-export async function fetchWebsiteInfo(url: string): Promise<ScrapperWebsiteEntity> {
-  const $ = cheerio.load(
-    await fetch(url).then((r) => r.text()),
-  );
+export class WebsiteInfoScrapper {
+  constructor(
+    public readonly websiteURL: string,
+  ) {}
 
-  return new ScrapperWebsiteEntity(
-    {
-      url,
-      title: $('title').text(),
-      description: $('meta[name="description"]').attr('content'),
-      faviconUrl: $('link[rel="icon"]').attr('href'),
-    },
-  );
+  async fetchWebsiteEntity(): Promise<ScrapperWebsiteEntity> {
+    return WebsiteInfoScrapper.getWebsiteEntityFromURL(this.websiteURL);
+  }
+
+  /**
+   * Fetches websites and parsers its meta tags
+   *
+   * @static
+   * @param {string} url
+   * @returns
+   * @memberof WebsiteInfoScrapper
+   */
+  static async getWebsiteEntityFromURL(url: string) {
+    const $ = cheerio.load(
+      await fetch(url).then((r) => r.text()),
+    );
+
+    return new ScrapperWebsiteEntity(
+      {
+        url,
+        title: $('title').text(),
+        description: $('meta[name="description"]').attr('content'),
+        faviconUrl: $('link[rel="icon"]').attr('href'),
+      },
+    );
+  }
 }

@@ -9,6 +9,7 @@ import {ScrapperRemoteEntity} from './ScrapperRemote.entity';
 
 export enum ScrapperMetadataKind {
   BOOK_REVIEW = 1,
+  BOOK = 2,
 }
 
 export enum ScrapperMetadataStatus {

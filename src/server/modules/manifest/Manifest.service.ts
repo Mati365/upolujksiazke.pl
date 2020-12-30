@@ -4,7 +4,7 @@ import {Inject, Injectable, Scope} from '@nestjs/common';
 import {loadFsJSON} from '@server/common/helpers/loadFsJSON';
 import {isDevMode} from '@shared/helpers';
 
-import {MANIFEST_OPTIONS} from './Manifest.module';
+export const MANIFEST_OPTIONS = 'MANIFEST_OPTIONS';
 
 export type ManifestServiceOptions = {
   file: string,

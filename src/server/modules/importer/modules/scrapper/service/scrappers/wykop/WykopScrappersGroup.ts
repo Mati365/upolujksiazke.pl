@@ -1,14 +1,12 @@
 import {ScrapperMetadataKind} from '../../../entity';
-import {WebsiteScrappersGroup} from '../../shared';
-
+import {WebsiteInfoScrapper, WebsiteScrappersGroup} from '../../shared';
 import {WykopBookReviewScrapper} from './book-review/WykopBookReview.scrapper';
-import {WykopWebsiteInfoScrapper} from './WykopWebsiteInfo.scrapper';
 
-export class WykopScrappersGroup extends WebsiteScrappersGroup<WykopWebsiteInfoScrapper> {
+export class WykopScrappersGroup extends WebsiteScrappersGroup {
   constructor() {
     super(
       {
-        websiteInfoScrapper: new WykopWebsiteInfoScrapper,
+        websiteInfoScrapper: new WebsiteInfoScrapper('https://wykop.pl'),
         scrappers: {
           [ScrapperMetadataKind.BOOK_REVIEW]: new WykopBookReviewScrapper,
         },

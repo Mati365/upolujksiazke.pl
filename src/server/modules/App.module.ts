@@ -4,13 +4,17 @@ import {BullModule} from '@nestjs/bull';
 
 import {ENV} from '@server/constants/env';
 
-import {isRootClusterAppInstance} from '../common/helpers';
+import {
+  getClusterAppInstance,
+  isRootClusterAppInstance,
+} from '../common/helpers';
 
 import {DatabaseModule} from './database/Database.module';
 import {FrontModule} from './front';
 import {ManifestModule} from './manifest';
 import {CdnModule} from './cdn';
 import {ImporterModule} from './importer';
+import {TmpDirModule} from './tmp-dir';
 
 @Module(
   {
@@ -42,6 +46,11 @@ import {ImporterModule} from './importer';
       ManifestModule.register(
         {
           file: 'public/files-manifest.json',
+        },
+      ),
+      TmpDirModule.register(
+        {
+          rootPath: `/tmp/bookmeter-instance-${getClusterAppInstance()}`,
         },
       ),
       FrontModule,

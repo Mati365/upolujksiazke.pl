@@ -1,6 +1,10 @@
 import * as R from 'ramda';
 
-import {RemoteID, ArrayElement} from '@shared/types';
+import {
+  RemoteID,
+  ArrayElement,
+  CanBePromise,
+} from '@shared/types';
 
 import {collectAsyncIterator, timeout} from '@shared/helpers';
 import {Scrapper} from './Scrapper';
@@ -19,6 +23,11 @@ export type ScrapperBasicPagination = {
 
 export type AsyncScrapperConfig = {
   pageProcessDelay?: number,
+};
+
+export type AsyncScrapperListenerAttrs = {
+  bulk: boolean,
+  reloadsAllRecords: boolean,
 };
 
 /**
@@ -45,8 +54,8 @@ export function isValidScrappingResult<T>(result: T) {
 export abstract class AsyncScrapper<
     Result extends readonly unknown[],
     Page = ScrapperBasicPagination> implements Scrapper<Result, Page> {
-  private pageProcessDelay: number = null;
-  protected group: WebsiteScrappersGroup = null;
+  private pageProcessDelay: number;
+  protected group: WebsiteScrappersGroup;
 
   constructor(
     {
@@ -56,12 +65,14 @@ export abstract class AsyncScrapper<
     this.pageProcessDelay = pageProcessDelay;
   }
 
-  setParentGroup(group: WebsiteScrappersGroup) {
+  setParentGroup(group: WebsiteScrappersGroup): this {
     this.group = group;
+    return this;
   }
 
-  setPageProcessDelay(delay: number) {
+  setPageProcessDelay(delay: number): this {
     this.pageProcessDelay = delay;
+    return this;
   }
 
   /**
@@ -110,7 +121,6 @@ export abstract class AsyncScrapper<
   ): AsyncGenerator<Result> {
     const {pageProcessDelay} = this;
     let currentIterations = maxIterations;
-
     const it = {
       [Symbol.asyncIterator]: () => ({
         next: async () => {
@@ -123,7 +133,14 @@ export abstract class AsyncScrapper<
           if (pageProcessDelay && maxIterations !== 1)
             await timeout(pageProcessDelay);
 
-          const {result, ptr} = await this.processPage(initialPage);
+          const processedPage = await this.processPage(initialPage);
+          if (!processedPage) {
+            return {
+              done: true,
+            };
+          }
+
+          const {result, ptr} = processedPage;
           initialPage = ptr.nextPage ?? null;
           if (!Number.isNaN(currentIterations))
             currentIterations--;
@@ -136,6 +153,7 @@ export abstract class AsyncScrapper<
       }),
     };
 
+    // start scrapping
     for await (const result of it) {
       if (!isValidScrappingResult(result))
         continue;
@@ -162,10 +180,10 @@ export abstract class AsyncScrapper<
    *
    * @abstract
    * @param {RemoteID} remoteId
-   * @returns {Promise<Result>}
+   * @returns {CanBePromise<ArrayElement<Result>>}
    * @memberof AsyncScrapper
    */
-  abstract fetchSingle(remoteId: RemoteID): Promise<ArrayElement<Result>>;
+  abstract fetchSingle(remoteId: RemoteID): CanBePromise<ArrayElement<Result>>;
 
   /**
    * Fetches single page
@@ -173,8 +191,8 @@ export abstract class AsyncScrapper<
    * @protected
    * @abstract
    * @param {Page} page
-   * @returns {Promise<ScrapperResult<Result, Page>>}
+   * @returns {CanBePromise<ScrapperResult<Result, Page>>}
    * @memberof AsyncScrapper
    */
-  protected abstract processPage(page: Page): Promise<ScrapperResult<Result, Page>>;
+  protected abstract processPage(page: Page): CanBePromise<ScrapperResult<Result, Page>>;
 }

@@ -5,7 +5,7 @@ import {TypeOrmModule} from '@nestjs/typeorm';
 import {BookCategoryEntity} from '@server/modules/book-category/BookCategory.entity';
 import {BookReviewerEntity} from '@server/modules/book-reviewer/BookReviewer.entity';
 import {ScrapperMetadataEntity} from '../scrapper/entity';
-import {BookReviewDbLoader} from './loaders';
+import {BookDbLoader, BookReviewDbLoader} from './loaders';
 
 import {
   MetadataDbLoaderService,
@@ -37,6 +37,7 @@ import {
       MetadataDbLoaderConsumerProcessor,
       MetadataDbLoaderService,
       MetadataDbLoaderQueueService,
+      BookDbLoader,
       BookReviewDbLoader,
     ],
     exports: [

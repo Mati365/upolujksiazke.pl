@@ -18,6 +18,8 @@ import {
   ScrapperResult,
 } from '../../shared';
 
+import {convertOnixToBookxMetadata} from './utils/convertOnixToBookMetadata';
+
 export type EIsbnBookScrapperConfig = {
   tmp: {
     dirService: TmpDirService,
@@ -36,7 +38,6 @@ export class EIsbnBookScrapper extends AsyncScrapper<any> {
     private readonly config: EIsbnBookScrapperConfig,
   ) {
     super();
-    this.getIsbnDBCache();
   }
 
   mapSingleItemResponse() {
@@ -82,8 +83,8 @@ export class EIsbnBookScrapper extends AsyncScrapper<any> {
     const stream = fs.createReadStream(path.join(tmpFolderPath, dbFiles.records));
     const xml = new XMLStream(stream);
 
-    xml.on('endElement: Product', (p) => {
-      console.info('s', p);
+    xml.on('endElement: Product', (entry: object) => {
+      convertOnixToBookxMetadata(entry);
       throw new Error;
     });
   }

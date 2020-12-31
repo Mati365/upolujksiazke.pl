@@ -1,13 +1,19 @@
+import {ListItem} from '@shared/types';
+
 export type BookScrapperInfo = {
   title: string,
   isbn: string,
   authors: string[],
-  category: string,
+  categories: string[],
   description?: string,
   cover?: {
     nsfw: boolean,
     ratio?: number,
     source: string,
     image: string,
+  },
+  attributes?: {
+    totalPages: number,
+    publisher?: ListItem,
   },
 };

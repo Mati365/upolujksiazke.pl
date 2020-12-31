@@ -87,7 +87,7 @@ export class ScrapperService {
         remote: new ScrapperRemoteEntity(
           {
             remoteId: R.toString(item.id),
-            website,
+            websiteId: website.id,
           },
         ),
       },
@@ -177,14 +177,26 @@ export class ScrapperService {
     } = this;
 
     const website = await websiteInfoScrapperService.findOrCreateWebsiteEntity(scrappersGroup.websiteInfoScrapper);
-    const updatedEntity = await upsert(
-      {
-        connection,
-        Entity: ScrapperMetadataEntity,
-        primaryKey: ['remoteId'],
-        data: ScrapperService.scrapperResultToMetadataEntity(website, item),
-      },
-    );
+    const updatedEntity = await connection.transaction(async () => {
+      const newEntity = ScrapperService.scrapperResultToMetadataEntity(website, item);
+      await upsert(
+        {
+          connection,
+          Entity: ScrapperRemoteEntity,
+          constraint: 'unique_remote_entry',
+          data: newEntity.remote,
+        },
+      );
+
+      return upsert(
+        {
+          connection,
+          Entity: ScrapperMetadataEntity,
+          primaryKey: ['remoteId'],
+          data: newEntity,
+        },
+      );
+    });
 
     await dbLoaderQueueService.addMetadataToQueue(updatedEntity);
     return updatedEntity;

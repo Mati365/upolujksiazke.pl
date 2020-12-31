@@ -29,6 +29,7 @@ export type WykopBookReviewScrapperConfig = {
 /**
  * @see
  * Special cases:
+ * https://www.wykop.pl/wpis/14255263/6-684-1-6-683-tytul-badacze-czasu-odkupienie-krzys/
  * https://www.wykop.pl/wpis/53839505/506-1-507-tytul-rhythm-of-war-autor-brandon-sander/
  * https://www.wykop.pl/wpis/51756185/143-1-144-tytul-portret-doriana-graya-autor-oscar-/
  * https://www.wykop.pl/wpis/51740461/142-1-143-tytul-problem-trzech-cial-autor-liu-cixi/
@@ -133,7 +134,7 @@ export class WykopBookReviewScrapper extends AsyncScrapper<BookReviewScrapperInf
         title: properties.title,
         isbn: properties.isbn,
         authors: properties.authors,
-        category: properties.category,
+        categories: properties.categories,
         description: null,
         cover: embed && {
           nsfw: embed.plus18,

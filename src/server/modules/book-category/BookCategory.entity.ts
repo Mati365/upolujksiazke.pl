@@ -9,7 +9,7 @@ import {DatedRecordEntity} from '../database/DatedRecord.entity';
   },
 )
 export class BookCategoryEntity extends DatedRecordEntity {
-  @Column('text')
+  @Column('text', {unique: true})
   name: string;
 
   @ManyToMany(() => BookEntity, (book) => book.categories)

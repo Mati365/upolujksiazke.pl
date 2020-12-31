@@ -11,19 +11,28 @@ import {
 
 import {BookReviewAuthor, BookReviewScrapperInfo} from '../../scrapper/service/scrappers/BookReview.scrapper';
 import {MetadataDbLoader} from '../MetadataDbLoader.interface';
+import {BookDbLoader} from './BookDbLoader.service';
 
 @Injectable()
 export class BookReviewDbLoader implements MetadataDbLoader {
   constructor(
     private readonly connection: Connection,
+    private readonly bookDbLoader: BookDbLoader,
   ) {}
 
   async extractMetadataToDb(metadata: ScrapperMetadataEntity) {
+    const {bookDbLoader} = this;
     const content = metadata.content as BookReviewScrapperInfo;
     const {websiteId} = metadata.remote;
 
     await Promise.all(
       [
+        bookDbLoader.extractBookToDb(
+          {
+            book: content.book,
+            websiteId,
+          },
+        ),
         this.extractReviewerToDb(
           {
             author: content.author,
@@ -37,12 +46,11 @@ export class BookReviewDbLoader implements MetadataDbLoader {
   /**
    * Finds or creates reviewer record in DB
    *
-   * @private
    * @param {Object} attrs
    * @returns
    * @memberof BookReviewDbLoader
    */
-  private async extractReviewerToDb(
+  async extractReviewerToDb(
     {
       author,
       websiteId,

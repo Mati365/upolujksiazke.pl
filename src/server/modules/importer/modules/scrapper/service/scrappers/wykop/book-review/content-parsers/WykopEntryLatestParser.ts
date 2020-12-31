@@ -32,9 +32,25 @@ export class WykopEntryLatestParser extends WykopEntryContentParser {
   static readonly propertiesExtractor = R.compose(
     R.evolve(
       {
+        categories: R.compose(
+          R.reject(R.isEmpty),
+          R.map(
+            R.pipe(
+              // rejects special characters such as (?) from categories
+              R.match(/([a-zA-ZżźćńółęąśŻŹĆĄŚĘŁÓŃ\s]+)/),
+              R.nth(1),
+              R.unless(
+                R.isNil,
+                R.pipe(R.trim, R.toLower),
+              ),
+            ),
+          ),
+          R.split(/,|\si\s|\//),
+        ) as any,
+
         authors: (authors) => (
           authors
-            .split(',')
+            .split(/,|\si\s|\//)
             .map(R.trim)
             .filter(R.complement(R.isEmpty))
         ),
@@ -49,15 +65,17 @@ export class WykopEntryLatestParser extends WykopEntryContentParser {
         },
       },
     ),
-    (obj): WykopBookReviewHeader => removeNullValues({
-      /* eslint-disable @typescript-eslint/dot-notation */
-      title: obj['tytuł'],
-      category: obj['gatunek'],
-      isbn: obj['isbn'],
-      authors: obj['autor'],
-      score: obj['ocena'],
-      /* eslint-enable @typescript-eslint/dot-notation */
-    }),
+    (obj): WykopBookReviewHeader => removeNullValues(
+      {
+        /* eslint-disable @typescript-eslint/dot-notation */
+        title: obj['tytuł'],
+        categories: obj['gatunek'],
+        isbn: obj['isbn'],
+        authors: obj['autor'],
+        score: obj['ocena'],
+        /* eslint-enable @typescript-eslint/dot-notation */
+      },
+    ),
     (array) => R.reduce(
       (acc, [key, value]) => {
         acc[R.toLower(key)] = R.trim(value);
@@ -72,7 +90,16 @@ export class WykopEntryLatestParser extends WykopEntryContentParser {
     R.map(
       (matches) => [matches[1], matches[2]],
     ),
-    (str: string) => Array.from(str.matchAll(/(?:<strong>)?(.+):(?:<\/strong>)?\s(.+)<br\s\/>/g)),
+    (str: string) => {
+      // matches new pots with strong tags
+      const matches = [...str.matchAll(/(?:<strong>([^<>]+)(?::<\/strong>|<\/strong>:))\s(.+)<br\s\/>/g)];
+      if (matches.length)
+        return matches;
+
+      // matches posts without strong tags
+      // such as: https://www.wykop.pl/wpis/51668249/133-1-134-tytul-piter-bitwa-blizniakow-autor-szymu/
+      return [...str.matchAll(/(\S+):\s*([^<>]+)<br\s\/>/g)];
+    },
   ) as any;
 
   /**

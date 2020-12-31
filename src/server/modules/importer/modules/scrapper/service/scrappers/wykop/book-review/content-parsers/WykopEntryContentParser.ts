@@ -3,13 +3,13 @@ import {mergeNonNullProperties} from '@shared/helpers';
 
 export const WYKOP_POST_PROPS_KEYS: Readonly<(keyof WykopBookReviewHeader)[]> = Object.freeze(
   [
-    'title', 'category', 'isbn', 'authors', 'score',
+    'title', 'categories', 'isbn', 'authors', 'score',
   ],
 );
 
 export type WykopBookReviewHeader = {
   title?: string,
-  category?: string,
+  categories?: string[],
   isbn?: string,
   authors?: string[],
   score?: number,

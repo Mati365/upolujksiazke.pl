@@ -1,4 +1,7 @@
-import {EntityTarget, Connection, getRepository} from 'typeorm';
+import {
+  EntityTarget, Connection,
+  getRepository, SelectQueryBuilder,
+} from 'typeorm';
 
 import {safeArray} from '@shared/helpers/safeArray';
 import {CanBeArray} from '@shared/types';
@@ -6,6 +9,7 @@ import {CanBeArray} from '@shared/types';
 export async function upsert<T, E extends T | T[], K extends keyof T>(
   {
     Entity,
+    queryBuilder,
     connection,
     data,
     constraint,
@@ -14,6 +18,7 @@ export async function upsert<T, E extends T | T[], K extends keyof T>(
   }: {
     connection: Connection,
     Entity: EntityTarget<T>,
+    queryBuilder?: SelectQueryBuilder<T>,
     data: E,
     constraint?: string,
     primaryKey?: CanBeArray<(string & keyof T) | `${string & keyof T}Id`>,
@@ -43,8 +48,7 @@ export async function upsert<T, E extends T | T[], K extends keyof T>(
   );
 
   const result = await (
-    repo
-      .createQueryBuilder()
+    (repo.createQueryBuilder() || queryBuilder)
       .insert()
       .values(data)
       .onConflict(`${conflictKeys} DO UPDATE SET ${updateStr}`)

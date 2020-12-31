@@ -4,7 +4,7 @@
 ![Website](https://img.shields.io/website?url=https%3A%2F%2Fbookmeter.org&style=flat-square)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 
-OpenSource book reviews aggregator that helps with searching book reviews. Something like Metacritic / Digg for books.
+OpenSource book reviews aggregator that helps with searching book opinions. Something like Metacritic / Digg for books.
 
 ## Goals
 

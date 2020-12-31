@@ -2,11 +2,15 @@ import {ScrapperMetadataKind} from '../../../entity';
 import {WebsiteInfoScrapper, WebsiteScrappersGroup} from '../../shared';
 import {EIsbnBookScrapper, EIsbnBookScrapperConfig} from './Books.scrapper';
 
+export type EIsbnScrappersGroupConfig = EIsbnBookScrapperConfig & {
+  homepageURL: string,
+};
+
 export class EIsbnScrappersGroup extends WebsiteScrappersGroup {
-  constructor(config: EIsbnBookScrapperConfig) {
+  constructor({homepageURL, ...config}: EIsbnScrappersGroupConfig) {
     super(
       {
-        websiteInfoScrapper: new WebsiteInfoScrapper('https://e-isbn.pl'),
+        websiteInfoScrapper: new WebsiteInfoScrapper(homepageURL),
         scrappers: {
           [ScrapperMetadataKind.BOOK]: new EIsbnBookScrapper(config),
         },

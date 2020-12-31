@@ -2,8 +2,6 @@ import * as R from 'ramda';
 import chalk from 'chalk';
 import {Logger} from '@nestjs/common';
 
-import {ENV} from '@server/constants/env';
-
 import {Gender, RemoteID} from '@shared/types';
 import {ScrapperMetadataKind} from '@server/modules/importer/modules/scrapper/entity';
 import {AsyncScrapper, ScrapperBasicPagination} from '@server/modules/importer/modules/scrapper/service/shared';
@@ -13,11 +11,20 @@ import {
   BookReviewProcessResult,
 } from '../../BookReview.scrapper';
 
-import {WykopAPI, WykopAPIResponse} from '../api/WykopAPI';
+import {
+  WykopAPI,
+  WykopAPIAuthParams,
+  WykopAPIResponse,
+} from '../api/WykopAPI';
+
 import {
   WykopEntryContentParser,
   WykopEntryLatestParser,
 } from './content-parsers';
+
+export type WykopBookReviewScrapperConfig = {
+  authConfig: WykopAPIAuthParams,
+};
 
 /**
  * @see
@@ -31,7 +38,7 @@ import {
  */
 export class WykopBookReviewScrapper extends AsyncScrapper<BookReviewScrapperInfo[]> {
   protected readonly logger = new Logger(WykopBookReviewScrapper.name);
-  protected api = new WykopAPI(ENV.server.parsers.wykop);
+  protected readonly api: WykopAPI;
 
   static contentParsers: Readonly<WykopEntryContentParser[]> = Object.freeze(
     [
@@ -39,12 +46,18 @@ export class WykopBookReviewScrapper extends AsyncScrapper<BookReviewScrapperInf
     ],
   );
 
-  constructor() {
+  constructor(
+    {
+      authConfig,
+    }: WykopBookReviewScrapperConfig,
+  ) {
     super(
       {
         pageProcessDelay: 13000,
       },
     );
+
+    this.api = new WykopAPI(authConfig);
   }
 
   /**

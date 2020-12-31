@@ -1,6 +1,6 @@
 import * as R from 'ramda';
 
-import {notImplemented} from '@shared/helpers/decorators/noImplemented';
+import {NotImplemented} from '@shared/helpers/decorators/NotImplemented';
 
 import {ID, SortKeys, CanBeArray} from '@shared/types';
 import {APIClient} from '../../utils/APIClient';
@@ -60,21 +60,21 @@ export abstract class BaseAPIRepo<T, F = {}> implements IWrite<T, F>, IRead<T, F
     protected api: APIClient,
   ) {}
 
-  @notImplemented validate(item: Partial<T>): Promise<APIValidatorResponse<T>> { return null; }
-  @notImplemented create(item: Partial<T>): Promise<T> { return null; }
-  @notImplemented update(item: CanBeArray<Partial<T>>): Promise<Partial<T>> { return null; }
-  @notImplemented updateBulk(
+  @NotImplemented validate(item: Partial<T>): Promise<APIValidatorResponse<T>> { return null; }
+  @NotImplemented create(item: Partial<T>): Promise<T> { return null; }
+  @NotImplemented update(item: CanBeArray<Partial<T>>): Promise<Partial<T>> { return null; }
+  @NotImplemented updateBulk(
     target: APIBulkTarget<PaginationFilters<F>>,
     item: Partial<T>,
   ): Promise<void> {
     return null;
   }
 
-  @notImplemented delete(id: ID): Promise<void> { return null; }
-  @notImplemented deleteBulk(target: APIBulkTarget<PaginationFilters<F>>): Promise<void> { return null; }
-  @notImplemented find(item: T): Promise<T> { return null; }
-  @notImplemented findOne(id: ID): Promise<T> { return null; }
-  @notImplemented findAll(filters: PaginationFilters<F>): Promise<APIPagination<T, F>> { return null; }
-  @notImplemented findPlainList(filters?: PaginationFilters<F>): Promise<T[]> { return null; }
-  @notImplemented count(filters?: PaginationFilters<F>): Promise<number> { return null; }
+  @NotImplemented delete(id: ID): Promise<void> { return null; }
+  @NotImplemented deleteBulk(target: APIBulkTarget<PaginationFilters<F>>): Promise<void> { return null; }
+  @NotImplemented find(item: T): Promise<T> { return null; }
+  @NotImplemented findOne(id: ID): Promise<T> { return null; }
+  @NotImplemented findAll(filters: PaginationFilters<F>): Promise<APIPagination<T, F>> { return null; }
+  @NotImplemented findPlainList(filters?: PaginationFilters<F>): Promise<T[]> { return null; }
+  @NotImplemented count(filters?: PaginationFilters<F>): Promise<number> { return null; }
 }

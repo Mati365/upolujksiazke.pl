@@ -1,5 +1,5 @@
 import {DynamicModule, Global, Module} from '@nestjs/common';
-import uuid from 'uuid';
+import * as uuid from 'uuid';
 
 import {
   TmpDirService,

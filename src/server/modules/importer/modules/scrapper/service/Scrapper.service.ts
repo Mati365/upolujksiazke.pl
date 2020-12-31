@@ -5,6 +5,7 @@ import {Injectable, Logger} from '@nestjs/common';
 import {Connection, Equal, In} from 'typeorm';
 
 import {upsert} from '@server/common/helpers/db/upsert';
+import {ENV} from '@server/constants/env';
 
 import {RemoteID, IdentifiedItem} from '@shared/types';
 import {paginatedAsyncIterator} from '@server/common/helpers/paginatedAsyncIterator';
@@ -31,6 +32,8 @@ import {
   WykopScrappersGroup,
 } from './scrappers';
 
+const {parsers: PARSERS_ENV} = ENV.server;
+
 export type ScrapperAnalyzerStats = {
   updated: number,
   removed: number,
@@ -49,10 +52,14 @@ export class ScrapperService {
     tmpDirService: TmpDirService,
   ) {
     this.scrappersGroups = [
-      new WykopScrappersGroup,
+      new WykopScrappersGroup(PARSERS_ENV.wykop),
       new EIsbnScrappersGroup(
         {
-          tmpDirService,
+          ...PARSERS_ENV.eisbn,
+          tmp: {
+            ...PARSERS_ENV.eisbn.tmp,
+            dirService: tmpDirService,
+          },
         },
       ),
     ];

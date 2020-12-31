@@ -8,6 +8,8 @@ export type CanBeArray<T> = T | T[];
 
 export type CanBePromise<T> = T | Promise<T>;
 
+export type CanBeVoidFunction<T> = T | (() => T);
+
 export type IdentifiedItem<I = ID, R = {}> = R & {
   id: I,
 };

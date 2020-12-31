@@ -34,7 +34,20 @@ export type AppEnv = Partial<{
       localPath: string,
     },
     parsers: {
-      wykop: WykopAPIAuthParams,
+      wykop: {
+        homepageURL: string,
+        authConfig: WykopAPIAuthParams,
+      },
+      eisbn: {
+        homepageURL: string,
+        tmp: {
+          folder: string,
+          dbFiles: {
+            records: string,
+            publishers: string,
+          },
+        },
+      },
     },
   },
   client: {
@@ -99,11 +112,24 @@ export const GLOBAL_CONFIG: Record<string, AppEnv> = {
       },
       parsers: {
         wykop: {
-          key: WYKOP_KEY,
-          secret: WYKOP_SECRET,
-          account: {
-            name: WYKOP_ACCOUNT_NAME,
-            key: WYKOP_ACCOUNT_KEY,
+          homepageURL: 'https://wykop.pl',
+          authConfig: {
+            key: WYKOP_KEY,
+            secret: WYKOP_SECRET,
+            account: {
+              name: WYKOP_ACCOUNT_NAME,
+              key: WYKOP_ACCOUNT_KEY,
+            },
+          },
+        },
+        eisbn: {
+          homepageURL: 'https://e-isbn.pl',
+          tmp: {
+            folder: 'isbn-db',
+            dbFiles: {
+              records: 'records.xml',
+              publishers: 'publishers.xml',
+            },
           },
         },
       },

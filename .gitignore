@@ -115,5 +115,8 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
+tmp/
 backup/
 assets/cdn/
+
+.vscode/

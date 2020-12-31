@@ -1,14 +1,22 @@
 import {ScrapperMetadataKind} from '../../../entity';
 import {WebsiteInfoScrapper, WebsiteScrappersGroup} from '../../shared';
-import {WykopBookReviewScrapper} from './book-review/WykopBookReview.scrapper';
+import {WykopBookReviewScrapper, WykopBookReviewScrapperConfig} from './book-review/WykopBookReview.scrapper';
+
+export type WykopScrappersGroupConfig = WykopBookReviewScrapperConfig & {
+  homepageURL: string,
+};
 
 export class WykopScrappersGroup extends WebsiteScrappersGroup {
-  constructor() {
+  constructor({authConfig, homepageURL}: WykopScrappersGroupConfig) {
     super(
       {
-        websiteInfoScrapper: new WebsiteInfoScrapper('https://wykop.pl'),
+        websiteInfoScrapper: new WebsiteInfoScrapper(homepageURL),
         scrappers: {
-          [ScrapperMetadataKind.BOOK_REVIEW]: new WykopBookReviewScrapper,
+          [ScrapperMetadataKind.BOOK_REVIEW]: new WykopBookReviewScrapper(
+            {
+              authConfig,
+            },
+          ),
         },
       },
     );

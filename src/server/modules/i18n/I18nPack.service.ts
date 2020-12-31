@@ -1,7 +1,7 @@
 import {Inject, Injectable} from '@nestjs/common';
 import * as R from 'ramda';
 
-import {memoizeMethod} from '@shared/helpers/decorators/memoizeMethod';
+import {MemoizeMethod} from '@shared/helpers/decorators/MemoizeMethod';
 import {LangPack} from '@client/i18n/utils/createLangPack';
 
 export const I18N_OPTIONS = 'I18N_OPTIONS';
@@ -25,7 +25,7 @@ export class I18nPackService {
     return this.packs;
   }
 
-  @memoizeMethod
+  @MemoizeMethod
   getAvailableLanguages() {
     return R.keys(this.packs);
   }

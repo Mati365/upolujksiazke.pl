@@ -1,4 +1,5 @@
 export * from './isRootClusterAppInstance';
 export * from './loadFsJSON';
 export * from './paginatedAsyncIterator';
-export * from './removeAndCreateDir';
+export * from './dirUtils';
+export * from './fileUtils';

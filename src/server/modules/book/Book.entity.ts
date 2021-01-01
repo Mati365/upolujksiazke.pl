@@ -2,7 +2,8 @@ import * as R from 'ramda';
 import {Transform} from 'class-transformer';
 import {
   Entity, Column, Index,
-  ManyToMany, OneToMany, JoinTable,
+  ManyToMany, OneToMany,
+  JoinTable, BeforeInsert, BeforeUpdate,
 } from 'typeorm';
 
 import {DatedRecordEntity} from '../database/DatedRecord.entity';
@@ -55,5 +56,13 @@ export class BookEntity extends DatedRecordEntity {
   constructor(partial: Partial<BookEntity>) {
     super();
     Object.assign(this, partial);
+  }
+
+  @BeforeInsert()
+  @BeforeUpdate()
+  transformFields() {
+    const {isbn} = this;
+    if (isbn)
+      this.isbn = isbn.replaceAll('-', '');
   }
 }

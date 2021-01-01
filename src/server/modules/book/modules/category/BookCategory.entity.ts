@@ -1,4 +1,7 @@
-import {Entity, Column, ManyToMany} from 'typeorm';
+import {
+  Entity, Column, ManyToMany,
+  BeforeInsert, BeforeUpdate,
+} from 'typeorm';
 
 import {DatedRecordEntity} from '../../../database/DatedRecord.entity';
 import {BookEntity} from '../../Book.entity';
@@ -18,5 +21,13 @@ export class BookCategoryEntity extends DatedRecordEntity {
   constructor(partial: Partial<BookCategoryEntity>) {
     super();
     Object.assign(this, partial);
+  }
+
+  @BeforeInsert()
+  @BeforeUpdate()
+  transformFields() {
+    const {name} = this;
+    if (name)
+      this.name = name.toLowerCase();
   }
 }

@@ -1,6 +1,7 @@
 import {
   EntityTarget, Connection,
   getRepository, SelectQueryBuilder,
+  EntityManager,
 } from 'typeorm';
 
 import {safeArray} from '@shared/helpers/safeArray';
@@ -9,6 +10,7 @@ import {CanBeArray} from '@shared/types';
 export async function upsert<T, E extends T | T[], K extends keyof T>(
   {
     Entity,
+    entityManager,
     queryBuilder,
     connection,
     data,
@@ -17,6 +19,7 @@ export async function upsert<T, E extends T | T[], K extends keyof T>(
     skip = ['id', 'createdAt'] as K[],
   }: {
     connection: Connection,
+    entityManager?: EntityManager,
     Entity: EntityTarget<T>,
     queryBuilder?: SelectQueryBuilder<T>,
     data: E,
@@ -25,7 +28,12 @@ export async function upsert<T, E extends T | T[], K extends keyof T>(
     skip?: K[],
   },
 ): Promise<E> {
-  const repo = getRepository(Entity);
+  const repo = (
+    entityManager
+      ? entityManager.getRepository(Entity)
+      : getRepository(Entity)
+  );
+
   const updateStr = (
     connection
       .getMetadata(Entity)

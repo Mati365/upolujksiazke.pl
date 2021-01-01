@@ -12,7 +12,7 @@ import {NestFactory, Reflector} from '@nestjs/core';
 import {ExpressAdapter, NestExpressApplication} from '@nestjs/platform-express';
 import {ClassSerializerInterceptor} from '@nestjs/common';
 
-import {AppEnv, ENV} from './constants/env';
+import {AppEnv, SERVER_ENV} from './constants/env';
 
 import {LoggerInterceptor} from './common/interceptors/Logger.interceptor';
 import {ClusterService} from './common/services/Cluster.service';
@@ -92,9 +92,9 @@ ClusterService.clusterize(
   () => {
     forkApp(
       {
-        ssl: ENV.server.ssl,
-        address: ENV.server.listen.address,
-        port: ENV.server.listen.port,
+        ssl: SERVER_ENV.ssl,
+        address: SERVER_ENV.listen.address,
+        port: SERVER_ENV.listen.port,
       },
     );
   },

@@ -8,3 +8,6 @@ export const ENV = {
   ...GLOBAL_CONFIG.shared,
   ...GLOBAL_CONFIG[process.env.APP_ENV || 'development'],
 };
+
+export const SERVER_ENV = ENV.server;
+export const CLIENT_ENV = ENV.client;

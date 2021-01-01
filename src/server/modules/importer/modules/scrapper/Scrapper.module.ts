@@ -1,14 +1,15 @@
-import {Module} from '@nestjs/common';
+import {Module, forwardRef} from '@nestjs/common';
 import {TypeOrmModule} from '@nestjs/typeorm';
 
 import {BookEntity} from '@server/modules/book/Book.entity';
-import {BookReviewEntity} from '@server/modules/book-review/BookReview.entity';
-import {MetadataDbLoaderModule} from '../metadata-db-loader/MetadataDbLoader.module';
+import {BookReviewEntity} from '@server/modules/book/modules/review/BookReview.entity';
 
+import {MetadataDbLoaderModule} from '../db-loader/MetadataDbLoader.module';
 import {
   WebsiteInfoScrapperService,
   ScrapperCronService,
   ScrapperService,
+  RemoteEntityService,
 } from './service';
 
 import {
@@ -19,7 +20,7 @@ import {
 @Module(
   {
     imports: [
-      MetadataDbLoaderModule,
+      forwardRef(() => MetadataDbLoaderModule),
       TypeOrmModule.forFeature(
         [
           BookEntity,
@@ -33,6 +34,12 @@ import {
       WebsiteInfoScrapperService,
       ScrapperService,
       ScrapperCronService,
+      RemoteEntityService,
+    ],
+    exports: [
+      WebsiteInfoScrapperService,
+      ScrapperService,
+      RemoteEntityService,
     ],
   },
 )

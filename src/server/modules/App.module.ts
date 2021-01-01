@@ -2,7 +2,7 @@ import {Module} from '@nestjs/common';
 import {ScheduleModule} from '@nestjs/schedule';
 import {BullModule} from '@nestjs/bull';
 
-import {ENV} from '@server/constants/env';
+import {SERVER_ENV} from '@server/constants/env';
 
 import {
   getClusterAppInstance,
@@ -12,7 +12,7 @@ import {
 import {DatabaseModule} from './database/Database.module';
 import {FrontModule} from './front';
 import {ManifestModule} from './manifest';
-import {CdnModule} from './cdn';
+import {AttachmentModule} from './attachment';
 import {ImporterModule} from './importer';
 import {TmpDirModule} from './tmp-dir';
 
@@ -22,7 +22,7 @@ import {TmpDirModule} from './tmp-dir';
       DatabaseModule,
       BullModule.forRoot(
         {
-          redis: ENV.server.redisConfig,
+          redis: SERVER_ENV.redisConfig,
           limiter: {
             max: 5,
             duration: 1500,
@@ -38,11 +38,7 @@ import {TmpDirModule} from './tmp-dir';
           ? [ScheduleModule.forRoot()]
           : []
       ),
-      CdnModule.register(
-        {
-          uploadRootDir: ENV.server.cdn.localPath,
-        },
-      ),
+      AttachmentModule.register(),
       ManifestModule.register(
         {
           file: 'public/files-manifest.json',

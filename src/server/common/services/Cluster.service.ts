@@ -3,17 +3,17 @@ import {Injectable} from '@nestjs/common';
 import * as R from 'ramda';
 
 import {isDevMode} from '@shared/helpers/isDevMode';
-import {ENV} from '@server/constants/env';
+import {SERVER_ENV} from '@server/constants/env';
 
 @Injectable()
 export class ClusterService {
   static clusterize(callback: Function): void {
-    if (cluster.isMaster && !isDevMode() && ENV.server.instances > 1) {
+    if (cluster.isMaster && !isDevMode() && SERVER_ENV.instances > 1) {
       console.info(`🚀 Master server (${process.pid}) is running!`);
 
       R.times(
         () => cluster.fork(),
-        ENV.server.instances,
+        SERVER_ENV.instances,
       );
 
       cluster.on('exit', (worker) => {

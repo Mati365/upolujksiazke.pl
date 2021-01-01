@@ -32,11 +32,11 @@ export class WykopEntryLatestParser extends WykopEntryContentParser {
   static readonly propertiesExtractor = R.compose(
     R.evolve(
       {
-        categories: R.compose(
+        tags: R.compose(
           R.reject(R.isEmpty),
           R.map(
             R.pipe(
-              // rejects special characters such as (?) from categories
+              // rejects special characters such as (?) from tags
               R.match(/([a-zA-ZżźćńółęąśŻŹĆĄŚĘŁÓŃ\s]+)/),
               R.nth(1),
               R.unless(
@@ -69,7 +69,7 @@ export class WykopEntryLatestParser extends WykopEntryContentParser {
       {
         /* eslint-disable @typescript-eslint/dot-notation */
         title: obj['tytuł'],
-        categories: obj['gatunek'],
+        tags: obj['gatunek'],
         isbn: obj['isbn'],
         authors: obj['autor'],
         score: obj['ocena'],

@@ -1,13 +1,16 @@
+import * as R from 'ramda';
+import {Transform} from 'class-transformer';
 import {
   Entity, Column, Index,
   ManyToMany, OneToMany, JoinTable,
 } from 'typeorm';
 
 import {DatedRecordEntity} from '../database/DatedRecord.entity';
-import {AuthorEntity} from '../author/Author.entity';
-import {BookReviewEntity} from '../book-review/BookReview.entity';
-import {BookCategoryEntity} from '../book-category/BookCategory.entity';
-import {BookReviewerEntity} from '../book-reviewer/BookReviewer.entity';
+import {TagEntity} from '../tag/Tag.entity';
+import {BookAuthorEntity} from './modules/author/BookAuthor.entity';
+import {BookCategoryEntity} from './modules/category/BookCategory.entity';
+import {BookReviewEntity} from './modules/review/BookReview.entity';
+import {BookReviewerEntity} from './modules/reviewer/BookReviewer.entity';
 
 @Entity(
   {
@@ -15,7 +18,7 @@ import {BookReviewerEntity} from '../book-reviewer/BookReviewer.entity';
   },
 )
 export class BookEntity extends DatedRecordEntity {
-  @Column('text')
+  @Column('text', {unique: true})
   title!: string;
 
   @Index(
@@ -26,12 +29,12 @@ export class BookEntity extends DatedRecordEntity {
   @Column('text')
   isbn!: string;
 
-  @Column('text')
+  @Column('text', {nullable: true})
   description: string;
 
   @JoinTable()
-  @ManyToMany(() => AuthorEntity, (author) => author.books)
-  authors: AuthorEntity[];
+  @ManyToMany(() => BookAuthorEntity, (author) => author.books)
+  authors: BookAuthorEntity[];
 
   @JoinTable()
   @ManyToMany(() => BookCategoryEntity, (categoryEntity) => categoryEntity.books)
@@ -43,6 +46,11 @@ export class BookEntity extends DatedRecordEntity {
   @JoinTable()
   @ManyToMany(() => BookReviewerEntity, (reviewer) => reviewer.books)
   reviewers: BookReviewerEntity[];
+
+  @Transform(R.map(R.prop('name')))
+  @JoinTable()
+  @ManyToMany(() => TagEntity)
+  tags: TagEntity[];
 
   constructor(partial: Partial<BookEntity>) {
     super();

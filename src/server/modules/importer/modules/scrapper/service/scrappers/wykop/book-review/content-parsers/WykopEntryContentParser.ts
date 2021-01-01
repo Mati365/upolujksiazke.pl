@@ -7,13 +7,14 @@ export const WYKOP_POST_PROPS_KEYS: Readonly<(keyof WykopBookReviewHeader)[]> = 
   ],
 );
 
-export type WykopBookReviewHeader = {
-  title?: string,
-  categories?: string[],
-  isbn?: string,
-  authors?: string[],
-  score?: number,
-};
+export type WykopBookReviewHeader = Partial<{
+  title: string,
+  categories: string[],
+  tags: string[],
+  isbn: string,
+  authors: string[],
+  score: number,
+}>;
 
 export type WykopContentParserResult = {
   properties: WykopBookReviewHeader,

@@ -10,7 +10,11 @@ import {
 } from '@nestjs/common';
 
 import {MAGIC_ASYNC_DATA_CONTEXT} from '@client/hooks/useSSRPromiseAttach/wrapHydratedAsyncTree';
-import {ENV} from '@server/constants/env';
+import {
+  CLIENT_ENV,
+  SERVER_ENV,
+} from '@server/constants/env';
+
 import {ssrRenderAsyncTree} from '@client/hooks/useSSRPromiseAttach/ssrRenderAsyncTree';
 
 import {AttachedPromise} from '@client/hooks/useSSRPromiseAttach';
@@ -102,7 +106,7 @@ export class FrontController {
               location: req.url,
             },
             apiConfig: {
-              ...ENV.server.apiConfig,
+              ...SERVER_ENV.apiConfig,
               tokenAccessor: new APICookieTokenAccessor(
                 {
                   cookiesDriver: new RequestCookiesDriver(req, res),
@@ -114,7 +118,7 @@ export class FrontController {
           provideAsGlobals={{
             ua,
             i18n: hydrateLang,
-            env: ENV.client,
+            env: CLIENT_ENV,
             ssrTime: Date.now(),
             [MAGIC_ASYNC_DATA_CONTEXT]: asyncAcc.toJSON,
           }}

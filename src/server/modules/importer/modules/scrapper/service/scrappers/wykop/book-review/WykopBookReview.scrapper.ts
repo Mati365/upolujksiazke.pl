@@ -135,6 +135,7 @@ export class WykopBookReviewScrapper extends AsyncScrapper<BookReviewScrapperInf
         isbn: properties.isbn,
         authors: properties.authors,
         categories: properties.categories,
+        tags: properties.tags,
         description: null,
         cover: embed && {
           nsfw: embed.plus18,

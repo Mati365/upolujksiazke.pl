@@ -1,13 +1,9 @@
 import {TypeOrmModuleOptions} from '@nestjs/typeorm';
 
-import {ENV} from '@server/constants/env';
+import {SERVER_ENV} from '@server/constants/env';
 import {isDevMode} from '@shared/helpers';
 
-import {AuthorEntity} from '../../author/Author.entity';
-import {BookEntity} from '../../book/Book.entity';
-import {BookReviewEntity} from '../../book-review/BookReview.entity';
-import {BookCategoryEntity} from '../../book-category/BookCategory.entity';
-import {BookReviewerEntity} from '../../book-reviewer/BookReviewer.entity';
+import {TagEntity} from '@server/modules/tag/Tag.entity';
 
 import {
   ScrapperMetadataEntity,
@@ -15,8 +11,15 @@ import {
   ScrapperWebsiteEntity,
 } from '../../importer/modules/scrapper/entity';
 
+import {AttachmentEntity} from '../../attachment/Attachment.entity';
+import {BookEntity} from '../../book/Book.entity';
+import {BookAuthorEntity} from '../../book/modules/author/BookAuthor.entity';
+import {BookReviewEntity} from '../../book/modules/review/BookReview.entity';
+import {BookCategoryEntity} from '../../book/modules/category/BookCategory.entity';
+import {BookReviewerEntity} from '../../book/modules/reviewer/BookReviewer.entity';
+
 export const DB_CONFIG: TypeOrmModuleOptions = {
-  ...ENV.server.dbConfig,
+  ...SERVER_ENV.dbConfig,
   type: 'postgres',
   logger: 'advanced-console',
   logging: (
@@ -26,7 +29,8 @@ export const DB_CONFIG: TypeOrmModuleOptions = {
   ),
   synchronize: false,
   entities: [
-    AuthorEntity,
+    AttachmentEntity,
+    BookAuthorEntity,
     BookEntity,
     BookReviewEntity,
     BookCategoryEntity,
@@ -34,5 +38,6 @@ export const DB_CONFIG: TypeOrmModuleOptions = {
     ScrapperMetadataEntity,
     ScrapperWebsiteEntity,
     ScrapperRemoteEntity,
+    TagEntity,
   ],
 };

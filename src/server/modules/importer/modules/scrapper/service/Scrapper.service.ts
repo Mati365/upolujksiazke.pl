@@ -4,21 +4,21 @@ import pLimit from 'p-limit';
 import {Injectable, Logger} from '@nestjs/common';
 import {Connection, Equal, In} from 'typeorm';
 
-import {upsert} from '@server/common/helpers/db/upsert';
-import {ENV} from '@server/constants/env';
+import {SERVER_ENV} from '@server/constants/env';
 
 import {RemoteID, IdentifiedItem} from '@shared/types';
 import {paginatedAsyncIterator} from '@server/common/helpers/paginatedAsyncIterator';
+import {upsert} from '@server/common/helpers/db/upsert';
 
 import {TmpDirService} from '@server/modules/tmp-dir/TmpDir.service';
-import {MetadataDbLoaderQueueService} from '../../metadata-db-loader/services';
+import {MetadataDbLoaderQueueService} from '../../db-loader/services';
 import {WebsiteInfoScrapperService} from './WebsiteInfoScrapper.service';
 import {
+  ScrapperRemoteEntity,
+  ScrapperWebsiteEntity,
   ScrapperMetadataEntity,
   ScrapperMetadataKind,
   ScrapperMetadataStatus,
-  ScrapperRemoteEntity,
-  ScrapperWebsiteEntity,
 } from '../entity';
 
 import {
@@ -32,7 +32,7 @@ import {
   WykopScrappersGroup,
 } from './scrappers';
 
-const {parsers: PARSERS_ENV} = ENV.server;
+const {parsers: PARSERS_ENV} = SERVER_ENV;
 
 export type ScrapperAnalyzerStats = {
   updated: number,
@@ -177,11 +177,12 @@ export class ScrapperService {
     } = this;
 
     const website = await websiteInfoScrapperService.findOrCreateWebsiteEntity(scrappersGroup.websiteInfoScrapper);
-    const updatedEntity = await connection.transaction(async () => {
+    const updatedEntity = await connection.transaction(async (transaction) => {
       const newEntity = ScrapperService.scrapperResultToMetadataEntity(website, item);
       await upsert(
         {
           connection,
+          entityManager: transaction,
           Entity: ScrapperRemoteEntity,
           constraint: 'unique_remote_entry',
           data: newEntity.remote,
@@ -191,6 +192,7 @@ export class ScrapperService {
       return upsert(
         {
           connection,
+          entityManager: transaction,
           Entity: ScrapperMetadataEntity,
           primaryKey: ['remoteId'],
           data: newEntity,

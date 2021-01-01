@@ -5,6 +5,7 @@ export type BookScrapperInfo = {
   isbn: string,
   authors: string[],
   categories: string[],
+  tags: string[],
   description?: string,
   cover?: {
     nsfw: boolean,

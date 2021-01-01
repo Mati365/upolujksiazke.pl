@@ -1,5 +1,5 @@
 import {
-  ArrayMaxSize, IsArray, IsDefined,
+  ArrayMaxSize, IsArray, IsDefined, IsNumber,
   IsOptional, IsString, MinLength,
 } from 'class-validator';
 
@@ -7,6 +7,10 @@ import {IsUniqueValue} from '@server/common/validators/IsUniqueValue';
 import {IsTagCorrect} from '@server/modules/tag/validators/IsTagCorrect';
 
 export class CreateBookDto {
+  @IsOptional()
+  @IsNumber()
+  readonly id: number;
+
   @IsDefined()
   @IsString()
   readonly isbn: string;

@@ -11,14 +11,16 @@ import {
   TmpFolderScopeAttrs,
 } from '@server/modules/tmp-dir';
 
-import {CanBePromise} from '@shared/types';
 import {
   AsyncScrapper,
   ScrapperBasicPagination,
   ScrapperResult,
 } from '../../shared';
 
-import {convertOnixToBookxMetadata} from './utils/convertOnixToBookMetadata';
+import {
+  convertOnixToBookxMetadata,
+  OnixBookFormat,
+} from './utils/convertOnixToBookMetadata';
 
 export type EIsbnBookScrapperConfig = {
   tmp: {
@@ -48,7 +50,8 @@ export class EIsbnBookScrapper extends AsyncScrapper<any> {
     return null;
   }
 
-  protected processPage(): CanBePromise<ScrapperResult<any, ScrapperBasicPagination>> {
+  protected async processPage(): Promise<ScrapperResult<any, ScrapperBasicPagination>> {
+    await this.getBooksDBCache();
     return null;
   }
 
@@ -78,14 +81,22 @@ export class EIsbnBookScrapper extends AsyncScrapper<any> {
       this.logger.log(`Entering ${chalk.bold(tmpFolderPath)} tmp folder!`);
     },
   )
-  private async getIsbnDBCache({tmpFolderPath}: TmpFolderScopeAttrs = null) {
+  private async getBooksDBCache({tmpFolderPath}: TmpFolderScopeAttrs = null) {
     const {tmp: {dbFiles}} = this.config;
     const stream = fs.createReadStream(path.join(tmpFolderPath, dbFiles.records));
     const xml = new XMLStream(stream);
 
-    xml.on('endElement: Product', (entry: object) => {
-      convertOnixToBookxMetadata(entry);
-      throw new Error;
+    return new Promise((resolve, reject) => {
+      xml.on('endElement: Product', (entry: OnixBookFormat) => {
+        try {
+          convertOnixToBookxMetadata(entry);
+        } catch (e) {
+          reject(e);
+        }
+      });
+
+      xml.on('error', reject);
+      xml.on('end', resolve);
     });
   }
 }

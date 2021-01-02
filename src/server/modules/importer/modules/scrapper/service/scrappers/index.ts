@@ -1,2 +1,4 @@
-export * from './e-isbn';
+export * from './eisbn';
 export * from './wykop';
+export * from './wikipedia';
+export * from './literatura-gildia';

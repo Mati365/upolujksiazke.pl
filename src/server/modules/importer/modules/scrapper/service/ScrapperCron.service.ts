@@ -1,17 +1,17 @@
 import {Injectable} from '@nestjs/common';
 import {Cron, CronExpression} from '@nestjs/schedule';
 import {ScrapperMetadataKind} from '../entity';
-import {ScrapperService} from './Scrapper.service';
+import {ScrapperRefreshService} from './actions';
 
 @Injectable()
 export class ScrapperCronService {
   constructor(
-    private readonly scrapperService: ScrapperService,
+    private readonly scrapperRefreshService: ScrapperRefreshService,
   ) {}
 
   @Cron(CronExpression.EVERY_5_MINUTES)
   fetchLatestReviews() {
-    this.scrapperService.refreshLatest(
+    this.scrapperRefreshService.refreshLatest(
       {
         kind: ScrapperMetadataKind.BOOK_REVIEW,
         maxIterations: 1,

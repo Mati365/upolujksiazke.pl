@@ -1,6 +1,6 @@
 import {ScrapperMetadataKind} from '../../../entity';
 import {WebsiteInfoScrapper, WebsiteScrappersGroup} from '../../shared';
-import {EIsbnBookScrapper, EIsbnBookScrapperConfig} from './Books.scrapper';
+import {EIsbnBookScrapper, EIsbnBookScrapperConfig} from './EIsbnBooks.scrapper';
 
 export type EIsbnScrappersGroupConfig = EIsbnBookScrapperConfig & {
   homepageURL: string,

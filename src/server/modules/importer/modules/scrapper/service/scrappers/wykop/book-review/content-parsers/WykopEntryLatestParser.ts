@@ -32,6 +32,7 @@ export class WykopEntryLatestParser extends WykopEntryContentParser {
   static readonly propertiesExtractor = R.compose(
     R.evolve(
       {
+        isbn: R.replace(/-/g, ''),
         tags: R.compose(
           R.filter(Boolean),
           R.map(

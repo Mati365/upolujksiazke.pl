@@ -1,4 +1,6 @@
 import cheerio from 'cheerio';
+import * as R from 'ramda';
+
 import {RemoteWebsiteEntity} from '@server/modules/remote/entity';
 
 /**
@@ -29,12 +31,16 @@ export class WebsiteInfoScrapper {
       await fetch(url).then((r) => r.text()),
     );
 
+    let faviconUrl = $('[rel="shortcut icon"], [rel="icon"]').attr('href');
+    if (faviconUrl && R.startsWith('/', faviconUrl))
+      faviconUrl = `${R.endsWith('/', url) ? R.init(url) : url}${faviconUrl}`;
+
     return new RemoteWebsiteEntity(
       {
         url,
         title: $('title').text(),
         description: $('meta[name="description"]').attr('content'),
-        faviconUrl: $('link[rel="icon"]').attr('href'),
+        faviconUrl,
       },
     );
   }

@@ -34,9 +34,19 @@ export type AppEnv = Partial<{
       localPath: string,
     },
     parsers: {
+      literaturaGildia: {
+        homepageURL: string,
+      },
       wykop: {
         homepageURL: string,
         authConfig: WykopAPIAuthParams,
+      },
+      wikipedia: {
+        homepageURL: string,
+        clientOptions: {
+          apiUrl?: string,
+          origin?: string,
+        },
       },
       eisbn: {
         homepageURL: string,
@@ -120,6 +130,16 @@ export const GLOBAL_CONFIG: Record<string, AppEnv> = {
               name: WYKOP_ACCOUNT_NAME,
               key: WYKOP_ACCOUNT_KEY,
             },
+          },
+        },
+        literaturaGildia: {
+          homepageURL: 'https://www.literatura.gildia.pl/',
+        },
+        wikipedia: {
+          homepageURL: 'https://pl.wikipedia.org',
+          clientOptions: {
+            apiUrl: 'http://pl.wikipedia.org/w/api.php',
+            origin: '*',
           },
         },
         eisbn: {

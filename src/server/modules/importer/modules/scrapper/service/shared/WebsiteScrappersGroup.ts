@@ -4,27 +4,39 @@ import {PartialRecord} from '@shared/types';
 
 import {ScrapperMetadataKind} from '../../entity/ScrapperMetadata.entity';
 import {AsyncScrapper} from './AsyncScrapper';
+import {ScrapperMatcher, ScrapperMatcherResult} from './ScrapperMatcher';
 import {WebsiteInfoScrapper} from './WebsiteInfoScrapper';
 
 export type WebsiteScrappersKindMap = PartialRecord<ScrapperMetadataKind, AsyncScrapper<any, any>>;
 
+export type WebsiteScrappersMatchersKindMap = PartialRecord<ScrapperMetadataKind, ScrapperMatcher<any, any>>;
+
 export type ScrappersGroupInitializer<W extends WebsiteInfoScrapper> = {
   websiteInfoScrapper?: W,
-  scrappers: WebsiteScrappersKindMap,
+  scrappers?: WebsiteScrappersKindMap,
+  matchers?: WebsiteScrappersMatchersKindMap,
+};
+
+export type MatchRecordAttrs = {
+  data: any,
+  kind: ScrapperMetadataKind,
 };
 
 export class WebsiteScrappersGroup<W extends WebsiteInfoScrapper = WebsiteInfoScrapper> {
   public readonly websiteInfoScrapper: W;
   public readonly scrappers: WebsiteScrappersKindMap;
+  public readonly matchers: WebsiteScrappersMatchersKindMap;
 
   constructor(
     {
       websiteInfoScrapper,
-      scrappers,
+      scrappers = {},
+      matchers = {},
     }: ScrappersGroupInitializer<W>,
   ) {
     this.websiteInfoScrapper = websiteInfoScrapper;
     this.scrappers = scrappers;
+    this.matchers = matchers;
 
     R.forEachObjIndexed(
       (scrapper) => {
@@ -37,5 +49,25 @@ export class WebsiteScrappersGroup<W extends WebsiteInfoScrapper = WebsiteInfoSc
 
   get websiteURL() {
     return this.websiteInfoScrapper.websiteURL;
+  }
+
+  /**
+   *Finds record in remote webiste using provided info
+   *
+   * @param {MatchRecordAttrs} attrs
+   * @returns {Promise<ScrapperMatcherResult<any>>}
+   * @memberof WebsiteScrappersGroup
+   */
+  async matchRecord(
+    {
+      data,
+      kind,
+    }: MatchRecordAttrs,
+  ): Promise<ScrapperMatcherResult<any>> {
+    const matcher = this.matchers[kind];
+    if (!matcher)
+      return null;
+
+    return matcher.matchRecord(data);
   }
 }

@@ -2,9 +2,10 @@ import {NestFactory} from '@nestjs/core';
 import {TaskFunction} from 'gulp';
 
 import {logger} from '@tasks/utils/logger';
+
 import {AppModule} from '@server/modules/App.module';
-import {ScrapperModule} from '../Scrapper.module';
-import {ScrapperService} from '../service';
+import {ScrapperModule} from '@server/modules/importer/modules/scrapper/Scrapper.module';
+import {ScrapperReanalyzerService} from '@server/modules/importer/modules/scrapper/service/actions';
 
 /**
  * Iterates over all records and parses them again,
@@ -21,7 +22,7 @@ export const reanalyzeAllReviewsTask: TaskFunction = async () => {
   const {removed, updated} = await (
     app
       .select(ScrapperModule)
-      .get(ScrapperService)
+      .get(ScrapperReanalyzerService)
       .reanalyze()
   );
   app.close();

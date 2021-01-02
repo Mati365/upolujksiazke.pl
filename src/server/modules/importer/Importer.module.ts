@@ -1,6 +1,5 @@
 import {Module} from '@nestjs/common';
 
-import {BookMatcherModule} from './modules/book-matcher/BookMatcher.module';
 import {MetadataDbLoaderModule} from './modules/db-loader/MetadataDbLoader.module';
 import {ScrapperModule} from './modules/scrapper/Scrapper.module';
 
@@ -8,7 +7,6 @@ import {ScrapperModule} from './modules/scrapper/Scrapper.module';
   {
     imports: [
       MetadataDbLoaderModule,
-      BookMatcherModule,
       ScrapperModule,
     ],
   },

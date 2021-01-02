@@ -8,7 +8,6 @@ import {BookReviewerEntity} from '@server/modules/book/modules/reviewer/BookRevi
 import {BookModule} from '@server/modules/book/Book.module';
 
 import {ScrapperMetadataEntity} from '../scrapper/entity';
-import {BookMatcherModule} from '../book-matcher/BookMatcher.module';
 import {BookDbLoader, BookReviewDbLoader} from './loaders';
 
 import {
@@ -21,11 +20,13 @@ import {
   MetadataDbLoaderConsumerProcessor,
 } from './processors/MetadataDbLoaderConsumer.processor';
 
+import {ScrapperModule} from '../scrapper/Scrapper.module';
+
 @Module(
   {
     imports: [
       forwardRef(() => BookModule),
-      BookMatcherModule,
+      ScrapperModule,
       TagModule,
       BullModule.registerQueue(
         {

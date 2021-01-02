@@ -33,6 +33,13 @@ export type EIsbnBookScrapperConfig = {
   },
 };
 
+/**
+ * Scrapper that fetches database and performs search in it
+ *
+ * @export
+ * @class EIsbnBookScrapper
+ * @extends {AsyncScrapper<any>}
+ */
 export class EIsbnBookScrapper extends AsyncScrapper<any> {
   private logger = new Logger(EIsbnBookScrapper.name);
 

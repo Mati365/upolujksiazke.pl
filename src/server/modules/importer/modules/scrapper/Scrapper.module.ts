@@ -14,6 +14,12 @@ import {
   ScrapperService,
 } from './service';
 
+import {
+  ScrapperMatcherService,
+  ScrapperReanalyzerService,
+  ScrapperRefreshService,
+} from './service/actions';
+
 @Module(
   {
     imports: [
@@ -31,10 +37,16 @@ import {
       WebsiteInfoScrapperService,
       ScrapperService,
       ScrapperCronService,
+      ScrapperRefreshService,
+      ScrapperReanalyzerService,
+      ScrapperMatcherService,
     ],
     exports: [
       WebsiteInfoScrapperService,
       ScrapperService,
+      ScrapperRefreshService,
+      ScrapperReanalyzerService,
+      ScrapperMatcherService,
     ],
   },
 )

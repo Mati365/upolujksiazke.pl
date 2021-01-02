@@ -6,23 +6,24 @@ import * as R from 'ramda';
 import {logger} from '@tasks/utils/logger';
 
 import {AppModule} from '@server/modules/App.module';
-import {ScrapperModule} from '../Scrapper.module';
-import {ScrapperService} from '../service/Scrapper.service';
-import {ScrapperMetadataKind} from '../entity';
+import {ScrapperModule} from '@server/modules/importer/modules/scrapper/Scrapper.module';
+import {ScrapperRefreshService} from '@server/modules/importer/modules/scrapper/service/actions';
+import {ScrapperService} from '@server/modules/importer/modules/scrapper/service';
+import {ScrapperMetadataKind} from '@server/modules/importer/modules/scrapper/entity';
 
 /**
  * Refreshes all latest entities
  *
- * @param {Parameters<ScrapperService['refreshLatest']>[0]} config
+ * @param {Parameters<ScrapperRefreshService['refreshLatest']>[0]} config
  */
-async function refreshLatest(config: Parameters<ScrapperService['refreshLatest']>[0]) {
+async function refreshLatest(config: Parameters<ScrapperRefreshService['refreshLatest']>[0]) {
   const app = await NestFactory.create(AppModule);
   app.enableShutdownHooks();
 
   await (
     app
       .select(ScrapperModule)
-      .get(ScrapperService)
+      .get(ScrapperRefreshService)
       .refreshLatest(config)
   );
 
@@ -46,23 +47,22 @@ async function refreshScrapper(
   },
 ) {
   const app = await NestFactory.create(AppModule);
+  const scrapperMod = app.select(ScrapperModule);
   app.enableShutdownHooks();
 
-  const scrapper = (
-    app
-      .select(ScrapperModule)
-      .get(ScrapperService)
-  );
-
-  await scrapper.execScrapper(
-    {
-      kind,
-      scrappersGroup: scrapper.getScrappersGroupByWebsiteURL(website),
-      maxIterations: null,
-      initialPage: {
-        page,
-      },
-    },
+  await (
+    scrapperMod
+      .get(ScrapperRefreshService)
+      .execScrapper(
+        {
+          kind,
+          scrappersGroup: scrapperMod.get(ScrapperService).getScrappersGroupByWebsiteURL(website),
+          maxIterations: null,
+          initialPage: {
+            page,
+          },
+        },
+      )
   );
 
   app.close();
@@ -127,20 +127,19 @@ export const refreshSingleTask: TaskFunction = async () => {
   logger.log('Refresh item...');
 
   const app = await NestFactory.create(AppModule);
+  const scrapperMod = app.select(ScrapperModule);
   app.enableShutdownHooks();
 
-  const scrapper: ScrapperService = (
-    app
-      .select(ScrapperModule)
-      .get(ScrapperService)
-  );
-
-  await scrapper.refreshSingle(
-    {
-      kind: +ScrapperMetadataKind[kind],
-      remoteId: R.toString(remoteId),
-      scrappersGroup: scrapper.getScrappersGroupByWebsiteURL(website),
-    },
+  await (
+    scrapperMod
+      .get(ScrapperRefreshService)
+      .refreshSingle(
+        {
+          kind: +ScrapperMetadataKind[kind],
+          remoteId: R.toString(remoteId),
+          scrappersGroup: scrapperMod.get(ScrapperService).getScrappersGroupByWebsiteURL(website),
+        },
+      )
   );
 
   app.close();

@@ -6,7 +6,7 @@ import {
   refreshLatestReviewsTask,
   refreshAllReviewsTask,
   reanalyzeAllReviewsTask,
-} from '@server/modules/importer/modules/scrapper/tasks';
+} from './scrapper';
 
 gulp.task('scrapper:refresh:single', refreshSingleTask);
 gulp.task('scrapper:refresh:latest', refreshLatestReviewsTask);

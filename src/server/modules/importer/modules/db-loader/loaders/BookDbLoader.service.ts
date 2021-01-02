@@ -5,11 +5,11 @@ import {
 
 import {BookService} from '@server/modules/book/Book.service';
 import {BookEntity, CreateBookDto} from '@server/modules/book';
-import {ScrapperMetadataEntity} from '../../scrapper/entity';
+import {ScrapperMetadataEntity, ScrapperMetadataKind} from '../../scrapper/entity';
 
 import {BookScrapperInfo} from '../../scrapper/service/scrappers/Book.scrapper';
 import {MetadataDbLoader} from '../MetadataDbLoader.interface';
-import {BookMatcherService} from '../../book-matcher/BookMatcher.service';
+import {ScrapperMatcherService} from '../../scrapper/service/actions';
 
 @Injectable()
 export class BookDbLoader implements MetadataDbLoader {
@@ -18,7 +18,7 @@ export class BookDbLoader implements MetadataDbLoader {
   constructor(
     @Inject(forwardRef(() => BookService))
     private readonly bookService: BookService,
-    private readonly bookMatcherService: BookMatcherService,
+    private readonly scrapperMatcherService: ScrapperMatcherService,
   ) {}
 
   /**
@@ -57,10 +57,16 @@ export class BookDbLoader implements MetadataDbLoader {
       book: BookScrapperInfo,
     },
   ) {
-    const {logger, bookService, bookMatcherService} = this;
+    const {logger, bookService, scrapperMatcherService} = this;
 
     if (BookDbLoader.isIncompleteBookScrapperInfo(book)) {
-      const matchedBook = await bookMatcherService.matchBook(book);
+      const matchedBook = await scrapperMatcherService.matchSingle<CreateBookDto>(
+        {
+          kind: ScrapperMetadataKind.BOOK,
+          data: book,
+        },
+      );
+
       if (!matchedBook) {
         logger.warn(`Book ${JSON.stringify(book)} not matched!`);
         return null;

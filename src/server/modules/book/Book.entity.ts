@@ -3,7 +3,8 @@ import {Transform} from 'class-transformer';
 import {
   Entity, Column, Index,
   ManyToMany, OneToMany,
-  JoinTable, BeforeInsert, BeforeUpdate,
+  JoinTable, BeforeInsert,
+  BeforeUpdate, OneToOne, JoinColumn,
 } from 'typeorm';
 
 import {DatedRecordEntity} from '../database/DatedRecord.entity';
@@ -12,6 +13,7 @@ import {BookAuthorEntity} from './modules/author/BookAuthor.entity';
 import {BookCategoryEntity} from './modules/category/BookCategory.entity';
 import {BookReviewEntity} from './modules/review/BookReview.entity';
 import {BookReviewerEntity} from './modules/reviewer/BookReviewer.entity';
+import {RemoteRecordEntity} from '../remote/entity';
 
 @Entity(
   {
@@ -52,6 +54,10 @@ export class BookEntity extends DatedRecordEntity {
   @JoinTable()
   @ManyToMany(() => TagEntity)
   tags: TagEntity[];
+
+  @OneToOne(() => RemoteRecordEntity)
+  @JoinColumn()
+  remote: RemoteRecordEntity;
 
   constructor(partial: Partial<BookEntity>) {
     super();

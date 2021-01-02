@@ -1,10 +1,11 @@
 import {
   ArrayMaxSize, IsArray, IsDefined, IsNumber,
-  IsOptional, IsString, MinLength,
+  IsOptional, IsString, MinLength, ValidateNested,
 } from 'class-validator';
 
 import {IsUniqueValue} from '@server/common/validators/IsUniqueValue';
 import {IsTagCorrect} from '@server/modules/tag/validators/IsTagCorrect';
+import {RemoteRecordDto} from '@server/modules/remote/dto/RemoteRecord.dto';
 
 export class CreateBookDto {
   @IsOptional()
@@ -40,6 +41,10 @@ export class CreateBookDto {
   @IsArray()
   @MinLength(1)
   readonly authors: string[];
+
+  @IsDefined()
+  @ValidateNested()
+  readonly remote: RemoteRecordDto;
 
   constructor(partial: Partial<CreateBookDto>) {
     Object.assign(this, partial);

@@ -5,11 +5,11 @@ import {isDevMode} from '@shared/helpers';
 
 import {TagEntity} from '@server/modules/tag/Tag.entity';
 
+import {ScrapperMetadataEntity} from '../../importer/modules/scrapper/entity';
 import {
-  ScrapperMetadataEntity,
-  ScrapperRemoteEntity,
-  ScrapperWebsiteEntity,
-} from '../../importer/modules/scrapper/entity';
+  RemoteRecordEntity,
+  RemoteWebsiteEntity,
+} from '../../remote/entity';
 
 import {AttachmentEntity} from '../../attachment/Attachment.entity';
 import {BookEntity} from '../../book/Book.entity';
@@ -29,6 +29,8 @@ export const DB_CONFIG: TypeOrmModuleOptions = {
   ),
   synchronize: false,
   entities: [
+    RemoteWebsiteEntity,
+    RemoteRecordEntity,
     AttachmentEntity,
     BookAuthorEntity,
     BookEntity,
@@ -36,8 +38,6 @@ export const DB_CONFIG: TypeOrmModuleOptions = {
     BookCategoryEntity,
     BookReviewerEntity,
     ScrapperMetadataEntity,
-    ScrapperWebsiteEntity,
-    ScrapperRemoteEntity,
     TagEntity,
   ],
 };

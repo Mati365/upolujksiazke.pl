@@ -1,14 +1,14 @@
 import {Column, Entity, Index, OneToMany} from 'typeorm';
 
 import {DatedRecordEntity} from '@server/modules/database/DatedRecord.entity';
-import {ScrapperRemoteEntity} from './ScrapperRemote.entity';
+import {RemoteRecordEntity} from './RemoteRecord.entity';
 
 @Entity(
   {
     name: 'scrapper_website',
   },
 )
-export class ScrapperWebsiteEntity extends DatedRecordEntity {
+export class RemoteWebsiteEntity extends DatedRecordEntity {
   @Column()
   @Index(
     {
@@ -26,10 +26,10 @@ export class ScrapperWebsiteEntity extends DatedRecordEntity {
   @Column('text', {nullable: true})
   faviconUrl: string;
 
-  @OneToMany(() => ScrapperRemoteEntity, (remote) => remote.website)
-  remoteRecords: ScrapperRemoteEntity[];
+  @OneToMany(() => RemoteRecordEntity, (remote) => remote.website)
+  remoteRecords: RemoteRecordEntity[];
 
-  constructor(partial: Partial<ScrapperWebsiteEntity>) {
+  constructor(partial: Partial<RemoteWebsiteEntity>) {
     super();
     Object.assign(this, partial);
   }

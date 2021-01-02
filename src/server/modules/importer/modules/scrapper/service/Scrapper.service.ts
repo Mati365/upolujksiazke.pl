@@ -11,11 +11,14 @@ import {paginatedAsyncIterator} from '@server/common/helpers/paginatedAsyncItera
 import {upsert} from '@server/common/helpers/db/upsert';
 
 import {TmpDirService} from '@server/modules/tmp-dir/TmpDir.service';
+import {
+  RemoteRecordEntity,
+  RemoteWebsiteEntity,
+} from '@server/modules/remote/entity';
+
 import {MetadataDbLoaderQueueService} from '../../db-loader/services';
 import {WebsiteInfoScrapperService} from './WebsiteInfoScrapper.service';
 import {
-  ScrapperRemoteEntity,
-  ScrapperWebsiteEntity,
   ScrapperMetadataEntity,
   ScrapperMetadataKind,
   ScrapperMetadataStatus,
@@ -69,14 +72,14 @@ export class ScrapperService {
    * Wraps scrapper result into entity
    *
    * @static
-   * @param {ScrapperWebsiteEntity} website
+   * @param {RemoteWebsiteEntity} website
    * @param {IdentifiedItem<RemoteID>} item
    * @param {ScrapperMetadataStatus} [status=ScrapperMetadataStatus.NEW]
    * @returns
    * @memberof ScrapperService
    */
   static scrapperResultToMetadataEntity(
-    website: ScrapperWebsiteEntity,
+    website: RemoteWebsiteEntity,
     item: WebsiteScrapperItemInfo,
     status: ScrapperMetadataStatus = ScrapperMetadataStatus.NEW,
   ) {
@@ -84,7 +87,7 @@ export class ScrapperService {
       {
         status,
         content: item,
-        remote: new ScrapperRemoteEntity(
+        remote: new RemoteRecordEntity(
           {
             remoteId: R.toString(item.id),
             websiteId: website.id,
@@ -183,7 +186,7 @@ export class ScrapperService {
         {
           connection,
           entityManager: transaction,
-          Entity: ScrapperRemoteEntity,
+          Entity: RemoteRecordEntity,
           constraint: 'unique_remote_entry',
           data: newEntity.remote,
         },
@@ -287,7 +290,7 @@ export class ScrapperService {
       website,
       scrappedPage,
     }: {
-      website: ScrapperWebsiteEntity,
+      website: RemoteWebsiteEntity,
       scrappedPage: WebsiteScrapperItemInfo[],
     },
   ) {
@@ -299,7 +302,7 @@ export class ScrapperService {
     // detect which ids has been already scrapped
     const scrappedIds = R.pluck(
       'remoteId',
-      await ScrapperRemoteEntity.find(
+      await RemoteRecordEntity.find(
         {
           where: {
             websiteId: Equal(website.id),

@@ -3,7 +3,7 @@ import {Connection} from 'typeorm';
 
 import {upsert} from '@server/common/helpers/db';
 
-import {ScrapperRemoteEntity} from '@server/modules/importer/modules/scrapper/entity';
+import {RemoteRecordEntity} from '@server/modules/remote/entity';
 import {BookReviewerDto} from './dto/BookReviewer.dto';
 import {BookReviewerEntity} from './BookReviewer.entity';
 
@@ -25,9 +25,9 @@ export class BookReviewerService {
     const remoteEntity = await upsert(
       {
         connection,
-        Entity: ScrapperRemoteEntity,
+        Entity: RemoteRecordEntity,
         constraint: 'unique_remote_entry',
-        data: new ScrapperRemoteEntity(dto.remote),
+        data: new RemoteRecordEntity(dto.remote),
       },
     );
 

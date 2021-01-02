@@ -1,5 +1,6 @@
 import {Injectable, Inject, forwardRef} from '@nestjs/common';
 
+import {RemoteRecordDto} from '@server/modules/remote/dto/RemoteRecord.dto';
 import {BookReviewerDto} from '@server/modules/book/modules/reviewer/dto/BookReviewer.dto';
 import {BookReviewerService} from '@server/modules/book/modules/reviewer/BookReviewer.service';
 import {ScrapperMetadataEntity} from '../../scrapper/entity';
@@ -7,7 +8,6 @@ import {ScrapperMetadataEntity} from '../../scrapper/entity';
 import {BookReviewAuthor, BookReviewScrapperInfo} from '../../scrapper/service/scrappers/BookReview.scrapper';
 import {MetadataDbLoader} from '../MetadataDbLoader.interface';
 import {BookDbLoader} from './BookDbLoader.service';
-import {RemoteEntityDto} from '../../scrapper/dto/RemoteEntity.dto';
 
 @Injectable()
 export class BookReviewDbLoader implements MetadataDbLoader {
@@ -63,7 +63,7 @@ export class BookReviewDbLoader implements MetadataDbLoader {
         {
           name: author.name,
           gender: author.gender,
-          remote: new RemoteEntityDto(
+          remote: new RemoteRecordDto(
             {
               remoteId,
               websiteId,

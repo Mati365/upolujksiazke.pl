@@ -3,8 +3,9 @@ import {
   OneToOne, JoinColumn,
 } from 'typeorm';
 
-import {DatedRecordEntity} from '../../../database/DatedRecord.entity';
-import {ScrapperMetadataEntity, ScrapperRemoteEntity} from '../../../importer/modules/scrapper/entity';
+import {RemoteRecordEntity} from '@server/modules/remote/entity';
+import {DatedRecordEntity} from '@server/modules/database/DatedRecord.entity';
+import {ScrapperMetadataEntity} from '@server/modules/importer/modules/scrapper/entity';
 import {BookEntity} from '../../Book.entity';
 
 @Entity(
@@ -29,9 +30,9 @@ export class BookReviewEntity extends DatedRecordEntity {
   @JoinColumn()
   scrapperMetadata!: ScrapperMetadataEntity;
 
-  @OneToOne(() => ScrapperRemoteEntity)
+  @OneToOne(() => RemoteRecordEntity)
   @JoinColumn()
-  remote: ScrapperRemoteEntity;
+  remote: RemoteRecordEntity;
 
   constructor(partial: Partial<BookReviewEntity>) {
     super();

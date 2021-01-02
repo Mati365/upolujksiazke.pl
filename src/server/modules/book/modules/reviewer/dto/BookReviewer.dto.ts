@@ -5,7 +5,7 @@ import {
 } from 'class-validator';
 
 import {Gender} from '@shared/types';
-import {RemoteEntityDto} from '@server/modules/importer/modules/scrapper/dto/RemoteEntity.dto';
+import {RemoteRecordDto} from '@server/modules/remote/dto/RemoteRecord.dto';
 
 export class BookReviewerDto {
   @IsOptional()
@@ -14,7 +14,7 @@ export class BookReviewerDto {
 
   @IsDefined()
   @ValidateNested()
-  readonly remote: RemoteEntityDto;
+  readonly remote: RemoteRecordDto;
 
   @IsDefined()
   @IsNotEmpty()

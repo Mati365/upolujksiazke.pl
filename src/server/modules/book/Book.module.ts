@@ -7,12 +7,14 @@ import {BookCategoryModule} from './modules/category/BookCategory.module';
 import {BookReviewModule} from './modules/review/BookReview.module';
 
 import {TagModule} from '../tag';
+import {RemoteModule} from '../remote';
 import {BookEntity} from './Book.entity';
 import {BookService} from './Book.service';
 
 @Module(
   {
     imports: [
+      RemoteModule,
       BookAuthorModule,
       BookReviewerModule,
       BookReviewModule,

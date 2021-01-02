@@ -1,5 +1,5 @@
 import cheerio from 'cheerio';
-import {ScrapperWebsiteEntity} from '../../entity';
+import {RemoteWebsiteEntity} from '@server/modules/remote/entity';
 
 /**
  * Basic async scrapper that loads meta info from website
@@ -12,7 +12,7 @@ export class WebsiteInfoScrapper {
     public readonly websiteURL: string,
   ) {}
 
-  async fetchWebsiteEntity(): Promise<ScrapperWebsiteEntity> {
+  async fetchWebsiteEntity(): Promise<RemoteWebsiteEntity> {
     return WebsiteInfoScrapper.getWebsiteEntityFromURL(this.websiteURL);
   }
 
@@ -29,7 +29,7 @@ export class WebsiteInfoScrapper {
       await fetch(url).then((r) => r.text()),
     );
 
-    return new ScrapperWebsiteEntity(
+    return new RemoteWebsiteEntity(
       {
         url,
         title: $('title').text(),

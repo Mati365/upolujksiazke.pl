@@ -1,6 +1,6 @@
 import {Injectable} from '@nestjs/common';
 
-import {ScrapperWebsiteEntity} from '../entity';
+import {RemoteWebsiteEntity} from '@server/modules/remote/entity';
 import {WebsiteInfoScrapper} from './shared';
 
 @Injectable()
@@ -13,7 +13,7 @@ export class WebsiteInfoScrapperService {
    * @memberof ScrapperService
    */
   async findOrCreateWebsiteEntity(scrapper: WebsiteInfoScrapper) {
-    let website = await ScrapperWebsiteEntity.findOne(
+    let website = await RemoteWebsiteEntity.findOne(
       {
         url: scrapper.websiteURL,
       },

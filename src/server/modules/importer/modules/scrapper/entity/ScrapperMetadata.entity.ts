@@ -4,8 +4,8 @@ import {
 } from 'typeorm';
 
 import {DatedRecordEntity} from '@server/modules/database/DatedRecord.entity';
+import {RemoteRecordEntity} from '@server/modules/remote/entity';
 import {WebsiteScrapperItemInfo} from '../service/shared';
-import {ScrapperRemoteEntity} from './ScrapperRemote.entity';
 
 export enum ScrapperMetadataKind {
   BOOK_REVIEW = 1,
@@ -62,9 +62,9 @@ export class ScrapperMetadataEntity extends DatedRecordEntity {
   )
   status: ScrapperMetadataStatus;
 
-  @OneToOne(() => ScrapperRemoteEntity, {onDelete: 'CASCADE'})
+  @OneToOne(() => RemoteRecordEntity, {onDelete: 'CASCADE'})
   @JoinColumn()
-  remote: ScrapperRemoteEntity;
+  remote: RemoteRecordEntity;
 
   constructor(partial: Partial<ScrapperMetadataEntity>) {
     super();

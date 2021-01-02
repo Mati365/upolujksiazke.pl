@@ -4,7 +4,7 @@ import {
 } from 'typeorm';
 
 import {DatedRecordEntity} from '@server/modules/database/DatedRecord.entity';
-import {ScrapperWebsiteEntity} from './ScrapperWebsite.entity';
+import {RemoteWebsiteEntity} from './RemoteWebsite.entity';
 
 @Entity(
   {
@@ -12,19 +12,19 @@ import {ScrapperWebsiteEntity} from './ScrapperWebsite.entity';
   },
 )
 @Unique('unique_remote_entry', ['remoteId', 'website'])
-export class ScrapperRemoteEntity extends DatedRecordEntity {
+export class RemoteRecordEntity extends DatedRecordEntity {
   @Column('text')
   remoteId!: string;
 
-  @ManyToOne(() => ScrapperWebsiteEntity)
+  @ManyToOne(() => RemoteWebsiteEntity)
   @JoinColumn({name: 'websiteId'})
-  website!: ScrapperWebsiteEntity;
+  website!: RemoteWebsiteEntity;
 
   @Column()
-  @RelationId((entity: ScrapperRemoteEntity) => entity.website)
+  @RelationId((entity: RemoteRecordEntity) => entity.website)
   websiteId: number;
 
-  constructor(partial: Partial<ScrapperRemoteEntity>) {
+  constructor(partial: Partial<RemoteRecordEntity>) {
     super();
     Object.assign(this, partial);
   }

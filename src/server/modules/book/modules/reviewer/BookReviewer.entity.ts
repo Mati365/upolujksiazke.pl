@@ -4,8 +4,8 @@ import {
 } from 'typeorm';
 
 import {Gender} from '@shared/types';
-import {DatedRecordEntity} from '../../../database/DatedRecord.entity';
-import {ScrapperRemoteEntity} from '../../../importer/modules/scrapper/entity';
+import {RemoteRecordEntity} from '@server/modules/remote/entity';
+import {DatedRecordEntity} from '@server/modules/database/DatedRecord.entity';
 import {BookEntity} from '../../Book.entity';
 
 @Entity(
@@ -29,9 +29,9 @@ export class BookReviewerEntity extends DatedRecordEntity {
   @ManyToMany(() => BookEntity, (book) => book.reviewers)
   books: BookEntity[];
 
-  @OneToOne(() => ScrapperRemoteEntity, {onDelete: 'CASCADE'})
+  @OneToOne(() => RemoteRecordEntity, {onDelete: 'CASCADE'})
   @JoinColumn({name: 'remoteId'})
-  remote: ScrapperRemoteEntity;
+  remote: RemoteRecordEntity;
 
   @Column()
   @RelationId((entity: BookReviewerEntity) => entity.remote)

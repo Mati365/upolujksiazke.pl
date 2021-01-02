@@ -42,7 +42,7 @@ OpenSource book reviews aggregator that helps with searching book opinions. Some
 ```bash
 cp .env.example .env # edit .env config
 yarn install
-yarn run migration:up
+yarn run migration:run
 yarn run develop
 gulp scrapper:refresh
 ```

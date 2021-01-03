@@ -40,7 +40,7 @@ export class ScrapperMetadataEntity extends DatedRecordEntity {
   }
 
   @Column('jsonb')
-  content!: WebsiteScrapperItemInfo;
+  content: WebsiteScrapperItemInfo;
 
   @Index()
   @Column(

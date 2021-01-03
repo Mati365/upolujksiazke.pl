@@ -83,7 +83,6 @@ export class BookDbLoader implements MetadataDbLoader {
         {
           authors: book.authors,
           description: book.description,
-          isbn: book.isbn,
           tags: book.tags,
           title: book.title,
         },

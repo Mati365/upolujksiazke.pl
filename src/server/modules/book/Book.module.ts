@@ -10,10 +10,16 @@ import {TagModule} from '../tag';
 import {RemoteModule} from '../remote';
 import {BookEntity} from './Book.entity';
 import {BookService} from './Book.service';
+import {BookReleaseModule} from './modules/release';
+import {BookPublisherModule} from './modules/publisher';
+import {BookAvailabilityModule} from './modules/availability';
 
 @Module(
   {
     imports: [
+      BookAvailabilityModule,
+      BookPublisherModule,
+      BookReleaseModule,
       RemoteModule,
       BookAuthorModule,
       BookReviewerModule,
@@ -26,7 +32,10 @@ import {BookService} from './Book.service';
       BookService,
     ],
     exports: [
+      BookAvailabilityModule,
+      BookPublisherModule,
       BookService,
+      BookReleaseModule,
       BookAuthorModule,
       BookReviewerModule,
       BookReviewModule,

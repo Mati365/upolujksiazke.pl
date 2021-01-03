@@ -20,10 +20,13 @@ import {
 } from './shared';
 
 import {
+  // GraniceScrappersGroup,
+  // MatrasScrappersGroup,
   EIsbnScrappersGroup,
   LiteraturaGildiaScrappersGroup,
-  WikipediaScrappersGroup,
+  // WikipediaScrappersGroup,
   WykopScrappersGroup,
+  // SkupszopScrappersGroup,
 } from './scrappers';
 
 const {parsers: PARSERS_ENV} = SERVER_ENV;
@@ -40,8 +43,11 @@ export class ScrapperService {
   constructor(tmpDirService: TmpDirService) {
     this.scrappersGroups = [
       new LiteraturaGildiaScrappersGroup(PARSERS_ENV.literaturaGildia),
+      // new SkupszopScrappersGroup(PARSERS_ENV.skupszop),
+      // new GraniceScrappersGroup(PARSERS_ENV.granice),
+      // new MatrasScrappersGroup(PARSERS_ENV.matras),
       new WykopScrappersGroup(PARSERS_ENV.wykop),
-      new WikipediaScrappersGroup(PARSERS_ENV.wikipedia),
+      // new WikipediaScrappersGroup(PARSERS_ENV.wikipedia),
       new EIsbnScrappersGroup(
         {
           ...PARSERS_ENV.eisbn,

@@ -17,6 +17,9 @@ import {BookAuthorEntity} from '../../book/modules/author/BookAuthor.entity';
 import {BookReviewEntity} from '../../book/modules/review/BookReview.entity';
 import {BookCategoryEntity} from '../../book/modules/category/BookCategory.entity';
 import {BookReviewerEntity} from '../../book/modules/reviewer/BookReviewer.entity';
+import {BookReleaseEntity} from '../../book/modules/release/BookRelease.entity';
+import {BookPublisherEntity} from '../../book/modules/publisher/BookPublisher.entity';
+import {BookAvailabilityEntity} from '../../book/modules/availability/BookAvailability.entity';
 
 export const DB_CONFIG: TypeOrmModuleOptions = {
   ...SERVER_ENV.dbConfig,
@@ -32,6 +35,9 @@ export const DB_CONFIG: TypeOrmModuleOptions = {
     RemoteWebsiteEntity,
     RemoteRecordEntity,
     AttachmentEntity,
+    BookAvailabilityEntity,
+    BookPublisherEntity,
+    BookReleaseEntity,
     BookAuthorEntity,
     BookEntity,
     BookReviewEntity,

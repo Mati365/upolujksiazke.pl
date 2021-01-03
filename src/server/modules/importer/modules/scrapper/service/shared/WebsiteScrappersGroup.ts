@@ -11,7 +11,7 @@ export type WebsiteScrappersKindMap = PartialRecord<ScrapperMetadataKind, AsyncS
 
 export type WebsiteScrappersMatchersKindMap = PartialRecord<ScrapperMetadataKind, ScrapperMatcher<any, any>>;
 
-export type ScrappersGroupInitializer<W extends WebsiteInfoScrapper> = {
+export type ScrappersGroupInitializer<W extends WebsiteInfoScrapper = WebsiteInfoScrapper> = {
   websiteInfoScrapper?: W,
   scrappers?: WebsiteScrappersKindMap,
   matchers?: WebsiteScrappersMatchersKindMap,

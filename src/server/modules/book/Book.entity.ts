@@ -1,10 +1,9 @@
 import * as R from 'ramda';
 import {Transform} from 'class-transformer';
 import {
-  Entity, Column, Index,
+  Entity, Column,
   ManyToMany, OneToMany,
-  JoinTable, BeforeInsert,
-  BeforeUpdate, OneToOne, JoinColumn,
+  JoinTable,
 } from 'typeorm';
 
 import {DatedRecordEntity} from '../database/DatedRecord.entity';
@@ -13,7 +12,7 @@ import {BookAuthorEntity} from './modules/author/BookAuthor.entity';
 import {BookCategoryEntity} from './modules/category/BookCategory.entity';
 import {BookReviewEntity} from './modules/review/BookReview.entity';
 import {BookReviewerEntity} from './modules/reviewer/BookReviewer.entity';
-import {RemoteRecordEntity} from '../remote/entity';
+import {BookReleaseEntity} from './modules/release/BookRelease.entity';
 
 @Entity(
   {
@@ -22,15 +21,7 @@ import {RemoteRecordEntity} from '../remote/entity';
 )
 export class BookEntity extends DatedRecordEntity {
   @Column('text', {unique: true})
-  title!: string;
-
-  @Index(
-    {
-      unique: true,
-    },
-  )
-  @Column('text')
-  isbn!: string;
+  title: string;
 
   @Column('text', {nullable: true})
   description: string;
@@ -55,20 +46,11 @@ export class BookEntity extends DatedRecordEntity {
   @ManyToMany(() => TagEntity)
   tags: TagEntity[];
 
-  @OneToOne(() => RemoteRecordEntity)
-  @JoinColumn()
-  remote: RemoteRecordEntity;
+  @OneToMany(() => BookReleaseEntity, (entity) => entity.book)
+  releases: BookReleaseEntity[];
 
   constructor(partial: Partial<BookEntity>) {
     super();
     Object.assign(this, partial);
-  }
-
-  @BeforeInsert()
-  @BeforeUpdate()
-  transformFields() {
-    const {isbn} = this;
-    if (isbn)
-      this.isbn = isbn.replaceAll('-', '');
   }
 }

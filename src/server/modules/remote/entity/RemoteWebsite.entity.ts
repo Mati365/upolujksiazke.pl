@@ -1,4 +1,8 @@
-import {Column, Entity, Index, OneToMany} from 'typeorm';
+import * as R from 'ramda';
+import {
+  BeforeInsert, BeforeUpdate,
+  Column, Entity, Index, OneToMany,
+} from 'typeorm';
 
 import {DatedRecordEntity} from '@server/modules/database/DatedRecord.entity';
 import {RemoteRecordEntity} from './RemoteRecord.entity';
@@ -32,5 +36,20 @@ export class RemoteWebsiteEntity extends DatedRecordEntity {
   constructor(partial: Partial<RemoteWebsiteEntity>) {
     super();
     Object.assign(this, partial);
+  }
+
+  @BeforeInsert()
+  @BeforeUpdate()
+  transformFields() {
+    const {description, title, faviconUrl} = this;
+
+    if (!R.trim(description || ''))
+      this.description = null;
+
+    if (!R.trim(title || ''))
+      this.title = null;
+
+    if (!R.trim(faviconUrl || ''))
+      this.faviconUrl = null;
   }
 }

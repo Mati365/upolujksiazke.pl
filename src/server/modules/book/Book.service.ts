@@ -3,8 +3,8 @@ import {Connection, EntityManager} from 'typeorm';
 
 import {upsert} from '@server/common/helpers/db';
 
-import {RemoteRecordDto} from '../remote/dto/RemoteRecord.dto';
-import {RemoteRecordService} from '../remote/service/RemoteRecord.service';
+// import {RemoteRecordDto} from '../remote/dto/RemoteRecord.dto';
+// import {RemoteRecordService} from '../remote/service/RemoteRecord.service';
 
 import {BookAuthorService} from './modules/author/BookAuthor.service';
 import {TagService} from '../tag/Tag.service';
@@ -21,11 +21,10 @@ export class BookService {
     private readonly connection: Connection,
     private tagService: TagService,
     private authorService: BookAuthorService,
-    private remoteEntityService: RemoteRecordService,
   ) {}
 
   async createBookEntityFromDTO(dto: CreateBookDto, entityManager?: EntityManager) {
-    const {tagService, authorService, remoteEntityService} = this;
+    const {tagService, authorService} = this;
     const authors = await authorService.upsertList(
       (dto.authors || []).map((author) => new CreateBookAuthorDto(
         {
@@ -44,17 +43,14 @@ export class BookService {
       entityManager,
     );
 
-    const remoteEntity = await remoteEntityService.upsert(
-      new RemoteRecordDto(dto.remote),
-      entityManager,
-    );
+    const releases = [];
 
     return new BookEntity(
       {
         title: dto.title,
         description: dto.description,
-        remote: remoteEntity,
         authors,
+        releases,
         tags,
       },
     );

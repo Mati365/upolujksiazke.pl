@@ -15,20 +15,20 @@ import {BookEntity} from '../../Book.entity';
 )
 export class BookReviewEntity extends DatedRecordEntity {
   @Column('text')
-  nick!: string;
+  nick: string;
 
   @Column('text')
-  description!: string;
+  description: string;
 
   @Column('smallint')
   rating: number;
 
   @ManyToOne(() => BookEntity, (book) => book.reviews)
-  book!: BookEntity;
+  book: BookEntity;
 
   @OneToOne(() => ScrapperMetadataEntity)
   @JoinColumn()
-  scrapperMetadata!: ScrapperMetadataEntity;
+  scrapperMetadata: ScrapperMetadataEntity;
 
   @OneToOne(() => RemoteRecordEntity)
   @JoinColumn()

@@ -14,11 +14,11 @@ import {RemoteWebsiteEntity} from './RemoteWebsite.entity';
 @Unique('unique_remote_entry', ['remoteId', 'website'])
 export class RemoteRecordEntity extends DatedRecordEntity {
   @Column('text')
-  remoteId!: string;
+  remoteId: string;
 
   @ManyToOne(() => RemoteWebsiteEntity)
   @JoinColumn({name: 'websiteId'})
-  website!: RemoteWebsiteEntity;
+  website: RemoteWebsiteEntity;
 
   @Column()
   @RelationId((entity: RemoteRecordEntity) => entity.website)

@@ -1,3 +1,4 @@
+import {BookShopUrlsConfig} from '@server/modules/importer/modules/scrapper/service/scrappers/BookShopScrappersGroup';
 import {WykopAPIAuthParams} from '@server/modules/importer/modules/scrapper/service/scrappers/wykop/api/WykopAPI';
 
 /* eslint-disable import/no-default-export */
@@ -34,9 +35,10 @@ export type AppEnv = Partial<{
       localPath: string,
     },
     parsers: {
-      literaturaGildia: {
-        homepageURL: string,
-      },
+      literaturaGildia: BookShopUrlsConfig,
+      matras: BookShopUrlsConfig,
+      granice: BookShopUrlsConfig,
+      skupszop: BookShopUrlsConfig,
       wykop: {
         homepageURL: string,
         authConfig: WykopAPIAuthParams,
@@ -132,8 +134,21 @@ export const GLOBAL_CONFIG: Record<string, AppEnv> = {
             },
           },
         },
+        skupszop: {
+          homepageURL: 'https://skupszop.pl/',
+          searchURL: 'https://skupszop.pl/wyszukiwarka',
+        },
+        granice: {
+          homepageURL: 'https://www.granice.pl/',
+          searchURL: 'https://www.granice.pl/wyszukaj/',
+        },
         literaturaGildia: {
           homepageURL: 'https://www.literatura.gildia.pl/',
+          searchURL: 'https://portal.gildia.pl/szukanie',
+        },
+        matras: {
+          homepageURL: 'https://www.matras.pl',
+          searchURL: 'https://www.matras.pl/wyszukiwanie',
         },
         wikipedia: {
           homepageURL: 'https://pl.wikipedia.org',

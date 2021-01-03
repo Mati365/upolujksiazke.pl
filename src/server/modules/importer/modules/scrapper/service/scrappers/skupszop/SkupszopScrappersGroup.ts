@@ -1,18 +1,18 @@
 import {ScrapperMetadataKind} from '@server/modules/importer/modules/scrapper/entity';
 
-import {LiteraturaGildiaBookMatcher} from './LiteraturaGildiaBook.matcher';
+import {SkupszopBookMatcher} from './SkupszopBook.matcher';
 import {
   BookShopScrappersGroup,
   BookShopScrappersGroupConfig,
 } from '../BookShopScrappersGroup';
 
-export class LiteraturaGildiaScrappersGroup extends BookShopScrappersGroup {
+export class SkupszopScrappersGroup extends BookShopScrappersGroup {
   constructor(options: BookShopScrappersGroupConfig) {
     super(
       {
         ...options,
         matchers: {
-          [ScrapperMetadataKind.BOOK]: new LiteraturaGildiaBookMatcher(options),
+          [ScrapperMetadataKind.BOOK]: new SkupszopBookMatcher(options),
         },
       },
     );

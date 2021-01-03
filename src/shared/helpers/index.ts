@@ -25,3 +25,5 @@ export * from './mapObjValuesToPromise';
 export * from './async/collectAsyncIterator';
 export * from './async/timeout';
 export * from './mergeNonNullProperties';
+export * from './escapeDiacritics';
+export * from './removeSpecialCharacters';

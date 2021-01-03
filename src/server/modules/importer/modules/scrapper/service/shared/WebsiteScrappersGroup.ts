@@ -9,7 +9,7 @@ import {WebsiteInfoScrapper} from './WebsiteInfoScrapper';
 
 export type WebsiteScrappersKindMap = PartialRecord<ScrapperMetadataKind, AsyncScrapper<any, any>>;
 
-export type WebsiteScrappersMatchersKindMap = PartialRecord<ScrapperMetadataKind, ScrapperMatcher<any, any>>;
+export type WebsiteScrappersMatchersKindMap = PartialRecord<ScrapperMetadataKind, ScrapperMatcher<any>>;
 
 export type ScrappersGroupInitializer<W extends WebsiteInfoScrapper = WebsiteInfoScrapper> = {
   websiteInfoScrapper?: W,
@@ -38,12 +38,15 @@ export class WebsiteScrappersGroup<W extends WebsiteInfoScrapper = WebsiteInfoSc
     this.scrappers = scrappers;
     this.matchers = matchers;
 
-    R.forEachObjIndexed(
+    R.forEach(
       (scrapper) => {
         if (scrapper.setParentGroup)
           scrapper.setParentGroup(this);
       },
-      scrappers,
+      [
+        ...R.values(scrappers),
+        ...R.values(matchers),
+      ],
     );
   }
 
@@ -52,7 +55,7 @@ export class WebsiteScrappersGroup<W extends WebsiteInfoScrapper = WebsiteInfoSc
   }
 
   /**
-   *Finds record in remote webiste using provided info
+   * Finds record in remote webiste using provided info
    *
    * @param {MatchRecordAttrs} attrs
    * @returns {Promise<ScrapperMatcherResult<any>>}

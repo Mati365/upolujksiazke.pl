@@ -1,9 +1,18 @@
 import {ListItem} from '@shared/types';
 
+export type BookAvailabiltiyScrapperInfo = {
+  price: number,
+};
+
+export type BookAuthorScrapperInfo = {
+  name: string,
+  description?: string,
+};
+
 export type BookScrapperInfo = {
   title: string,
-  isbn: string,
-  authors: string[],
+  availability: BookAvailabiltiyScrapperInfo[],
+  authors: BookAuthorScrapperInfo[],
   categories: string[],
   tags: string[],
   description?: string,

@@ -20,6 +20,7 @@ export class MetadataDbLoaderService implements MetadataDbLoader {
     this.resourceLoaders = {
       [ScrapperMetadataKind.BOOK_REVIEW]: bookReviewDbLoader,
       [ScrapperMetadataKind.BOOK]: bookDbLoader,
+      [ScrapperMetadataKind.BOOK_AUTHOR]: null,
     };
   }
 

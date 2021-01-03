@@ -1,24 +1,18 @@
 import wiki, {Options} from 'wikijs';
 
-import {BookEntity} from '@server/modules/book/Book.entity';
 import {ScrapperMatcher, ScrapperMatcherResult} from '../../shared/ScrapperMatcher';
 import {BookScrapperInfo} from '../Book.scrapper';
 
 export type WikipediaAPIOptions = Options;
 
-/**
- * Search over wikipedia for record
- *
- * @export
- * @class WikipediaBookMatcher
- * @implements {ScrapperMatcher<BookScrapperInfo, BookEntity>}
- */
-export class WikipediaBookMatcher implements ScrapperMatcher<BookScrapperInfo, BookEntity> {
+export class WikipediaBookMatcher extends ScrapperMatcher<BookScrapperInfo> {
   constructor(
     private readonly apiOptions: WikipediaAPIOptions,
-  ) {}
+  ) {
+    super();
+  }
 
-  async matchRecord(scrapperInfo: BookScrapperInfo): Promise<ScrapperMatcherResult<BookEntity>> {
+  async matchRecord(scrapperInfo: BookScrapperInfo): Promise<ScrapperMatcherResult<BookScrapperInfo>> {
     const {apiOptions} = this;
 
     try {

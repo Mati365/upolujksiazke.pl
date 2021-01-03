@@ -26,11 +26,7 @@ export class BookService {
   async createBookEntityFromDTO(dto: CreateBookDto, entityManager?: EntityManager) {
     const {tagService, authorService} = this;
     const authors = await authorService.upsertList(
-      (dto.authors || []).map((author) => new CreateBookAuthorDto(
-        {
-          name: author,
-        },
-      )),
+      (dto.authors || []).map((author) => new CreateBookAuthorDto(author)),
       entityManager,
     );
 

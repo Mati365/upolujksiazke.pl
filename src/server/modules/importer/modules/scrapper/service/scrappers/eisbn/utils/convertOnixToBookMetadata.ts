@@ -96,7 +96,9 @@ export function convertOnixToBookxMetadata(onix: OnixBookFormat): BookScrapperIn
     tags: [],
     categories: [],
     authors: [
-      reverseContributorName(Contributor.PersonNameInverted),
+      {
+        name: reverseContributorName(Contributor.PersonNameInverted),
+      },
     ],
   };
 

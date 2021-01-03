@@ -8,6 +8,7 @@ import {IsTagCorrect} from '@server/modules/tag/validators/IsTagCorrect';
 
 import {CreateBookAvailabilityDto} from '../modules/availability/dto/CreateBookAvailability.dto';
 import {CreateBookReleaseDto} from '../modules/release/dto/CreateBookRelease.dto';
+import {CreateBookAuthorDto} from '../modules/author/dto/CreateBookAuthor.dto';
 
 export class CreateBookDto {
   @IsOptional()
@@ -36,10 +37,6 @@ export class CreateBookDto {
   @MinLength(3)
   readonly description: string;
 
-  @IsArray()
-  @MinLength(1)
-  readonly authors: string[];
-
   @IsDefined()
   @ValidateNested()
   readonly releases: CreateBookReleaseDto[];
@@ -47,6 +44,13 @@ export class CreateBookDto {
   @IsDefined()
   @ValidateNested()
   readonly availability: CreateBookAvailabilityDto;
+
+  @IsArray()
+  readonly authors: CreateBookAuthorDto[];
+
+  @IsArray()
+  @MinLength(1)
+  readonly authorsIds: number[];
 
   constructor(partial: Partial<CreateBookDto>) {
     Object.assign(this, partial);

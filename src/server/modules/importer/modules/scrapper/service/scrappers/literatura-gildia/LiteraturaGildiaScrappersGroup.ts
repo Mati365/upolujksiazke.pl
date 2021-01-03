@@ -1,10 +1,11 @@
 import {ScrapperMetadataKind} from '@server/modules/importer/modules/scrapper/entity';
 
-import {LiteraturaGildiaBookMatcher} from './LiteraturaGildiaBook.matcher';
 import {
   BookShopScrappersGroup,
   BookShopScrappersGroupConfig,
 } from '../BookShopScrappersGroup';
+
+import {LiteraturaGildiaBookMatcher} from './matchers/LiteraturaGildiaBook.matcher';
 
 export class LiteraturaGildiaScrappersGroup extends BookShopScrappersGroup {
   constructor(options: BookShopScrappersGroupConfig) {

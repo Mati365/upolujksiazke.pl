@@ -5,6 +5,7 @@ import {
 
 import {BookService} from '@server/modules/book/Book.service';
 import {BookEntity, CreateBookDto} from '@server/modules/book';
+import {CreateBookAuthorDto} from '@server/modules/book/modules/author/dto/CreateBookAuthor.dto';
 import {ScrapperMetadataEntity, ScrapperMetadataKind} from '../../scrapper/entity';
 
 import {BookScrapperInfo} from '../../scrapper/service/scrappers/Book.scrapper';
@@ -81,10 +82,12 @@ export class BookDbLoader implements MetadataDbLoader {
     return bookService.upsert(
       new CreateBookDto(
         {
-          authors: book.authors,
           description: book.description,
           tags: book.tags,
           title: book.title,
+          authors: book.authors.map(
+            (author) => new CreateBookAuthorDto(author),
+          ),
         },
       ),
     );

@@ -12,6 +12,9 @@ export class BookAuthorEntity extends DatedRecordEntity {
   @Column('text', {unique: true})
   name: string;
 
+  @Column('text', {nullable: true})
+  description: string;
+
   @ManyToMany(() => BookEntity, (book) => book.authors)
   books: BookEntity[];
 

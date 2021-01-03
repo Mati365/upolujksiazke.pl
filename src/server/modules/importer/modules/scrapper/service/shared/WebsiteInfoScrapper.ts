@@ -1,6 +1,6 @@
-import * as R from 'ramda';
-
 import {parseAsyncURL} from '@server/common/helpers/fetchAsyncHTML';
+import {concatUrls} from '@shared/helpers/concatUrls';
+
 import {RemoteWebsiteEntity} from '@server/modules/remote/entity';
 
 /**
@@ -27,18 +27,15 @@ export class WebsiteInfoScrapper {
    * @memberof WebsiteInfoScrapper
    */
   static async getWebsiteEntityFromURL(url: string) {
-    const $ = await parseAsyncURL(url);
-
-    let faviconUrl = $('[rel="shortcut icon"], [rel="icon"]').attr('href');
-    if (faviconUrl && R.startsWith('/', faviconUrl))
-      faviconUrl = `${R.endsWith('/', url) ? R.init(url) : url}${faviconUrl}`;
+    const {$} = await parseAsyncURL(url);
+    const faviconUrl = $('[rel="shortcut icon"], [rel="icon"]').attr('href');
 
     return new RemoteWebsiteEntity(
       {
         url,
         title: $('title').text(),
         description: $('meta[name="description"]').attr('content'),
-        faviconUrl,
+        faviconUrl: concatUrls(url, faviconUrl),
       },
     );
   }

@@ -10,6 +10,7 @@ import {WebsiteScrapperItemInfo} from '../service/shared';
 export enum ScrapperMetadataKind {
   BOOK_REVIEW = 1,
   BOOK = 2,
+  BOOK_AUTHOR = 3,
 }
 
 export enum ScrapperMetadataStatus {

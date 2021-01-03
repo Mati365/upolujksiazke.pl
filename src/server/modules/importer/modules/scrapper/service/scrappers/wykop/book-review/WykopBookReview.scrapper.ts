@@ -133,10 +133,10 @@ export class WykopBookReviewScrapper extends AsyncScrapper<BookReviewScrapperInf
       book: {
         title: properties.title,
         isbn: properties.isbn,
-        authors: properties.authors,
         categories: properties.categories,
         tags: properties.tags,
         description: null,
+        authors: properties.authors.map(R.objOf('name')),
         cover: embed && {
           nsfw: embed.plus18,
           ratio: embed.ratio,

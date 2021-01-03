@@ -1,16 +1,20 @@
 import cheerio from 'cheerio';
+import {HTTPCode} from '@shared/constants';
 
 /**
  * Fetches html and fixes encoding
  *
  * @export
- * @param {string} url
+ * @param {Request} request
  * @returns
  */
-export async function fetchAsyncHTML(url: string) {
-  const result = await fetch(url);
+export async function fetchAsyncHTML(request: Request) {
+  const response = await fetch(request);
 
-  return (result as any).textConverted();
+  return {
+    response,
+    result: (response as any).textConverted(),
+  };
 }
 
 /**
@@ -21,7 +25,33 @@ export async function fetchAsyncHTML(url: string) {
  * @returns
  */
 export async function parseAsyncURL(url: string) {
-  return cheerio.load(
-    await fetchAsyncHTML(url),
-  );
+  const request = new Request(url);
+  const {result, response} = await fetchAsyncHTML(request);
+
+  return {
+    $: cheerio.load(result),
+    result,
+    request,
+    response,
+  };
+}
+
+/**
+ * Returns async html if found (only when 200 status code is present)
+ *
+ * @export
+ * @param {string} url
+ * @returns
+ */
+export async function parseAsyncURLIfOK(url: string) {
+  try {
+    const result = await parseAsyncURL(url);
+    return (
+      result.response.status !== HTTPCode.OK
+        ? null
+        : result
+    );
+  } catch (e) {
+    return null;
+  }
 }

@@ -1,5 +1,5 @@
 import {
-  IsDefined, IsNumber,
+  IsDefined, IsEmail, IsNumber,
   IsOptional, IsString,
 } from 'class-validator';
 
@@ -23,6 +23,10 @@ export class CreateBookPublisherDto {
   @IsOptional()
   @IsString()
   readonly address: string;
+
+  @IsOptional()
+  @IsEmail()
+  readonly email: string;
 
   constructor(partial: Partial<CreateBookPublisherDto>) {
     Object.assign(this, partial);

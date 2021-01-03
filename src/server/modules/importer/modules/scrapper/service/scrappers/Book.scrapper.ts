@@ -1,29 +1,13 @@
-import {ListItem} from '@shared/types';
+import {CreateBookReviewDto} from '@server/modules/book/modules/review/dto/CreateBookReview.dto';
+import {ScrapperMetadataKind} from '../../entity';
+import {
+  ScrapperBasicPagination,
+  ScrapperResult,
+  WebsiteScrapperItemInfo,
+} from '../shared';
 
-export type BookAvailabiltiyScrapperInfo = {
-  price: number,
+export type BookScrapperInfo = WebsiteScrapperItemInfo<CreateBookReviewDto> & {
+  kind: ScrapperMetadataKind.BOOK,
 };
 
-export type BookAuthorScrapperInfo = {
-  name: string,
-  description?: string,
-};
-
-export type BookScrapperInfo = {
-  title: string,
-  availability: BookAvailabiltiyScrapperInfo[],
-  authors: BookAuthorScrapperInfo[],
-  categories: string[],
-  tags: string[],
-  description?: string,
-  cover?: {
-    nsfw: boolean,
-    ratio?: number,
-    source: string,
-    image: string,
-  },
-  attributes?: {
-    totalPages: number,
-    publisher?: ListItem,
-  },
-};
+export type BookProcessResult = ScrapperResult<BookScrapperInfo[], ScrapperBasicPagination>;

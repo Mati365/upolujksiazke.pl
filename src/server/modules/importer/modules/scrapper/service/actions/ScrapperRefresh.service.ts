@@ -55,7 +55,7 @@ export class ScrapperRefreshService {
         {
           where: {
             websiteId: Equal(website.id),
-            remoteId: In(R.pluck('id', scrappedPage).map(R.toString)),
+            remoteId: In(R.pluck('remoteId', scrappedPage).map(R.toString)),
           },
         },
       ),
@@ -66,7 +66,7 @@ export class ScrapperRefreshService {
       R
         .map(
           (item) => (
-            R.includes(R.toString(item.id), scrappedIds)
+            R.includes(R.toString(item.remoteId), scrappedIds)
               ? null
               : ScrapperService.scrapperResultToMetadataEntity(website, item)
           ),

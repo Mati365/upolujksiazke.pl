@@ -36,7 +36,7 @@ export class ScrapperMetadataEntity extends DatedRecordEntity {
     return (
       ScrapperMetadataEntity
         .createQueryBuilder()
-        .where('(content->>\'content\')::text is null')
+        .where('(content->\'dto\'->>\'description\')::text is null')
     );
   }
 

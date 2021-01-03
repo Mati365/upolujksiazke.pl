@@ -14,6 +14,9 @@ import {BookPublisherEntity} from '../publisher/BookPublisher.entity';
 )
 @Unique('unique_publisher_isbn', ['isbn', 'publisher'])
 export class BookReleaseEntity extends DatedRecordEntity {
+  @Column('timestamp')
+  publishDate: Date;
+
   @Column('text', {nullable: true})
   place: string;
 

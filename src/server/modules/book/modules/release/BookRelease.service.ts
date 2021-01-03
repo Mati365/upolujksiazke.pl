@@ -4,11 +4,13 @@ import {Connection, EntityManager} from 'typeorm';
 import {upsert} from '@server/common/helpers/db';
 import {CreateBookReleaseDto} from './dto/CreateBookRelease.dto';
 import {BookReleaseEntity} from './BookRelease.entity';
+import {BookPublisherService} from '../publisher/BookPublisher.service';
 
 @Injectable()
 export class BookReleaseService {
   constructor(
     private readonly connection: Connection,
+    private readonly publisherService: BookPublisherService,
   ) {}
 
   /**
@@ -27,13 +29,13 @@ export class BookReleaseService {
   /**
    * Inserts or updates remote entity
    *
-   * @param {RemoteRecordDto} dto
+   * @param {CreateRemoteRecordDto} dto
    * @param {EntityManager} [entityManager]
    * @returns {Promise<BookReleaseEntity>}
    * @memberof BookReleaseService
    */
   async upsert(dto: CreateBookReleaseDto, entityManager?: EntityManager): Promise<BookReleaseEntity> {
-    const {connection} = this;
+    const {connection, publisherService} = this;
 
     return upsert(
       {
@@ -41,7 +43,12 @@ export class BookReleaseService {
         connection,
         Entity: BookReleaseEntity,
         constraint: 'unique_publisher_isbn',
-        data: new BookReleaseEntity(dto),
+        data: new BookReleaseEntity(
+          {
+            ...dto,
+            publisher: await publisherService.upsert(dto.publisher),
+          },
+        ),
       },
     );
   }

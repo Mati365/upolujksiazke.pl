@@ -1,7 +1,11 @@
+import {Type} from 'class-transformer';
 import {
-  IsDate, IsDefined, IsNumber,
+  IsDate, IsNumber,
   IsOptional, IsString,
+  ValidateNested,
 } from 'class-validator';
+
+import {CreateBookPublisherDto} from '../../publisher/dto/BookPublisher.dto';
 
 export class CreateBookReleaseDto {
   @IsOptional()
@@ -22,9 +26,10 @@ export class CreateBookReleaseDto {
   @IsString()
   readonly totalPages: number;
 
-  @IsDefined()
-  @IsNumber()
-  readonly publisherId: number;
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => CreateBookPublisherDto)
+  readonly publisher: CreateBookPublisherDto;
 
   @IsOptional()
   @IsString()

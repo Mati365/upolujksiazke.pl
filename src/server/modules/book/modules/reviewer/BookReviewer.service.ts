@@ -4,8 +4,8 @@ import {Connection} from 'typeorm';
 import {upsert} from '@server/common/helpers/db';
 
 import {RemoteRecordEntity} from '@server/modules/remote/entity';
-import {BookReviewerDto} from './dto/BookReviewer.dto';
 import {BookReviewerEntity} from './BookReviewer.entity';
+import {CreateBookReviewerDto} from './dto/CreateBookReviewer.dto';
 
 @Injectable()
 export class BookReviewerService {
@@ -16,11 +16,11 @@ export class BookReviewerService {
   /**
    * Creates or updates book reviewer
    *
-   * @param {BookReviewerDto} dto
+   * @param {CreateBookReviewerDto} dto
    * @returns {Promise<BookReviewerEntity>}
    * @memberof BookReviewerService
    */
-  async upsert(dto: BookReviewerDto): Promise<BookReviewerEntity> {
+  async upsert(dto: CreateBookReviewerDto): Promise<BookReviewerEntity> {
     const {connection} = this;
     const remoteEntity = await upsert(
       {

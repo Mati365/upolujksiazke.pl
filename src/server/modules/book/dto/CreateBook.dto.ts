@@ -1,3 +1,4 @@
+import {Type} from 'class-transformer';
 import {
   ArrayMaxSize, IsArray, IsDefined, IsNumber,
   IsOptional, MinLength, ValidateNested,
@@ -6,9 +7,11 @@ import {
 import {IsUniqueValue} from '@server/common/validators/IsUniqueValue';
 import {IsTagCorrect} from '@server/modules/tag/validators/IsTagCorrect';
 
+import {CreateAttachmentDto} from '@server/modules/attachment/dto';
 import {CreateBookAvailabilityDto} from '../modules/availability/dto/CreateBookAvailability.dto';
 import {CreateBookReleaseDto} from '../modules/release/dto/CreateBookRelease.dto';
 import {CreateBookAuthorDto} from '../modules/author/dto/CreateBookAuthor.dto';
+import {CreateBookCategoryDto} from '../modules/category/dto/CreateBookCategory.dto';
 
 export class CreateBookDto {
   @IsOptional()
@@ -39,18 +42,27 @@ export class CreateBookDto {
 
   @IsDefined()
   @ValidateNested()
+  @Type(() => CreateBookReleaseDto)
   readonly releases: CreateBookReleaseDto[];
 
   @IsDefined()
   @ValidateNested()
+  @Type(() => CreateBookAvailabilityDto)
   readonly availability: CreateBookAvailabilityDto;
 
   @IsArray()
+  @ValidateNested()
+  @Type(() => CreateBookAuthorDto)
   readonly authors: CreateBookAuthorDto[];
 
   @IsArray()
-  @MinLength(1)
-  readonly authorsIds: number[];
+  @ValidateNested()
+  @Type(() => CreateBookCategoryDto)
+  readonly categories: CreateBookCategoryDto[];
+
+  @ValidateNested()
+  @IsOptional()
+  readonly cover: CreateAttachmentDto;
 
   constructor(partial: Partial<CreateBookDto>) {
     Object.assign(this, partial);

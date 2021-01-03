@@ -3,7 +3,7 @@ import {
   IsOptional, IsString,
 } from 'class-validator';
 
-export class RemoteRecordDto {
+export class CreateRemoteRecordDto {
   @IsOptional()
   @IsNumber()
   readonly id: number;
@@ -16,7 +16,7 @@ export class RemoteRecordDto {
   @IsNumber()
   readonly websiteId: number;
 
-  constructor(partial: Partial<RemoteRecordDto>) {
+  constructor(partial: Partial<CreateRemoteRecordDto>) {
     Object.assign(this, partial);
   }
 }

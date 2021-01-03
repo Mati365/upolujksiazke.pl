@@ -18,9 +18,9 @@ import {
 } from '../../shared';
 
 import {
-  convertOnixToBookxMetadata,
+  convertOnixToBookDto,
   OnixBookFormat,
-} from './utils/convertOnixToBookMetadata';
+} from './utils/convertOnixToBookDto';
 
 export type EIsbnBookScrapperConfig = {
   tmp: {
@@ -96,7 +96,7 @@ export class EIsbnBookScrapper extends AsyncScrapper<any> {
     return new Promise((resolve, reject) => {
       xml.on('endElement: Product', (entry: OnixBookFormat) => {
         try {
-          convertOnixToBookxMetadata(entry);
+          convertOnixToBookDto(entry);
         } catch (e) {
           reject(e);
         }

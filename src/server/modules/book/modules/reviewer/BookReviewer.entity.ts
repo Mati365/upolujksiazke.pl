@@ -1,12 +1,14 @@
 import {
   Entity, Column, ManyToMany,
-  OneToOne, JoinColumn, RelationId,
+  OneToOne, JoinColumn, RelationId, OneToMany,
 } from 'typeorm';
 
 import {Gender} from '@shared/types';
 import {RemoteRecordEntity} from '@server/modules/remote/entity';
 import {DatedRecordEntity} from '@server/modules/database/DatedRecord.entity';
+
 import {BookEntity} from '../../Book.entity';
+import {BookReviewEntity} from '../review/BookReview.entity';
 
 @Entity(
   {
@@ -28,6 +30,9 @@ export class BookReviewerEntity extends DatedRecordEntity {
 
   @ManyToMany(() => BookEntity, (book) => book.reviewers)
   books: BookEntity[];
+
+  @OneToMany(() => BookReviewEntity, (entity) => entity.reviewer)
+  reviews: BookReviewEntity[];
 
   @OneToOne(() => RemoteRecordEntity, {onDelete: 'CASCADE'})
   @JoinColumn({name: 'remoteId'})

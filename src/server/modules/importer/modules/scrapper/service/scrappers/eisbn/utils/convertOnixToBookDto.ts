@@ -1,5 +1,7 @@
 import * as R from 'ramda';
-import {BookScrapperInfo} from '../../Book.scrapper';
+import {CreateBookDto} from '@server/modules/book/dto/CreateBook.dto';
+import {CreateBookAuthorDto} from '@server/modules/book/modules/author/dto/CreateBookAuthor.dto';
+import {CreateBookReleaseDto} from '@server/modules/book/modules/release/dto/CreateBookRelease.dto';
 
 /**
 {
@@ -84,27 +86,33 @@ export type OnixBookFormat = {
   },
 };
 
-export function convertOnixToBookxMetadata(onix: OnixBookFormat): BookScrapperInfo {
+export function convertOnixToBookDto(onix: OnixBookFormat): CreateBookDto {
   const {DescriptiveDetail} = onix;
   const {Contributor, TitleDetail} = DescriptiveDetail;
   if (!Contributor?.PersonNameInverted || !TitleDetail)
     return null;
 
-  const result: BookScrapperInfo = {
-    isbn: onix.ProductIdentifier.IDValue,
-    title: TitleDetail.TitleElement.TitleText,
-    tags: [],
-    categories: [],
-    authors: [
-      {
-        name: reverseContributorName(Contributor.PersonNameInverted),
-      },
-    ],
-  };
+  const result = new CreateBookDto(
+    {
+      title: TitleDetail.TitleElement.TitleText,
+      tags: [],
+      categories: [],
+      releases: [
+        new CreateBookReleaseDto(
+          {
+            isbn: onix.ProductIdentifier.IDValue,
+          },
+        ),
+      ],
+      authors: [
+        new CreateBookAuthorDto(
+          {
+            name: reverseContributorName(Contributor.PersonNameInverted),
+          },
+        ),
+      ],
+    },
+  );
 
-  if (result.title === 'Świętoszek') {
-    console.info(result, JSON.stringify(onix as any));
-    throw new Error;
-  }
   return result;
 }

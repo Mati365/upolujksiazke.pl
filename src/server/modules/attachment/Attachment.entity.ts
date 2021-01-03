@@ -29,6 +29,15 @@ export class AttachmentEntity extends DatedRecordEntity {
   @Column('text')
   name: string;
 
+  @Column('boolean', {default: false})
+  nsfw: boolean;
+
+  @Column('float', {nullable: true})
+  ratio: number;
+
+  @Column('text', {nullable: true})
+  sourceUrl: string;
+
   @Expose()
   get url(): string {
     return `${SERVER_ENV.cdn.publicUrl}/${this.file}`;

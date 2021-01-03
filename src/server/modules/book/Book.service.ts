@@ -3,8 +3,8 @@ import {Connection, EntityManager} from 'typeorm';
 
 import {upsert} from '@server/common/helpers/db';
 
-// import {RemoteRecordDto} from '../remote/dto/RemoteRecord.dto';
-// import {RemoteRecordService} from '../remote/service/RemoteRecord.service';
+// import {CreateRemoteRecordDto} from '../remote/dto/CreateRemoteRecord.dto';
+// import {RemoteRecordService} from '../remote/service/CreateRemoteRecord.service';
 
 import {BookAuthorService} from './modules/author/BookAuthor.service';
 import {TagService} from '../tag/Tag.service';

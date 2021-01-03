@@ -6,6 +6,16 @@ import {Gender, RemoteID} from '@shared/types';
 import {ScrapperMetadataKind} from '@server/modules/importer/modules/scrapper/entity';
 import {AsyncScrapper, ScrapperBasicPagination} from '@server/modules/importer/modules/scrapper/service/shared';
 
+import {CreateBookReviewDto} from '@server/modules/book/modules/review/dto/CreateBookReview.dto';
+import {CreateRemoteRecordDto} from '@server/modules/remote/dto/CreateRemoteRecord.dto';
+import {CreateBookReviewerDto} from '@server/modules/book/modules/reviewer/dto/CreateBookReviewer.dto';
+import {VotingStatsEmbeddable} from '@server/modules/shared/VotingStats.embeddable';
+import {CreateAttachmentDto} from '@server/modules/attachment/dto';
+import {CreateBookDto} from '@server/modules/book/dto/CreateBook.dto';
+import {CreateBookCategoryDto} from '@server/modules/book/modules/category';
+import {CreateBookAuthorDto} from '@server/modules/book/modules/author/dto/CreateBookAuthor.dto';
+import {CreateBookReleaseDto} from '@server/modules/book/modules/release/dto/CreateBookRelease.dto';
+
 import {
   BookReviewScrapperInfo,
   BookReviewProcessResult,
@@ -99,7 +109,7 @@ export class WykopBookReviewScrapper extends AsyncScrapper<BookReviewScrapperInf
     if (R.isEmpty(properties) || !description)
       return null;
 
-    const {author} = post;
+    const {author, id: remoteId} = post;
     const gender = (() => {
       switch (author.sex) {
         case 'female':
@@ -113,37 +123,82 @@ export class WykopBookReviewScrapper extends AsyncScrapper<BookReviewScrapperInf
       }
     })();
 
-    return {
-      kind: ScrapperMetadataKind.BOOK_REVIEW,
-      parserSource: JSON.stringify(post),
-      url: `https://www.wykop.pl/wpis/${post.id}`,
-      id: post.id,
-      date: new Date(post.date),
-      stats: {
-        votes: post.vote_count,
-        comments: post.comments_count,
-      },
-      author: {
-        name: author.login,
-        avatar: author.avatar,
-        gender,
-      },
-      score: properties.score,
-      content: description,
-      book: {
+    const book = new CreateBookDto(
+      {
         title: properties.title,
-        isbn: properties.isbn,
-        categories: properties.categories,
         tags: properties.tags,
         description: null,
-        authors: properties.authors.map(R.objOf('name')),
-        cover: embed && {
-          nsfw: embed.plus18,
-          ratio: embed.ratio,
-          source: embed.preview,
-          image: embed.source,
-        },
+
+        releases: [
+          !!properties.isbn && new CreateBookReleaseDto(
+            {
+              isbn: properties.isbn,
+            },
+          ),
+        ].filter(Boolean),
+
+        authors: (properties.authors || []).map(
+          (authorName) => new CreateBookAuthorDto(
+            {
+              name: authorName,
+            },
+          ),
+        ),
+
+        categories: (properties.categories || []).map(
+          (categoryName) => new CreateBookCategoryDto(
+            {
+              name: categoryName,
+            },
+          ),
+        ),
+
+        cover: embed && new CreateAttachmentDto(
+          {
+            nsfw: embed.plus18,
+            ratio: embed.ratio,
+            sourceUrl: embed.source,
+            originalUrl: embed.preview,
+          },
+        ),
       },
+    );
+
+    return {
+      remoteId,
+      kind: ScrapperMetadataKind.BOOK_REVIEW,
+      parserSource: JSON.stringify(post),
+      url: `https://www.wykop.pl/wpis/${remoteId}`,
+      dto: new CreateBookReviewDto(
+        {
+          description,
+          rating: properties.score,
+          publishDate: new Date(post.date),
+          book,
+          stats: new VotingStatsEmbeddable(
+            {
+              upvotes: post.vote_count,
+              comments: post.comments_count,
+            },
+          ),
+          remote: new CreateRemoteRecordDto(
+            {
+              remoteId,
+            },
+          ),
+          reviewer: new CreateBookReviewerDto(
+            {
+              name: author.login,
+              gender,
+              avatar: new CreateAttachmentDto(
+                {
+                  originalUrl: author.avatar,
+                },
+              ),
+            },
+          ),
+        },
+      ),
     };
   }
 

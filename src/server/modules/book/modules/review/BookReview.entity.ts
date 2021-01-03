@@ -6,6 +6,9 @@ import {
 import {RemoteRecordEntity} from '@server/modules/remote/entity';
 import {DatedRecordEntity} from '@server/modules/database/DatedRecord.entity';
 import {ScrapperMetadataEntity} from '@server/modules/importer/modules/scrapper/entity';
+import {VotingStatsEmbeddable} from '@server/modules/shared/VotingStats.embeddable';
+
+import {BookReviewerEntity} from '../reviewer/BookReviewer.entity';
 import {BookEntity} from '../../Book.entity';
 
 @Entity(
@@ -14,13 +17,16 @@ import {BookEntity} from '../../Book.entity';
   },
 )
 export class BookReviewEntity extends DatedRecordEntity {
-  @Column('text')
-  nick: string;
+  @Column('timestamp')
+  publishDate: Date;
+
+  @ManyToOne(() => BookReviewerEntity, (entity) => entity.reviews)
+  reviewer: BookReviewerEntity;
 
   @Column('text')
   description: string;
 
-  @Column('smallint')
+  @Column('smallint', {nullable: true})
   rating: number;
 
   @ManyToOne(() => BookEntity, (book) => book.reviews)
@@ -33,6 +39,9 @@ export class BookReviewEntity extends DatedRecordEntity {
   @OneToOne(() => RemoteRecordEntity)
   @JoinColumn()
   remote: RemoteRecordEntity;
+
+  @Column(() => VotingStatsEmbeddable)
+  stats: VotingStatsEmbeddable;
 
   constructor(partial: Partial<BookReviewEntity>) {
     super();

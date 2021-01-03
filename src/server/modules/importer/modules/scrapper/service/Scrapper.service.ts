@@ -1,5 +1,6 @@
 import * as R from 'ramda';
 import {Injectable} from '@nestjs/common';
+import {classToPlain} from 'class-transformer';
 
 import {SERVER_ENV} from '@server/constants/env';
 
@@ -78,10 +79,13 @@ export class ScrapperService {
     return new ScrapperMetadataEntity(
       {
         status,
-        content: item,
+        content: {
+          ...item,
+          dto: classToPlain(item.dto),
+        },
         remote: new RemoteRecordEntity(
           {
-            remoteId: R.toString(item.id),
+            remoteId: R.toString(item.remoteId),
             websiteId: website.id,
           },
         ),

@@ -5,11 +5,11 @@ import {underscoreParameterize} from '@shared/helpers/parameterize';
 import {parseAsyncURLIfOK} from '@server/common/helpers/fetchAsyncHTML';
 import {concatUrls} from '@shared/helpers/concatUrls';
 
+import {CreateBookDto} from '@server/modules/book/dto/CreateBook.dto';
 import {ScrapperMatcher, ScrapperMatcherResult} from '../../../shared/ScrapperMatcher';
-import {BookScrapperInfo} from '../../Book.scrapper';
 import {BookShopScrappersGroupConfig} from '../../BookShopScrappersGroup';
 
-export class LiteraturaGildiaBookMatcher extends ScrapperMatcher<BookScrapperInfo> {
+export class LiteraturaGildiaBookMatcher extends ScrapperMatcher<CreateBookDto> {
   private readonly logger = new Logger(LiteraturaGildiaBookMatcher.name);
 
   constructor(
@@ -18,7 +18,7 @@ export class LiteraturaGildiaBookMatcher extends ScrapperMatcher<BookScrapperInf
     super();
   }
 
-  async matchRecord(scrapperInfo: BookScrapperInfo): Promise<ScrapperMatcherResult<BookScrapperInfo>> {
+  async matchRecord(scrapperInfo: CreateBookDto): Promise<ScrapperMatcherResult<CreateBookDto>> {
     const {$} = await this.directSearch(scrapperInfo);
     console.info('s', $);
 
@@ -29,11 +29,11 @@ export class LiteraturaGildiaBookMatcher extends ScrapperMatcher<BookScrapperInf
    * Skips search phrase and try to build that links directly to book
    *
    * @private
-   * @param {BookScrapperInfo} {authors, title}
+   * @param {CreateBookDto} {authors, title}
    * @returns
    * @memberof LiteraturaGildiaBookMatcher
    */
-  private async directSearch({authors, title}: BookScrapperInfo) {
+  private async directSearch({authors, title}: CreateBookDto) {
     const {config, logger} = this;
     const url = concatUrls(
       config.homepageURL,

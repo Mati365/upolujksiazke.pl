@@ -1,15 +1,15 @@
+import {CreateBookDto} from '@server/modules/book/dto/CreateBook.dto';
 import {ScrapperMatcher, ScrapperMatcherResult} from '../../shared/ScrapperMatcher';
-import {BookScrapperInfo} from '../Book.scrapper';
 import {BookShopScrappersGroupConfig} from '../BookShopScrappersGroup';
 
-export class GraniceBookMatcher extends ScrapperMatcher<BookScrapperInfo> {
+export class GraniceBookMatcher extends ScrapperMatcher<CreateBookDto> {
   constructor(
     private readonly config: BookShopScrappersGroupConfig,
   ) {
     super();
   }
 
-  async matchRecord(scrapperInfo: BookScrapperInfo): Promise<ScrapperMatcherResult<BookScrapperInfo>> {
+  async matchRecord(scrapperInfo: CreateBookDto): Promise<ScrapperMatcherResult<CreateBookDto>> {
     console.info('s', scrapperInfo);
     return Promise.resolve(null);
   }

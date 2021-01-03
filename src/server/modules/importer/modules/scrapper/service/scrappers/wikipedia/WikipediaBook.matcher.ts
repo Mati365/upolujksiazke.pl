@@ -1,18 +1,18 @@
 import wiki, {Options} from 'wikijs';
 
+import {CreateBookDto} from '@server/modules/book/dto/CreateBook.dto';
 import {ScrapperMatcher, ScrapperMatcherResult} from '../../shared/ScrapperMatcher';
-import {BookScrapperInfo} from '../Book.scrapper';
 
 export type WikipediaAPIOptions = Options;
 
-export class WikipediaBookMatcher extends ScrapperMatcher<BookScrapperInfo> {
+export class WikipediaBookMatcher extends ScrapperMatcher<CreateBookDto> {
   constructor(
     private readonly apiOptions: WikipediaAPIOptions,
   ) {
     super();
   }
 
-  async matchRecord(scrapperInfo: BookScrapperInfo): Promise<ScrapperMatcherResult<BookScrapperInfo>> {
+  async matchRecord(scrapperInfo: CreateBookDto): Promise<ScrapperMatcherResult<CreateBookDto>> {
     const {apiOptions} = this;
 
     try {

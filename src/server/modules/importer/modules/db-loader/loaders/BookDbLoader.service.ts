@@ -8,7 +8,6 @@ import {BookEntity, CreateBookDto} from '@server/modules/book';
 import {CreateBookAuthorDto} from '@server/modules/book/modules/author/dto/CreateBookAuthor.dto';
 import {ScrapperMetadataEntity, ScrapperMetadataKind} from '../../scrapper/entity';
 
-import {BookScrapperInfo} from '../../scrapper/service/scrappers/Book.scrapper';
 import {MetadataDbLoader} from '../MetadataDbLoader.interface';
 import {ScrapperMatcherService} from '../../scrapper/service/actions';
 
@@ -25,16 +24,19 @@ export class BookDbLoader implements MetadataDbLoader {
   /**
    * Checks if book should be matcher using matcher
    *
+   * @todo
+   *  Use validators!
+   *
    * @static
-   * @param {BookScrapperInfo} book
+   * @param {CreateBookDto} book
    * @returns
    * @memberof BookDbLoader
    */
-  static isIncompleteBookScrapperInfo(book: BookScrapperInfo) {
+  static isIncompleteBookScrapperDto(book: CreateBookDto) {
     return (
       !book.authors
         || !book.description
-        || !book.isbn
+        || !book.releases
         || !book.title
     );
   }
@@ -55,12 +57,12 @@ export class BookDbLoader implements MetadataDbLoader {
     {
       book,
     }: {
-      book: BookScrapperInfo,
+      book: CreateBookDto,
     },
   ) {
     const {logger, bookService, scrapperMatcherService} = this;
 
-    if (BookDbLoader.isIncompleteBookScrapperInfo(book)) {
+    if (BookDbLoader.isIncompleteBookScrapperDto(book)) {
       const matchedBook = await scrapperMatcherService.matchSingle<CreateBookDto>(
         {
           kind: ScrapperMetadataKind.BOOK,

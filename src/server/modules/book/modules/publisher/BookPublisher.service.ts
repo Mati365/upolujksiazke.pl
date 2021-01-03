@@ -27,7 +27,7 @@ export class BookPublisherService {
   /**
    * Inserts or updates remote entity
    *
-   * @param {RemoteRecordDto} dto
+   * @param {CreateRemoteRecordDto} dto
    * @param {EntityManager} [entityManager]
    * @returns {Promise<BookPublisherEntity>}
    * @memberof BookPublisherService

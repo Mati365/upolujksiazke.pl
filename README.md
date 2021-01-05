@@ -8,7 +8,7 @@ OpenSource book reviews aggregator that helps with searching book opinions. Some
 
 ## Goals
 
-- [ ] Allegro.pl / Amazon.pl price synchronization integration
+- [ ] Allegro.pl / Amazon.pl / Skąpiec.pl price synchronization integration
 - [ ] Wikipedia style edit info proposals
 - [ ] Automatic daily summary tag posting (wykop.pl, #bookmeter tag)
 - [ ] Notifications about new reviews

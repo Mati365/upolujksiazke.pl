@@ -7,6 +7,13 @@ import {DatedRecordEntity} from '../../../database/DatedRecord.entity';
 import {BookEntity} from '../../Book.entity';
 import {BookPublisherEntity} from '../publisher/BookPublisher.entity';
 
+export enum BookBindingKind {
+  HARDCOVER = 1,
+  PAPERBACK = 2,
+  NOTEBOOK = 3,
+  SPIRAL = 4,
+}
+
 @Entity(
   {
     name: 'book_release',
@@ -14,7 +21,7 @@ import {BookPublisherEntity} from '../publisher/BookPublisher.entity';
 )
 @Unique('unique_publisher_isbn', ['isbn', 'publisher'])
 export class BookReleaseEntity extends DatedRecordEntity {
-  @Column('timestamp')
+  @Column('timestamp', {nullable: true})
   publishDate: Date;
 
   @Column('text', {nullable: true})
@@ -23,8 +30,20 @@ export class BookReleaseEntity extends DatedRecordEntity {
   @Column('text')
   isbn: string;
 
-  @Column('text')
+  @Column('text', {nullable: true})
   format: string;
+
+  @Column('text', {nullable: true})
+  edition: string;
+
+  @Column(
+    {
+      type: 'enum',
+      enum: BookBindingKind,
+      nullable: true,
+    },
+  )
+  binding: BookBindingKind;
 
   @ManyToOne(() => BookPublisherEntity, (entity) => entity.releases)
   publisher: BookPublisherEntity;

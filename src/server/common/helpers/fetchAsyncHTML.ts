@@ -13,7 +13,7 @@ export async function fetchAsyncHTML(request: Request) {
 
   return {
     response,
-    result: (response as any).textConverted(),
+    result: await (response as any).textConverted(),
   };
 }
 

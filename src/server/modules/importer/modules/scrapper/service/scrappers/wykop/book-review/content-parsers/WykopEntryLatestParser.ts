@@ -1,5 +1,6 @@
 import * as R from 'ramda';
 
+import {normalizeISBN} from '@server/common/helpers';
 import {removeNullValues} from '@shared/helpers';
 import {
   WykopBookReviewHeader,
@@ -32,7 +33,7 @@ export class WykopEntryLatestParser extends WykopEntryContentParser {
   static readonly propertiesExtractor = R.compose(
     R.evolve(
       {
-        isbn: R.replace(/-/g, ''),
+        isbn: normalizeISBN,
         tags: R.compose(
           R.filter(Boolean),
           R.map(

@@ -5,3 +5,4 @@ export * from './literatura-gildia';
 export * from './matras';
 export * from './skupszop';
 export * from './granice';
+export * from './wbibliotece';

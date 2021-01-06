@@ -13,6 +13,9 @@ import {RemoteWebsiteEntity} from './RemoteWebsite.entity';
 )
 @Unique('unique_remote_entry', ['remoteId', 'website'])
 export class RemoteRecordEntity extends DatedRecordEntity {
+  @Column('text', {nullable: true})
+  url: string;
+
   @Column('text')
   remoteId: string;
 

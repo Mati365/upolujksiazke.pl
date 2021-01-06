@@ -1,6 +1,6 @@
 import {
   IsDefined, IsNumber,
-  IsOptional, IsString,
+  IsOptional, IsString, IsUrl,
 } from 'class-validator';
 
 export class CreateRemoteRecordDto {
@@ -15,6 +15,11 @@ export class CreateRemoteRecordDto {
   @IsDefined()
   @IsNumber()
   readonly websiteId: number;
+
+  @IsOptional()
+  @IsString()
+  @IsUrl()
+  readonly url: string;
 
   constructor(partial: Partial<CreateRemoteRecordDto>) {
     Object.assign(this, partial);

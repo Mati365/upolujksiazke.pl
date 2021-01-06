@@ -21,8 +21,8 @@ export enum BookBindingKind {
 )
 @Unique('unique_publisher_isbn', ['isbn', 'publisher'])
 export class BookReleaseEntity extends DatedRecordEntity {
-  @Column('timestamp', {nullable: true})
-  publishDate: Date;
+  @Column('text', {nullable: true})
+  publishDate: string; // due to fuzzy dates
 
   @Column('text', {nullable: true})
   place: string;

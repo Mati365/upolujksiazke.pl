@@ -15,6 +15,7 @@ import {CreateBookDto} from '@server/modules/book/dto/CreateBook.dto';
 import {CreateBookReleaseDto} from '@server/modules/book/modules/release/dto/CreateBookRelease.dto';
 import {CreateBookAuthorDto} from '@server/modules/book/modules/author/dto/CreateBookAuthor.dto';
 import {CreateBookPublisherDto} from '@server/modules/book/modules/publisher/dto/BookPublisher.dto';
+import {BookBindingKind} from '@server/modules/book/modules/release/BookRelease.entity';
 
 import {ScrapperMatcher, ScrapperMatcherResult} from '../../../shared/ScrapperMatcher';
 import {BookShopScrappersGroupConfig} from '../../BookShopScrappersGroup';
@@ -24,6 +25,13 @@ import {LiteraturaGildiaBookPublisherMatcher} from './LiteraturaGildiaBookPublis
 
 export class LiteraturaGildiaBookMatcher extends ScrapperMatcher<CreateBookDto> {
   private readonly logger = new Logger(LiteraturaGildiaBookMatcher.name);
+
+  static readonly bindingMappings = Object.freeze({
+    /* eslint-disable quote-props */
+    'miękka': BookBindingKind.NOTEBOOK,
+    'twarda': BookBindingKind.HARDCOVER,
+    /* eslint-enable quote-props */
+  });
 
   constructor(
     private readonly config: BookShopScrappersGroupConfig,
@@ -57,22 +65,31 @@ export class LiteraturaGildiaBookMatcher extends ScrapperMatcher<CreateBookDto> 
     const result = new CreateBookDto(
       {
         title: $('h1').text().trim(),
-        description: $wideText.find('p[align="justify"]').text().trim(),
+        description: normalizeParsedText(
+          $wideText.find('div > p').text().trim(),
+        ),
         authors: [
           author,
         ],
         releases: [
           new CreateBookReleaseDto(
             {
+              publisher,
+              edition: normalizeParsedText(text.match(/Wydanie: ([\S]+)/)?.[1]),
+              publishDate: normalizeParsedText(text.match(/Rok wydania oryginału: ([\S]+)/)?.[1]),
               isbn: normalizeISBN(text.match(/ISBN: ([\w-]+)/)?.[1]),
               totalPages: (+text.match(/Liczba stron: (\d+)/)?.[1]) || 0,
-              publisher,
+              format: normalizeParsedText(text.match(/Format: ([\S]+)/)?.[1]),
+              binding: LiteraturaGildiaBookMatcher.bindingMappings[
+                normalizeParsedText(text.match(/Oprawa: ([\S]+)/)?.[1])?.toLowerCase()
+              ],
             },
           ),
         ],
       },
     );
 
+    console.info(result.releases);
     return {
       result,
     };

@@ -51,7 +51,7 @@ export class WykopBookReviewScrapper extends AsyncScrapper<BookReviewScrapperInf
   protected readonly logger = new Logger(WykopBookReviewScrapper.name);
   protected readonly api: WykopAPI;
 
-  static contentParsers: Readonly<WykopEntryContentParser[]> = Object.freeze(
+  static readonly contentParsers: Readonly<WykopEntryContentParser[]> = Object.freeze(
     [
       new WykopEntryLatestParser,
     ],

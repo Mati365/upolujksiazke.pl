@@ -1,6 +1,6 @@
 import {Type} from 'class-transformer';
 import {
-  IsDate, IsEnum, IsNumber,
+  IsEnum, IsNumber,
   IsOptional, IsString,
   ValidateNested,
 } from 'class-validator';
@@ -8,14 +8,21 @@ import {
 import {CreateBookPublisherDto} from '../../publisher/dto/BookPublisher.dto';
 import {BookBindingKind} from '../BookRelease.entity';
 
+/**
+ * @todo
+ *  Maybe add enum for Audiobooks?
+ *
+ * @export
+ * @class CreateBookReleaseDto
+ */
 export class CreateBookReleaseDto {
   @IsOptional()
   @IsNumber()
   readonly id: number;
 
   @IsOptional()
-  @IsDate()
-  readonly publishDate: Date;
+  @IsString()
+  readonly publishDate: string;
 
   @IsOptional()
   @IsString()
@@ -34,7 +41,7 @@ export class CreateBookReleaseDto {
 
   @IsOptional()
   @IsString()
-  readonly format: string; // todo: maybe add enum for Audiobooks?
+  readonly format: string;
 
   @IsOptional()
   @IsEnum(BookBindingKind)

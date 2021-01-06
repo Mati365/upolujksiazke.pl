@@ -35,6 +35,7 @@ export class LiteraturaGildiaBookAuthorMatcher extends ScrapperMatcher<CreateBoo
     );
 
     logger.log(`Direct fetching author from ${chalk.bold(url)}!`);
+
     const {$} = await parseAsyncURLIfOK(url);
     return {
       result: new CreateBookAuthorDto(

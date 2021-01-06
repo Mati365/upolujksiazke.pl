@@ -133,6 +133,14 @@ export class WykopBookReviewScrapper extends AsyncScrapper<BookReviewScrapperInf
           !!properties.isbn && new CreateBookReleaseDto(
             {
               isbn: properties.isbn,
+              cover: embed && new CreateAttachmentDto(
+                {
+                  nsfw: embed.plus18,
+                  ratio: embed.ratio,
+                  sourceUrl: embed.source,
+                  originalUrl: embed.preview,
+                },
+              ),
             },
           ),
         ].filter(Boolean),
@@ -151,15 +159,6 @@ export class WykopBookReviewScrapper extends AsyncScrapper<BookReviewScrapperInf
               name: categoryName,
             },
           ),
-        ),
-
-        cover: embed && new CreateAttachmentDto(
-          {
-            nsfw: embed.plus18,
-            ratio: embed.ratio,
-            sourceUrl: embed.source,
-            originalUrl: embed.preview,
-          },
         ),
       },
     );

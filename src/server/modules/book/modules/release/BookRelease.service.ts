@@ -20,7 +20,7 @@ export class BookReleaseService {
    * @returns {Promise<BookReleaseEntity>}
    * @memberof BookReleaseService
    */
-  create(dto: CreateBookReleaseDto): Promise<BookReleaseEntity> {
+  create({cover, ...dto}: CreateBookReleaseDto): Promise<BookReleaseEntity> {
     return BookReleaseEntity.save(
       BookReleaseEntity.create(dto),
     );
@@ -34,7 +34,7 @@ export class BookReleaseService {
    * @returns {Promise<BookReleaseEntity>}
    * @memberof BookReleaseService
    */
-  async upsert(dto: CreateBookReleaseDto, entityManager?: EntityManager): Promise<BookReleaseEntity> {
+  async upsert({cover, ...dto}: CreateBookReleaseDto, entityManager?: EntityManager): Promise<BookReleaseEntity> {
     const {connection, publisherService} = this;
 
     return upsert(

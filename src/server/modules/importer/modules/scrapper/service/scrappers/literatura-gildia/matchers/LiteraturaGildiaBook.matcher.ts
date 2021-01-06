@@ -11,11 +11,13 @@ import {
   normalizeParsedText,
 } from '@server/common/helpers';
 
+import {BookBindingKind} from '@server/modules/book/modules/release/BookRelease.entity';
+
 import {CreateBookDto} from '@server/modules/book/dto/CreateBook.dto';
 import {CreateBookReleaseDto} from '@server/modules/book/modules/release/dto/CreateBookRelease.dto';
 import {CreateBookAuthorDto} from '@server/modules/book/modules/author/dto/CreateBookAuthor.dto';
 import {CreateBookPublisherDto} from '@server/modules/book/modules/publisher/dto/BookPublisher.dto';
-import {BookBindingKind} from '@server/modules/book/modules/release/BookRelease.entity';
+import {CreateAttachmentDto} from '@server/modules/attachment/dto';
 
 import {ScrapperMatcher, ScrapperMatcherResult} from '../../../shared/ScrapperMatcher';
 import {BookShopScrappersGroupConfig} from '../../BookShopScrappersGroup';
@@ -62,6 +64,8 @@ export class LiteraturaGildiaBookMatcher extends ScrapperMatcher<CreateBookDto> 
     );
 
     const text = $wideText.text();
+    const $coverImage = $wideText.find('img.main-article-image');
+
     const result = new CreateBookDto(
       {
         title: $('h1').text().trim(),
@@ -83,6 +87,11 @@ export class LiteraturaGildiaBookMatcher extends ScrapperMatcher<CreateBookDto> 
               binding: LiteraturaGildiaBookMatcher.bindingMappings[
                 normalizeParsedText(text.match(/Oprawa: ([\S]+)/)?.[1])?.toLowerCase()
               ],
+              cover: $coverImage && new CreateAttachmentDto(
+                {
+                  sourceUrl: $coverImage.attr('src'),
+                },
+              ),
             },
           ),
         ],

@@ -3,6 +3,7 @@ import {
   Entity, ManyToOne, Unique,
 } from 'typeorm';
 
+import {AttachmentEntity} from '@server/modules/attachment/Attachment.entity';
 import {DatedRecordEntity} from '../../../database/DatedRecord.entity';
 import {BookEntity} from '../../Book.entity';
 import {BookPublisherEntity} from '../publisher/BookPublisher.entity';
@@ -50,6 +51,9 @@ export class BookReleaseEntity extends DatedRecordEntity {
 
   @ManyToOne(() => BookEntity, (entity) => entity.releases)
   book: BookEntity;
+
+  @ManyToOne(() => AttachmentEntity, {nullable: true})
+  cover: AttachmentEntity;
 
   @BeforeInsert()
   @BeforeUpdate()

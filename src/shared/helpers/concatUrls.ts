@@ -1,5 +1,7 @@
 import * as R from 'ramda';
 
+export const isAbsoluteURL = R.test(/^https?:\/\//);
+
 /**
  * Concat two urls and fixes double slashes
  *
@@ -11,6 +13,9 @@ import * as R from 'ramda';
 export function concatUrls(a: string, b: string): string {
   if (!b || b === '/')
     return a;
+
+  if (isAbsoluteURL(b))
+    return b;
 
   return [
     R.endsWith('/', a) ? R.init(a) : a,

@@ -21,6 +21,10 @@ export class CreateBookAuthorDto {
   )
   readonly name: string;
 
+  @IsOptional()
+  @IsString()
+  readonly description: string;
+
   constructor(partial: Partial<CreateBookAuthorDto>) {
     Object.assign(this, partial);
   }

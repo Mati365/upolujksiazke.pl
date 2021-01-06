@@ -14,5 +14,9 @@ export abstract class ScrapperMatcher<Type> implements ScrapperGroupChild {
     this.group = group;
   }
 
+  get matchers() {
+    return this.group.matchers;
+  }
+
   abstract matchRecord(scrapperInfo: Type): CanBePromise<ScrapperMatcherResult<Type>>;
 }

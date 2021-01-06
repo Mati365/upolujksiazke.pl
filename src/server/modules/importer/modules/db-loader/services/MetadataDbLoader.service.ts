@@ -21,6 +21,7 @@ export class MetadataDbLoaderService implements MetadataDbLoader {
       [ScrapperMetadataKind.BOOK_REVIEW]: bookReviewDbLoader,
       [ScrapperMetadataKind.BOOK]: bookDbLoader,
       [ScrapperMetadataKind.BOOK_AUTHOR]: null,
+      [ScrapperMetadataKind.BOOK_PUBLISHER]: null,
     };
   }
 

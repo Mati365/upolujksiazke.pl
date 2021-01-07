@@ -47,6 +47,10 @@ export class BookEntity extends DatedRecordEntity {
   @ManyToMany(() => TagEntity)
   tags: TagEntity[];
 
+  @JoinColumn()
+  @OneToOne(() => BookReleaseEntity)
+  originalRelease: BookReleaseEntity;
+
   @OneToMany(() => BookReleaseEntity, (entity) => entity.book)
   releases: BookReleaseEntity[];
 

@@ -39,6 +39,11 @@ export class CreateBookDto {
   @MinLength(3)
   readonly description: string;
 
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => CreateBookReleaseDto)
+  readonly originalRelease: CreateBookReleaseDto;
+
   @IsDefined()
   @ValidateNested()
   @Type(() => CreateBookReleaseDto)

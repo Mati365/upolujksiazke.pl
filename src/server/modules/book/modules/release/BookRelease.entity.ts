@@ -3,6 +3,7 @@ import {
   Entity, ManyToOne, Unique,
 } from 'typeorm';
 
+import {Language} from '@server/constants/language';
 import {AttachmentEntity} from '@server/modules/attachment/Attachment.entity';
 import {DatedRecordEntity} from '../../../database/DatedRecord.entity';
 import {BookEntity} from '../../Book.entity';
@@ -22,6 +23,9 @@ export enum BookBindingKind {
 )
 @Unique('unique_publisher_isbn', ['isbn', 'publisher'])
 export class BookReleaseEntity extends DatedRecordEntity {
+  @Column('text', {nullable: true})
+  title: string;
+
   @Column('text', {nullable: true})
   publishDate: string; // due to fuzzy dates
 
@@ -45,6 +49,15 @@ export class BookReleaseEntity extends DatedRecordEntity {
     },
   )
   binding: BookBindingKind;
+
+  @Column(
+    {
+      type: 'enum',
+      enum: Language,
+      nullable: true,
+    },
+  )
+  lang: Language;
 
   @ManyToOne(() => BookPublisherEntity, (entity) => entity.releases)
   publisher: BookPublisherEntity;

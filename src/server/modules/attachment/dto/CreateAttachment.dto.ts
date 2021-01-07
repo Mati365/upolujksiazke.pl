@@ -12,7 +12,7 @@ export class CreateAttachmentDto {
 
   @IsOptional()
   @IsString()
-  readonly originalUrl: number;
+  readonly originalUrl: string;
 
   @IsDefined()
   @IsString()

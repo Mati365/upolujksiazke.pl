@@ -1,6 +1,9 @@
 import cheerio from 'cheerio';
 import {HTTPCode} from '@shared/constants';
 
+// eslint-disable-next-line max-len
+export const DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36';
+
 /**
  * Fetches html and fixes encoding
  *
@@ -9,7 +12,11 @@ import {HTTPCode} from '@shared/constants';
  * @returns
  */
 export async function fetchAsyncHTML(request: Request) {
-  const response = await fetch(request);
+  const response = await fetch(request, {
+    headers: {
+      'User-Agent': DEFAULT_USER_AGENT,
+    },
+  });
 
   return {
     response,
@@ -29,7 +36,7 @@ export async function parseAsyncURL(url: string) {
   const {result, response} = await fetchAsyncHTML(request);
 
   return {
-    $: cheerio.load(result),
+    $: cheerio.load(result, {decodeEntities: false}),
     result,
     request,
     response,

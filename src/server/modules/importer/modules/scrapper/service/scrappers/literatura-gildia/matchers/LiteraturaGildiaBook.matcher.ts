@@ -68,21 +68,23 @@ export class LiteraturaGildiaBookMatcher extends ScrapperMatcher<CreateBookDto> 
 
     const result = new CreateBookDto(
       {
-        title: $('h1').text().trim(),
-        description: normalizeParsedText(
-          $wideText.find('div > p').text().trim(),
-        ),
+        title: normalizeParsedText($('h1').text()),
+        description: normalizeParsedText($wideText.find('div > p').text()),
         authors: [
           author,
         ],
+        originalRelease: new CreateBookReleaseDto(
+          {
+            publishDate: normalizeParsedText(text.match(/Rok wydania oryginału: ([\S]+)/)?.[1]),
+          },
+        ),
         releases: [
           new CreateBookReleaseDto(
             {
               publisher,
               edition: normalizeParsedText(text.match(/Wydanie: ([\S]+)/)?.[1]),
-              publishDate: normalizeParsedText(text.match(/Rok wydania oryginału: ([\S]+)/)?.[1]),
               isbn: normalizeISBN(text.match(/ISBN: ([\w-]+)/)?.[1]),
-              totalPages: (+text.match(/Liczba stron: (\d+)/)?.[1]) || 0,
+              totalPages: (+text.match(/Liczba stron: (\d+)/)?.[1]) || null,
               format: normalizeParsedText(text.match(/Format: ([\S]+)/)?.[1]),
               binding: LiteraturaGildiaBookMatcher.bindingMappings[
                 normalizeParsedText(text.match(/Oprawa: ([\S]+)/)?.[1])?.toLowerCase()
@@ -98,7 +100,6 @@ export class LiteraturaGildiaBookMatcher extends ScrapperMatcher<CreateBookDto> 
       },
     );
 
-    console.info(result.releases);
     return {
       result,
     };

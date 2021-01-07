@@ -191,7 +191,7 @@ export class WykopBookReviewScrapper extends AsyncScrapper<BookReviewScrapperInf
               gender,
               avatar: new CreateAttachmentDto(
                 {
-                  originalUrl: author.avatar,
+                  sourceUrl: author.avatar,
                 },
               ),
             },

@@ -5,6 +5,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 
+import {Language} from '@server/constants/language';
 import {CreateAttachmentDto} from '@server/modules/attachment/dto';
 import {CreateBookPublisherDto} from '../../publisher/dto/BookPublisher.dto';
 import {BookBindingKind} from '../BookRelease.entity';
@@ -24,6 +25,10 @@ export class CreateBookReleaseDto {
   @IsOptional()
   @IsString()
   readonly publishDate: string;
+
+  @IsOptional()
+  @IsString()
+  readonly title: string;
 
   @IsOptional()
   @IsString()
@@ -55,6 +60,10 @@ export class CreateBookReleaseDto {
   @ValidateNested()
   @IsOptional()
   readonly cover: CreateAttachmentDto;
+
+  @IsEnum(Language)
+  @IsOptional()
+  readonly lang: Language;
 
   constructor(partial: Partial<CreateBookReleaseDto>) {
     Object.assign(this, partial);

@@ -22,7 +22,7 @@ OpenSource book reviews aggregator that helps with searching book opinions. Some
 - [ ] Mobile APP
 - [ ] Trending books
 - [ ] Emoji reactions
-- [ ] Add comment after publishing entry on wykop.pl
+- [ ] Add comment after publishing entry on wykop.pl with links to shops
 
 ## Available websites
 

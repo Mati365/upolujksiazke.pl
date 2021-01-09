@@ -1,6 +1,7 @@
 import {Logger} from '@nestjs/common';
 import chalk from 'chalk';
 import stringSimilarity from 'string-similarity';
+import * as R from 'ramda';
 
 import {concatUrls} from '@shared/helpers/concatUrls';
 import {parseAsyncURLIfOK} from '@server/common/helpers/fetchAsyncHTML';
@@ -41,9 +42,11 @@ export class GraniceBookMatcher extends ScrapperMatcher<CreateBookDto> {
     const categories = (
       (normalizeParsedText(detailsText.match(/Kategoria: ([\S]+)/)?.[1]) || '')
         .split(',')
+        .map((item) => item.trim())
+        .filter(Boolean)
         .map((name) => new CreateBookCategoryDto(
           {
-            name: name.trim(),
+            name,
           },
         ))
     );
@@ -74,7 +77,7 @@ export class GraniceBookMatcher extends ScrapperMatcher<CreateBookDto> {
         ),
         cover: new CreateAttachmentDto(
           {
-            originalUrl: $details.find('[itemprop="image"').attr('src'),
+            originalUrl: $details.find('[itemprop="image"]').attr('src'),
           },
         ),
       },
@@ -86,14 +89,17 @@ export class GraniceBookMatcher extends ScrapperMatcher<CreateBookDto> {
         description: normalizeParsedText($content.find('> .desc > p:not(:empty):not(.tags)').text()),
         categories,
         authors: [author],
-        originalRelease,
+        originalRelease: (
+          originalRelease.title
+            ? originalRelease
+            : null
+        ),
         releases: [
           release,
         ],
       },
     );
 
-    console.info(result);
     return {
       result,
     };
@@ -108,9 +114,13 @@ export class GraniceBookMatcher extends ScrapperMatcher<CreateBookDto> {
    */
   private async searchByPhrase(scrapperInfo: CreateBookDto) {
     const {config, logger} = this;
+    const searchParams = {
+      search: `${scrapperInfo.title} ${scrapperInfo.authors[0].name}`,
+    };
+
     const url = concatUrls(
       config.searchURL,
-      `${encodeURIComponent(`${scrapperInfo.title} ${scrapperInfo.authors[0].name}`)}/1`,
+      `?${new URLSearchParams(searchParams).toString()}`,
     );
 
     logger.log(`Searching book by phrase from ${chalk.bold(url)}!`);
@@ -121,31 +131,50 @@ export class GraniceBookMatcher extends ScrapperMatcher<CreateBookDto> {
       scrapperInfo.authors[0].name.toLowerCase(),
     ];
 
-    const item = (
+    const item = R.head(R.sort(
+      (a, b) => b[0] - a[0],
       $('[book-id]')
         .toArray()
-        .find((el) => {
+        .map((el): [number, cheerio.Element] => {
           const itemTitle = normalizeParsedText($(el).find('.cont > .title').text())?.toLowerCase();
           const similarity = stringSimilarity.compareTwoStrings(lowerTitle, itemTitle);
 
-          if (similarity < 0.75)
-            return false;
+          if (similarity < 0.5)
+            return null;
 
           const authorTitle = normalizeParsedText($(el).find('.cont > .details > .author').text())?.toLowerCase();
-          return stringSimilarity.compareTwoStrings(lowerAuthor, authorTitle) > 0.7;
+          return [
+            stringSimilarity.compareTwoStrings(lowerAuthor, authorTitle),
+            el,
+          ];
         })
-    );
+        .filter(Boolean),
+    ));
 
-    if (!item)
+    if (!item || item[0] < 0.5)
       return null;
 
-    return parseAsyncURLIfOK(
-      concatUrls(
-        config.homepageURL,
-        $(item)
-          .find('a.title[href^="/ksiazka/"]')
-          .attr('href'),
-      ),
+    return this.searchByPath(
+      $(item[1])
+        .find('a.title[href^="/ksiazka/"]')
+        .attr('href'),
     );
+  }
+
+  /**
+   * Concats urls with root page url and fetches page
+   *
+   * @private
+   * @param {string} path
+   * @returns
+   * @memberof GraniceBookMatcher
+   */
+  private async searchByPath(path: string) {
+    const {config, logger} = this;
+    const url = concatUrls(config.homepageURL, path);
+
+    logger.log(`Direct search book ${chalk.bold(url)}!`);
+
+    return parseAsyncURLIfOK(url);
   }
 }

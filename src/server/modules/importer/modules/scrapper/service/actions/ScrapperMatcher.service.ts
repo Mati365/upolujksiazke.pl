@@ -21,9 +21,13 @@ export class ScrapperMatcherService {
     const {scrappersGroups} = this.scrapperService;
 
     for await (const scrapper of scrappersGroups) {
-      const result = await scrapper.matchRecord(attrs);
-      if (result)
-        return result;
+      try {
+        const result = await scrapper.matchRecord(attrs);
+        if (result)
+          return result;
+      } catch (e) {
+        console.error(e);
+      }
     }
 
     return null;

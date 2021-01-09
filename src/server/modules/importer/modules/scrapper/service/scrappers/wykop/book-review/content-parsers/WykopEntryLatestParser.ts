@@ -40,7 +40,7 @@ export class WykopEntryLatestParser extends WykopEntryContentParser {
             R.pipe(
               // rejects special characters such as (?) from tags
               R.trim,
-              R.match(/^([a-zA-ZżźćńółęąśŻŹĆĄŚĘŁÓŃ\s]+)$/),
+              R.match(/^([a-zA-ZżźćńółęąśŻŹĆĄŚĘŁÓŃ\-\s]+)$/),
               R.nth(1),
               R.unless(
                 R.isNil,
@@ -94,14 +94,14 @@ export class WykopEntryLatestParser extends WykopEntryContentParser {
       (matches) => [matches[1], matches[2]],
     ),
     (str: string) => {
-      // matches new pots with strong tags
+      // matches new posts with strong tags
       const matches = [...str.matchAll(/(?:<strong>([^<>]+)(?::<\/strong>|<\/strong>:))\s(.+)<br\s\/>/g)];
+
       if (matches.length)
         return matches;
 
       // matches posts without strong tags
-      // such as: https://www.wykop.pl/wpis/51668249/133-1-134-tytul-piter-bitwa-blizniakow-autor-szymu/
-      return [...str.matchAll(/(\S+):\s*([^<>]+)<br\s\/>/g)];
+      return [...str.matchAll(/(\S+):\s*(?:#<a href="#psychologia">)?([^<>]+)(?:<\/a>)?\s*<br\s\/>/g)];
     },
   ) as any;
 
@@ -135,9 +135,20 @@ export class WykopEntryLatestParser extends WykopEntryContentParser {
       body
         .replace(/\n/g, '')
         // eslint-disable-next-line max-len
-        .match(/(?:[☆★]|\d+\s*\/\s*\d+(?:<br \/><br \/>[☆★]+)?)<br\s\/><br\s\/>(.+?)(?<!<a)<br \/><br \/>(?:Wpis dodano za pomocą stron|#?<a href="#).*/mi)
+        .match(/(?:[☆★]|\d+\s*\/\s*\d+(?:<br \/><br \/>[☆★]+)?)(?:<br\s\/>)+(.+?)(?<!<a)(?:<br \/>)*(?:Wpis dodano za pomocą stron|#?<a href="#bookmeter).*/mi)
     )?.[1] ?? null;
 
-    return match && R.trim(match);
+    if (!match)
+      return null;
+
+    return (
+      R
+        .trim(match)
+        .replace(/(<br\s\/>)+/g, '<br />')
+        .replace(
+          /<a href="spoiler:(.+)">\[.+\]<\/a>/g,
+          (_, p1) => `<spoiler>${decodeURIComponent(p1).replace(/\+/g, ' ')}</spoiler>`,
+        )
+    );
   }
 }

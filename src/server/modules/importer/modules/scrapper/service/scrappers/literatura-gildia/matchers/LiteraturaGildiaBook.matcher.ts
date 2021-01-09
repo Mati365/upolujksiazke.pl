@@ -91,7 +91,7 @@ export class LiteraturaGildiaBookMatcher extends ScrapperMatcher<CreateBookDto> 
               ],
               cover: $coverImage && new CreateAttachmentDto(
                 {
-                  sourceUrl: $coverImage.attr('src'),
+                  originalUrl: $coverImage.attr('src'),
                 },
               ),
             },

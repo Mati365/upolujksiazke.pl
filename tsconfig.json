@@ -8,6 +8,7 @@
     "experimentalDecorators": true,
     "downlevelIteration": true,
     "emitDecoratorMetadata": true,
+    "resolveJsonModule": true,
     "baseUrl": "./",
     "paths": {
       "@client": ["src/client"],
@@ -23,11 +24,13 @@
       "@shared/*": ["src/shared/*"],
 
       "@assets": ["assets"],
-      "@assets/*": ["assets/*"]
+      "@assets/*": ["assets/*"],
+
+      "@scrapper": ["./src/server/modules/importer/modules/scrapper"],
+      "@scrapper/*": ["./src/server/modules/importer/modules/scrapper/*"]
     }
   },
   "exclude": [
-    "**/*.test.ts",
     "node_modules"
   ]
 }

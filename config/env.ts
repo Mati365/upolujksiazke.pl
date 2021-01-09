@@ -1,5 +1,5 @@
-import {BookShopUrlsConfig} from '@server/modules/importer/modules/scrapper/service/scrappers/BookShopScrappersGroup';
-import {WykopAPIAuthParams} from '@server/modules/importer/modules/scrapper/service/scrappers/wykop/api/WykopAPI';
+import {BookShopUrlsConfig} from '@scrapper/service/scrappers/BookShopScrappersGroup';
+import {WykopAPIAuthParams} from '@scrapper/service/scrappers/wykop/api/WykopAPI';
 
 /* eslint-disable import/no-default-export */
 require('dotenv').config();

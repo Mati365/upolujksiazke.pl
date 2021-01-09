@@ -4,8 +4,8 @@ import {TaskFunction} from 'gulp';
 import {logger} from '@tasks/utils/logger';
 
 import {AppModule} from '@server/modules/App.module';
-import {ScrapperModule} from '@server/modules/importer/modules/scrapper/Scrapper.module';
-import {ScrapperReanalyzerService} from '@server/modules/importer/modules/scrapper/service/actions';
+import {ScrapperModule} from '@scrapper/Scrapper.module';
+import {ScrapperReanalyzerService} from '@scrapper/service/actions';
 
 /**
  * Iterates over all records and parses them again,

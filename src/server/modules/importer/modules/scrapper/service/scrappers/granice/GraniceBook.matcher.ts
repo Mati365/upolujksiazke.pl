@@ -74,7 +74,7 @@ export class GraniceBookMatcher extends ScrapperMatcher<CreateBookDto> {
         ),
         cover: new CreateAttachmentDto(
           {
-            sourceUrl: $details.find('[itemprop="image"').attr('src'),
+            originalUrl: $details.find('[itemprop="image"').attr('src'),
           },
         ),
       },

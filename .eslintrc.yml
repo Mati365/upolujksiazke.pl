@@ -11,11 +11,12 @@
         map: [
           ['@client', './src/client/'],
           ['@server', './src/server/'],
+          ['@scrapper', './src/server/modules/importer/modules/scrapper'],
           ['@shared', './src/shared/'],
           ['@tasks', './src/tasks/'],
           ['@assets', './assets/'],
         ],
-        extensions: ['.js', '.ts', '.tsx', '.scss', '.json']
+        extensions: ['.js', '.test.ts', '.ts', '.tsx', '.scss', '.json']
       }
   env:
     node: true

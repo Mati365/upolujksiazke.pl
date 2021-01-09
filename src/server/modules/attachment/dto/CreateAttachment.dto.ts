@@ -20,15 +20,11 @@ export class CreateAttachmentDto {
 
   @IsOptional()
   @IsBoolean()
-  nsfw: boolean;
+  readonly nsfw: boolean;
 
   @IsOptional()
   @IsNumber()
-  ratio: number;
-
-  @IsOptional()
-  @IsString()
-  sourceUrl: string;
+  readonly ratio: number;
 
   @ValidateNested()
   readonly file: UploadedFileDto;

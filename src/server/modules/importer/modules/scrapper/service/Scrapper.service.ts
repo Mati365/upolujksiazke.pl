@@ -20,6 +20,7 @@ import {
   WebsiteScrappersGroup,
 } from './shared';
 
+import {WykopAPI} from './scrappers/wykop/api/WykopAPI';
 import {
   GraniceScrappersGroup,
   // MatrasScrappersGroup,
@@ -47,7 +48,18 @@ export class ScrapperService {
       // new SkupszopScrappersGroup(PARSERS_ENV.skupszop),
       new GraniceScrappersGroup(PARSERS_ENV.granice),
       // new MatrasScrappersGroup(PARSERS_ENV.matras),
-      new WykopScrappersGroup(PARSERS_ENV.wykop),
+
+      new WykopScrappersGroup(
+        {
+          homepageURL: PARSERS_ENV.wykop.homepageURL,
+          api: new WykopAPI(
+            {
+              authConfig: PARSERS_ENV.wykop.authConfig,
+            },
+          ),
+        },
+      ),
+
       // new WikipediaScrappersGroup(PARSERS_ENV.wikipedia),
       new EIsbnScrappersGroup(
         {

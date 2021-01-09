@@ -20,6 +20,13 @@ export type WykopAPIAuthParams = {
   },
 };
 
+export type WykopAPIConfig = {
+  authConfig?: WykopAPIAuthParams,
+  cacheResolver?(params: WykopRequestParams): {
+    data: any,
+  },
+};
+
 export type WykopAPIResponse = {
   data?: any,
   pagination?: {
@@ -52,11 +59,19 @@ export function toUnicode(val: any) {
 export class WykopAPI {
   static API_URL = 'https://a2.wykop.pl';
 
+  private readonly authConfig: WykopAPIAuthParams;
+  private readonly cacheResolver: WykopAPIConfig['cacheResolver'];
   private userkey: string;
 
   constructor(
-    public readonly authConfig: WykopAPIAuthParams,
-  ) {}
+    {
+      authConfig,
+      cacheResolver,
+    }: WykopAPIConfig,
+  ) {
+    this.authConfig = authConfig;
+    this.cacheResolver = cacheResolver;
+  }
 
   static stringifyBodyValues(body: WykopBodyParams) {
     return R.compose(
@@ -74,7 +89,12 @@ export class WykopAPI {
    * @memberof WykopAPI
    */
   async call(params: WykopRequestParams): Promise<WykopAPIResponse> {
-    const {userkey, authConfig} = this;
+    const {userkey, authConfig, cacheResolver} = this;
+    const cacheResult = cacheResolver?.(params);
+
+    if (cacheResult)
+      return cacheResult.data;
+
     if (!userkey && !params.noAuthCheck) {
       await this.authorize();
       return this.call(params);

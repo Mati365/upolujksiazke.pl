@@ -6,10 +6,10 @@ import * as R from 'ramda';
 import {logger} from '@tasks/utils/logger';
 
 import {AppModule} from '@server/modules/App.module';
-import {ScrapperModule} from '@server/modules/importer/modules/scrapper/Scrapper.module';
-import {ScrapperRefreshService} from '@server/modules/importer/modules/scrapper/service/actions';
-import {ScrapperService} from '@server/modules/importer/modules/scrapper/service';
-import {ScrapperMetadataKind} from '@server/modules/importer/modules/scrapper/entity';
+import {ScrapperModule} from '@scrapper/Scrapper.module';
+import {ScrapperRefreshService} from '@scrapper/service/actions';
+import {ScrapperService} from '@scrapper/service';
+import {ScrapperMetadataKind} from '@scrapper/entity';
 
 /**
  * Refreshes all latest entities

@@ -3,8 +3,8 @@ import chalk from 'chalk';
 import {Logger} from '@nestjs/common';
 
 import {Gender, RemoteID} from '@shared/types';
-import {ScrapperMetadataKind} from '@server/modules/importer/modules/scrapper/entity';
-import {AsyncScrapper, ScrapperBasicPagination} from '@server/modules/importer/modules/scrapper/service/shared';
+import {ScrapperMetadataKind} from '@scrapper/entity';
+import {AsyncScrapper, ScrapperBasicPagination} from '@scrapper/service/shared';
 
 import {CreateBookReviewDto} from '@server/modules/book/modules/review/dto/CreateBookReview.dto';
 import {CreateRemoteRecordDto} from '@server/modules/remote/dto/CreateRemoteRecord.dto';
@@ -23,7 +23,6 @@ import {
 
 import {
   WykopAPI,
-  WykopAPIAuthParams,
   WykopAPIResponse,
 } from '../api/WykopAPI';
 
@@ -33,7 +32,7 @@ import {
 } from './content-parsers';
 
 export type WykopBookReviewScrapperConfig = {
-  authConfig: WykopAPIAuthParams,
+  api: WykopAPI,
 };
 
 /**
@@ -57,18 +56,14 @@ export class WykopBookReviewScrapper extends AsyncScrapper<BookReviewScrapperInf
     ],
   );
 
-  constructor(
-    {
-      authConfig,
-    }: WykopBookReviewScrapperConfig,
-  ) {
+  constructor({api}: WykopBookReviewScrapperConfig) {
     super(
       {
         pageProcessDelay: 13000,
       },
     );
 
-    this.api = new WykopAPI(authConfig);
+    this.api = api;
   }
 
   /**
@@ -137,7 +132,6 @@ export class WykopBookReviewScrapper extends AsyncScrapper<BookReviewScrapperInf
                 {
                   nsfw: embed.plus18,
                   ratio: embed.ratio,
-                  sourceUrl: embed.source,
                   originalUrl: embed.preview,
                 },
               ),
@@ -191,7 +185,7 @@ export class WykopBookReviewScrapper extends AsyncScrapper<BookReviewScrapperInf
               gender,
               avatar: new CreateAttachmentDto(
                 {
-                  sourceUrl: author.avatar,
+                  originalUrl: author.avatar,
                 },
               ),
             },

@@ -1,4 +1,4 @@
-import {ScrapperMetadataKind} from '@server/modules/importer/modules/scrapper/entity';
+import {ScrapperMetadataKind} from '@scrapper/entity';
 
 import {SkupszopBookMatcher} from './SkupszopBook.matcher';
 import {

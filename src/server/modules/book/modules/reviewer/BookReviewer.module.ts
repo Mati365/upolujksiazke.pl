@@ -1,7 +1,7 @@
 import {Module} from '@nestjs/common';
 import {TypeOrmModule} from '@nestjs/typeorm';
 
-import {ScrapperModule} from '@server/modules/importer/modules/scrapper/Scrapper.module';
+import {ScrapperModule} from '@scrapper/Scrapper.module';
 import {BookReviewerEntity} from './BookReviewer.entity';
 import {BookReviewerService} from './BookReviewer.service';
 

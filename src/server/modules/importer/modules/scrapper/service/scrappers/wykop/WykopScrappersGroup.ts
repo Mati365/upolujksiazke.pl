@@ -7,14 +7,14 @@ export type WykopScrappersGroupConfig = WykopBookReviewScrapperConfig & {
 };
 
 export class WykopScrappersGroup extends WebsiteScrappersGroup {
-  constructor({authConfig, homepageURL}: WykopScrappersGroupConfig) {
+  constructor({api, homepageURL}: WykopScrappersGroupConfig) {
     super(
       {
         websiteInfoScrapper: new WebsiteInfoScrapper(homepageURL),
         scrappers: {
           [ScrapperMetadataKind.BOOK_REVIEW]: new WykopBookReviewScrapper(
             {
-              authConfig,
+              api,
             },
           ),
         },

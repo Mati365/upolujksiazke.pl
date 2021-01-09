@@ -36,7 +36,7 @@ export class AttachmentEntity extends DatedRecordEntity {
   ratio: number;
 
   @Column('text', {nullable: true})
-  sourceUrl: string;
+  originalUrl: string;
 
   @Expose()
   get url(): string {

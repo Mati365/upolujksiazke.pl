@@ -5,7 +5,7 @@ import {
 
 import {RemoteRecordEntity} from '@server/modules/remote/entity';
 import {DatedRecordEntity} from '@server/modules/database/DatedRecord.entity';
-import {ScrapperMetadataEntity} from '@server/modules/importer/modules/scrapper/entity';
+import {ScrapperMetadataEntity} from '@scrapper/entity';
 import {VotingStatsEmbeddable} from '@server/modules/shared/VotingStats.embeddable';
 
 import {BookReviewerEntity} from '../reviewer/BookReviewer.entity';

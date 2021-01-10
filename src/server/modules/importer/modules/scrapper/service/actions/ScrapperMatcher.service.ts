@@ -10,19 +10,19 @@ export class ScrapperMatcherService {
   ) {}
 
   /**
-   *Iterate sequentially over scrappers and tries
+   * Iterate sequentially over scrappers and tries
    *
    * @template R Result type
    * @param {MatchRecordAttrs} attrs
    * @returns {Promise<R>}
    * @memberof ScrapperMatcherService
    */
-  async matchSingle<R>(attrs: MatchRecordAttrs): Promise<ScrapperMatcherResult<R>> {
+  async searchRemoteRecord<R>(attrs: MatchRecordAttrs): Promise<ScrapperMatcherResult<R>> {
     const {scrappersGroups} = this.scrapperService;
 
     for await (const scrapper of scrappersGroups) {
       try {
-        const result = await scrapper.matchRecord(attrs);
+        const result = await scrapper.searchRemoteRecord(attrs);
         if (result)
           return result;
       } catch (e) {

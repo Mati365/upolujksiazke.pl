@@ -33,8 +33,10 @@ export class BookAuthorService {
    * @memberof BookAuthorService
    */
   async upsertList(dtos: CreateBookAuthorDto[], entityManager?: EntityManager): Promise<BookAuthorEntity[]> {
-    const {connection} = this;
+    if (!dtos?.length)
+      return [];
 
+    const {connection} = this;
     return upsert(
       {
         connection,

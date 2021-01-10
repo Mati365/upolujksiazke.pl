@@ -1,4 +1,5 @@
 import {CreateBookDto} from '@server/modules/book/dto/CreateBook.dto';
+import {MatchRecordAttrs} from '../../shared/WebsiteScrappersGroup';
 import {ScrapperMatcher, ScrapperMatcherResult} from '../../shared/ScrapperMatcher';
 import {BookShopScrappersGroupConfig} from '../BookShopScrappersGroup';
 
@@ -9,7 +10,9 @@ export class WbiblioteceBookMatcher extends ScrapperMatcher<CreateBookDto> {
     super();
   }
 
-  async matchRecord(scrapperInfo: CreateBookDto): Promise<ScrapperMatcherResult<CreateBookDto>> {
+  async searchRemoteRecord(
+    scrapperInfo: MatchRecordAttrs<CreateBookDto>,
+  ): Promise<ScrapperMatcherResult<CreateBookDto>> {
     console.info('s', scrapperInfo);
     return Promise.resolve(null);
   }

@@ -1,8 +1,7 @@
-import {Injectable, Inject, forwardRef} from '@nestjs/common';
+import {Injectable} from '@nestjs/common';
 import {plainToClass} from 'class-transformer';
 
 import {CreateBookReviewDto} from '@server/modules/book/modules/review/dto/CreateBookReview.dto';
-import {BookReviewerService} from '@server/modules/book/modules/reviewer/BookReviewer.service';
 import {ScrapperMetadataEntity} from '../../scrapper/entity';
 
 import {MetadataDbLoader} from '../MetadataDbLoader.interface';
@@ -12,10 +11,6 @@ import {BookDbLoader} from './BookDbLoader.service';
 export class BookReviewDbLoader implements MetadataDbLoader {
   constructor(
     private readonly bookDbLoader: BookDbLoader,
-    private readonly bookReviewService: BookReviewerService,
-
-    @Inject(forwardRef(() => BookReviewerService))
-    private readonly bookReviewerService: BookReviewerService,
   ) {}
 
   /**

@@ -25,30 +25,29 @@ import {
   GraniceScrappersGroup,
   // MatrasScrappersGroup,
   EIsbnScrappersGroup,
-  // LiteraturaGildiaScrappersGroup,
+  LiteraturaGildiaScrappersGroup,
   // WikipediaScrappersGroup,
   WykopScrappersGroup,
   // SkupszopScrappersGroup,
 } from './scrappers';
 
-const {parsers: PARSERS_ENV} = SERVER_ENV;
+import {WebsiteInfoScrapperService} from './WebsiteInfoScrapper.service';
 
-export type ScrapperAnalyzerStats = {
-  updated: number,
-  removed: number,
-};
+const {parsers: PARSERS_ENV} = SERVER_ENV;
 
 @Injectable()
 export class ScrapperService {
   public readonly scrappersGroups: WebsiteScrappersGroup[] = null;
 
-  constructor(tmpDirService: TmpDirService) {
+  constructor(
+    private readonly websiteInfoService: WebsiteInfoScrapperService,
+    tmpDirService: TmpDirService,
+  ) {
     this.scrappersGroups = [
-      // new LiteraturaGildiaScrappersGroup(PARSERS_ENV.literaturaGildia),
+      new LiteraturaGildiaScrappersGroup(PARSERS_ENV.literaturaGildia),
       // new SkupszopScrappersGroup(PARSERS_ENV.skupszop),
-      new GraniceScrappersGroup(PARSERS_ENV.granice),
       // new MatrasScrappersGroup(PARSERS_ENV.matras),
-
+      new GraniceScrappersGroup(PARSERS_ENV.granice),
       new WykopScrappersGroup(
         {
           homepageURL: PARSERS_ENV.wykop.homepageURL,
@@ -59,7 +58,6 @@ export class ScrapperService {
           ),
         },
       ),
-
       // new WikipediaScrappersGroup(PARSERS_ENV.wikipedia),
       new EIsbnScrappersGroup(
         {
@@ -113,9 +111,24 @@ export class ScrapperService {
    * @memberof ScrapperService
    */
   getScrappersGroupByWebsiteURL(url: string): WebsiteScrappersGroup {
+    url = new URL(url).hostname;
+
     return R.find(
-      (scrapper) => scrapper.websiteURL === url,
+      (scrapper) => new URL(scrapper.websiteURL).hostname === url,
       this.scrappersGroups,
+    );
+  }
+
+  /**
+   * Fetches website basic info by full url
+   *
+   * @param {string} url
+   * @returns {Promise<RemoteWebsiteEntity>}
+   * @memberof ScrapperService
+   */
+  findOrCreateWebsiteByUrl(url: string): Promise<RemoteWebsiteEntity> {
+    return this.websiteInfoService.findOrCreateWebsiteEntity(
+      this.getScrappersGroupByWebsiteURL(url).websiteInfoScrapper,
     );
   }
 }

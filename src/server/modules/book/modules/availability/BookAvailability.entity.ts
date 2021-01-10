@@ -14,6 +14,9 @@ export class BookAvailabilityEntity extends DatedRecordEntity {
   remote: RemoteRecordEntity;
 
   @Column('money', {nullable: true})
+  prevPrice: number;
+
+  @Column('money', {nullable: true})
   price: number;
 
   constructor(partial: Partial<BookAvailabilityEntity>) {

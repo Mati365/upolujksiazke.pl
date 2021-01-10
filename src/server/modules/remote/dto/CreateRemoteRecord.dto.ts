@@ -1,4 +1,5 @@
 import {
+  IsBoolean,
   IsDefined, IsNumber,
   IsOptional, IsString, IsUrl,
 } from 'class-validator';
@@ -20,6 +21,10 @@ export class CreateRemoteRecordDto {
   @IsString()
   @IsUrl()
   readonly url: string;
+
+  @IsOptional()
+  @IsBoolean()
+  readonly showOnlyAsQuote: boolean;
 
   constructor(partial: Partial<CreateRemoteRecordDto>) {
     Object.assign(this, partial);

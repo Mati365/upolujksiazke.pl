@@ -1,3 +1,5 @@
+import * as R from 'ramda';
+import {In} from 'typeorm';
 import {
   Inject, Injectable,
   Logger, forwardRef,
@@ -5,11 +7,14 @@ import {
 
 import {BookService} from '@server/modules/book/Book.service';
 import {BookEntity, CreateBookDto} from '@server/modules/book';
-import {CreateBookAuthorDto} from '@server/modules/book/modules/author/dto/CreateBookAuthor.dto';
+import {CreateBookReleaseDto} from '@server/modules/book/modules/release/dto/CreateBookRelease.dto';
+import {CreateRemoteRecordDto} from '@server/modules/remote/dto/CreateRemoteRecord.dto';
+import {BookReleaseEntity} from '@server/modules/book/modules/release/BookRelease.entity';
 import {ScrapperMetadataEntity, ScrapperMetadataKind} from '../../scrapper/entity';
 
 import {MetadataDbLoader} from '../MetadataDbLoader.interface';
 import {ScrapperMatcherService} from '../../scrapper/service/actions';
+import {ScrapperService} from '../../scrapper/service/Scrapper.service';
 
 @Injectable()
 export class BookDbLoader implements MetadataDbLoader {
@@ -19,6 +24,7 @@ export class BookDbLoader implements MetadataDbLoader {
     @Inject(forwardRef(() => BookService))
     private readonly bookService: BookService,
     private readonly scrapperMatcherService: ScrapperMatcherService,
+    private readonly scrapperService: ScrapperService,
   ) {}
 
   /**
@@ -35,8 +41,9 @@ export class BookDbLoader implements MetadataDbLoader {
   static isIncompleteBookScrapperDto(book: CreateBookDto) {
     return (
       !book.authors
-        || !book.description
         || !book.releases
+        || !book.releases.length
+        || !book.releases[0].description
         || !book.title
     );
   }
@@ -60,10 +67,14 @@ export class BookDbLoader implements MetadataDbLoader {
       book: CreateBookDto,
     },
   ) {
-    const {logger, bookService, scrapperMatcherService} = this;
+    const {
+      logger, bookService,
+      scrapperMatcherService,
+      scrapperService,
+    } = this;
 
     if (BookDbLoader.isIncompleteBookScrapperDto(book)) {
-      const matchedBook = await scrapperMatcherService.matchSingle<CreateBookDto>(
+      const matchedBook = await scrapperMatcherService.searchRemoteRecord<CreateBookDto>(
         {
           kind: ScrapperMetadataKind.BOOK,
           data: book,
@@ -75,23 +86,52 @@ export class BookDbLoader implements MetadataDbLoader {
         return null;
       }
 
-      if (!matchedBook.cached)
-        return bookService.upsert(matchedBook.result);
+      if (!matchedBook.cached) {
+        const {result} = matchedBook;
+        const releases = await Promise.all(
+          result.releases.map(
+            async (release) => new CreateBookReleaseDto(
+              {
+                ...release,
+                remoteDescription: new CreateRemoteRecordDto(
+                  {
+                    ...release.remoteDescription,
+                    websiteId: (
+                      await scrapperService.findOrCreateWebsiteByUrl(release.remoteDescription.url)
+                    ).id,
+                  },
+                ),
+              },
+            ),
+          ),
+        );
+
+        // todo: It seems to be slow, optimize
+        const releaseBook = (
+          await BookReleaseEntity.findOne(
+            {
+              relations: ['book'],
+              where: {
+                title: In(R.pluck('title', releases)),
+              },
+            },
+          )
+        )?.book;
+
+        return bookService.upsert(
+          new CreateBookDto(
+            {
+              id: releaseBook?.id,
+              ...result,
+              releases,
+            },
+          ),
+        );
+      }
 
       return BookEntity.findOne(matchedBook.result.id);
     }
 
-    return bookService.upsert(
-      new CreateBookDto(
-        {
-          description: book.description,
-          tags: book.tags,
-          title: book.title,
-          authors: book.authors.map(
-            (author) => new CreateBookAuthorDto(author),
-          ),
-        },
-      ),
-    );
+    return null;
   }
 }

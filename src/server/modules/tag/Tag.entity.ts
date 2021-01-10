@@ -1,4 +1,8 @@
-import {Entity, Column, PrimaryGeneratedColumn} from 'typeorm';
+import {
+  Entity, Column, PrimaryGeneratedColumn,
+  BeforeInsert, BeforeUpdate,
+} from 'typeorm';
+
 import {DatedRecordEntity} from '../database/DatedRecord.entity';
 
 @Entity(
@@ -22,5 +26,13 @@ export class TagEntity extends DatedRecordEntity {
   constructor(partial: Partial<TagEntity>) {
     super();
     Object.assign(this, partial);
+  }
+
+  @BeforeInsert()
+  @BeforeUpdate()
+  transformFields() {
+    const {name} = this;
+    if (name)
+      this.name = name.toLowerCase();
   }
 }

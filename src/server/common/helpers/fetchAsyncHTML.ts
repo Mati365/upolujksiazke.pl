@@ -29,19 +29,28 @@ export async function fetchAsyncHTML(request: Request) {
  *
  * @export
  * @param {string} url
- * @returns
+ * @returns {AsyncURLParseResult}
  */
-export async function parseAsyncURL(url: string) {
+export async function parseAsyncURL(url: string): Promise<AsyncURLParseResult> {
   const request = new Request(url);
   const {result, response} = await fetchAsyncHTML(request);
 
   return {
     $: cheerio.load(result, {decodeEntities: false}),
+    url,
     result,
     request,
     response,
   };
 }
+
+export type AsyncURLParseResult = {
+  $: cheerio.Root,
+  url: string,
+  result: any,
+  request: Request,
+  response: Response,
+};
 
 /**
  * Returns async html if found (only when 200 status code is present)

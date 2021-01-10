@@ -120,13 +120,11 @@ export class WykopBookReviewScrapper extends AsyncScrapper<BookReviewScrapperInf
 
     const book = new CreateBookDto(
       {
-        title: properties.title,
         tags: properties.tags,
-        description: null,
-
         releases: [
-          !!properties.isbn && new CreateBookReleaseDto(
+          new CreateBookReleaseDto(
             {
+              title: properties.title,
               isbn: properties.isbn,
               cover: embed && new CreateAttachmentDto(
                 {
@@ -137,7 +135,7 @@ export class WykopBookReviewScrapper extends AsyncScrapper<BookReviewScrapperInf
               ),
             },
           ),
-        ].filter(Boolean),
+        ],
 
         authors: (properties.authors || []).map(
           (authorName) => new CreateBookAuthorDto(

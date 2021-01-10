@@ -1,13 +1,17 @@
 import {CanBePromise} from '@shared/types';
 import {ScrapperGroupChild} from './Scrapper';
-import {WebsiteScrappersGroup} from './WebsiteScrappersGroup';
+import {MatchRecordAttrs, WebsiteScrappersGroup} from './WebsiteScrappersGroup';
 
 export type ScrapperMatcherResult<T> = {
   cached?: boolean,
   result: T,
 };
 
-export abstract class ScrapperMatcher<Type> implements ScrapperGroupChild {
+export interface ScrapperMatchable<Type> {
+  searchRemoteRecord(attrs: MatchRecordAttrs<Type>): CanBePromise<ScrapperMatcherResult<Type>>;
+}
+
+export abstract class ScrapperMatcher<Type> implements ScrapperGroupChild, ScrapperMatchable<Type> {
   protected group: WebsiteScrappersGroup<any>;
 
   setParentGroup?(group: WebsiteScrappersGroup<any>): void {
@@ -18,5 +22,5 @@ export abstract class ScrapperMatcher<Type> implements ScrapperGroupChild {
     return this.group.matchers;
   }
 
-  abstract matchRecord(scrapperInfo: Type): CanBePromise<ScrapperMatcherResult<Type>>;
+  abstract searchRemoteRecord(attrs: MatchRecordAttrs<Type>): CanBePromise<ScrapperMatcherResult<Type>>;
 }

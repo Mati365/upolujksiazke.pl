@@ -8,6 +8,10 @@ import {findByName} from '@shared/helpers/findByProp';
 import {TagEntity} from './Tag.entity';
 import {CreateTagDto} from './dto/CreateTag.dto';
 
+function isTagArray(arg: any): arg is CreateTagDto[] {
+  return !arg || typeof arg[0] !== 'string';
+}
+
 @Injectable()
 export class TagService {
   /**
@@ -26,14 +30,26 @@ export class TagService {
   /**
    * Updates array of tags
    *
-   * @param {CreateTagDto[]} dto
+   * @param {((CreateTagDto | string)[])} names
    * @param {EntityManager} [entityManager]
    * @returns {Promise<TagEntity[]>}
    * @memberof TagService
    */
-  async upsertList(dto: CreateTagDto[], entityManager?: EntityManager): Promise<TagEntity[]> {
-    if (!dto?.length)
+  async upsertList(names: (CreateTagDto | string)[], entityManager?: EntityManager): Promise<TagEntity[]> {
+    if (!names?.length)
       return [];
+
+    const dto = (
+      isTagArray(names)
+        ? names
+        : names.map(
+          (name: string) => new CreateTagDto(
+            {
+              name,
+            },
+          ),
+        )
+    );
 
     let savedEntities = await TagEntity.find(
       {

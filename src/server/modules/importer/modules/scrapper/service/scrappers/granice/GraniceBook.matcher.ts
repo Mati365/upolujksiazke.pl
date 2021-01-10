@@ -3,12 +3,15 @@ import chalk from 'chalk';
 import stringSimilarity from 'string-similarity';
 import * as R from 'ramda';
 
+import {encodeURLParams} from '@shared/helpers/urlEncoder';
 import {concatUrls} from '@shared/helpers/concatUrls';
 import {parseAsyncURLIfOK} from '@server/common/helpers/fetchAsyncHTML';
 import {
   normalizeISBN,
   normalizeParsedText,
 } from '@server/common/helpers';
+
+import {Language} from '@server/constants/language';
 
 import {CreateBookAuthorDto} from '@server/modules/book/modules/author/dto/CreateBookAuthor.dto';
 import {CreateBookDto} from '@server/modules/book/dto/CreateBook.dto';
@@ -17,7 +20,9 @@ import {CreateBookCategoryDto} from '@server/modules/book/modules/category/dto/C
 import {CreateBookPublisherDto} from '@server/modules/book/modules/publisher/dto/BookPublisher.dto';
 import {CreateAttachmentDto} from '@server/modules/attachment/dto';
 
+import {CreateRemoteRecordDto} from '@server/modules/remote/dto/CreateRemoteRecord.dto';
 import {ScrapperMatcher, ScrapperMatcherResult} from '../../shared/ScrapperMatcher';
+import {MatchRecordAttrs} from '../../shared/WebsiteScrappersGroup';
 import {BookShopScrappersGroupConfig} from '../BookShopScrappersGroup';
 
 export class GraniceBookMatcher extends ScrapperMatcher<CreateBookDto> {
@@ -29,15 +34,18 @@ export class GraniceBookMatcher extends ScrapperMatcher<CreateBookDto> {
     super();
   }
 
-  async matchRecord(scrapperInfo: CreateBookDto): Promise<ScrapperMatcherResult<CreateBookDto>> {
-    const bookPage = await this.searchByPhrase(scrapperInfo);
+  async searchRemoteRecord({data}: MatchRecordAttrs<CreateBookDto>): Promise<ScrapperMatcherResult<CreateBookDto>> {
+    const bookPage = await this.searchByPhrase(data);
     if (!bookPage)
       return null;
 
-    const {$} = bookPage;
+    const {$, url} = bookPage;
     const $content = $('.web > .sub > .column1');
     const $details = $content.find('#book_id.detailsbig');
     const [detailsText, detailsHTML] = [$details.text(), $details.html()];
+
+    const remoteId = $details.attr('book-id');
+    const title = normalizeParsedText($content.find('h1 > [itemprop="name"]').text());
 
     const categories = (
       (normalizeParsedText(detailsText.match(/Kategoria: ([\S]+)/)?.[1]) || '')
@@ -57,14 +65,11 @@ export class GraniceBookMatcher extends ScrapperMatcher<CreateBookDto> {
       },
     );
 
-    const originalRelease = new CreateBookReleaseDto(
-      {
-        title: normalizeParsedText(detailsHTML.match(/Tytuł oryginału: ([^\n<>]+)/)?.[1]),
-      },
-    );
-
     const release = new CreateBookReleaseDto(
       {
+        title,
+        lang: Language.PL,
+        description: normalizeParsedText($content.find('> .desc > p:not(:empty):not(.tags)').text()),
         totalPages: +$details.find('span[itemprop="numberOfPages"]').text() || null,
         publishDate: normalizeParsedText(detailsText.match(/Data wydania: ([\S]+)/)?.[1]),
         isbn: normalizeISBN(
@@ -80,23 +85,24 @@ export class GraniceBookMatcher extends ScrapperMatcher<CreateBookDto> {
             originalUrl: $details.find('[itemprop="image"]').attr('src'),
           },
         ),
+        remoteDescription: new CreateRemoteRecordDto(
+          {
+            showOnlyAsQuote: true,
+            remoteId,
+            url,
+          },
+        ),
       },
     );
 
     const result = new CreateBookDto(
       {
-        title: normalizeParsedText($content.find('h1 > [itemprop="name"]').text()),
-        description: normalizeParsedText($content.find('> .desc > p:not(:empty):not(.tags)').text()),
-        categories,
+        originalTitle: normalizeParsedText(detailsHTML.match(/Tytuł oryginału: ([^\n<>]+)/)?.[1]),
         authors: [author],
-        originalRelease: (
-          originalRelease.title
-            ? originalRelease
-            : null
-        ),
         releases: [
           release,
         ],
+        categories,
       },
     );
 
@@ -114,20 +120,21 @@ export class GraniceBookMatcher extends ScrapperMatcher<CreateBookDto> {
    */
   private async searchByPhrase(scrapperInfo: CreateBookDto) {
     const {config, logger} = this;
+    const {title} = scrapperInfo;
     const searchParams = {
-      search: `${scrapperInfo.title} ${scrapperInfo.authors[0].name}`,
+      search: `${title} ${scrapperInfo.authors[0].name}`, // fixme: wrong encoding 54811961 review
     };
 
     const url = concatUrls(
       config.searchURL,
-      `?${new URLSearchParams(searchParams).toString()}`,
+      `?${encodeURLParams(searchParams)}`,
     );
 
     logger.log(`Searching book by phrase from ${chalk.bold(url)}!`);
 
     const {$} = await parseAsyncURLIfOK(url);
     const [lowerTitle, lowerAuthor] = [
-      scrapperInfo.title.toLowerCase(),
+      title.toLowerCase(),
       scrapperInfo.authors[0].name.toLowerCase(),
     ];
 

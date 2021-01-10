@@ -33,8 +33,10 @@ export class BookCategoryService {
    * @memberof BookCategoryService
    */
   async upsertList(dtos: CreateBookCategoryDto[], entityManager?: EntityManager): Promise<BookCategoryEntity[]> {
-    const {connection} = this;
+    if (!dtos?.length)
+      return [];
 
+    const {connection} = this;
     return upsert(
       {
         entityManager,

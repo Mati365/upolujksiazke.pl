@@ -11,6 +11,7 @@ import {CreateBookPublisherDto} from '@server/modules/book/modules/publisher/dto
 
 import {ScrapperMatcher, ScrapperMatcherResult} from '../../../shared/ScrapperMatcher';
 import {BookShopScrappersGroupConfig} from '../../BookShopScrappersGroup';
+import {MatchRecordAttrs} from '../../../shared/WebsiteScrappersGroup';
 
 export class LiteraturaGildiaBookPublisherMatcher extends ScrapperMatcher<CreateBookPublisherDto> {
   private readonly logger = new Logger(LiteraturaGildiaBookPublisherMatcher.name);
@@ -21,14 +22,14 @@ export class LiteraturaGildiaBookPublisherMatcher extends ScrapperMatcher<Create
     super();
   }
 
-  async matchRecord(
-    scrapperInfo: CreateBookPublisherDto,
+  async searchRemoteRecord(
+    {data}: MatchRecordAttrs<CreateBookPublisherDto>,
     attrs?: {
       path: string,
     },
   ): Promise<ScrapperMatcherResult<CreateBookPublisherDto>> {
     const {config, logger} = this;
-    const {name, description, address, email} = scrapperInfo;
+    const {name, description, address, email} = data;
 
     const url = concatUrls(
       config.homepageURL,

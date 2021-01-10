@@ -9,6 +9,7 @@ import {concatUrls} from '@shared/helpers/concatUrls';
 import {CreateBookAuthorDto} from '@server/modules/book/modules/author/dto/CreateBookAuthor.dto';
 
 import {ScrapperMatcher, ScrapperMatcherResult} from '../../../shared/ScrapperMatcher';
+import {MatchRecordAttrs} from '../../../shared/WebsiteScrappersGroup';
 import {BookShopScrappersGroupConfig} from '../../BookShopScrappersGroup';
 
 export class LiteraturaGildiaBookAuthorMatcher extends ScrapperMatcher<CreateBookAuthorDto> {
@@ -20,14 +21,14 @@ export class LiteraturaGildiaBookAuthorMatcher extends ScrapperMatcher<CreateBoo
     super();
   }
 
-  async matchRecord(
-    scrapperInfo: CreateBookAuthorDto,
+  async searchRemoteRecord(
+    {data}: MatchRecordAttrs<CreateBookAuthorDto>,
     attrs?: {
       path: string,
     },
   ): Promise<ScrapperMatcherResult<CreateBookAuthorDto>> {
     const {config, logger} = this;
-    const {name, description} = scrapperInfo;
+    const {name, description} = data;
 
     const url = concatUrls(
       config.homepageURL,

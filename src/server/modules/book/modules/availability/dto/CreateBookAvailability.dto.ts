@@ -7,6 +7,10 @@ export class CreateBookAvailabilityDto {
 
   @IsOptional()
   @IsNumber()
+  readonly prevPrice: number;
+
+  @IsOptional()
+  @IsNumber()
   readonly price: number;
 
   constructor(partial: Partial<CreateBookAvailabilityDto>) {

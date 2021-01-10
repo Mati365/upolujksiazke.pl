@@ -13,10 +13,13 @@ import {RemoteWebsiteEntity} from './RemoteWebsite.entity';
 )
 @Unique('unique_remote_entry', ['remoteId', 'website'])
 export class RemoteRecordEntity extends DatedRecordEntity {
+  @Column('boolean', {default: false})
+  showOnlyAsQuote: boolean;
+
   @Column('text', {nullable: true})
   url: string;
 
-  @Column('text')
+  @Column('text', {nullable: true})
   remoteId: string;
 
   @ManyToOne(() => RemoteWebsiteEntity)

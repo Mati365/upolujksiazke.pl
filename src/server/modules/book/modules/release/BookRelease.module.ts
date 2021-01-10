@@ -1,6 +1,7 @@
 import {Module} from '@nestjs/common';
 import {TypeOrmModule} from '@nestjs/typeorm';
 
+import {RemoteModule} from '@server/modules/remote/Remote.module';
 import {BookPublisherModule} from '../publisher';
 import {BookReleaseEntity} from './BookRelease.entity';
 import {BookReleaseService} from './BookRelease.service';
@@ -8,6 +9,7 @@ import {BookReleaseService} from './BookRelease.service';
 @Module(
   {
     imports: [
+      RemoteModule,
       BookPublisherModule,
       TypeOrmModule.forFeature([BookReleaseEntity]),
     ],

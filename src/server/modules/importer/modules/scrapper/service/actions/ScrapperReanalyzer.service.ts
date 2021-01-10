@@ -6,10 +6,12 @@ import {paginatedAsyncIterator} from '@server/common/helpers';
 import {MetadataDbLoaderQueueService} from '@server/modules/importer/modules/db-loader/services';
 import {WebsiteScrapperItemInfo} from '../shared';
 import {ScrapperMetadataEntity} from '../../entity';
-import {
-  ScrapperAnalyzerStats,
-  ScrapperService,
-} from '../Scrapper.service';
+import {ScrapperService} from '../Scrapper.service';
+
+export type ScrapperAnalyzerStats = {
+  updated: number,
+  removed: number,
+};
 
 @Injectable()
 export class ScrapperReanalyzerService {

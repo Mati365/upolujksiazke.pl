@@ -4,7 +4,7 @@ import {PartialRecord} from '@shared/types';
 
 import {ScrapperMetadataKind} from '../../entity/ScrapperMetadata.entity';
 import {AsyncScrapper} from './AsyncScrapper';
-import {ScrapperMatcher, ScrapperMatcherResult} from './ScrapperMatcher';
+import {ScrapperMatchable, ScrapperMatcher, ScrapperMatcherResult} from './ScrapperMatcher';
 import {WebsiteInfoScrapper} from './WebsiteInfoScrapper';
 
 export type WebsiteScrappersKindMap = PartialRecord<ScrapperMetadataKind, AsyncScrapper<any, any>>;
@@ -17,12 +17,13 @@ export type ScrappersGroupInitializer<W extends WebsiteInfoScrapper = WebsiteInf
   matchers?: WebsiteScrappersMatchersKindMap,
 };
 
-export type MatchRecordAttrs = {
-  data: any,
-  kind: ScrapperMetadataKind,
+export type MatchRecordAttrs<T = any> = {
+  data: T,
+  kind?: ScrapperMetadataKind,
 };
 
-export class WebsiteScrappersGroup<W extends WebsiteInfoScrapper = WebsiteInfoScrapper> {
+export class WebsiteScrappersGroup<W extends WebsiteInfoScrapper = WebsiteInfoScrapper>
+implements ScrapperMatchable<string> {
   public readonly websiteInfoScrapper: W;
   public readonly scrappers: WebsiteScrappersKindMap;
   public readonly matchers: WebsiteScrappersMatchersKindMap;
@@ -61,16 +62,11 @@ export class WebsiteScrappersGroup<W extends WebsiteInfoScrapper = WebsiteInfoSc
    * @returns {Promise<ScrapperMatcherResult<any>>}
    * @memberof WebsiteScrappersGroup
    */
-  async matchRecord(
-    {
-      data,
-      kind,
-    }: MatchRecordAttrs,
-  ): Promise<ScrapperMatcherResult<any>> {
-    const matcher = this.matchers[kind];
+  async searchRemoteRecord(attrs: MatchRecordAttrs<any>): Promise<ScrapperMatcherResult<any>> {
+    const matcher = this.matchers[attrs.kind];
     if (!matcher)
       return null;
 
-    return matcher.matchRecord(data);
+    return matcher.searchRemoteRecord(attrs);
   }
 }

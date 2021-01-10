@@ -2,8 +2,7 @@ import * as R from 'ramda';
 import {Transform} from 'class-transformer';
 import {
   Entity, Column,
-  ManyToMany, OneToMany,
-  JoinTable, OneToOne, JoinColumn,
+  ManyToMany, OneToMany, JoinTable,
 } from 'typeorm';
 
 import {DatedRecordEntity} from '../database/DatedRecord.entity';
@@ -13,7 +12,6 @@ import {BookCategoryEntity} from './modules/category/BookCategory.entity';
 import {BookReviewEntity} from './modules/review/BookReview.entity';
 import {BookReviewerEntity} from './modules/reviewer/BookReviewer.entity';
 import {BookReleaseEntity} from './modules/release/BookRelease.entity';
-import {ScrapperMetadataEntity} from '../importer/modules/scrapper/entity';
 
 @Entity(
   {
@@ -21,18 +19,18 @@ import {ScrapperMetadataEntity} from '../importer/modules/scrapper/entity';
   },
 )
 export class BookEntity extends DatedRecordEntity {
-  @Column('text', {unique: true})
-  title: string;
+  @Column('text', {unique: true, nullable: true})
+  originalTitle: string;
 
   @Column('text', {nullable: true})
-  description: string;
+  originalPublishDate: string;
 
   @JoinTable()
   @ManyToMany(() => BookAuthorEntity, (author) => author.books)
   authors: BookAuthorEntity[];
 
   @JoinTable()
-  @ManyToMany(() => BookCategoryEntity, (categoryEntity) => categoryEntity.books)
+  @ManyToMany(() => BookCategoryEntity, (categoryEntity) => categoryEntity.books, {cascade: true})
   categories: BookCategoryEntity[];
 
   @OneToMany(() => BookReviewEntity, (review) => review.book)
@@ -44,19 +42,11 @@ export class BookEntity extends DatedRecordEntity {
 
   @Transform(R.map(R.prop('name')))
   @JoinTable()
-  @ManyToMany(() => TagEntity)
+  @ManyToMany(() => TagEntity, {cascade: true})
   tags: TagEntity[];
-
-  @JoinColumn()
-  @OneToOne(() => BookReleaseEntity)
-  originalRelease: BookReleaseEntity;
 
   @OneToMany(() => BookReleaseEntity, (entity) => entity.book)
   releases: BookReleaseEntity[];
-
-  @OneToOne(() => ScrapperMetadataEntity)
-  @JoinColumn()
-  scrapperMetadata: ScrapperMetadataEntity;
 
   constructor(partial: Partial<BookEntity>) {
     super();

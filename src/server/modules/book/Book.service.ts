@@ -1,56 +1,26 @@
 import {Injectable} from '@nestjs/common';
-import {Connection, EntityManager} from 'typeorm';
+import {Connection} from 'typeorm';
+import sequential from 'promise-sequential';
+import * as R from 'ramda';
 
-import {upsert} from '@server/common/helpers/db';
-
-// import {CreateRemoteRecordDto} from '../remote/dto/CreateRemoteRecord.dto';
-// import {RemoteRecordService} from '../remote/service/CreateRemoteRecord.service';
-
-import {BookAuthorService} from './modules/author/BookAuthor.service';
 import {TagService} from '../tag/Tag.service';
+import {BookAuthorService} from './modules/author/BookAuthor.service';
+import {BookReleaseService} from './modules/release/BookRelease.service';
+import {BookCategoryService} from './modules/category';
 
-import {CreateTagDto} from '../tag/dto/CreateTag.dto';
 import {CreateBookDto} from './dto/CreateBook.dto';
-import {CreateBookAuthorDto} from './modules/author/dto/CreateBookAuthor.dto';
-
+import {CreateBookReleaseDto} from './modules/release/dto/CreateBookRelease.dto';
 import {BookEntity} from './Book.entity';
 
 @Injectable()
 export class BookService {
   constructor(
     private readonly connection: Connection,
-    private tagService: TagService,
-    private authorService: BookAuthorService,
+    private readonly tagService: TagService,
+    private readonly authorService: BookAuthorService,
+    private readonly releaseService: BookReleaseService,
+    private readonly categoryService: BookCategoryService,
   ) {}
-
-  async createBookEntityFromDTO(dto: CreateBookDto, entityManager?: EntityManager) {
-    const {tagService, authorService} = this;
-    const authors = await authorService.upsertList(
-      (dto.authors || []).map((author) => new CreateBookAuthorDto(author)),
-      entityManager,
-    );
-
-    const tags = await tagService.upsertList(
-      (dto.tags || []).map((tag) => new CreateTagDto(
-        {
-          name: tag,
-        },
-      )),
-      entityManager,
-    );
-
-    const releases = [];
-
-    return new BookEntity(
-      {
-        title: dto.title,
-        description: dto.description,
-        authors,
-        releases,
-        tags,
-      },
-    );
-  }
 
   /**
    * Creates or updates single book
@@ -62,16 +32,60 @@ export class BookService {
   async upsert(dto: CreateBookDto): Promise<BookEntity> {
     const {connection} = this;
 
-    return connection.transaction(
-      async (transaction) => upsert(
-        {
-          connection,
-          entityManager: transaction,
-          Entity: BookEntity,
-          primaryKey: 'title',
-          data: await this.createBookEntityFromDTO(dto, transaction),
-        },
-      ),
-    );
+    return connection.transaction(async (transaction) => {
+      const {
+        tagService, authorService,
+        releaseService, categoryService,
+      } = this;
+
+      const [
+        authors,
+        tags,
+        categories,
+      ] = (
+        [
+          await authorService.upsertList(dto.authors, transaction),
+          await tagService.upsertList(dto.tags, transaction),
+          await categoryService.upsertList(dto.categories, transaction),
+        ]
+      );
+
+      let book: BookEntity = null;
+      if (R.isNil(dto.id)) {
+        book = await transaction.save(
+          new BookEntity(
+            {
+              originalTitle: dto.originalTitle,
+              originalPublishDate: dto.originalPublishDate,
+              authors,
+              tags,
+              categories,
+            },
+          ),
+        );
+      } else {
+        book = new BookEntity(
+          {
+            id: dto.id,
+          },
+        );
+      }
+
+      await releaseService.upsertList(
+        await sequential(
+          dto.releases.map(
+            (release) => async () => new CreateBookReleaseDto(
+              {
+                ...release,
+                bookId: book.id,
+              },
+            ),
+          ),
+        ),
+        transaction,
+      );
+
+      return book;
+    });
   }
 }

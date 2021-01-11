@@ -52,7 +52,8 @@ export class BookReleaseService {
         entityManager,
         connection,
         Entity: BookReleaseEntity,
-        constraint: 'unique_publisher_edition',
+        // fixme
+        constraint: 'book_release_unique_publisher_edition',
         data: new BookReleaseEntity(
           {
             ...dto,

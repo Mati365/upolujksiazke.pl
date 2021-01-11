@@ -3,6 +3,8 @@ import {Connection} from 'typeorm';
 import sequential from 'promise-sequential';
 import * as R from 'ramda';
 
+import {upsert} from '@server/common/helpers/db';
+
 import {TagService} from '../tag/Tag.service';
 import {BookAuthorService} from './modules/author/BookAuthor.service';
 import {BookReleaseService} from './modules/release/BookRelease.service';
@@ -52,16 +54,23 @@ export class BookService {
 
       let book: BookEntity = null;
       if (R.isNil(dto.id)) {
-        book = await transaction.save(
-          new BookEntity(
-            {
-              originalTitle: dto.originalTitle,
-              originalPublishDate: dto.originalPublishDate,
-              authors,
-              tags,
-              categories,
-            },
-          ),
+        book = await upsert(
+          {
+            connection,
+            entityManager: transaction,
+            conflictKeys: '(lower("defaultTitle"))',
+            Entity: BookEntity,
+            data: new BookEntity(
+              {
+                defaultTitle: dto.defaultTitle,
+                originalTitle: dto.originalTitle,
+                originalPublishDate: dto.originalPublishDate,
+                authors,
+                tags,
+                categories,
+              },
+            ),
+          },
         );
       } else {
         book = new BookEntity(

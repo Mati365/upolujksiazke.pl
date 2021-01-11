@@ -1,7 +1,7 @@
 import * as R from 'ramda';
 import {Transform} from 'class-transformer';
 import {
-  Entity, Column,
+  Entity, Column, Index,
   ManyToMany, OneToMany, JoinTable,
 } from 'typeorm';
 
@@ -19,6 +19,10 @@ import {BookReleaseEntity} from './modules/release/BookRelease.entity';
   },
 )
 export class BookEntity extends DatedRecordEntity {
+  @Column('text')
+  @Index('book_default_title_index', {synchronize: false})
+  defaultTitle: string;
+
   @Column('text', {unique: true, nullable: true})
   originalTitle: string;
 

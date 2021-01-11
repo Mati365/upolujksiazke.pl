@@ -120,6 +120,7 @@ export class WykopBookReviewScrapper extends AsyncScrapper<BookReviewScrapperInf
 
     const book = new CreateBookDto(
       {
+        defaultTitle: properties.title,
         tags: properties.tags,
         releases: [
           new CreateBookReleaseDto(

@@ -22,7 +22,7 @@ export enum BookBindingKind {
     name: 'book_release',
   },
 )
-@Unique('unique_publisher_edition', ['title', 'publisher', 'edition'])
+@Unique('book_release_unique_publisher_edition', ['title', 'publisher', 'edition'])
 export class BookReleaseEntity extends DatedRecordEntity {
   @Column('text')
   title: string;

@@ -27,7 +27,7 @@ export class RemoteRecordService {
         entityManager,
         connection,
         Entity: RemoteRecordEntity,
-        constraint: 'unique_remote_entry',
+        constraint: 'remote_record_unique_remote_entry',
         data: new RemoteRecordEntity(dto),
       },
     );

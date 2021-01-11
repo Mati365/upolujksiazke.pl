@@ -11,7 +11,7 @@ import {RemoteWebsiteEntity} from './RemoteWebsite.entity';
     name: 'scrapper_remote_record',
   },
 )
-@Unique('unique_remote_entry', ['remoteId', 'website'])
+@Unique('remote_record_unique_remote_entry', ['remoteId', 'website'])
 export class RemoteRecordEntity extends DatedRecordEntity {
   @Column('boolean', {default: false})
   showOnlyAsQuote: boolean;

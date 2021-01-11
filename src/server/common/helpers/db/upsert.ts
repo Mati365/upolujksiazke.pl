@@ -16,6 +16,7 @@ export async function upsert<T, E extends T | T[], K extends keyof T>(
     data,
     constraint,
     primaryKey,
+    conflictKeys,
     skip = ['id', 'createdAt'] as K[],
   }: {
     connection: Connection,
@@ -24,6 +25,7 @@ export async function upsert<T, E extends T | T[], K extends keyof T>(
     queryBuilder?: SelectQueryBuilder<T>,
     data: E,
     constraint?: string,
+    conflictKeys?: string,
     primaryKey?: CanBeArray<(string & keyof T) | `${string & keyof T}Id`>,
     skip?: K[],
   },
@@ -49,7 +51,7 @@ export async function upsert<T, E extends T | T[], K extends keyof T>(
       .join(',')
   );
 
-  const conflictKeys = (
+  conflictKeys ??= (
     constraint
       ? `on constraint ${constraint}`
       : `(${safeArray(primaryKey).map((col) => `"${col}"`).join(',')})`

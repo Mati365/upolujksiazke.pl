@@ -3,7 +3,7 @@ import chalk from 'chalk';
 import stringSimilarity from 'string-similarity';
 import * as R from 'ramda';
 
-import {encodeURLParams} from '@shared/helpers/urlEncoder';
+import {escapeIso88592} from '@server/common/helpers/encoding/escapeIso88592';
 import {concatUrls} from '@shared/helpers/concatUrls';
 import {parseAsyncURLIfOK} from '@server/common/helpers/fetchAsyncHTML';
 import {
@@ -97,6 +97,7 @@ export class GraniceBookMatcher extends ScrapperMatcher<CreateBookDto> {
 
     const result = new CreateBookDto(
       {
+        defaultTitle: title,
         originalTitle: normalizeParsedText(detailsHTML.match(/Tytuł oryginału: ([^\n<>]+)/)?.[1]),
         authors: [author],
         releases: [
@@ -121,13 +122,10 @@ export class GraniceBookMatcher extends ScrapperMatcher<CreateBookDto> {
   private async searchByPhrase(scrapperInfo: CreateBookDto) {
     const {config, logger} = this;
     const {title} = scrapperInfo;
-    const searchParams = {
-      search: `${title} ${scrapperInfo.authors[0].name}`, // fixme: wrong encoding 54811961 review
-    };
 
     const url = concatUrls(
       config.searchURL,
-      `?${encodeURLParams(searchParams)}`,
+      `?search=${escapeIso88592(`${title} ${scrapperInfo.authors[0].name}`)}`,
     );
 
     logger.log(`Searching book by phrase from ${chalk.bold(url)}!`);

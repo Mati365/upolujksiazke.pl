@@ -16,6 +16,9 @@ export class CreateBookDto {
   @IsNumber()
   readonly id: number;
 
+  @IsString()
+  readonly defaultTitle: string;
+
   @IsOptional()
   @IsString()
   readonly originalTitle: string;

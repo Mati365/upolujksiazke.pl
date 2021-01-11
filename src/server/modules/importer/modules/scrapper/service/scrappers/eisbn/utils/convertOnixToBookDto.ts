@@ -94,7 +94,7 @@ export function convertOnixToBookDto(onix: OnixBookFormat): CreateBookDto {
 
   const result = new CreateBookDto(
     {
-      title: TitleDetail.TitleElement.TitleText,
+      defaultTitle: TitleDetail.TitleElement.TitleText,
       tags: [],
       categories: [],
       releases: [

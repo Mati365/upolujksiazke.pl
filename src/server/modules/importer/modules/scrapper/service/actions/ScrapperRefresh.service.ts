@@ -215,7 +215,7 @@ export class ScrapperRefreshService {
           connection,
           entityManager: transaction,
           Entity: RemoteRecordEntity,
-          constraint: 'unique_remote_entry',
+          constraint: 'remote_record_unique_remote_entry',
           data: newEntity.remote,
         },
       );

@@ -41,7 +41,7 @@ export class BookAvailabilityService {
         entityManager,
         connection,
         Entity: BookAvailabilityEntity,
-        constraint: 'unique_remote_entry',
+        constraint: 'remote_record_unique_remote_entry',
         data: new BookAvailabilityEntity(dto),
       },
     );

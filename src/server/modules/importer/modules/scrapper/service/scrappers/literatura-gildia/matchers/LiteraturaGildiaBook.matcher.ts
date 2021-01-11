@@ -59,15 +59,22 @@ export class LiteraturaGildiaBookMatcher extends ScrapperMatcher<CreateBookDto> 
     const $wideText = $('#yui-main .content .widetext');
     const text = $wideText.text();
 
-    const author = await this.extractAuthor($wideText);
+    const [author, release] = await Promise.all(
+      [
+        this.extractAuthor($wideText),
+        this.extractRelease(bookPage),
+      ],
+    );
+
     const result = new CreateBookDto(
       {
+        defaultTitle: release.title,
         originalPublishDate: normalizeParsedText(text.match(/Rok wydania oryginału: ([\S]+)/)?.[1]),
         authors: [
           author,
         ],
         releases: [
-          await this.extractRelease(bookPage),
+          release,
         ],
       },
     );
@@ -89,13 +96,7 @@ export class LiteraturaGildiaBookMatcher extends ScrapperMatcher<CreateBookDto> 
     const {$, url} = bookPage;
     const $wideText = $('#yui-main .content .widetext');
 
-    const [publisher] = await Promise.all(
-      [
-        this.extractPublisher($wideText),
-        this.extractAuthor($wideText),
-      ],
-    );
-
+    const publisher = await this.extractPublisher($wideText);
     const title = normalizeParsedText($('h1').text());
     const text = $wideText.text();
     const $coverImage = $wideText.find('img.main-article-image');

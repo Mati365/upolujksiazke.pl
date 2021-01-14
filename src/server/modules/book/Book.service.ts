@@ -58,7 +58,7 @@ export class BookService {
           {
             connection,
             entityManager: transaction,
-            conflictKeys: '(lower("defaultTitle"))',
+            primaryKey: 'defaultTitle',
             Entity: BookEntity,
             data: new BookEntity(
               {

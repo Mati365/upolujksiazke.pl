@@ -1,6 +1,7 @@
 import {
   BeforeInsert, BeforeUpdate, Column,
-  Entity, JoinColumn, ManyToOne, OneToOne, RelationId, Unique,
+  Entity, Index, JoinColumn, ManyToOne,
+  OneToMany, OneToOne, RelationId, Unique,
 } from 'typeorm';
 
 import {Language} from '@server/constants/language';
@@ -9,6 +10,8 @@ import {RemoteRecordEntity} from '@server/modules/remote/entity/RemoteRecord.ent
 import {DatedRecordEntity} from '../../../database/DatedRecord.entity';
 import {BookEntity} from '../../Book.entity';
 import {BookPublisherEntity} from '../publisher/BookPublisher.entity';
+import {BookVolumeEntity} from '../volume/BookVolume.entity';
+import {BookReviewEntity} from '../review/BookReview.entity';
 
 export enum BookBindingKind {
   HARDCOVER = 1,
@@ -23,8 +26,10 @@ export enum BookBindingKind {
   },
 )
 @Unique('book_release_unique_publisher_edition', ['title', 'publisher', 'edition'])
+@Index(['book'])
+@Index(['volume'])
 export class BookReleaseEntity extends DatedRecordEntity {
-  @Column('text')
+  @Column('citext')
   title: string;
 
   @Column('text', {nullable: true})
@@ -42,7 +47,7 @@ export class BookReleaseEntity extends DatedRecordEntity {
   @Column('text', {nullable: true})
   format: string;
 
-  @Column('text', {nullable: true})
+  @Column('citext', {nullable: true})
   edition: string;
 
   @Column('int', {nullable: true})
@@ -92,6 +97,17 @@ export class BookReleaseEntity extends DatedRecordEntity {
   @Column()
   @RelationId((entity: BookReleaseEntity) => entity.remoteDescription)
   remoteDescriptionId: number;
+
+  @ManyToOne(() => BookVolumeEntity, (entity) => entity.release, {onDelete: 'CASCADE'})
+  @JoinColumn({name: 'volumeId'})
+  volume: BookVolumeEntity;
+
+  @Column({nullable: true})
+  @RelationId((entity: BookReleaseEntity) => entity.volume)
+  volumeId: number;
+
+  @OneToMany(() => BookReviewEntity, (review) => review.release)
+  reviews: BookReviewEntity[];
 
   constructor(partial: Partial<BookReleaseEntity>) {
     super();

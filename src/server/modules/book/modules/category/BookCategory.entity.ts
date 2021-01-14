@@ -12,7 +12,7 @@ import {BookEntity} from '../../Book.entity';
   },
 )
 export class BookCategoryEntity extends DatedRecordEntity {
-  @Column('text', {unique: true})
+  @Column('citext', {unique: true})
   name: string;
 
   @ManyToMany(() => BookEntity, (book) => book.categories)

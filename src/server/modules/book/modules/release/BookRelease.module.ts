@@ -3,6 +3,7 @@ import {TypeOrmModule} from '@nestjs/typeorm';
 
 import {RemoteModule} from '@server/modules/remote/Remote.module';
 import {BookPublisherModule} from '../publisher';
+import {BookVolumeModule} from '../volume';
 import {BookReleaseEntity} from './BookRelease.entity';
 import {BookReleaseService} from './BookRelease.service';
 
@@ -11,6 +12,7 @@ import {BookReleaseService} from './BookRelease.service';
     imports: [
       RemoteModule,
       BookPublisherModule,
+      BookVolumeModule,
       TypeOrmModule.forFeature([BookReleaseEntity]),
     ],
     providers: [

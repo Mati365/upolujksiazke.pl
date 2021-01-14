@@ -2,9 +2,9 @@ import {Module} from '@nestjs/common';
 import {TypeOrmModule} from '@nestjs/typeorm';
 
 import {BookEntity} from '../../Book.entity';
-import {BookVolumeEntity} from '../volume/BookVolume.entity';
-import {BookAvailabilityEntity} from './BookAvailability.entity';
-import {BookAvailabilityService} from './BookAvailability.service';
+import {BookReleaseEntity} from '../release/BookRelease.entity';
+import {BookVolumeEntity} from './BookVolume.entity';
+import {BookVolumeService} from './BookVolume.service';
 
 @Module(
   {
@@ -12,17 +12,17 @@ import {BookAvailabilityService} from './BookAvailability.service';
       TypeOrmModule.forFeature(
         [
           BookEntity,
+          BookReleaseEntity,
           BookVolumeEntity,
-          BookAvailabilityEntity,
         ],
       ),
     ],
     providers: [
-      BookAvailabilityService,
+      BookVolumeService,
     ],
     exports: [
-      BookAvailabilityService,
+      BookVolumeService,
     ],
   },
 )
-export class BookAvailabilityModule {}
+export class BookVolumeModule {}

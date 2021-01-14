@@ -2,6 +2,8 @@ import {Module} from '@nestjs/common';
 import {TypeOrmModule} from '@nestjs/typeorm';
 
 import {ScrapperModule} from '@scrapper/Scrapper.module';
+import {RemoteWebsiteEntity} from '@server/modules/remote/entity';
+
 import {BookReviewerEntity} from './BookReviewer.entity';
 import {BookReviewerService} from './BookReviewer.service';
 
@@ -9,7 +11,12 @@ import {BookReviewerService} from './BookReviewer.service';
   {
     imports: [
       ScrapperModule,
-      TypeOrmModule.forFeature([BookReviewerEntity]),
+      TypeOrmModule.forFeature(
+        [
+          RemoteWebsiteEntity,
+          BookReviewerEntity,
+        ],
+      ),
     ],
     providers: [
       BookReviewerService,

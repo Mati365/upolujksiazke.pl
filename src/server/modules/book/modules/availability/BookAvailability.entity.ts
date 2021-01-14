@@ -1,7 +1,12 @@
-import {Column, Entity, JoinColumn, OneToOne} from 'typeorm';
+import {
+  Column, Entity, JoinColumn,
+  ManyToOne, OneToOne, RelationId,
+} from 'typeorm';
 
 import {RemoteRecordEntity} from '@server/modules/remote/entity';
 import {DatedRecordEntity} from '@server/modules/database/DatedRecord.entity';
+import {BookEntity} from '../../Book.entity';
+import {BookVolumeEntity} from '../volume/BookVolume.entity';
 
 @Entity(
   {
@@ -18,6 +23,28 @@ export class BookAvailabilityEntity extends DatedRecordEntity {
 
   @Column('money', {nullable: true})
   price: number;
+
+  @Column('smallint', {nullable: true})
+  avgRating: number;
+
+  @Column('integer', {default: 0})
+  totalRatings: number;
+
+  @ManyToOne(() => BookEntity, (entity) => entity.availability, {onDelete: 'CASCADE'})
+  @JoinColumn({name: 'bookId'})
+  book: BookEntity;
+
+  @Column({nullable: true})
+  @RelationId((entity: BookAvailabilityEntity) => entity.book)
+  bookId: number;
+
+  @ManyToOne(() => BookVolumeEntity, (entity) => entity.availability, {onDelete: 'CASCADE'})
+  @JoinColumn({name: 'volumeId'})
+  volume: BookVolumeEntity;
+
+  @Column({nullable: true})
+  @RelationId((entity: BookAvailabilityEntity) => entity.volume)
+  volumeId: number;
 
   constructor(partial: Partial<BookAvailabilityEntity>) {
     super();

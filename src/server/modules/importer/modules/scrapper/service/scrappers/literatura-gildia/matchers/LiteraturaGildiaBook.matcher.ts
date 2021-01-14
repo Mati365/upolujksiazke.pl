@@ -85,6 +85,20 @@ export class LiteraturaGildiaBookMatcher extends ScrapperMatcher<CreateBookDto> 
   }
 
   /**
+   * Picks title of book but removes hash
+   *
+   * @private
+   * @static
+   * @param {string} title
+   * @memberof LiteraturaGildiaBookMatcher
+   */
+  private static parseTitle(title: string) {
+    const normalizedText = normalizeParsedText(title);
+
+    return normalizedText.match(/#\d+\s-\s*(.*)/)?.[1] ?? normalizedText;
+  }
+
+  /**
    * Extracts info about release from book page
    *
    * @private
@@ -97,15 +111,14 @@ export class LiteraturaGildiaBookMatcher extends ScrapperMatcher<CreateBookDto> 
     const $wideText = $('#yui-main .content .widetext');
 
     const publisher = await this.extractPublisher($wideText);
-    const title = normalizeParsedText($('h1').text());
     const text = $wideText.text();
     const $coverImage = $wideText.find('img.main-article-image');
 
     return new CreateBookReleaseDto(
       {
-        title,
         publisher,
         lang: Language.PL,
+        title: LiteraturaGildiaBookMatcher.parseTitle($('h1').text()),
         description: normalizeParsedText($wideText.find('div > p').text()),
         edition: normalizeParsedText(text.match(/Wydanie: ([\S]+)/)?.[1]), // todo: Support it!
         isbn: normalizeISBN(text.match(/ISBN: ([\w-]+)/)?.[1]),

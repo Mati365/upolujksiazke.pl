@@ -1,7 +1,7 @@
 import * as R from 'ramda';
 import {Transform} from 'class-transformer';
 import {
-  Entity, Column, Index,
+  Entity, Column,
   ManyToMany, OneToMany, JoinTable,
 } from 'typeorm';
 
@@ -12,6 +12,8 @@ import {BookCategoryEntity} from './modules/category/BookCategory.entity';
 import {BookReviewEntity} from './modules/review/BookReview.entity';
 import {BookReviewerEntity} from './modules/reviewer/BookReviewer.entity';
 import {BookReleaseEntity} from './modules/release/BookRelease.entity';
+import {BookVolumeEntity} from './modules/volume/BookVolume.entity';
+import {BookAvailabilityEntity} from './modules/availability/BookAvailability.entity';
 
 @Entity(
   {
@@ -19,8 +21,7 @@ import {BookReleaseEntity} from './modules/release/BookRelease.entity';
   },
 )
 export class BookEntity extends DatedRecordEntity {
-  @Column('text')
-  @Index('book_default_title_index', {synchronize: false})
+  @Column('citext', {unique: true})
   defaultTitle: string;
 
   @Column('text', {unique: true, nullable: true})
@@ -51,6 +52,12 @@ export class BookEntity extends DatedRecordEntity {
 
   @OneToMany(() => BookReleaseEntity, (entity) => entity.book)
   releases: BookReleaseEntity[];
+
+  @OneToMany(() => BookVolumeEntity, (entity) => entity.book)
+  volumes: BookReleaseEntity[];
+
+  @OneToMany(() => BookAvailabilityEntity, (entity) => entity.book)
+  availability: BookAvailabilityEntity[];
 
   constructor(partial: Partial<BookEntity>) {
     super();

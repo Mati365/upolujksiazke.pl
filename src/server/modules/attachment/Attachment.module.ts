@@ -9,6 +9,8 @@ import {DynamicModule, Module} from '@nestjs/common';
 import {AttachmentEntity} from './Attachment.entity';
 import {AttachmentService} from './Attachment.service';
 
+import {genUniqueFilename} from './helpers/genUniqueFilename';
+
 export * from './decorators/FilesForm.decorator';
 
 @Module({})
@@ -19,10 +21,12 @@ export class AttachmentModule {
         storage: diskStorage(
           {
             destination: SERVER_ENV.cdn.localPath,
-            filename: (req, file, cb) => {
-              const randomName = Array(32).fill(null).map(() => (Math.round(Math.random() * 16)).toString(16)).join('');
-              return cb(null, `${randomName}.${mime.extension(file.mimetype)}`);
-            },
+            filename: (req, file, cb) => cb(
+              null,
+              genUniqueFilename(
+                mime.extension(file.mimetype),
+              ),
+            ),
           },
         ),
       },

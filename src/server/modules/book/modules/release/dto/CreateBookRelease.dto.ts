@@ -9,6 +9,7 @@ import {Language} from '@server/constants/language';
 import {CreateAttachmentDto} from '@server/modules/attachment/dto';
 import {CreateRemoteRecordDto} from '@server/modules/remote/dto/CreateRemoteRecord.dto';
 import {CreateBookPublisherDto} from '../../publisher/dto/BookPublisher.dto';
+import {CreateBookVolumeDto} from '../../volume/dto/CreateBookVolume.dto';
 import {BookBindingKind} from '../BookRelease.entity';
 
 /**
@@ -46,6 +47,15 @@ export class CreateBookReleaseDto {
 
   @IsString()
   readonly totalPages: number;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => CreateBookVolumeDto)
+  readonly volume: CreateBookVolumeDto;
+
+  @IsOptional()
+  @IsNumber()
+  readonly volumeId: number;
 
   @IsOptional()
   @ValidateNested()

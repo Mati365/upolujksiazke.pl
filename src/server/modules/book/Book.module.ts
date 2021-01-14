@@ -13,6 +13,7 @@ import {BookService} from './Book.service';
 import {BookReleaseModule} from './modules/release';
 import {BookPublisherModule} from './modules/publisher';
 import {BookAvailabilityModule} from './modules/availability';
+import {BookVolumeModule} from './modules/volume';
 
 @Module(
   {
@@ -25,6 +26,7 @@ import {BookAvailabilityModule} from './modules/availability';
       BookReviewerModule,
       BookReviewModule,
       BookCategoryModule,
+      BookVolumeModule,
       TagModule,
       TypeOrmModule.forFeature([BookEntity]),
     ],
@@ -40,6 +42,7 @@ import {BookAvailabilityModule} from './modules/availability';
       BookReviewerModule,
       BookReviewModule,
       BookCategoryModule,
+      BookVolumeModule,
     ],
   },
 )

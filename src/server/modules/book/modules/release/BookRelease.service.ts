@@ -8,12 +8,14 @@ import {RemoteRecordService} from '@server/modules/remote/service/RemoteRecord.s
 import {CreateBookReleaseDto} from './dto/CreateBookRelease.dto';
 import {BookReleaseEntity} from './BookRelease.entity';
 import {BookPublisherService} from '../publisher/BookPublisher.service';
+import {BookVolumeService} from '../volume/BookVolume.service';
 
 @Injectable()
 export class BookReleaseService {
   constructor(
     private readonly connection: Connection,
     private readonly publisherService: BookPublisherService,
+    private readonly volumeService: BookVolumeService,
     private readonly remoteRecordService: RemoteRecordService,
   ) {}
 
@@ -40,35 +42,58 @@ export class BookReleaseService {
    */
   async upsert(
     {
-      cover, remoteDescription, publisher,
-      remoteDescriptionId, publisherId,
+      cover,
+      volumeId, volume,
+      remoteDescriptionId, remoteDescription,
+      publisher, publisherId,
       ...dto
     }: CreateBookReleaseDto, entityManager?: EntityManager,
   ): Promise<BookReleaseEntity> {
-    const {connection, publisherService, remoteRecordService} = this;
+    const {
+      connection,
+      publisherService,
+      remoteRecordService,
+      volumeService,
+    } = this;
 
-    return upsert(
-      {
-        entityManager,
-        connection,
-        Entity: BookReleaseEntity,
-        // fixme
-        constraint: 'book_release_unique_publisher_edition',
-        data: new BookReleaseEntity(
-          {
-            ...dto,
+    const upsertParams = {
+      entityManager,
+      connection,
+      Entity: BookReleaseEntity,
+      data: new BookReleaseEntity(
+        {
+          ...dto,
 
-            remoteDescriptionId: remoteDescriptionId ?? (
-              await (remoteDescription && remoteRecordService?.upsert(remoteDescription, entityManager))
-            )?.id,
+          volumeId: volumeId ?? (
+            await (volume && volumeService?.upsert(volume, entityManager))
+          )?.id,
 
-            publisherId: publisherId ?? (
-              await (publisher && publisherService.upsert(publisher, entityManager))
-            )?.id,
-          },
-        ),
-      },
-    );
+          remoteDescriptionId: remoteDescriptionId ?? (
+            await (remoteDescription && remoteRecordService?.upsert(remoteDescription, entityManager))
+          )?.id,
+
+          publisherId: publisherId ?? (
+            await (publisher && publisherService.upsert(publisher, entityManager))
+          )?.id,
+        },
+      ),
+    };
+
+    try {
+      return await upsert(
+        {
+          ...upsertParams,
+          primaryKey: 'remoteDescriptionId',
+        },
+      );
+    } catch (e) {
+      return upsert(
+        {
+          ...upsertParams,
+          constraint: 'book_release_unique_publisher_edition',
+        },
+      );
+    }
   }
 
   /**

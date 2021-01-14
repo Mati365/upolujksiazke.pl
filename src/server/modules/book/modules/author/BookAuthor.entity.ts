@@ -9,7 +9,7 @@ import {BookEntity} from '../../Book.entity';
   },
 )
 export class BookAuthorEntity extends DatedRecordEntity {
-  @Column('text', {unique: true})
+  @Column('citext', {unique: true})
   name: string;
 
   @Column('text', {nullable: true})

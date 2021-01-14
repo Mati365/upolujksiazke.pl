@@ -17,6 +17,7 @@ export async function upsert<T, E extends T | T[], K extends keyof T>(
     constraint,
     primaryKey,
     conflictKeys,
+    doNothing,
     skip = ['id', 'createdAt'] as K[],
   }: {
     connection: Connection,
@@ -26,6 +27,7 @@ export async function upsert<T, E extends T | T[], K extends keyof T>(
     data: E,
     constraint?: string,
     conflictKeys?: string,
+    doNothing?: boolean,
     primaryKey?: CanBeArray<(string & keyof T) | `${string & keyof T}Id`>,
     skip?: K[],
   },
@@ -36,7 +38,7 @@ export async function upsert<T, E extends T | T[], K extends keyof T>(
       : getRepository(Entity)
   );
 
-  const updateStr = (
+  const updateStr = !doNothing && (
     connection
       .getMetadata(Entity)
       .columns
@@ -51,17 +53,21 @@ export async function upsert<T, E extends T | T[], K extends keyof T>(
       .join(',')
   );
 
-  conflictKeys ??= (
-    constraint
-      ? `on constraint ${constraint}`
-      : `(${safeArray(primaryKey).map((col) => `"${col}"`).join(',')})`
-  );
+  if (doNothing)
+    conflictKeys ??= '';
+  else {
+    conflictKeys ??= (
+      constraint
+        ? `on constraint ${constraint}`
+        : `(${safeArray(primaryKey).map((col) => `"${col}"`).join(',')})`
+    );
+  }
 
   const result = await (
     (repo.createQueryBuilder() || queryBuilder)
       .insert()
       .values(data)
-      .onConflict(`${conflictKeys} DO UPDATE SET ${updateStr}`)
+      .onConflict(`${conflictKeys} ${doNothing ? 'DO NOTHING' : `DO UPDATE SET ${updateStr}`}`)
       .execute()
   );
 

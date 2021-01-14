@@ -19,6 +19,10 @@ export class CreateBookReviewerDto {
   readonly remote: CreateRemoteRecordDto;
 
   @IsDefined()
+  @IsNumber()
+  readonly websiteId: number;
+
+  @IsDefined()
   @IsNotEmpty()
   @IsString()
   readonly name: string;

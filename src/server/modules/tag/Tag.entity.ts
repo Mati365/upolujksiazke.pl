@@ -14,13 +14,7 @@ export class TagEntity extends DatedRecordEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column(
-    {
-      type: 'varchar',
-      length: 60,
-      unique: true,
-    },
-  )
+  @Column('citext', {unique: true})
   name: string;
 
   constructor(partial: Partial<TagEntity>) {

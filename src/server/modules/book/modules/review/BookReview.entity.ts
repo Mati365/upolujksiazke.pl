@@ -1,6 +1,6 @@
 import {
   Entity, Column, ManyToOne,
-  OneToOne, JoinColumn,
+  OneToOne, JoinColumn, RelationId, Index,
 } from 'typeorm';
 
 import {RemoteRecordEntity} from '@server/modules/remote/entity';
@@ -9,12 +9,14 @@ import {VotingStatsEmbeddable} from '@server/modules/shared/VotingStats.embeddab
 
 import {BookReviewerEntity} from '../reviewer/BookReviewer.entity';
 import {BookEntity} from '../../Book.entity';
+import {BookReleaseEntity} from '../release/BookRelease.entity';
 
 @Entity(
   {
     name: 'book_review',
   },
 )
+@Index(['book'])
 export class BookReviewEntity extends DatedRecordEntity {
   @Column('timestamp')
   publishDate: Date;
@@ -37,6 +39,14 @@ export class BookReviewEntity extends DatedRecordEntity {
 
   @Column(() => VotingStatsEmbeddable)
   stats: VotingStatsEmbeddable;
+
+  @ManyToOne(() => BookReleaseEntity, (entity) => entity.reviews, {onDelete: 'SET NULL'})
+  @JoinColumn({name: 'releaseId'})
+  release: BookReleaseEntity;
+
+  @Column()
+  @RelationId((entity: BookReviewEntity) => entity.release)
+  releaseId: number;
 
   constructor(partial: Partial<BookReviewEntity>) {
     super();

@@ -1,7 +1,7 @@
 import * as R from 'ramda';
 import {
   BeforeInsert, BeforeUpdate,
-  Column, Entity, Index, OneToMany,
+  Column, Entity, OneToMany,
 } from 'typeorm';
 
 import {DatedRecordEntity} from '@server/modules/database/DatedRecord.entity';
@@ -13,12 +13,7 @@ import {RemoteRecordEntity} from './RemoteRecord.entity';
   },
 )
 export class RemoteWebsiteEntity extends DatedRecordEntity {
-  @Column()
-  @Index(
-    {
-      unique: true,
-    },
-  )
+  @Column('citext', {unique: true})
   url: string;
 
   @Column('text', {nullable: true})

@@ -20,6 +20,7 @@ import {BookReviewerEntity} from '../../book/modules/reviewer/BookReviewer.entit
 import {BookReleaseEntity} from '../../book/modules/release/BookRelease.entity';
 import {BookPublisherEntity} from '../../book/modules/publisher/BookPublisher.entity';
 import {BookAvailabilityEntity} from '../../book/modules/availability/BookAvailability.entity';
+import {BookVolumeEntity} from '../../book/modules/volume/BookVolume.entity';
 
 export const DB_CONFIG: TypeOrmModuleOptions = {
   ...SERVER_ENV.dbConfig,
@@ -43,6 +44,7 @@ export const DB_CONFIG: TypeOrmModuleOptions = {
     BookReviewEntity,
     BookCategoryEntity,
     BookReviewerEntity,
+    BookVolumeEntity,
     ScrapperMetadataEntity,
     TagEntity,
   ],

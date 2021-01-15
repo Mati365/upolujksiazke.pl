@@ -15,7 +15,8 @@
     "schema:sync": "node_modules/.bin/ts-node --project tsconfig.json -r tsconfig-paths/register ./node_modules/.bin/typeorm schema:sync --config src/server/ormconfig.js",
     "schema:migrate": "node_modules/.bin/ts-node --project tsconfig.json -r tsconfig-paths/register ./node_modules/.bin/typeorm migration:run --config src/server/ormconfig.js",
     "seed:config": "node_modules/.bin/ts-node --project tsconfig.json -r tsconfig-paths/register ./node_modules/typeorm-seeding/dist/cli.js config --config src/server/ormconfig.js",
-    "seed:run": "node_modules/.bin/ts-node --project tsconfig.json -r tsconfig-paths/register ./node_modules/typeorm-seeding/dist/cli.js seed --config src/server/ormconfig.js"
+    "seed:run": "node_modules/.bin/ts-node --project tsconfig.json -r tsconfig-paths/register ./node_modules/typeorm-seeding/dist/cli.js seed --config src/server/ormconfig.js",
+    "console": "NODE_REPL_HISTORY_FILE=$HOME/.node_history node_modules/.bin/ts-node --project tsconfig.json -r tsconfig-paths/register ./src/console.ts"
   },
   "husky": {
     "hooks": {
@@ -48,6 +49,7 @@
     "@types/multer": "^1.4.5",
     "@types/node": "^14.14.10",
     "@types/promise-sequential": "^1.1.0",
+    "@types/purdy": "^3.5.0",
     "@types/ramda": "^0.27.32",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
@@ -94,6 +96,7 @@
     "@nestjs/schedule": "^0.4.1",
     "@nestjs/serve-static": "^2.1.4",
     "@nestjs/typeorm": "^7.1.5",
+    "await-outside": "^3.0.0",
     "bull": "^3.20.0",
     "cache-manager": "^3.4.0",
     "camelcase-keys": "^6.2.2",
@@ -102,7 +105,6 @@
     "class-transformer": "^0.3.1",
     "class-validator": "^0.12.2",
     "classnames": "^2.2.6",
-    "consola": "^2.15.0",
     "constate": "^3.1.0",
     "cookie-parser": "^1.4.5",
     "dotenv": "^8.2.0",
@@ -120,7 +122,9 @@
     "multer": "^1.4.2",
     "p-limit": "^3.1.0",
     "pg": "^8.5.1",
+    "pretty-repl": "^2.4.0",
     "promise-sequential": "^1.1.1",
+    "purdy": "^3.5.1",
     "querystring": "^0.2.0",
     "ramda": "^0.27.1",
     "react": "^17.0.1",

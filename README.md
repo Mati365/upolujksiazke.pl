@@ -51,6 +51,14 @@ yarn run develop
 gulp scrapper:refresh
 ```
 
+### REPL
+
+There is NestJS context present on window, it is called `app`. All entities are exporeted to context.
+
+```bash
+yarn console
+```
+
 ### Tasks
 
 Fetchers:

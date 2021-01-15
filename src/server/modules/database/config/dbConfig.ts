@@ -1,4 +1,5 @@
 import {TypeOrmModuleOptions} from '@nestjs/typeorm';
+import * as R from 'ramda';
 
 import {SERVER_ENV} from '@server/constants/env';
 import {isDevMode} from '@shared/helpers';
@@ -22,6 +23,23 @@ import {BookPublisherEntity} from '../../book/modules/publisher/BookPublisher.en
 import {BookAvailabilityEntity} from '../../book/modules/availability/BookAvailability.entity';
 import {BookVolumeEntity} from '../../book/modules/volume/BookVolume.entity';
 
+export const DB_ENTITIES = {
+  RemoteWebsiteEntity,
+  RemoteRecordEntity,
+  AttachmentEntity,
+  BookAvailabilityEntity,
+  BookPublisherEntity,
+  BookReleaseEntity,
+  BookAuthorEntity,
+  BookEntity,
+  BookReviewEntity,
+  BookCategoryEntity,
+  BookReviewerEntity,
+  BookVolumeEntity,
+  ScrapperMetadataEntity,
+  TagEntity,
+};
+
 export const DB_CONFIG: TypeOrmModuleOptions = {
   ...SERVER_ENV.dbConfig,
   type: 'postgres',
@@ -32,20 +50,5 @@ export const DB_CONFIG: TypeOrmModuleOptions = {
       : false
   ),
   synchronize: false,
-  entities: [
-    RemoteWebsiteEntity,
-    RemoteRecordEntity,
-    AttachmentEntity,
-    BookAvailabilityEntity,
-    BookPublisherEntity,
-    BookReleaseEntity,
-    BookAuthorEntity,
-    BookEntity,
-    BookReviewEntity,
-    BookCategoryEntity,
-    BookReviewerEntity,
-    BookVolumeEntity,
-    ScrapperMetadataEntity,
-    TagEntity,
-  ],
+  entities: R.values(DB_ENTITIES),
 };

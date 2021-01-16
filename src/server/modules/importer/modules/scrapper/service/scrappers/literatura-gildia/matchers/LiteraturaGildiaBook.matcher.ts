@@ -20,7 +20,7 @@ import {CreateBookDto} from '@server/modules/book/dto/CreateBook.dto';
 import {CreateBookReleaseDto} from '@server/modules/book/modules/release/dto/CreateBookRelease.dto';
 import {CreateBookAuthorDto} from '@server/modules/book/modules/author/dto/CreateBookAuthor.dto';
 import {CreateBookPublisherDto} from '@server/modules/book/modules/publisher/dto/BookPublisher.dto';
-import {CreateAttachmentDto} from '@server/modules/attachment/dto';
+import {CreateImageAttachmentDto} from '@server/modules/attachment/dto';
 import {CreateRemoteRecordDto} from '@server/modules/remote/dto/CreateRemoteRecord.dto';
 
 import {ScrapperMatcher, ScrapperMatcherResult} from '../../../shared/ScrapperMatcher';
@@ -127,7 +127,7 @@ export class LiteraturaGildiaBookMatcher extends ScrapperMatcher<CreateBookDto> 
         binding: LiteraturaGildiaBookMatcher.bindingMappings[
           normalizeParsedText(text.match(/Oprawa: ([\S]+)/)?.[1])?.toLowerCase()
         ],
-        cover: $coverImage && new CreateAttachmentDto(
+        cover: $coverImage && new CreateImageAttachmentDto(
           {
             originalUrl: $coverImage.attr('src'),
           },

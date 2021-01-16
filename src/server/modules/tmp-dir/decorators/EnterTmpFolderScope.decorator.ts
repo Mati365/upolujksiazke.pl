@@ -10,7 +10,7 @@ export type TmpFolderScopeAttrs = {
 
 type EnterTmpFolderScopeConfig = {
   dirService: TmpDirService,
-  attrs: TmpDirScopeEnterAttrs<false>,
+  attrs: TmpDirScopeEnterAttrs<any>,
 };
 
 /**

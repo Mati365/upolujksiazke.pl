@@ -18,7 +18,7 @@ import {CreateBookDto} from '@server/modules/book/dto/CreateBook.dto';
 import {CreateBookReleaseDto} from '@server/modules/book/modules/release/dto/CreateBookRelease.dto';
 import {CreateBookCategoryDto} from '@server/modules/book/modules/category/dto/CreateBookCategory.dto';
 import {CreateBookPublisherDto} from '@server/modules/book/modules/publisher/dto/BookPublisher.dto';
-import {CreateAttachmentDto} from '@server/modules/attachment/dto';
+import {CreateImageAttachmentDto} from '@server/modules/attachment/dto';
 
 import {CreateRemoteRecordDto} from '@server/modules/remote/dto/CreateRemoteRecord.dto';
 import {ScrapperMatcher, ScrapperMatcherResult} from '../../shared/ScrapperMatcher';
@@ -80,7 +80,7 @@ export class GraniceBookMatcher extends ScrapperMatcher<CreateBookDto> {
             name: normalizeParsedText($details.find('[itemprop="publisher"] > a').text()),
           },
         ),
-        cover: new CreateAttachmentDto(
+        cover: new CreateImageAttachmentDto(
           {
             originalUrl: $details.find('[itemprop="image"]').attr('src'),
           },

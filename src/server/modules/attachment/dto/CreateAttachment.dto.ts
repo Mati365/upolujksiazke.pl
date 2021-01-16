@@ -1,8 +1,4 @@
-import {
-  IsBoolean, IsDefined, IsNumber,
-  IsOptional, IsString, ValidateNested,
-} from 'class-validator';
-
+import {IsNumber, IsOptional, IsString, ValidateNested} from 'class-validator';
 import {UploadedFileDto} from './UploadedFile.dto';
 
 export class CreateAttachmentDto {
@@ -14,17 +10,9 @@ export class CreateAttachmentDto {
   @IsString()
   readonly originalUrl: string;
 
-  @IsDefined()
+  @IsOptional()
   @IsString()
   readonly name: string;
-
-  @IsOptional()
-  @IsBoolean()
-  readonly nsfw: boolean;
-
-  @IsOptional()
-  @IsNumber()
-  readonly ratio: number;
 
   @ValidateNested()
   readonly file: UploadedFileDto;

@@ -38,7 +38,11 @@ import {TmpDirModule} from './tmp-dir';
           ? [ScheduleModule.forRoot()]
           : []
       ),
-      AttachmentModule.register(),
+      AttachmentModule.register(
+        {
+          dest: SERVER_ENV.cdn.localPath,
+        },
+      ),
       ManifestModule.register(
         {
           file: 'public/files-manifest.json',

@@ -1,5 +1,5 @@
 import {
-  Entity, Column, PrimaryGeneratedColumn,
+  Entity, Column,
   BeforeInsert, BeforeUpdate,
 } from 'typeorm';
 
@@ -11,9 +11,6 @@ import {DatedRecordEntity} from '../database/DatedRecord.entity';
   },
 )
 export class TagEntity extends DatedRecordEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
-
   @Column('citext', {unique: true})
   name: string;
 

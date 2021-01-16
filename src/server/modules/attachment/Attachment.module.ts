@@ -1,29 +1,39 @@
 import {MulterModule} from '@nestjs/platform-express';
 import {TypeOrmModule} from '@nestjs/typeorm';
+import {DynamicModule, Global, Module} from '@nestjs/common';
 import {diskStorage} from 'multer';
 import * as mime from 'mime-types';
 
-import {SERVER_ENV} from '@server/constants/env';
-
-import {DynamicModule, Module} from '@nestjs/common';
-import {AttachmentEntity} from './Attachment.entity';
-import {AttachmentService} from './Attachment.service';
-
 import {genUniqueFilename} from './helpers/genUniqueFilename';
+
+import {
+  AttachmentEntity,
+  ImageAttachmentEntity,
+} from './entity';
+
+import {
+  ATTACHMENTS_OPTIONS,
+  AttachmentService,
+  ImageAttachmentService,
+  AttachmentServiceOptions,
+} from './services';
 
 export * from './decorators/FilesForm.decorator';
 
+@Global()
 @Module({})
 export class AttachmentModule {
-  static register(): DynamicModule {
+  static register(options: AttachmentServiceOptions): DynamicModule {
+    options.fileNameGenerator ??= genUniqueFilename;
+
     const multerModule = MulterModule.register(
       {
         storage: diskStorage(
           {
-            destination: SERVER_ENV.cdn.localPath,
+            destination: options.dest,
             filename: (req, file, cb) => cb(
               null,
-              genUniqueFilename(
+              options.fileNameGenerator(
                 mime.extension(file.mimetype),
               ),
             ),
@@ -35,13 +45,25 @@ export class AttachmentModule {
     return {
       module: AttachmentModule,
       imports: [
-        TypeOrmModule.forFeature([AttachmentEntity]),
+        TypeOrmModule.forFeature(
+          [
+            AttachmentEntity,
+            ImageAttachmentEntity,
+          ],
+        ),
         multerModule,
       ],
       providers: [
+        {
+          provide: ATTACHMENTS_OPTIONS,
+          useValue: options,
+        },
+        ImageAttachmentService,
         AttachmentService,
       ],
       exports: [
+        ImageAttachmentService,
+        AttachmentService,
         multerModule,
       ],
     };

@@ -1,11 +1,11 @@
 import {
   BeforeInsert, BeforeUpdate, Column,
-  Entity, Index, JoinColumn, ManyToOne,
-  OneToMany, OneToOne, RelationId, Unique,
+  Entity, Index, JoinColumn, JoinTable, ManyToMany,
+  ManyToOne, OneToMany, OneToOne, RelationId, Unique,
 } from 'typeorm';
 
 import {Language} from '@server/constants/language';
-import {AttachmentEntity} from '@server/modules/attachment/Attachment.entity';
+import {ImageAttachmentEntity} from '@server/modules/attachment/entity/ImageAttachment.entity';
 import {RemoteRecordEntity} from '@server/modules/remote/entity/RemoteRecord.entity';
 import {DatedRecordEntity} from '../../../database/DatedRecord.entity';
 import {BookEntity} from '../../Book.entity';
@@ -53,8 +53,20 @@ export class BookReleaseEntity extends DatedRecordEntity {
   @Column('int', {nullable: true})
   totalPages: number;
 
-  @ManyToOne(() => AttachmentEntity, {nullable: true})
-  cover: AttachmentEntity;
+  @ManyToMany(
+    () => ImageAttachmentEntity,
+    {
+      eager: true,
+      cascade: true,
+      onDelete: 'CASCADE',
+    },
+  )
+  @JoinTable(
+    {
+      name: 'book_release_cover_image_attachments',
+    },
+  )
+  cover: ImageAttachmentEntity[];
 
   @Column(
     {

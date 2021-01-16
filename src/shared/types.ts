@@ -43,16 +43,6 @@ export enum SortDirection {
   NORMAL = '',
 }
 
-export type Vec2 = {
-  x?: number,
-  y?: number,
-};
-
-export type Size = Vec2 & {
-  w?: number,
-  h?: number,
-};
-
 export type SortKeys = {
   [key: string]: SortDirection,
 };
@@ -66,3 +56,26 @@ export type Person = {
   name: string,
   gender?: Gender,
 };
+
+export class Vec2 {
+  constructor(
+    public x: number,
+    public y: number,
+  ) {}
+}
+
+export class Rect {
+  constructor(
+    public x: number,
+    public y: number,
+    public w: number,
+    public h: number,
+  ) {}
+}
+
+export class Size {
+  constructor(
+    public w: number,
+    public h: number,
+  ) {}
+}

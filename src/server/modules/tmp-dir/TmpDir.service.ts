@@ -22,7 +22,7 @@ export type TmpDirScopeExecutor<T = any> = (attrs: {tmpFolderPath: string}) => C
 
 export type TmpDirScopeEnterAttrs<DeleteOnExit = boolean> = {
   withUUID?: boolean,
-  name: string,
+  name?: string,
   deleteOnExit: DeleteOnExit,
 };
 
@@ -92,12 +92,10 @@ export class TmpDirService {
 
     const fullPath = path.resolve(options.rootPath, folderName);
     const deleteScope = async () => {
-      if (!options.preserveContentOnExit)
-        await removeDirIfExistsAsync(fullPath);
+      await removeDirIfExistsAsync(fullPath);
     };
 
-    if (!options.preserveContentOnExit)
-      await removeAndCreateDirAsync(fullPath);
+    await removeAndCreateDirAsync(fullPath);
 
     const result = fn(
       {

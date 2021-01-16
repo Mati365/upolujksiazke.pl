@@ -1,4 +1,5 @@
 import {Injectable, NotFoundException} from '@nestjs/common';
+import {EntityManager} from 'typeorm';
 
 import {
   paginateQueryBuilder,
@@ -6,8 +7,15 @@ import {
   PaginationResult,
 } from '@server/common/helpers/db/pagination';
 
-import {AttachmentEntity} from './Attachment.entity';
-import {CreateAttachmentDto} from './dto/CreateAttachment.dto';
+import {AttachmentEntity} from '../entity/Attachment.entity';
+import {CreateAttachmentDto} from '../dto/CreateAttachment.dto';
+
+export const ATTACHMENTS_OPTIONS = 'ATTACHMENTS_OPTIONS';
+
+export type AttachmentServiceOptions = {
+  dest: string,
+  fileNameGenerator?(extension: string|false): string,
+};
 
 @Injectable()
 export class AttachmentService {
@@ -33,8 +41,11 @@ export class AttachmentService {
    * @returns {Promise<AttachmentEntity>}
    * @memberof AttachmentService
    */
-  async create(dto: CreateAttachmentDto): Promise<AttachmentEntity> {
-    return AttachmentEntity.save(
+  async create(
+    dto: CreateAttachmentDto,
+    entityManager: EntityManager = <any> AttachmentEntity,
+  ): Promise<AttachmentEntity> {
+    return entityManager.save(
       AttachmentEntity.create(
         {
           name: dto.name,

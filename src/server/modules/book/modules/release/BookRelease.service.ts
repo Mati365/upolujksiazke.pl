@@ -1,9 +1,14 @@
 import {Injectable} from '@nestjs/common';
 import {Connection, EntityManager} from 'typeorm';
 import sequential from 'promise-sequential';
+import * as R from 'ramda';
+
+import {Size} from '@shared/types';
 
 import {upsert} from '@server/common/helpers/db';
 
+import {ImageAttachmentService} from '@server/modules/attachment/services';
+import {ImageVersion} from '@server/modules/attachment/entity/ImageAttachment.entity';
 import {RemoteRecordService} from '@server/modules/remote/service/RemoteRecord.service';
 import {CreateBookReleaseDto} from './dto/CreateBookRelease.dto';
 import {BookReleaseEntity} from './BookRelease.entity';
@@ -12,11 +17,21 @@ import {BookVolumeService} from '../volume/BookVolume.service';
 
 @Injectable()
 export class BookReleaseService {
+  static readonly COVER_IMAGE_SIZES: Record<ImageVersion, Size> = Object.freeze(
+    {
+      SMALL_THUMB: new Size(78, 117),
+      THUMB: new Size(147, 221),
+      PREVIEW: new Size(220, 330),
+      BIG: new Size(320, 484),
+    },
+  );
+
   constructor(
     private readonly connection: Connection,
     private readonly publisherService: BookPublisherService,
     private readonly volumeService: BookVolumeService,
     private readonly remoteRecordService: RemoteRecordService,
+    private readonly imageAttachmentService: ImageAttachmentService,
   ) {}
 
   /**
@@ -47,13 +62,16 @@ export class BookReleaseService {
       remoteDescriptionId, remoteDescription,
       publisher, publisherId,
       ...dto
-    }: CreateBookReleaseDto, entityManager?: EntityManager,
+    }: CreateBookReleaseDto,
+
+    entityManager: EntityManager = <any> BookReleaseEntity,
   ): Promise<BookReleaseEntity> {
     const {
       connection,
       publisherService,
       remoteRecordService,
       volumeService,
+      imageAttachmentService,
     } = this;
 
     const upsertParams = {
@@ -79,21 +97,60 @@ export class BookReleaseService {
       ),
     };
 
-    try {
-      return await upsert(
-        {
-          ...upsertParams,
-          primaryKey: 'remoteDescriptionId',
-        },
+    const releaseEntity = await (async () => {
+      try {
+        return await upsert(
+          {
+            ...upsertParams,
+            primaryKey: 'remoteDescriptionId',
+          },
+        );
+      } catch (e) {
+        return upsert(
+          {
+            ...upsertParams,
+            constraint: 'book_release_unique_publisher_edition',
+          },
+        );
+      }
+    })();
+
+    const releaseCover = await (
+      entityManager
+        .createQueryBuilder('book_release_cover_image_attachments', 'c')
+        .select('c.bookReleaseId')
+        .where(
+          {
+            bookReleaseId: releaseEntity.id,
+          },
+        )
+        .limit(1)
+        .execute()
+    );
+
+    if (!releaseCover?.length) {
+      releaseEntity.cover = R.values(
+        await imageAttachmentService.fetchAndCreateScaled(
+          {
+            destSubDir: 'cover',
+            sizes: BookReleaseService.COVER_IMAGE_SIZES,
+            dto: cover,
+          },
+          entityManager,
+        ),
       );
-    } catch (e) {
-      return upsert(
-        {
-          ...upsertParams,
-          constraint: 'book_release_unique_publisher_edition',
-        },
+
+      await entityManager.save(
+        new BookReleaseEntity(
+          {
+            id: releaseEntity.id,
+            cover: releaseEntity.cover,
+          },
+        ),
       );
     }
+
+    return releaseEntity;
   }
 
   /**

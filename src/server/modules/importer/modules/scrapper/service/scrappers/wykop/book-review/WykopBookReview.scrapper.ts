@@ -10,7 +10,7 @@ import {CreateBookReviewDto} from '@server/modules/book/modules/review/dto/Creat
 import {CreateRemoteRecordDto} from '@server/modules/remote/dto/CreateRemoteRecord.dto';
 import {CreateBookReviewerDto} from '@server/modules/book/modules/reviewer/dto/CreateBookReviewer.dto';
 import {VotingStatsEmbeddable} from '@server/modules/shared/VotingStats.embeddable';
-import {CreateAttachmentDto} from '@server/modules/attachment/dto';
+import {CreateImageAttachmentDto} from '@server/modules/attachment/dto';
 import {CreateBookDto} from '@server/modules/book/dto/CreateBook.dto';
 import {CreateBookCategoryDto} from '@server/modules/book/modules/category';
 import {CreateBookAuthorDto} from '@server/modules/book/modules/author/dto/CreateBookAuthor.dto';
@@ -127,7 +127,7 @@ export class WykopBookReviewScrapper extends AsyncScrapper<BookReviewScrapperInf
             {
               title: properties.title,
               isbn: properties.isbn,
-              cover: embed && new CreateAttachmentDto(
+              cover: embed && new CreateImageAttachmentDto(
                 {
                   nsfw: embed.plus18,
                   ratio: embed.ratio,
@@ -182,7 +182,7 @@ export class WykopBookReviewScrapper extends AsyncScrapper<BookReviewScrapperInf
             {
               name: author.login,
               gender,
-              avatar: new CreateAttachmentDto(
+              avatar: new CreateImageAttachmentDto(
                 {
                   originalUrl: author.avatar,
                 },

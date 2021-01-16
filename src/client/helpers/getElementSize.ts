@@ -1,4 +1,4 @@
-import {Size} from '@shared/types';
+import {Rect} from '@shared/types';
 
 /**
  * Returns size of component based on getBoundingClientRect
@@ -11,13 +11,13 @@ import {Size} from '@shared/types';
 export function getElementSize(
   element: Element,
   includeScroll: boolean = true,
-): Size {
+): Rect {
   const rect = element.getBoundingClientRect();
 
-  return {
-    x: rect.left + (includeScroll ? window.scrollX : 0),
-    y: rect.top + (includeScroll ? window.scrollY : 0),
-    w: rect.width,
-    h: rect.height,
-  };
+  return new Rect(
+    rect.left + (includeScroll ? window.scrollX : 0),
+    rect.top + (includeScroll ? window.scrollY : 0),
+    rect.width,
+    rect.height,
+  );
 }

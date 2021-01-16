@@ -12,7 +12,11 @@ import {
   RemoteWebsiteEntity,
 } from '../../remote/entity';
 
-import {AttachmentEntity} from '../../attachment/Attachment.entity';
+import {
+  ImageAttachmentEntity,
+  AttachmentEntity,
+} from '../../attachment/entity';
+
 import {BookEntity} from '../../book/Book.entity';
 import {BookAuthorEntity} from '../../book/modules/author/BookAuthor.entity';
 import {BookReviewEntity} from '../../book/modules/review/BookReview.entity';
@@ -26,6 +30,7 @@ import {BookVolumeEntity} from '../../book/modules/volume/BookVolume.entity';
 export const DB_ENTITIES = {
   RemoteWebsiteEntity,
   RemoteRecordEntity,
+  ImageAttachmentEntity,
   AttachmentEntity,
   BookAvailabilityEntity,
   BookPublisherEntity,

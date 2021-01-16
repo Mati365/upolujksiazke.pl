@@ -6,7 +6,7 @@ import {
 } from 'class-validator';
 
 import {Language} from '@server/constants/language';
-import {CreateAttachmentDto} from '@server/modules/attachment/dto';
+import {CreateImageAttachmentDto} from '@server/modules/attachment/dto';
 import {CreateRemoteRecordDto} from '@server/modules/remote/dto/CreateRemoteRecord.dto';
 import {CreateBookPublisherDto} from '../../publisher/dto/BookPublisher.dto';
 import {CreateBookVolumeDto} from '../../volume/dto/CreateBookVolume.dto';
@@ -80,7 +80,7 @@ export class CreateBookReleaseDto {
 
   @ValidateNested()
   @IsOptional()
-  readonly cover: CreateAttachmentDto;
+  readonly cover: CreateImageAttachmentDto;
 
   @IsEnum(Language)
   @IsOptional()

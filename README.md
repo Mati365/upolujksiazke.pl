@@ -59,7 +59,7 @@ There is NestJS context present on window, it is called `app`. All entities are 
 yarn console
 ```
 
-#### RPEL Examples
+#### REPL Examples
 
 **⚠️ Use services to remove records!** (TypeORM async callbacks are buggy)
 

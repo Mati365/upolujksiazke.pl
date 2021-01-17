@@ -45,7 +45,7 @@ export class BookEntity extends DatedRecordEntity {
   @ManyToMany(() => BookReviewerEntity, (reviewer) => reviewer.books)
   reviewers: BookReviewerEntity[];
 
-  @Transform(R.map(R.prop('name')))
+  @Transform(R.map(R.prop('name')) as any)
   @JoinTable()
   @ManyToMany(() => TagEntity, {cascade: true})
   tags: TagEntity[];

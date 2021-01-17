@@ -6,6 +6,7 @@ import * as mime from 'mime-types';
 
 import {genUniqueFilename} from './helpers/genUniqueFilename';
 
+import {AttachmentSubscriber} from './subscribers/Attachment.subscriber';
 import {
   AttachmentEntity,
   ImageAttachmentEntity,
@@ -60,6 +61,7 @@ export class AttachmentModule {
         },
         ImageAttachmentService,
         AttachmentService,
+        AttachmentSubscriber,
       ],
       exports: [
         ImageAttachmentService,

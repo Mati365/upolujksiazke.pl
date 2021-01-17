@@ -26,12 +26,11 @@ export class AttachmentService {
    * @memberof AttachmentService
    */
   async delete(id: number) {
-    const article = await AttachmentEntity.findOne(id);
-
-    if (!article)
+    const attachment = await AttachmentEntity.findOne(id);
+    if (!attachment)
       throw new NotFoundException;
 
-    return AttachmentEntity.remove(article);
+    return AttachmentEntity.remove(attachment);
   }
 
   /**

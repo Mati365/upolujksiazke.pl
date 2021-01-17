@@ -1,4 +1,8 @@
-import {Column, Entity, JoinColumn, OneToOne, RelationId} from 'typeorm';
+import {
+  Column, Entity, // AfterRemove,
+  JoinColumn, OneToOne, RelationId,
+} from 'typeorm';
+
 import {DatedRecordEntity} from '../../database/DatedRecord.entity';
 import {AttachmentEntity} from './Attachment.entity';
 
@@ -25,7 +29,13 @@ export class ImageAttachmentEntity extends DatedRecordEntity {
   @Column('float', {nullable: true})
   ratio: number;
 
-  @OneToOne(() => AttachmentEntity, {onDelete: 'CASCADE'})
+  @OneToOne(
+    () => AttachmentEntity,
+    {
+      onDelete: 'CASCADE',
+      cascade: true,
+    },
+  )
   @JoinColumn()
   attachment: AttachmentEntity;
 

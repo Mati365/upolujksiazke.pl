@@ -128,6 +128,12 @@ export class BookReleaseService {
         .execute()
     );
 
+    /**
+     * @todo
+     *  - Add rollback changes support!
+     *  - Add callback support
+     */
+
     if (!releaseCover?.length) {
       releaseEntity.cover = R.values(
         await imageAttachmentService.fetchAndCreateScaled(

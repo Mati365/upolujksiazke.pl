@@ -61,7 +61,7 @@ yarn console
 
 #### RPEL Examples
 
-**Warn: Use services to remove records!** (TypeORM async callbacks are buggy)
+**⚠️ Use services to remove records!** (TypeORM async callbacks are buggy)
 
 Remove book:
 

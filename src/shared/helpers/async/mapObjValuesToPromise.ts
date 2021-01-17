@@ -1,6 +1,6 @@
 import * as R from 'ramda';
 
-type PromiseMapperFn = (val: any, key: string) => Promise<any>;
+type PromiseMapperFn<R = any> = (val: any, key: string) => Promise<R>;
 
 const valuesToPromisesList = (mapperFn: PromiseMapperFn) => R.compose(
   R.map(
@@ -38,12 +38,15 @@ const nonNullPairsToObj = R.compose(
  * }
  * and when object is returned when all promises are done
  */
-export const mapObjValuesToPromise = R.curry(
-  (mapperFn: PromiseMapperFn, obj: object): Promise<object> => {
-    const promises = valuesToPromisesList(mapperFn)(obj);
+export function mapObjValuesToPromise<R>(
+  mapperFn: PromiseMapperFn<R>,
+  obj: object,
+): Promise<Record<string, R>> {
+  const promises = valuesToPromisesList(mapperFn)(obj);
 
-    return Promise
+  return (
+    Promise
       .all(promises)
-      .then(nonNullPairsToObj);
-  },
-);
+      .then(nonNullPairsToObj) as any
+  );
+}

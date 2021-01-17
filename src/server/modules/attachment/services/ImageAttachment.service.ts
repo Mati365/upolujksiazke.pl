@@ -1,19 +1,19 @@
 import {Inject, Injectable, Logger} from '@nestjs/common';
 import {EntityManager} from 'typeorm';
 import chalk from 'chalk';
-import sequential from 'promise-sequential';
-import {convert, IInfoResult, resize} from 'easyimage';
+import {convert, resize} from 'easyimage';
 import * as path from 'path';
 import * as mime from 'mime-types';
 import * as R from 'ramda';
 import mkdirp from 'mkdirp';
 
+import {safeArray, mapObjValuesToPromise} from '@shared/helpers';
 import {
   downloadFile,
   isImageMimeType,
 } from '@server/common/helpers';
 
-import {Size} from '@shared/types';
+import {CanBeArray, Size} from '@shared/types';
 import {InterceptMethod} from '@shared/helpers/decorators/InterceptMethod';
 import {
   EnterTmpFolderScope,
@@ -22,7 +22,6 @@ import {
 } from '../../tmp-dir';
 
 import {
-  AttachmentService,
   AttachmentServiceOptions,
   ATTACHMENTS_OPTIONS,
 } from './Attachment.service';
@@ -50,33 +49,31 @@ export class ImageAttachmentService {
 
   constructor(
     @Inject(ATTACHMENTS_OPTIONS) private readonly options: AttachmentServiceOptions,
-    private readonly attachmentService: AttachmentService,
     private readonly tmpDirService: TmpDirService,
   ) {}
 
   /**
-   * Create single attachment
+   * Creates single or multiple entities
    *
    * @param {CreateImageAttachmentDto} dto
    * @param {EntityManager} [entityManager]
    * @returns {Promise<ImageAttachmentEntity>}
    * @memberof ImageAttachmentService
    */
+  async create(dto: CreateImageAttachmentDto, entityManager?: EntityManager): Promise<ImageAttachmentEntity>;
+  async create(dto: CreateImageAttachmentDto[], entityManager?: EntityManager): Promise<ImageAttachmentEntity[]>;
   async create(
-    {nsfw, ratio, version, ...attachment}: CreateImageAttachmentDto,
+    dto: CanBeArray<CreateImageAttachmentDto>,
     entityManager: EntityManager = <any> ImageAttachmentEntity,
-  ): Promise<ImageAttachmentEntity> {
-    const {attachmentService} = this;
+  ): Promise<CanBeArray<ImageAttachmentEntity>> {
+    if (R.is(Array, dto)) {
+      return entityManager.save(
+        safeArray(dto).map((item) => ImageAttachmentEntity.fromDTO(item)),
+      );
+    }
 
     return entityManager.save(
-      ImageAttachmentEntity.create(
-        {
-          nsfw,
-          ratio,
-          version,
-          attachment: await attachmentService.create(attachment, entityManager),
-        },
-      ),
+      ImageAttachmentEntity.fromDTO(<CreateImageAttachmentDto> dto),
     );
   }
 
@@ -152,9 +149,9 @@ export class ImageAttachmentService {
       path.join(dest, destSubDir),
     );
 
-    const resizedFiles = await Promise.all(
-      R.toPairs(sizes).map(
-        async ([version, size]): Promise<[ImageVersion, {fileName: string, resizedFile: IInfoResult}]> => {
+    const dtos = R.values(
+      await mapObjValuesToPromise(
+        async (size, version: ImageVersion): Promise<CreateImageAttachmentDto> => {
           const fileName = path.join(
             destSubDir,
             fileNameGenerator(extension),
@@ -169,45 +166,31 @@ export class ImageAttachmentService {
             },
           );
 
-          return [
-            <ImageVersion> version,
+          return new CreateImageAttachmentDto(
             {
-              fileName,
-              resizedFile,
+              version,
+              originalUrl,
+              name: dto.name,
+              nsfw: dto.nsfw || false,
+              ratio: resizedFile.width / resizedFile.height,
+              file: new UploadedFileDto(
+                {
+                  mimetype: mime.lookup(extension) || null,
+                  size: resizedFile.size,
+                  file: fileName,
+                },
+              ),
             },
-          ];
+          );
         },
+        sizes,
       ),
     );
 
-    const sequenceResult = await sequential(
-      R.map(
-        ([version, {fileName, resizedFile}]) => async () => [[
-          version,
-          await this.create(
-            new CreateImageAttachmentDto(
-              {
-                version,
-                originalUrl,
-                name: dto.name,
-                nsfw: dto.nsfw || false,
-                ratio: resizedFile.width / resizedFile.height,
-                file: new UploadedFileDto(
-                  {
-                    mimetype: mime.lookup(extension) || null,
-                    size: resizedFile.size,
-                    file: fileName,
-                  },
-                ),
-              },
-            ),
-            entityManager,
-          ),
-        ]],
-        resizedFiles,
-      ) as any,
+    const entities = await this.create(dtos, entityManager);
+    return <ImageResizedEntities> R.mapObjIndexed(
+      R.nth(0),
+      R.groupBy(R.prop('version'), entities),
     );
-
-    return R.fromPairs(sequenceResult) as ImageResizedEntities;
   }
 }

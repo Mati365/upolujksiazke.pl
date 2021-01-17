@@ -21,7 +21,7 @@ export * from './capitalize';
 export * from './flattenObject';
 export * from './reduceIdArrayToObject';
 export * from './memoizeOne';
-export * from './mapObjValuesToPromise';
+export * from './async/mapObjValuesToPromise';
 export * from './async/collectAsyncIterator';
 export * from './async/timeout';
 export * from './mergeNonNullProperties';

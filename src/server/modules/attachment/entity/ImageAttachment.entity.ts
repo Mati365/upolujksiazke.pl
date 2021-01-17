@@ -4,6 +4,7 @@ import {
 } from 'typeorm';
 
 import {DatedRecordEntity} from '../../database/DatedRecord.entity';
+import {CreateImageAttachmentDto} from '../dto/CreateImageAttachment.dto';
 import {AttachmentEntity} from './Attachment.entity';
 
 export enum ImageVersion {
@@ -46,5 +47,16 @@ export class ImageAttachmentEntity extends DatedRecordEntity {
   constructor(partial: Partial<ImageAttachmentEntity>) {
     super();
     Object.assign(this, partial);
+  }
+
+  static fromDTO({nsfw, ratio, version, ...attachment}: CreateImageAttachmentDto) {
+    return new ImageAttachmentEntity(
+      {
+        nsfw,
+        ratio,
+        version,
+        attachment: AttachmentEntity.fromDTO(attachment),
+      },
+    );
   }
 }

@@ -8,7 +8,7 @@ import {Size} from '@shared/types';
 import {upsert} from '@server/common/helpers/db';
 
 import {ImageAttachmentService} from '@server/modules/attachment/services';
-import {ImageVersion} from '@server/modules/attachment/entity/ImageAttachment.entity';
+import {ImageAttachmentEntity, ImageVersion} from '@server/modules/attachment/entity/ImageAttachment.entity';
 import {RemoteRecordService} from '@server/modules/remote/service/RemoteRecord.service';
 import {CreateBookReleaseDto} from './dto/CreateBookRelease.dto';
 import {BookReleaseEntity} from './BookRelease.entity';
@@ -150,7 +150,13 @@ export class BookReleaseService {
         new BookReleaseEntity(
           {
             id: releaseEntity.id,
-            cover: releaseEntity.cover,
+            cover: releaseEntity.cover.map(
+              (item) => new ImageAttachmentEntity(
+                {
+                  id: item.id,
+                },
+              ),
+            ),
           },
         ),
       );

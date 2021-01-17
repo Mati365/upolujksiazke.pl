@@ -45,12 +45,7 @@ export class AttachmentService {
     entityManager: EntityManager = <any> AttachmentEntity,
   ): Promise<AttachmentEntity> {
     return entityManager.save(
-      AttachmentEntity.create(
-        {
-          name: dto.name,
-          ...dto.file,
-        },
-      ),
+      AttachmentEntity.fromDTO(dto),
     );
   }
 

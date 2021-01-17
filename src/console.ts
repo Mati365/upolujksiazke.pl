@@ -5,7 +5,7 @@ import awaitOutside from 'await-outside';
 import repl from 'pretty-repl';
 
 import {DB_ENTITIES} from '@server/modules/database/config/dbConfig';
-import {AppModule} from '@server/modules/App.module';
+import * as AppModules from '@server/modules';
 
 const LOGGER_OPTIONS = {
   indent: 2,
@@ -13,7 +13,7 @@ const LOGGER_OPTIONS = {
 };
 
 (async () => {
-  const context = await NestFactory.createApplicationContext(AppModule);
+  const context = await NestFactory.createApplicationContext(AppModules.AppModule);
   context.enableShutdownHooks();
 
   const server = repl.start(
@@ -29,6 +29,7 @@ const LOGGER_OPTIONS = {
     server.context,
     {
       app: context,
+      ...AppModules,
       ...DB_ENTITIES,
     },
   );

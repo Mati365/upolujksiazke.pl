@@ -56,7 +56,6 @@ export class BookReleaseEntity extends DatedRecordEntity {
   @ManyToMany(
     () => ImageAttachmentEntity,
     {
-      eager: true,
       cascade: true,
       onDelete: 'CASCADE',
     },

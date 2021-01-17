@@ -1,4 +1,4 @@
-import {Injectable, NotFoundException} from '@nestjs/common';
+import {Injectable} from '@nestjs/common';
 import {EntityManager} from 'typeorm';
 
 import {
@@ -19,18 +19,26 @@ export type AttachmentServiceOptions = {
 
 @Injectable()
 export class AttachmentService {
+  constructor(
+    private readonly em: EntityManager,
+  ) {}
+
   /**
    * Remove single attachment
    *
-   * @param {number} id
+   * @param {number[]} ids
+   * @param {EntityManager} [entityManager=this.em]
+   * @returns
    * @memberof AttachmentService
    */
-  async delete(id: number) {
-    const attachment = await AttachmentEntity.findOne(id);
-    if (!attachment)
-      throw new NotFoundException;
-
-    return AttachmentEntity.remove(attachment);
+  async delete(ids: number[], entityManager: EntityManager = this.em) {
+    return entityManager.remove(
+      ids.map((id) => new AttachmentEntity(
+        {
+          id,
+        },
+      )),
+    );
   }
 
   /**

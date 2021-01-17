@@ -153,7 +153,7 @@ export class LiteraturaGildiaBookMatcher extends ScrapperMatcher<CreateBookDto> 
    */
   private async extractAuthor($parent: cheerio.Cheerio) {
     const authorMatcher = <LiteraturaGildiaBookAuthorMatcher> this.matchers[ScrapperMetadataKind.BOOK_AUTHOR];
-    const $authorAnchor = $parent.find('> a[href^="/tworcy/"]');
+    const $authorAnchor = $parent.find('> a[href^="/tworcy/"]').first();
 
     return (await authorMatcher.searchRemoteRecord(
       {

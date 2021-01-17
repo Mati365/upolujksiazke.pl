@@ -16,7 +16,7 @@ import {AppEnv, SERVER_ENV} from './constants/env';
 
 import {LoggerInterceptor} from './common/interceptors/Logger.interceptor';
 import {ClusterService} from './common/services/Cluster.service';
-import {AppModule} from './modules/App.module';
+import {AppModule} from './modules';
 
 if (typeof File === 'undefined')
   (global as any).File = class {};

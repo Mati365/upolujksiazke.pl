@@ -1,9 +1,12 @@
 import {Injectable} from '@nestjs/common';
-import {Connection} from 'typeorm';
+import {Connection, EntityManager} from 'typeorm';
 import sequential from 'promise-sequential';
 import * as R from 'ramda';
 
-import {upsert} from '@server/common/helpers/db';
+import {
+  forwardTransaction,
+  upsert,
+} from '@server/common/helpers/db';
 
 import {TagService} from '../tag/Tag.service';
 import {BookAuthorService} from './modules/author/BookAuthor.service';
@@ -23,6 +26,41 @@ export class BookService {
     private readonly releaseService: BookReleaseService,
     private readonly categoryService: BookCategoryService,
   ) {}
+
+  /**
+   * Remove single book release
+   *
+   * @param {number[]} ids
+   * @param {EntityManager} [entityManager]
+   * @memberof BookService
+   */
+  async delete(ids: number[], entityManager?: EntityManager) {
+    const {
+      connection,
+      releaseService,
+    } = this;
+
+    const entities = await BookEntity.findByIds(
+      ids,
+      {
+        select: ['id'],
+        loadRelationIds: {
+          relations: ['releases'],
+        },
+      },
+    );
+
+    await forwardTransaction({connection, entityManager}, async (transaction) => {
+      for await (const entity of entities) {
+        await releaseService.delete(
+          entity.releases as any[],
+          transaction,
+        );
+      }
+
+      await transaction.remove(entities);
+    });
+  }
 
   /**
    * Creates or updates single book

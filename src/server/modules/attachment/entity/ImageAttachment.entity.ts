@@ -1,5 +1,5 @@
 import {
-  Column, Entity, // AfterRemove,
+  Column, Entity,
   JoinColumn, OneToOne, RelationId,
 } from 'typeorm';
 

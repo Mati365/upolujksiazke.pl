@@ -59,6 +59,16 @@ There is NestJS context present on window, it is called `app`. All entities are 
 yarn console
 ```
 
+#### RPEL Examples
+
+**Warn: Use services to remove records!** (TypeORM async callbacks are buggy)
+
+Remove book:
+
+```bash
+app.select(ScrapperModule).get('BookService').delete([13])
+```
+
 ### Tasks
 
 Fetchers:
@@ -80,7 +90,7 @@ gulp scrapper:refresh:all --kind BOOK_REVIEW
 Analyzers:
 
 ```bash
-# Iteratores over all records and reparses them, dangerous!!
+# Iterates over all records and reparses them, dangerous!!
 # it removes records that are not classified as reviews after analyze
 gulp scrapper:reanalyze:all
 ```

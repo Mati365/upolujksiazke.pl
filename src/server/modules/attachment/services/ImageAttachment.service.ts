@@ -26,7 +26,11 @@ import {
   ATTACHMENTS_OPTIONS,
 } from './Attachment.service';
 
-import {ImageAttachmentEntity, ImageVersion} from '../entity/ImageAttachment.entity';
+import {
+  ImageAttachmentEntity,
+  ImageVersion,
+} from '../entity/ImageAttachment.entity';
+
 import {
   UploadedFileDto,
   CreateImageAttachmentDto,
@@ -50,7 +54,32 @@ export class ImageAttachmentService {
   constructor(
     @Inject(ATTACHMENTS_OPTIONS) private readonly options: AttachmentServiceOptions,
     private readonly tmpDirService: TmpDirService,
+    private readonly em: EntityManager,
   ) {}
+
+  /**
+   * Remove single image attachment
+   *
+   * @param {number[]} ids
+   * @param {EntityManager} [entityManager=this.em]
+   * @memberof ImageAttachmentService
+   */
+  async delete(ids: number[], entityManager: EntityManager = this.em) {
+    const imageAttachments = await ImageAttachmentEntity.findByIds(
+      ids,
+      {
+        select: ['id'],
+        relations: ['attachment'],
+      },
+    );
+
+    await entityManager.remove(
+      [
+        ...imageAttachments,
+        ...R.pluck('attachment', imageAttachments),
+      ],
+    );
+  }
 
   /**
    * Creates single or multiple entities

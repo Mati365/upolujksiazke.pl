@@ -4,8 +4,10 @@ import sequential from 'promise-sequential';
 import * as R from 'ramda';
 
 import {Size} from '@shared/types';
-
-import {upsert} from '@server/common/helpers/db';
+import {
+  forwardTransaction,
+  upsert,
+} from '@server/common/helpers/db';
 
 import {ImageAttachmentService} from '@server/modules/attachment/services';
 import {ImageAttachmentEntity, ImageVersion} from '@server/modules/attachment/entity/ImageAttachment.entity';
@@ -33,6 +35,41 @@ export class BookReleaseService {
     private readonly remoteRecordService: RemoteRecordService,
     private readonly imageAttachmentService: ImageAttachmentService,
   ) {}
+
+  /**
+   * Remove single book release
+   *
+   * @param {number[]} ids
+   * @param {EntityManager} [entityManager]
+   * @memberof BookReleaseService
+   */
+  async delete(ids: number[], entityManager?: EntityManager) {
+    const {
+      connection,
+      imageAttachmentService,
+    } = this;
+
+    const entities = await BookReleaseEntity.findByIds(
+      ids,
+      {
+        select: ['id'],
+        loadRelationIds: {
+          relations: ['cover'],
+        },
+      },
+    );
+
+    await forwardTransaction({connection, entityManager}, async (transaction) => {
+      for await (const entity of entities) {
+        await imageAttachmentService.delete(
+          entity.cover as any[],
+          transaction,
+        );
+      }
+
+      await transaction.remove(entities);
+    });
+  }
 
   /**
    * Creates signle book category

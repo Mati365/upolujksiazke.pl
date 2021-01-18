@@ -1,6 +1,6 @@
 import {ScrapperMetadataKind} from '@scrapper/entity';
 
-import {GraniceBookMatcher} from './GraniceBook.matcher';
+import {GraniceBookMatcher} from './matchers/GraniceBook.matcher';
 import {
   BookShopScrappersGroup,
   BookShopScrappersGroupConfig,

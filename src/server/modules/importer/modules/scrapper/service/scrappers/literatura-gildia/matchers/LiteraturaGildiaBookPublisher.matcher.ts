@@ -1,5 +1,3 @@
-import {Logger} from '@nestjs/common';
-import chalk from 'chalk';
 import * as R from 'ramda';
 
 import {normalizeParsedText} from '@server/common/helpers';
@@ -14,8 +12,6 @@ import {BookShopScrappersGroupConfig} from '../../BookShopScrappersGroup';
 import {MatchRecordAttrs} from '../../../shared/WebsiteScrappersGroup';
 
 export class LiteraturaGildiaBookPublisherMatcher extends ScrapperMatcher<CreateBookPublisherDto> {
-  private readonly logger = new Logger(LiteraturaGildiaBookPublisherMatcher.name);
-
   constructor(
     private readonly config: BookShopScrappersGroupConfig,
   ) {
@@ -28,17 +24,20 @@ export class LiteraturaGildiaBookPublisherMatcher extends ScrapperMatcher<Create
       path: string,
     },
   ): Promise<ScrapperMatcherResult<CreateBookPublisherDto>> {
-    const {config, logger} = this;
+    const {config} = this;
     const {name, description, address, email} = data;
+    const $ = (
+      await parseAsyncURLIfOK(
+        concatUrls(
+          config.homepageURL,
+          attrs?.path ?? `wydawnictwa/${underscoreParameterize(name)}`,
+        ),
+      )
+    )?.$;
 
-    const url = concatUrls(
-      config.homepageURL,
-      attrs?.path ?? `wydawnictwa/${underscoreParameterize(name)}`,
-    );
+    if (!$)
+      return null;
 
-    logger.log(`Direct fetching publisher from ${chalk.bold(url)}!`);
-
-    const {$} = await parseAsyncURLIfOK(url);
     const $content = $('#yui-main .widetext');
     const segments = $content.find('p').toArray().map((item) => $(item).text());
     const [

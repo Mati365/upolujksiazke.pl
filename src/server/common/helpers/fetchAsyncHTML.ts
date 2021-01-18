@@ -1,5 +1,9 @@
 import cheerio from 'cheerio';
+import chalk from 'chalk';
+import {Logger} from '@nestjs/common';
+
 import {HTTPCode} from '@shared/constants';
+import {isDevMode} from '@shared/helpers/isDevMode';
 
 // eslint-disable-next-line max-len
 export const DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36';
@@ -34,6 +38,12 @@ export async function fetchAsyncHTML(request: Request) {
 export async function parseAsyncURL(url: string): Promise<AsyncURLParseResult> {
   const request = new Request(url);
   const {result, response} = await fetchAsyncHTML(request);
+
+  if (isDevMode()) {
+    new Logger('parseAsyncURL').warn(
+      `Fetching ${chalk.bold(url)}!`,
+    );
+  }
 
   return {
     $: cheerio.load(result, {decodeEntities: false}),

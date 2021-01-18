@@ -1,6 +1,3 @@
-import {Logger} from '@nestjs/common';
-import chalk from 'chalk';
-
 import {normalizeParsedText} from '@server/common/helpers';
 import {underscoreParameterize} from '@shared/helpers/parameterize';
 import {parseAsyncURLIfOK} from '@server/common/helpers/fetchAsyncHTML';
@@ -13,8 +10,6 @@ import {MatchRecordAttrs} from '../../../shared/WebsiteScrappersGroup';
 import {BookShopScrappersGroupConfig} from '../../BookShopScrappersGroup';
 
 export class LiteraturaGildiaBookAuthorMatcher extends ScrapperMatcher<CreateBookAuthorDto> {
-  private readonly logger = new Logger(LiteraturaGildiaBookAuthorMatcher.name);
-
   constructor(
     private readonly config: BookShopScrappersGroupConfig,
   ) {
@@ -27,17 +22,20 @@ export class LiteraturaGildiaBookAuthorMatcher extends ScrapperMatcher<CreateBoo
       path: string,
     },
   ): Promise<ScrapperMatcherResult<CreateBookAuthorDto>> {
-    const {config, logger} = this;
+    const {config} = this;
     const {name, description} = data;
+    const $ = (
+      await parseAsyncURLIfOK(
+        concatUrls(
+          config.homepageURL,
+          attrs?.path ?? `tworcy/${underscoreParameterize(name)}`,
+        ),
+      )
+    )?.$;
 
-    const url = concatUrls(
-      config.homepageURL,
-      attrs?.path ?? `tworcy/${underscoreParameterize(name)}`,
-    );
+    if (!$)
+      return null;
 
-    logger.log(`Direct fetching author from ${chalk.bold(url)}!`);
-
-    const {$} = await parseAsyncURLIfOK(url);
     return {
       result: new CreateBookAuthorDto(
         {

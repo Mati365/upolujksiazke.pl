@@ -1,6 +1,6 @@
 import {ScrapperMetadataKind} from '@scrapper/entity';
 
-import {MatrasBookMatcher} from './MatrasBook.matcher';
+import {MatrasBookMatcher} from './matchers/MatrasBook.matcher';
 import {
   BookShopScrappersGroup,
   BookShopScrappersGroupConfig,

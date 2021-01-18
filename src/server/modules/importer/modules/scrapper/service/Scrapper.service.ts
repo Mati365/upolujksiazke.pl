@@ -22,10 +22,10 @@ import {
 
 import {WykopAPI} from './scrappers/wykop/api/WykopAPI';
 import {
-  GraniceScrappersGroup,
-  // MatrasScrappersGroup,
+  // GraniceScrappersGroup,
+  MatrasScrappersGroup,
   EIsbnScrappersGroup,
-  LiteraturaGildiaScrappersGroup,
+  // LiteraturaGildiaScrappersGroup,
   // WikipediaScrappersGroup,
   WykopScrappersGroup,
   // SkupszopScrappersGroup,
@@ -44,10 +44,11 @@ export class ScrapperService {
     tmpDirService: TmpDirService,
   ) {
     this.scrappersGroups = [
-      new LiteraturaGildiaScrappersGroup(PARSERS_ENV.literaturaGildia),
+      // new LiteraturaGildiaScrappersGroup(PARSERS_ENV.literaturaGildia),
       // new SkupszopScrappersGroup(PARSERS_ENV.skupszop),
       // new MatrasScrappersGroup(PARSERS_ENV.matras),
-      new GraniceScrappersGroup(PARSERS_ENV.granice),
+      // new GraniceScrappersGroup(PARSERS_ENV.granice),
+      new MatrasScrappersGroup(PARSERS_ENV.matras),
       new WykopScrappersGroup(
         {
           homepageURL: PARSERS_ENV.wykop.homepageURL,

@@ -1,5 +1,3 @@
-import {Logger} from '@nestjs/common';
-import chalk from 'chalk';
 import stringSimilarity from 'string-similarity';
 import * as R from 'ramda';
 
@@ -31,8 +29,6 @@ import {LiteraturaGildiaBookAuthorMatcher} from './LiteraturaGildiaBookAuthor.ma
 import {LiteraturaGildiaBookPublisherMatcher} from './LiteraturaGildiaBookPublisher.matcher';
 
 export class LiteraturaGildiaBookMatcher extends ScrapperMatcher<CreateBookDto> {
-  private readonly logger = new Logger(LiteraturaGildiaBookMatcher.name);
-
   static readonly bindingMappings = Object.freeze({
     /* eslint-disable quote-props */
     'miękka': BookBindingKind.NOTEBOOK,
@@ -204,14 +200,14 @@ export class LiteraturaGildiaBookMatcher extends ScrapperMatcher<CreateBookDto> 
    * @memberof LiteraturaGildiaBookMatcher
    */
   private async directSearch({authors, title}: CreateBookDto) {
-    const {config, logger} = this;
-    const url = concatUrls(
-      config.homepageURL,
-      `tworcy/${underscoreParameterize(authors[0].name)}/${underscoreParameterize(title)}`,
-    );
+    const {config} = this;
 
-    logger.log(`Direct fetching book from ${chalk.bold(url)}!`);
-    return parseAsyncURLIfOK(url);
+    return parseAsyncURLIfOK(
+      concatUrls(
+        config.homepageURL,
+        `tworcy/${underscoreParameterize(authors[0].name)}/${underscoreParameterize(title)}`,
+      ),
+    );
   }
 
   /**
@@ -223,19 +219,19 @@ export class LiteraturaGildiaBookMatcher extends ScrapperMatcher<CreateBookDto> 
    * @memberof LiteraturaGildiaBookMatcher
    */
   private async searchByFirstLetter({title}: CreateBookDto) {
-    const {config, logger} = this;
-    const url = concatUrls(
-      config.homepageURL,
-      `ksiazki,${LiteraturaGildiaBookMatcher.getFilterFirstLetter(title)}`,
-    );
+    const {config} = this;
+    const $ = (
+      await parseAsyncURLIfOK(
+        concatUrls(
+          config.homepageURL,
+          `ksiazki,${LiteraturaGildiaBookMatcher.getFilterFirstLetter(title)}`,
+        ),
+      )
+    )?.$;
 
-    logger.log(`Searching book by first letter from ${chalk.bold(url)}!`);
-
-    const result = await parseAsyncURLIfOK(url);
-    if (!result)
+    if (!$)
       return null;
 
-    const {$} = result;
     const lowerTitle = R.toLower(title);
     const bestMatch = R.head(R.sort(
       (a, b) => b[0] - a[0],

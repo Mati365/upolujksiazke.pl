@@ -1,5 +1,3 @@
-import {Logger} from '@nestjs/common';
-import chalk from 'chalk';
 import stringSimilarity from 'string-similarity';
 import * as R from 'ramda';
 
@@ -21,13 +19,11 @@ import {CreateBookPublisherDto} from '@server/modules/book/modules/publisher/dto
 import {CreateImageAttachmentDto} from '@server/modules/attachment/dto';
 
 import {CreateRemoteRecordDto} from '@server/modules/remote/dto/CreateRemoteRecord.dto';
-import {ScrapperMatcher, ScrapperMatcherResult} from '../../shared/ScrapperMatcher';
-import {MatchRecordAttrs} from '../../shared/WebsiteScrappersGroup';
-import {BookShopScrappersGroupConfig} from '../BookShopScrappersGroup';
+import {ScrapperMatcher, ScrapperMatcherResult} from '../../../shared/ScrapperMatcher';
+import {MatchRecordAttrs} from '../../../shared/WebsiteScrappersGroup';
+import {BookShopScrappersGroupConfig} from '../../BookShopScrappersGroup';
 
 export class GraniceBookMatcher extends ScrapperMatcher<CreateBookDto> {
-  private readonly logger = new Logger(GraniceBookMatcher.name);
-
   constructor(
     private readonly config: BookShopScrappersGroupConfig,
   ) {
@@ -119,21 +115,23 @@ export class GraniceBookMatcher extends ScrapperMatcher<CreateBookDto> {
    * @param {CreateBookDto} scrapperInfo
    * @memberof GraniceBookMatcher
    */
-  private async searchByPhrase(scrapperInfo: CreateBookDto) {
-    const {config, logger} = this;
-    const {title} = scrapperInfo;
+  private async searchByPhrase({authors, title}: CreateBookDto) {
+    const {config} = this;
+    const $ = (
+      await parseAsyncURLIfOK(
+        concatUrls(
+          config.searchURL,
+          `?search=${escapeIso88592(`${title} ${authors[0].name}`)}`,
+        ),
+      )
+    )?.$;
 
-    const url = concatUrls(
-      config.searchURL,
-      `?search=${escapeIso88592(`${title} ${scrapperInfo.authors[0].name}`)}`,
-    );
+    if (!$)
+      return null;
 
-    logger.log(`Searching book by phrase from ${chalk.bold(url)}!`);
-
-    const {$} = await parseAsyncURLIfOK(url);
     const [lowerTitle, lowerAuthor] = [
       title.toLowerCase(),
-      scrapperInfo.authors[0].name.toLowerCase(),
+      authors[0].name.toLowerCase(),
     ];
 
     const item = R.head(R.sort(
@@ -175,11 +173,10 @@ export class GraniceBookMatcher extends ScrapperMatcher<CreateBookDto> {
    * @memberof GraniceBookMatcher
    */
   private async searchByPath(path: string) {
-    const {config, logger} = this;
-    const url = concatUrls(config.homepageURL, path);
+    const {config} = this;
 
-    logger.log(`Direct search book ${chalk.bold(url)}!`);
-
-    return parseAsyncURLIfOK(url);
+    return parseAsyncURLIfOK(
+      concatUrls(config.homepageURL, path),
+    );
   }
 }

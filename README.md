@@ -8,7 +8,8 @@ OpenSource book reviews aggregator that helps with searching book opinions. Some
 
 ## Goals
 
-- [ ] Book series tree (slider)
+- [ ] Add article scrapping (wykop, reddit, etc)
+- [ ] Book series tree (al'a tree box)
 - [ ] Allegro.pl / Amazon.pl / Skąpiec.pl price synchronization integration
 - [ ] Wikipedia style edit info proposals
 - [ ] Automatic daily summary tag posting (wykop.pl, #bookmeter tag)

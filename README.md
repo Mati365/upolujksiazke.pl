@@ -4,7 +4,7 @@
 ![Website](https://img.shields.io/website?url=https%3A%2F%2Fbookmeter.org&style=flat-square)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 
-OpenSource book reviews aggregator that helps with searching book opinions. Something like Metacritic / Digg for books.
+OpenSource book reviews aggregator, something like Metacritic / Digg for books. It allows to compare book price between different shops.
 
 ## Goals
 
@@ -32,8 +32,14 @@ OpenSource book reviews aggregator that helps with searching book opinions. Some
 🇵🇱 Poland
 
 - [x] Wykop.pl (#bookmeter tag)
+- [x] Gildia.pl (Literatura Gildia)
+- [x] Granice.pl
+- [x] Matras.pl
 - [ ] Booklips.pl
 - [ ] Swiatksiazki.pl
+- [ ] Allegro.pl
+- [ ] Skupszop.pl
+- [ ] wbibliotece.pl
 
 🌍 World
 

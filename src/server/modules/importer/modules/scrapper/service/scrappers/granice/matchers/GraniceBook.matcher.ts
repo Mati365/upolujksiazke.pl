@@ -1,9 +1,7 @@
-import stringSimilarity from 'string-similarity';
-import * as R from 'ramda';
-
 import {escapeIso88592} from '@server/common/helpers/encoding/escapeIso88592';
 import {concatUrls} from '@shared/helpers/concatUrls';
 import {parseAsyncURLIfOK} from '@server/common/helpers/fetchAsyncHTML';
+import {fuzzyFindBookAnchor} from '@scrapper/helpers/fuzzyFindBookAnchor';
 import {
   normalizeISBN,
   normalizeParsedText,
@@ -129,36 +127,22 @@ export class GraniceBookMatcher extends ScrapperMatcher<CreateBookDto> {
     if (!$)
       return null;
 
-    const [lowerTitle, lowerAuthor] = [
-      title.toLowerCase(),
-      authors[0].name.toLowerCase(),
-    ];
+    const matchedAnchor = fuzzyFindBookAnchor(
+      {
+        $: $('[book-id]'),
+        book: {
+          title,
+          author: authors[0].name,
+        },
+        anchorSelector: (anchor) => ({
+          title: $(anchor).find('.cont > .title').text(),
+          author: $(anchor).find('.cont > .details > .author').text(),
+        }),
+      },
+    );
 
-    const item = R.head(R.sort(
-      (a, b) => b[0] - a[0],
-      $('[book-id]')
-        .toArray()
-        .map((el): [number, cheerio.Element] => {
-          const itemTitle = normalizeParsedText($(el).find('.cont > .title').text())?.toLowerCase();
-          const similarity = stringSimilarity.compareTwoStrings(lowerTitle, itemTitle);
-
-          if (similarity < 0.5)
-            return null;
-
-          const authorTitle = normalizeParsedText($(el).find('.cont > .details > .author').text())?.toLowerCase();
-          return [
-            stringSimilarity.compareTwoStrings(lowerAuthor, authorTitle),
-            el,
-          ];
-        })
-        .filter(Boolean),
-    ));
-
-    if (!item || item[0] < 0.5)
-      return null;
-
-    return this.searchByPath(
-      $(item[1])
+    return matchedAnchor && this.searchByPath(
+      $(matchedAnchor)
         .find('a.title[href^="/ksiazka/"]')
         .attr('href'),
     );

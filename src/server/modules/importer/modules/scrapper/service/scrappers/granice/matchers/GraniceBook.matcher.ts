@@ -17,17 +17,14 @@ import {CreateBookPublisherDto} from '@server/modules/book/modules/publisher/dto
 import {CreateImageAttachmentDto} from '@server/modules/attachment/dto';
 
 import {CreateRemoteRecordDto} from '@server/modules/remote/dto/CreateRemoteRecord.dto';
-import {ScrapperMatcher, ScrapperMatcherResult} from '../../../shared/ScrapperMatcher';
+import {ScrapperMatcherResult, WebsiteScrapperMatcher} from '../../../shared/ScrapperMatcher';
 import {MatchRecordAttrs} from '../../../shared/WebsiteScrappersGroup';
 import {BookShopScrappersGroupConfig} from '../../BookShopScrappersGroup';
 
-export class GraniceBookMatcher extends ScrapperMatcher<CreateBookDto> {
-  constructor(
-    private readonly config: BookShopScrappersGroupConfig,
-  ) {
-    super();
-  }
-
+export class GraniceBookMatcher extends WebsiteScrapperMatcher<CreateBookDto, BookShopScrappersGroupConfig> {
+  /**
+   * @inheritdoc
+   */
   async searchRemoteRecord({data}: MatchRecordAttrs<CreateBookDto>): Promise<ScrapperMatcherResult<CreateBookDto>> {
     const bookPage = await this.searchByPhrase(data);
     if (!bookPage)
@@ -145,22 +142,6 @@ export class GraniceBookMatcher extends ScrapperMatcher<CreateBookDto> {
       $(matchedAnchor)
         .find('a.title[href^="/ksiazka/"]')
         .attr('href'),
-    );
-  }
-
-  /**
-   * Concats urls with root page url and fetches page
-   *
-   * @private
-   * @param {string} path
-   * @returns
-   * @memberof GraniceBookMatcher
-   */
-  private async searchByPath(path: string) {
-    const {config} = this;
-
-    return parseAsyncURLIfOK(
-      concatUrls(config.homepageURL, path),
     );
   }
 }

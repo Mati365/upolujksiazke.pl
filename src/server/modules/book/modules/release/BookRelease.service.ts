@@ -72,19 +72,6 @@ export class BookReleaseService {
   }
 
   /**
-   * Creates signle book category
-   *
-   * @param {CreateBookCategoryDto} dto
-   * @returns {Promise<BookReleaseEntity>}
-   * @memberof BookReleaseService
-   */
-  create({cover, ...dto}: CreateBookReleaseDto): Promise<BookReleaseEntity> {
-    return BookReleaseEntity.save(
-      BookReleaseEntity.create(dto),
-    );
-  }
-
-  /**
    * Inserts or updates remote entity
    *
    * @param {CreateRemoteRecordDto} dto
@@ -152,7 +139,7 @@ export class BookReleaseService {
       }
     })();
 
-    const releaseCover = await (
+    const cachedCover = await (
       entityManager
         .createQueryBuilder('book_release_cover_image_attachments', 'c')
         .select('c.bookReleaseId')
@@ -171,7 +158,7 @@ export class BookReleaseService {
      *  - Add callback support
      */
 
-    if (!releaseCover?.length) {
+    if (!cachedCover?.length) {
       releaseEntity.cover = R.values(
         await imageAttachmentService.fetchAndCreateScaled(
           {

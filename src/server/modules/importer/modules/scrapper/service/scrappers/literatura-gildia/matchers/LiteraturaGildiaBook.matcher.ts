@@ -1,11 +1,10 @@
-import stringSimilarity from 'string-similarity';
 import * as R from 'ramda';
 
 import {escapeDiacritics} from '@shared/helpers/escapeDiacritics';
 import {underscoreParameterize} from '@shared/helpers/parameterize';
+import {fuzzyFindBookAnchor} from '@scrapper/helpers/fuzzyFindBookAnchor';
 
-import {AsyncURLParseResult, parseAsyncURLIfOK} from '@server/common/helpers/fetchAsyncHTML';
-import {concatUrls} from '@shared/helpers/concatUrls';
+import {AsyncURLParseResult} from '@server/common/helpers/fetchAsyncHTML';
 import {
   normalizeISBN,
   normalizeParsedText,
@@ -21,14 +20,14 @@ import {CreateBookPublisherDto} from '@server/modules/book/modules/publisher/dto
 import {CreateImageAttachmentDto} from '@server/modules/attachment/dto';
 import {CreateRemoteRecordDto} from '@server/modules/remote/dto/CreateRemoteRecord.dto';
 
-import {ScrapperMatcher, ScrapperMatcherResult} from '../../../shared/ScrapperMatcher';
-import {MatchRecordAttrs} from '../../../shared/WebsiteScrappersGroup';
+import {ScrapperMatcherResult, WebsiteScrapperMatcher} from '@scrapper/service/shared/ScrapperMatcher';
+import {MatchRecordAttrs} from '@scrapper/service/shared/WebsiteScrappersGroup';
+import {ScrapperMetadataKind} from '@scrapper/entity/ScrapperMetadata.entity';
 import {BookShopScrappersGroupConfig} from '../../BookShopScrappersGroup';
-import {ScrapperMetadataKind} from '../../../../entity';
 import {LiteraturaGildiaBookAuthorMatcher} from './LiteraturaGildiaBookAuthor.matcher';
 import {LiteraturaGildiaBookPublisherMatcher} from './LiteraturaGildiaBookPublisher.matcher';
 
-export class LiteraturaGildiaBookMatcher extends ScrapperMatcher<CreateBookDto> {
+export class LiteraturaGildiaBookMatcher extends WebsiteScrapperMatcher<CreateBookDto, BookShopScrappersGroupConfig> {
   static readonly bindingMappings = Object.freeze({
     /* eslint-disable quote-props */
     'miękka': BookBindingKind.NOTEBOOK,
@@ -36,12 +35,9 @@ export class LiteraturaGildiaBookMatcher extends ScrapperMatcher<CreateBookDto> 
     /* eslint-enable quote-props */
   });
 
-  constructor(
-    private readonly config: BookShopScrappersGroupConfig,
-  ) {
-    super();
-  }
-
+  /**
+   * @inheritdoc
+   */
   async searchRemoteRecord({data}: MatchRecordAttrs<CreateBookDto>): Promise<ScrapperMatcherResult<CreateBookDto>> {
     const bookPage = (
       (await this.directSearch(data))
@@ -199,14 +195,9 @@ export class LiteraturaGildiaBookMatcher extends ScrapperMatcher<CreateBookDto> 
    * @returns
    * @memberof LiteraturaGildiaBookMatcher
    */
-  private async directSearch({authors, title}: CreateBookDto) {
-    const {config} = this;
-
-    return parseAsyncURLIfOK(
-      concatUrls(
-        config.homepageURL,
-        `tworcy/${underscoreParameterize(authors[0].name)}/${underscoreParameterize(title)}`,
-      ),
+  private directSearch({authors, title}: CreateBookDto) {
+    return this.searchByPath(
+      `tworcy/${underscoreParameterize(authors[0].name)}/${underscoreParameterize(title)}`,
     );
   }
 
@@ -219,54 +210,28 @@ export class LiteraturaGildiaBookMatcher extends ScrapperMatcher<CreateBookDto> 
    * @memberof LiteraturaGildiaBookMatcher
    */
   private async searchByFirstLetter({title}: CreateBookDto) {
-    const {config} = this;
     const $ = (
-      await parseAsyncURLIfOK(
-        concatUrls(
-          config.homepageURL,
-          `ksiazki,${LiteraturaGildiaBookMatcher.getFilterFirstLetter(title)}`,
-        ),
-      )
+      await this.searchByPath(`ksiazki,${LiteraturaGildiaBookMatcher.getFilterFirstLetter(title)}`)
     )?.$;
 
     if (!$)
       return null;
 
-    const lowerTitle = R.toLower(title);
-    const bestMatch = R.head(R.sort(
-      (a, b) => b[0] - a[0],
-      $('#yui-main .content ul.long-list > li > a')
-        .toArray()
-        .map(
-          (element): [number, string] => {
-            const $element = $(element);
-            const similarity = stringSimilarity.compareTwoStrings(
-              lowerTitle,
-              R.toLower($element.text().trim()),
-            );
+    const matchedAnchor = fuzzyFindBookAnchor(
+      {
+        $: $('#yui-main .content ul.long-list > li > a'),
+        book: {
+          title,
+        },
+        anchorSelector: (anchor) => ({
+          title: $(anchor).text(),
+        }),
+      },
+    );
 
-            if (!similarity)
-              return null;
-
-            return [
-              similarity,
-              $element.attr('href'),
-            ];
-          },
-        )
-        .filter(Boolean),
-    ));
-
-    if (bestMatch?.[0] > 0.8) {
-      return parseAsyncURLIfOK(
-        concatUrls(
-          config.homepageURL,
-          bestMatch[1],
-        ),
-      );
-    }
-
-    return null;
+    return matchedAnchor && this.searchByPath(
+      $(matchedAnchor).attr('href'),
+    );
   }
 
   /**

@@ -7,17 +7,15 @@ import {concatUrls} from '@shared/helpers/concatUrls';
 
 import {CreateBookPublisherDto} from '@server/modules/book/modules/publisher/dto/BookPublisher.dto';
 
-import {ScrapperMatcher, ScrapperMatcherResult} from '../../../shared/ScrapperMatcher';
+import {ScrapperMatcherResult, WebsiteScrapperMatcher} from '../../../shared/ScrapperMatcher';
 import {BookShopScrappersGroupConfig} from '../../BookShopScrappersGroup';
 import {MatchRecordAttrs} from '../../../shared/WebsiteScrappersGroup';
 
-export class LiteraturaGildiaBookPublisherMatcher extends ScrapperMatcher<CreateBookPublisherDto> {
-  constructor(
-    private readonly config: BookShopScrappersGroupConfig,
-  ) {
-    super();
-  }
-
+export class LiteraturaGildiaBookPublisherMatcher
+  extends WebsiteScrapperMatcher<CreateBookPublisherDto, BookShopScrappersGroupConfig> {
+  /**
+   * @inheritdoc
+   */
   async searchRemoteRecord(
     {data}: MatchRecordAttrs<CreateBookPublisherDto>,
     attrs?: {

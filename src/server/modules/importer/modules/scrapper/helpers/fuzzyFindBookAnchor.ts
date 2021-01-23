@@ -4,8 +4,12 @@ import {normalizeParsedText} from '@server/common/helpers';
 
 type BookSimilarityFields = {
   title: string,
-  author: string,
+  author?: string,
 };
+
+export const normalizeObjFields = R.mapObjIndexed(
+  (title) => normalizeParsedText(title)?.toLowerCase(),
+);
 
 export function fuzzyFindBookAnchor(
   {
@@ -32,17 +36,17 @@ export function fuzzyFindBookAnchor(
       $
         .toArray()
         .map((el): [number, cheerio.Element] => {
-          const itemTitle = normalizeParsedText(anchorSelector(el))?.toLowerCase();
-          const similarity = stringSimilarity.compareTwoStrings(lowerTitle, itemTitle);
+          const selected = <BookSimilarityFields> normalizeObjFields(anchorSelector(el));
+          const similarity = (
+            stringSimilarity.compareTwoStrings(lowerTitle, selected.title)
+              * (selected.author ? stringSimilarity.compareTwoStrings(lowerAuthor, selected.author) : 1)
+          );
 
-          if (similarity < 0.5)
-            return null;
-
-          const authorTitle = normalizeParsedText(el)?.toLowerCase();
-          return [
-            stringSimilarity.compareTwoStrings(lowerAuthor, authorTitle),
-            el,
-          ];
+          return (
+            similarity < 0.5
+              ? null
+              : [similarity, el]
+          );
         })
         .filter(Boolean),
     ),

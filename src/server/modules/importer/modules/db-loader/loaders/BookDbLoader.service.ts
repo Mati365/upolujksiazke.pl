@@ -73,65 +73,64 @@ export class BookDbLoader implements MetadataDbLoader {
       scrapperService,
     } = this;
 
-    if (BookDbLoader.isIncompleteBookScrapperDto(book)) {
-      const matchedBook = await scrapperMatcherService.searchRemoteRecord<CreateBookDto>(
-        {
-          kind: ScrapperMetadataKind.BOOK,
-          data: book,
-        },
-      );
+    if (!BookDbLoader.isIncompleteBookScrapperDto(book))
+      return null; // dump cache?
 
-      if (!matchedBook) {
-        logger.warn(`Book ${JSON.stringify(book)} not matched!`);
-        return null;
-      }
+    const matchedBook = await scrapperMatcherService.searchRemoteRecord<CreateBookDto>(
+      {
+        kind: ScrapperMetadataKind.BOOK,
+        data: book,
+      },
+    );
 
-      if (!matchedBook.cached) {
-        const {result} = matchedBook;
-        const releases = await Promise.all(
-          result.releases.map(
-            async (release) => new CreateBookReleaseDto(
-              {
-                ...release,
-                remoteDescription: new CreateRemoteRecordDto(
-                  {
-                    ...release.remoteDescription,
-                    websiteId: (
-                      await scrapperService.findOrCreateWebsiteByUrl(release.remoteDescription.url)
-                    ).id,
-                  },
-                ),
-              },
-            ),
-          ),
-        );
-
-        // todo: It seems to be slow, optimize
-        const releaseBook = (
-          await BookReleaseEntity.findOne(
-            {
-              relations: ['book'],
-              where: {
-                title: In(R.pluck('title', releases)),
-              },
-            },
-          )
-        )?.book;
-
-        return bookService.upsert(
-          new CreateBookDto(
-            {
-              id: releaseBook?.id,
-              ...result,
-              releases,
-            },
-          ),
-        );
-      }
-
-      return BookEntity.findOne(matchedBook.result.id);
+    if (!matchedBook) {
+      logger.warn(`Book ${JSON.stringify(book)} not matched!`);
+      return null;
     }
 
-    return null;
+    if (!matchedBook.cached) {
+      const {result} = matchedBook;
+      const releases = await Promise.all(
+        result.releases.map(
+          async (release) => new CreateBookReleaseDto(
+            {
+              ...release,
+              remoteDescription: new CreateRemoteRecordDto(
+                {
+                  ...release.remoteDescription,
+                  websiteId: (
+                    await scrapperService.findOrCreateWebsiteByUrl(release.remoteDescription.url)
+                  ).id,
+                },
+              ),
+            },
+          ),
+        ),
+      );
+
+      // todo: It seems to be slow, optimize
+      const releaseBook = (
+        await BookReleaseEntity.findOne(
+          {
+            relations: ['book'],
+            where: {
+              title: In(R.pluck('title', releases)),
+            },
+          },
+        )
+      )?.book;
+
+      return bookService.upsert(
+        new CreateBookDto(
+          {
+            id: releaseBook?.id,
+            ...result,
+            releases,
+          },
+        ),
+      );
+    }
+
+    return BookEntity.findOne(matchedBook.result.id);
   }
 }

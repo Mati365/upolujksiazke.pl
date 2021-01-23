@@ -9,8 +9,7 @@ import {WebsiteScrapperMatcher, ScrapperMatcherResult} from '../../../shared/Scr
 import {MatchRecordAttrs} from '../../../shared/WebsiteScrappersGroup';
 import {BookShopScrappersGroupConfig} from '../../BookShopScrappersGroup';
 
-export class LiteraturaGildiaBookAuthorMatcher
-  extends WebsiteScrapperMatcher<CreateBookAuthorDto, BookShopScrappersGroupConfig> {
+export class MatrasBookAuthorMatcher extends WebsiteScrapperMatcher<CreateBookAuthorDto, BookShopScrappersGroupConfig> {
   /**
    * @inheritdoc
    */
@@ -26,7 +25,7 @@ export class LiteraturaGildiaBookAuthorMatcher
       await parseAsyncURLIfOK(
         concatUrls(
           config.homepageURL,
-          attrs?.path ?? `tworcy/${underscoreParameterize(name)}`,
+          attrs?.path ?? `autor/${underscoreParameterize(name)}`,
         ),
       )
     )?.$;
@@ -34,11 +33,16 @@ export class LiteraturaGildiaBookAuthorMatcher
     if (!$)
       return null;
 
+    const $section = $('.mainContainer.pageHome > section:first-child');
     return {
       result: new CreateBookAuthorDto(
         {
-          name: name ?? normalizeParsedText($('h1').text()),
-          description: description ?? normalizeParsedText($('.widetext .visible-sentence')?.text()),
+          name: name ?? normalizeParsedText($section.find('h2').text()),
+          description: description ?? normalizeParsedText(
+            $section
+              .find('.col-lg-8.col-md-8.col-sm-8.col-xs-12.right')
+              ?.text(),
+          ),
         },
       ),
     };

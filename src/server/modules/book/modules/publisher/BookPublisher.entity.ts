@@ -1,4 +1,9 @@
-import {Column, Entity, OneToMany} from 'typeorm';
+import {
+  Column, Entity, JoinTable,
+  ManyToMany, OneToMany,
+} from 'typeorm';
+
+import {ImageAttachmentEntity} from '@server/modules/attachment/entity';
 import {DatedRecordEntity} from '../../../database/DatedRecord.entity';
 import {BookReleaseEntity} from '../release/BookRelease.entity';
 
@@ -27,4 +32,18 @@ export class BookPublisherEntity extends DatedRecordEntity {
 
   @OneToMany(() => BookReleaseEntity, (entity) => entity.publisher)
   releases: BookReleaseEntity[];
+
+  @ManyToMany(
+    () => ImageAttachmentEntity,
+    {
+      cascade: true,
+      onDelete: 'CASCADE',
+    },
+  )
+  @JoinTable(
+    {
+      name: 'book_publisher_logo_image_attachments',
+    },
+  )
+  logo: ImageAttachmentEntity[];
 }

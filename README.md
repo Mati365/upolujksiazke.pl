@@ -8,6 +8,7 @@ OpenSource book reviews aggregator, something like Metacritic / Digg for books. 
 
 ## Goals
 
+- [ ] Discover all author books (links discover queue)
 - [ ] Add article scrapping (wykop, reddit, etc)
 - [ ] Book series tree (al'a tree box)
 - [ ] Allegro.pl / Amazon.pl / Skąpiec.pl price synchronization integration

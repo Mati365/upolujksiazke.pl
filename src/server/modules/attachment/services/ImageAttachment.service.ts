@@ -130,7 +130,10 @@ export class ImageAttachmentService {
         tmpFolderPath,
       }: TmpFolderScopeAttrs,
     ) {
-      this.logger.log(`Fetching ${chalk.bold(dto.originalUrl)} to ${chalk.bold(tmpFolderPath)} tmp folder!`);
+      const {logger} = this;
+
+      if (dto.originalUrl)
+        logger.log(`Fetching ${chalk.bold(dto.originalUrl)} to ${chalk.bold(tmpFolderPath)} tmp folder!`);
     },
   )
   async fetchAndCreateScaled(
@@ -153,6 +156,9 @@ export class ImageAttachmentService {
     } = this;
 
     const {originalUrl} = dto;
+    if (!originalUrl)
+      return null;
+
     const resultFile = await downloadFile(
       {
         url: originalUrl,
@@ -191,7 +197,11 @@ export class ImageAttachmentService {
               src: convertResult.path,
               dst: path.resolve(dest, fileName),
               width: size.w,
-              height: size.h,
+
+              // todo: check it
+              ...size.h && {
+                height: size.h,
+              },
             },
           );
 

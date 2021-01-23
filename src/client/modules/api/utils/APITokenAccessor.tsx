@@ -24,7 +24,7 @@ export type APITokenAccessorListeners = {
  * Accessors allow to detect revoke token
  */
 export class APITokenAccessor {
-  static TOKEN_DURATION_MARGIN: number = 5000;
+  static readonly TOKEN_DURATION_MARGIN: number = 5000;
 
   public token: string;
   public refreshToken: string;

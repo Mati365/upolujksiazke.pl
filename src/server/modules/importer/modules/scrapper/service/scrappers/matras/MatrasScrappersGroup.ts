@@ -1,6 +1,7 @@
 import {ScrapperMetadataKind} from '@scrapper/entity';
 
 import {MatrasBookMatcher} from './matchers/MatrasBook.matcher';
+import {MatrasBookAuthorMatcher} from './matchers/MatrasBookAuthor.matcher';
 import {
   BookShopScrappersGroup,
   BookShopScrappersGroupConfig,
@@ -13,6 +14,7 @@ export class MatrasScrappersGroup extends BookShopScrappersGroup {
         ...options,
         matchers: {
           [ScrapperMetadataKind.BOOK]: new MatrasBookMatcher(options),
+          [ScrapperMetadataKind.BOOK_AUTHOR]: new MatrasBookAuthorMatcher(options),
         },
       },
     );

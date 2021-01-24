@@ -1,10 +1,15 @@
 import {buildURL} from '@shared/helpers';
-import {parseAsyncURLIfOK} from '@server/common/helpers/fetchAsyncHTML';
 import {fuzzyFindBookAnchor} from '@scrapper/helpers/fuzzyFindBookAnchor';
 import {
   normalizeISBN,
   normalizeParsedText,
+  normalizePrice,
+  normalizeURL,
 } from '@server/common/helpers';
+
+import {Language} from '@server/constants/language';
+import {BookBindingKind} from '@server/modules/book/modules/release/BookRelease.entity';
+import {AsyncURLParseResult, parseAsyncURLIfOK} from '@server/common/helpers/fetchAsyncHTML';
 
 import {CreateBookAuthorDto} from '@server/modules/book/modules/author/dto/CreateBookAuthor.dto';
 import {CreateBookDto} from '@server/modules/book/dto/CreateBook.dto';
@@ -13,7 +18,6 @@ import {CreateBookPublisherDto} from '@server/modules/book/modules/publisher/dto
 import {CreateImageAttachmentDto} from '@server/modules/attachment/dto';
 import {CreateRemoteRecordDto} from '@server/modules/remote/dto/CreateRemoteRecord.dto';
 
-import {Language} from '@server/constants/language';
 import {ScrapperMetadataKind} from '@scrapper/entity/ScrapperMetadata.entity';
 import {MatchRecordAttrs} from '../../../shared/WebsiteScrappersGroup';
 import {WebsiteScrapperMatcher, ScrapperMatcherResult} from '../../../shared/ScrapperMatcher';
@@ -21,6 +25,15 @@ import {BookShopScrappersGroupConfig} from '../../BookShopScrappersGroup';
 import {MatrasBookAuthorMatcher} from './MatrasBookAuthor.matcher';
 
 export class MatrasBookMatcher extends WebsiteScrapperMatcher<CreateBookDto, BookShopScrappersGroupConfig> {
+  static readonly bindingMappings = Object.freeze(
+    {
+      /* eslint-disable quote-props */
+      'miękka': BookBindingKind.NOTEBOOK,
+      'twarda': BookBindingKind.HARDCOVER,
+      /* eslint-enable quote-props */
+    },
+  );
+
   /**
    * @inheritdoc
    */
@@ -29,37 +42,71 @@ export class MatrasBookMatcher extends WebsiteScrapperMatcher<CreateBookDto, Boo
     if (!bookPage)
       return null;
 
-    const {$, url} = bookPage;
-    const detailsText = $('#con-notes > div.colsInfo').text();
+    const authors = await this.extractAuthors(bookPage.$);
+    const {detailsText, release} = this.extractRelease(bookPage);
 
-    const authors = await this.extractAuthors($);
-    const release = new CreateBookReleaseDto(
+    const result = new CreateBookDto(
       {
-        lang: Language.PL,
-        title: normalizeParsedText($('h1').text()),
-        description: normalizeParsedText($('#con-notes > .text:first-child').text()),
-        isbn: normalizeISBN(detailsText.match(/ISBN: ([\w-]+)/)?.[1]),
-        totalPages: (+detailsText.match(/Liczba stron: (\d+)/)?.[1]) || null,
-        format: normalizeParsedText(detailsText.match(/Format: ([\S]+)/)?.[1]),
-        publishDate: normalizeParsedText(detailsText.match(/Data wydania: ([\S]+)/)?.[1]),
-        publisher: this.extractPublisher($),
-        cover: new CreateImageAttachmentDto(
-          {
-            originalUrl: $('section.pageInfo .imgBox > .img-responsive').attr('src'),
-          },
-        ),
-        remoteDescription: new CreateRemoteRecordDto(
-          {
-            showOnlyAsQuote: true,
-            remoteId: $('.buy[data-id]').data('id'),
-            url,
-          },
-        ),
+        defaultTitle: release.title,
+        originalPublishDate: normalizeParsedText(detailsText.match(/Data pierwszego wydania:[\s]*([\S]+)/)?.[1]),
+        authors,
+        releases: [
+          release,
+        ],
       },
     );
 
-    console.info(release, authors);
-    return null;
+    return {
+      result,
+    };
+  }
+
+  /**
+   * Pick release info from fetched page
+   *
+   * @private
+   * @param {AsyncURLParseResult} bookPage
+   * @returns
+   * @memberof MatrasBookMatcher
+   */
+  private extractRelease({$, url}: AsyncURLParseResult) {
+    const detailsText = $('#con-notes > div.colsInfo').text();
+
+    return {
+      detailsText,
+      release: new CreateBookReleaseDto(
+        {
+          lang: Language.PL,
+          title: normalizeParsedText($('h1').text()),
+          description: normalizeParsedText($('#con-notes > .text:first-child').text()),
+          isbn: normalizeISBN(detailsText.match(/ISBN:\s*([\w-]+)/)?.[1]),
+          totalPages: (+detailsText.match(/Liczba stron:\s*(\d+)/)?.[1]) || null,
+          edition: normalizeParsedText(detailsText.match(/Wydanie:\s*(\S+)/)?.[1]),
+          format: normalizeParsedText(detailsText.match(/Format:\s*(\S+)/)?.[1]),
+          publishDate: normalizeParsedText(detailsText.match(/Rok wydania:\s*(\S+)/)?.[1]),
+          defaultPrice: normalizePrice(detailsText.match(/Cena katalogowa:\s*(\S+\s\S+)/)?.[1])?.price,
+          translator: normalizeParsedText(detailsText.match(/Tłumaczenie:\s*(\S+\s\S+)/)?.[1]),
+          binding: MatrasBookMatcher.bindingMappings[
+            normalizeParsedText(detailsText.match(/Oprawa\s*(\S+)/)?.[1])?.toLowerCase()
+          ],
+          publisher: this.extractPublisher($),
+          cover: new CreateImageAttachmentDto(
+            {
+              originalUrl: normalizeURL(
+                $('section.pageInfo .imgBox > .img-responsive').attr('src'),
+              ),
+            },
+          ),
+          remoteDescription: new CreateRemoteRecordDto(
+            {
+              showOnlyAsQuote: true,
+              remoteId: $('.buy[data-id]').data('id'),
+              url,
+            },
+          ),
+        },
+      ),
+    };
   }
 
   /**
@@ -72,7 +119,7 @@ export class MatrasBookMatcher extends WebsiteScrapperMatcher<CreateBookDto, Boo
    */
   private extractPublisher($: cheerio.Root) {
     const publisherContainer = $('#con-notes > div.colsInfo > div.col-lg-2.col-md-2.col-sm-4.col-xs-12.col-1');
-    const logo = publisherContainer.find('img.img-responsive');
+    const logo = publisherContainer.find('img');
 
     return new CreateBookPublisherDto(
       {
@@ -84,7 +131,7 @@ export class MatrasBookMatcher extends WebsiteScrapperMatcher<CreateBookDto, Boo
           logo.attr('src')
             ? new CreateImageAttachmentDto(
               {
-                originalUrl: logo.attr('src'),
+                originalUrl: normalizeURL(logo.attr('src')),
               },
             )
             : null

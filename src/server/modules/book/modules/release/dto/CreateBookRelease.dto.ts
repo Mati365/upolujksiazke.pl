@@ -99,6 +99,14 @@ export class CreateBookReleaseDto {
   @IsNumber()
   readonly bookId: number;
 
+  @IsOptional()
+  @IsString()
+  readonly translator: string;
+
+  @IsOptional()
+  @IsNumber()
+  readonly defaultPrice: number;
+
   constructor(partial: Partial<CreateBookReleaseDto>) {
     Object.assign(this, partial);
   }

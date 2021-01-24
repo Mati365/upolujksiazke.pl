@@ -18,10 +18,24 @@ export class BookAvailabilityEntity extends DatedRecordEntity {
   @JoinColumn()
   remote: RemoteRecordEntity;
 
-  @Column('money', {nullable: true})
+  @Column(
+    'decimal',
+    {
+      precision: 5,
+      scale: 2,
+      nullable: true,
+    },
+  )
   prevPrice: number;
 
-  @Column('money', {nullable: true})
+  @Column(
+    'decimal',
+    {
+      precision: 5,
+      scale: 2,
+      nullable: true,
+    },
+  )
   price: number;
 
   @Column('smallint', {nullable: true})

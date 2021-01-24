@@ -5,6 +5,7 @@ import {fuzzyFindBookAnchor} from '@scrapper/helpers/fuzzyFindBookAnchor';
 import {
   normalizeISBN,
   normalizeParsedText,
+  normalizeURL,
 } from '@server/common/helpers';
 
 import {Language} from '@server/constants/language';
@@ -73,7 +74,9 @@ export class GraniceBookMatcher extends WebsiteScrapperMatcher<CreateBookDto, Bo
         ),
         cover: new CreateImageAttachmentDto(
           {
-            originalUrl: $details.find('[itemprop="image"]').attr('src'),
+            originalUrl: normalizeURL(
+              $details.find('[itemprop="image"]').attr('src'),
+            ),
           },
         ),
         remoteDescription: new CreateRemoteRecordDto(

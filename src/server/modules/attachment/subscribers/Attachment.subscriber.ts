@@ -30,8 +30,12 @@ export class AttachmentSubscriber implements EntitySubscriberInterface<Attachmen
   async afterRemove(event: RemoveEvent<AttachmentEntity>) {
     const {options} = this;
 
-    await fs.unlink(
-      path.join(options.dest, event.entity.file),
-    );
+    try {
+      await fs.unlink(
+        path.join(options.dest, event.entity.file),
+      );
+    } catch (e) {
+      console.error(e);
+    }
   }
 }

@@ -2,7 +2,11 @@ import {Injectable} from '@nestjs/common';
 import {Connection, EntityManager} from 'typeorm';
 import * as R from 'ramda';
 
-import {upsert} from '@server/common/helpers/db';
+import {
+  checkIfExists,
+  forwardTransaction,
+  upsert,
+} from '@server/common/helpers/db';
 
 import {Size} from '@shared/types';
 import {ImageAttachmentEntity, ImageVersion} from '@server/modules/attachment/entity';
@@ -24,6 +28,37 @@ export class BookPublisherService {
     private readonly connection: Connection,
     private readonly imageAttachmentService: ImageAttachmentService,
   ) {}
+
+  /**
+   * Remove single book publisher
+   *
+   * @param {number[]} ids
+   * @param {EntityManager} [entityManager]
+   * @memberof BookPublisherService
+   */
+  async delete(ids: number[], entityManager?: EntityManager) {
+    const {
+      connection,
+      imageAttachmentService,
+    } = this;
+
+    const entities = await BookPublisherEntity.findByIds(
+      ids,
+      {
+        select: ['id'],
+        loadRelationIds: {
+          relations: ['logo'],
+        },
+      },
+    );
+
+    await forwardTransaction({connection, entityManager}, async (transaction) => {
+      for await (const entity of entities)
+        await imageAttachmentService.delete(entity.logo as any[], transaction);
+
+      await transaction.remove(entities);
+    });
+  }
 
   /**
    * Inserts or updates remote entity
@@ -52,45 +87,44 @@ export class BookPublisherService {
       },
     );
 
-    const cachedLogo = await (
-      entityManager
-        .createQueryBuilder('book_publisher_logo_image_attachments', 'c')
-        .select('c.bookPublisherId')
-        .where(
-          {
+    if (logo?.originalUrl) {
+      const logoAlreadyCached = await checkIfExists(
+        {
+          entityManager,
+          tableName: 'book_publisher_logo_image_attachments',
+          where: {
             bookPublisherId: publisher.id,
           },
-        )
-        .limit(1)
-        .execute()
-    );
-
-    if (!cachedLogo?.length) {
-      publisher.logo = R.values(
-        await imageAttachmentService.fetchAndCreateScaled(
-          {
-            destSubDir: 'cover',
-            sizes: BookPublisherService.LOGO_IMAGE_SIZES,
-            dto: logo,
-          },
-          entityManager,
-        ),
+        },
       );
 
-      await entityManager.save(
-        new BookPublisherEntity(
-          {
-            id: publisher.id,
-            logo: publisher.logo.map(
-              (item) => new ImageAttachmentEntity(
-                {
-                  id: item.id,
-                },
+      if (!logoAlreadyCached) {
+        publisher.logo = R.values(
+          await imageAttachmentService.fetchAndCreateScaled(
+            {
+              destSubDir: 'logo',
+              sizes: BookPublisherService.LOGO_IMAGE_SIZES,
+              dto: logo,
+            },
+            entityManager,
+          ),
+        );
+
+        await entityManager.save(
+          new BookPublisherEntity(
+            {
+              id: publisher.id,
+              logo: publisher.logo.map(
+                (item) => new ImageAttachmentEntity(
+                  {
+                    id: item.id,
+                  },
+                ),
               ),
-            ),
-          },
-        ),
-      );
+            },
+          ),
+        );
+      }
     }
 
     return publisher;

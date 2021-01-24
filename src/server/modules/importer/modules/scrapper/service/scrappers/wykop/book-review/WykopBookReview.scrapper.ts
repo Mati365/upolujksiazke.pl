@@ -2,6 +2,8 @@ import * as R from 'ramda';
 import chalk from 'chalk';
 import {Logger} from '@nestjs/common';
 
+import {normalizeURL} from '@server/common/helpers';
+
 import {Gender, RemoteID} from '@shared/types';
 import {ScrapperMetadataKind} from '@scrapper/entity';
 import {AsyncScrapper, ScrapperBasicPagination} from '@scrapper/service/shared';
@@ -131,7 +133,7 @@ export class WykopBookReviewScrapper extends AsyncScrapper<BookReviewScrapperInf
                 {
                   nsfw: embed.plus18,
                   ratio: embed.ratio,
-                  originalUrl: embed.preview,
+                  originalUrl: normalizeURL(embed.preview),
                 },
               ),
             },
@@ -184,7 +186,7 @@ export class WykopBookReviewScrapper extends AsyncScrapper<BookReviewScrapperInf
               gender,
               avatar: new CreateImageAttachmentDto(
                 {
-                  originalUrl: author.avatar,
+                  originalUrl: normalizeURL(author.avatar),
                 },
               ),
             },

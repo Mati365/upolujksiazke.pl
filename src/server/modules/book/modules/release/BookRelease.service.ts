@@ -7,6 +7,7 @@ import {Size} from '@shared/types';
 import {
   forwardTransaction,
   upsert,
+  checkIfExists,
 } from '@server/common/helpers/db';
 
 import {ImageAttachmentService} from '@server/modules/attachment/services';
@@ -60,12 +61,8 @@ export class BookReleaseService {
     );
 
     await forwardTransaction({connection, entityManager}, async (transaction) => {
-      for await (const entity of entities) {
-        await imageAttachmentService.delete(
-          entity.cover as any[],
-          transaction,
-        );
-      }
+      for await (const entity of entities)
+        await imageAttachmentService.delete(entity.cover as any[], transaction);
 
       await transaction.remove(entities);
     });
@@ -139,51 +136,50 @@ export class BookReleaseService {
       }
     })();
 
-    const cachedCover = await (
-      entityManager
-        .createQueryBuilder('book_release_cover_image_attachments', 'c')
-        .select('c.bookReleaseId')
-        .where(
-          {
+    if (cover?.originalUrl) {
+      const coverAlreadyCached = await checkIfExists(
+        {
+          entityManager,
+          tableName: 'book_release_cover_image_attachments',
+          where: {
             bookReleaseId: releaseEntity.id,
           },
-        )
-        .limit(1)
-        .execute()
-    );
-
-    /**
-     * @todo
-     *  - Add rollback changes support!
-     *  - Add callback support
-     */
-
-    if (!cachedCover?.length) {
-      releaseEntity.cover = R.values(
-        await imageAttachmentService.fetchAndCreateScaled(
-          {
-            destSubDir: 'cover',
-            sizes: BookReleaseService.COVER_IMAGE_SIZES,
-            dto: cover,
-          },
-          entityManager,
-        ),
+        },
       );
 
-      await entityManager.save(
-        new BookReleaseEntity(
-          {
-            id: releaseEntity.id,
-            cover: releaseEntity.cover.map(
-              (item) => new ImageAttachmentEntity(
-                {
-                  id: item.id,
-                },
+      /**
+       * @todo
+       *  - Add rollback changes support!
+       *  - Add callback support
+       */
+
+      if (!coverAlreadyCached) {
+        releaseEntity.cover = R.values(
+          await imageAttachmentService.fetchAndCreateScaled(
+            {
+              destSubDir: 'cover',
+              sizes: BookReleaseService.COVER_IMAGE_SIZES,
+              dto: cover,
+            },
+            entityManager,
+          ),
+        );
+
+        await entityManager.save(
+          new BookReleaseEntity(
+            {
+              id: releaseEntity.id,
+              cover: releaseEntity.cover.map(
+                (item) => new ImageAttachmentEntity(
+                  {
+                    id: item.id,
+                  },
+                ),
               ),
-            ),
-          },
-        ),
-      );
+            },
+          ),
+        );
+      }
     }
 
     return releaseEntity;

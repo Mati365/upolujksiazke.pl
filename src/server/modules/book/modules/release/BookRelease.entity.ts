@@ -50,8 +50,21 @@ export class BookReleaseEntity extends DatedRecordEntity {
   @Column('citext', {nullable: true})
   edition: string;
 
+  @Column('citext', {nullable: true})
+  translator: string;
+
   @Column('int', {nullable: true})
   totalPages: number;
+
+  @Column(
+    'decimal',
+    {
+      precision: 5,
+      scale: 2,
+      nullable: true,
+    },
+  )
+  defaultPrice: number;
 
   @ManyToMany(
     () => ImageAttachmentEntity,

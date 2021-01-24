@@ -17,3 +17,20 @@ export const normalizeISBN = R.unless(
     R.trim,
   ),
 );
+
+export const normalizeURL = R.when(
+  R.startsWith('//'),
+  R.concat('https:'),
+);
+
+export function normalizePrice(str: string) {
+  const [, value, currency] = R.match(/(\d+[.,]\d+)\s*(\S+)?/, str);
+
+  if (R.isNil(value) || R.isNil(currency))
+    return null;
+
+  return {
+    price: Number.parseFloat(value.replace(',', '.')), // it should be decimal?
+    currency: currency.toLowerCase(),
+  };
+}

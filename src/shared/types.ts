@@ -47,11 +47,18 @@ export type SortKeys = {
   [key: string]: SortDirection,
 };
 
+export enum Currency {
+  DOLLAR = '$',
+  EURO = '€',
+  PLN = 'zł',
+}
+
 export enum Gender {
   UNKNOWN = 1,
   FEMALE = 2,
   MALE = 3,
 }
+
 export type Person = {
   name: string,
   gender?: Gender,

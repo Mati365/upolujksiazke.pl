@@ -8,6 +8,7 @@ import {AsyncURLParseResult} from '@server/common/helpers/fetchAsyncHTML';
 import {
   normalizeISBN,
   normalizeParsedText,
+  normalizeURL,
 } from '@server/common/helpers';
 
 import {Language} from '@server/constants/language';
@@ -28,12 +29,14 @@ import {LiteraturaGildiaBookAuthorMatcher} from './LiteraturaGildiaBookAuthor.ma
 import {LiteraturaGildiaBookPublisherMatcher} from './LiteraturaGildiaBookPublisher.matcher';
 
 export class LiteraturaGildiaBookMatcher extends WebsiteScrapperMatcher<CreateBookDto, BookShopScrappersGroupConfig> {
-  static readonly bindingMappings = Object.freeze({
-    /* eslint-disable quote-props */
-    'miękka': BookBindingKind.NOTEBOOK,
-    'twarda': BookBindingKind.HARDCOVER,
-    /* eslint-enable quote-props */
-  });
+  static readonly bindingMappings = Object.freeze(
+    {
+      /* eslint-disable quote-props */
+      'miękka': BookBindingKind.NOTEBOOK,
+      'twarda': BookBindingKind.HARDCOVER,
+      /* eslint-enable quote-props */
+    },
+  );
 
   /**
    * @inheritdoc
@@ -112,7 +115,7 @@ export class LiteraturaGildiaBookMatcher extends WebsiteScrapperMatcher<CreateBo
         lang: Language.PL,
         title: LiteraturaGildiaBookMatcher.parseTitle($('h1').text()),
         description: normalizeParsedText($wideText.find('div > p').text()),
-        edition: normalizeParsedText(text.match(/Wydanie: ([\S]+)/)?.[1]), // todo: Support it!
+        edition: normalizeParsedText(text.match(/Wydanie: ([\S]+)/)?.[1]),
         isbn: normalizeISBN(text.match(/ISBN: ([\w-]+)/)?.[1]),
         totalPages: (+text.match(/Liczba stron: (\d+)/)?.[1]) || null,
         format: normalizeParsedText(text.match(/Format: ([\S]+)/)?.[1]),
@@ -121,7 +124,7 @@ export class LiteraturaGildiaBookMatcher extends WebsiteScrapperMatcher<CreateBo
         ],
         cover: $coverImage && new CreateImageAttachmentDto(
           {
-            originalUrl: $coverImage.attr('src'),
+            originalUrl: normalizeURL($coverImage.attr('src')),
           },
         ),
         remoteDescription: new CreateRemoteRecordDto(

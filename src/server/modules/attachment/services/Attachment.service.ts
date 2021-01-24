@@ -19,25 +19,20 @@ export type AttachmentServiceOptions = {
 
 @Injectable()
 export class AttachmentService {
-  constructor(
-    private readonly em: EntityManager,
-  ) {}
-
   /**
    * Remove single attachment
    *
    * @param {number[]} ids
-   * @param {EntityManager} [entityManager=this.em]
+   * @param {EntityManager} [entityManager=<any> AttachmentEntity]
    * @returns
    * @memberof AttachmentService
    */
-  async delete(ids: number[], entityManager: EntityManager = this.em) {
+  async delete(
+    ids: number[],
+    entityManager: EntityManager = <any> AttachmentEntity,
+  ) {
     return entityManager.remove(
-      ids.map((id) => new AttachmentEntity(
-        {
-          id,
-        },
-      )),
+      await AttachmentEntity.findByIds(ids),
     );
   }
 

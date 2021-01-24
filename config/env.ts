@@ -36,6 +36,7 @@ export type AppEnv = Partial<{
     },
     parsers: {
       literaturaGildia: BookShopUrlsConfig,
+      gildia: BookShopUrlsConfig,
       matras: BookShopUrlsConfig,
       granice: BookShopUrlsConfig,
       skupszop: BookShopUrlsConfig,
@@ -145,6 +146,10 @@ export const GLOBAL_CONFIG: Record<string, AppEnv> = {
         literaturaGildia: {
           homepageURL: 'https://www.literatura.gildia.pl/',
           searchURL: 'https://portal.gildia.pl/szukanie',
+        },
+        gildia: {
+          homepageURL: 'https://www.gildia.pl/',
+          searchURL: 'https://www.gildia.pl/szukaj',
         },
         matras: {
           homepageURL: 'https://www.matras.pl',

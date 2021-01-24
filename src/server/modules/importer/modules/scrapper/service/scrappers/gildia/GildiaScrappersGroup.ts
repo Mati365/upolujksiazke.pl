@@ -1,18 +1,18 @@
 import {ScrapperMetadataKind} from '@scrapper/entity';
 
-import {GraniceBookMatcher} from './GraniceBook.matcher';
+import {GildiaBookMatcher} from './GildiaBook.matcher';
 import {
   BookShopScrappersGroup,
   BookShopScrappersGroupConfig,
 } from '../BookShopScrappersGroup';
 
-export class GraniceScrappersGroup extends BookShopScrappersGroup {
+export class GildiaScrappersGroup extends BookShopScrappersGroup {
   constructor(options: BookShopScrappersGroupConfig) {
     super(
       {
         ...options,
         matchers: {
-          [ScrapperMetadataKind.BOOK]: new GraniceBookMatcher(options),
+          [ScrapperMetadataKind.BOOK]: new GildiaBookMatcher(options),
         },
       },
     );

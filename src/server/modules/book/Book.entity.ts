@@ -24,7 +24,7 @@ export class BookEntity extends DatedRecordEntity {
   @Column('citext', {unique: true})
   defaultTitle: string;
 
-  @Column('text', {unique: true, nullable: true})
+  @Column('citext', {unique: true, nullable: true})
   originalTitle: string;
 
   @Column('text', {nullable: true})

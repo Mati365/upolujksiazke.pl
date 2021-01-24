@@ -39,7 +39,7 @@ export class BookReleaseEntity extends DatedRecordEntity {
   @Column('text', {nullable: true})
   place: string;
 
-  @Column('text', {unique: true})
+  @Column('citext', {unique: true})
   isbn: string;
 
   @Column('text', {nullable: true})

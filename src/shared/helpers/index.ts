@@ -29,3 +29,4 @@ export * from './mergeNonNullProperties';
 export * from './escapeDiacritics';
 export * from './removeSpecialCharacters';
 export * from './convert';
+export * from './countLetter';

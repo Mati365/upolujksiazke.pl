@@ -18,7 +18,7 @@ export class BookPublisherEntity extends DatedRecordEntity {
     Object.assign(this, partial);
   }
 
-  @Column('text', {unique: true})
+  @Column('citext', {unique: true})
   name: string;
 
   @Column('text', {nullable: true})

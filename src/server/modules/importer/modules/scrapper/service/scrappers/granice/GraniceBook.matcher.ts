@@ -18,10 +18,10 @@ import {CreateBookPublisherDto} from '@server/modules/book/modules/publisher/dto
 import {CreateImageAttachmentDto} from '@server/modules/attachment/dto';
 import {CreateBookAvailabilityDto} from '@server/modules/book/modules/availability/dto/CreateBookAvailability.dto';
 
-import {ScrapperMatcherResult, WebsiteScrapperMatcher} from '../../../shared/ScrapperMatcher';
-import {MatchRecordAttrs} from '../../../shared/WebsiteScrappersGroup';
-import {BookShopScrappersGroupConfig} from '../../BookShopScrappersGroup';
-import {BookAvailabilityScrapperMatcher} from '../../Book.scrapper';
+import {ScrapperMatcherResult, WebsiteScrapperMatcher} from '../../shared/ScrapperMatcher';
+import {MatchRecordAttrs} from '../../shared/WebsiteScrappersGroup';
+import {BookShopScrappersGroupConfig} from '../BookShopScrappersGroup';
+import {BookAvailabilityScrapperMatcher} from '../Book.scrapper';
 
 export class GraniceBookMatcher
   extends WebsiteScrapperMatcher<CreateBookDto, BookShopScrappersGroupConfig>

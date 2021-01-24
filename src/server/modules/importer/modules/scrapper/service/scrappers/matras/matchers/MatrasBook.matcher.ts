@@ -59,23 +59,23 @@ export class MatrasBookMatcher
     if (!bookPage)
       return null;
 
-    const authors = await this.extractAuthors(bookPage.$);
-    const {detailsText, release} = this.extractRelease(bookPage.$);
-
-    const result = new CreateBookDto(
-      {
-        authors,
-        defaultTitle: release.title,
-        originalPublishDate: normalizeParsedText(detailsText.match(/Data pierwszego wydania:\s*(\S+)/)?.[1]),
-        availability: await this.searchAvailability(bookPage),
-        releases: [
-          release,
-        ],
-      },
-    );
+    const {
+      detailsText,
+      release,
+    } = this.extractRelease(bookPage.$);
 
     return {
-      result,
+      result: new CreateBookDto(
+        {
+          authors: await this.extractAuthors(bookPage.$),
+          defaultTitle: release.title,
+          originalPublishDate: normalizeParsedText(detailsText.match(/Data pierwszego wydania:\s*(\S+)/)?.[1]),
+          availability: await this.searchAvailability(bookPage),
+          releases: [
+            release,
+          ],
+        },
+      ),
     };
   }
 
@@ -192,7 +192,7 @@ export class MatrasBookMatcher
    *
    * @private
    * @param {CreateBookDto} scrapperInfo
-   * @memberof GraniceBookMatcher
+   * @memberof MatrasBookMatcher
    */
   private async searchByPhrase({title, authors}: CreateBookDto) {
     const {config} = this;

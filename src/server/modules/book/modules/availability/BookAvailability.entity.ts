@@ -41,7 +41,7 @@ export class BookAvailabilityEntity extends RemoteRecordFields {
   @Column('smallint', {nullable: true})
   avgRating: number;
 
-  @Column('integer', {default: 0})
+  @Column('integer', {nullable: true})
   totalRatings: number;
 
   @ManyToOne(() => BookEntity, (entity) => entity.availability, {onDelete: 'CASCADE'})

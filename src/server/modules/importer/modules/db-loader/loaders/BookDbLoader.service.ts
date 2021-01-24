@@ -7,8 +7,7 @@ import {
 
 import {BookService} from '@server/modules/book/Book.service';
 import {BookEntity, CreateBookDto} from '@server/modules/book';
-import {CreateBookReleaseDto} from '@server/modules/book/modules/release/dto/CreateBookRelease.dto';
-import {CreateRemoteRecordDto} from '@server/modules/remote/dto/CreateRemoteRecord.dto';
+import {CreateBookAvailabilityDto} from '@server/modules/book/modules/availability/dto/CreateBookAvailability.dto';
 import {BookReleaseEntity} from '@server/modules/book/modules/release/BookRelease.entity';
 import {ScrapperMetadataEntity, ScrapperMetadataKind} from '../../scrapper/entity';
 
@@ -90,42 +89,37 @@ export class BookDbLoader implements MetadataDbLoader {
 
     if (!matchedBook.cached) {
       const {result} = matchedBook;
-      const releases = await Promise.all(
-        result.releases.map(
-          async (release) => new CreateBookReleaseDto(
-            {
-              ...release,
-              remoteDescription: new CreateRemoteRecordDto(
-                {
-                  ...release.remoteDescription,
-                  websiteId: (
-                    await scrapperService.findOrCreateWebsiteByUrl(release.remoteDescription.url)
-                  ).id,
-                },
-              ),
-            },
-          ),
-        ),
-      );
-
-      // todo: It seems to be slow, optimize
       const releaseBook = (
         await BookReleaseEntity.findOne(
           {
             relations: ['book'],
             where: {
-              title: In(R.pluck('title', releases)),
+              title: In(R.pluck('title', result.releases)),
             },
           },
         )
       )?.book;
+
+      const availability = await Promise.all(
+        result.availability.map(
+          async (release) => new CreateBookAvailabilityDto(
+            {
+              ...release,
+              bookId: releaseBook?.id,
+              websiteId: (
+                await scrapperService.findOrCreateWebsiteByUrl(release.url)
+              ).id,
+            },
+          ),
+        ),
+      );
 
       return bookService.upsert(
         new CreateBookDto(
           {
             id: releaseBook?.id,
             ...result,
-            releases,
+            availability,
           },
         ),
       );

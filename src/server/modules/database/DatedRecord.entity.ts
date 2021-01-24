@@ -4,7 +4,7 @@ import {
   CreateDateColumn, PrimaryGeneratedColumn,
 } from 'typeorm';
 
-export class DatedRecordEntity extends BaseEntity {
+export abstract class DatedRecordEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 

@@ -1,23 +1,22 @@
 import {
-  Entity, Column, ManyToOne,
-  OneToOne, JoinColumn, RelationId, Index,
+  Column, ManyToOne,
+  JoinColumn, RelationId, Index,
 } from 'typeorm';
 
-import {RemoteRecordEntity} from '@server/modules/remote/entity';
-import {DatedRecordEntity} from '@server/modules/database/DatedRecord.entity';
+import {RemoteRecordEntity, RemoteRecordFields} from '@server/modules/remote/entity/RemoteRecord.entity';
 import {VotingStatsEmbeddable} from '@server/modules/shared/VotingStats.embeddable';
 
 import {BookReviewerEntity} from '../reviewer/BookReviewer.entity';
 import {BookEntity} from '../../Book.entity';
 import {BookReleaseEntity} from '../release/BookRelease.entity';
 
-@Entity(
+@RemoteRecordEntity(
   {
     name: 'book_review',
   },
 )
 @Index(['book'])
-export class BookReviewEntity extends DatedRecordEntity {
+export class BookReviewEntity extends RemoteRecordFields {
   @Column('timestamp')
   publishDate: Date;
 
@@ -33,10 +32,6 @@ export class BookReviewEntity extends DatedRecordEntity {
   @ManyToOne(() => BookEntity, (book) => book.reviews)
   book: BookEntity;
 
-  @OneToOne(() => RemoteRecordEntity)
-  @JoinColumn()
-  remote: RemoteRecordEntity;
-
   @Column(() => VotingStatsEmbeddable)
   stats: VotingStatsEmbeddable;
 
@@ -48,8 +43,8 @@ export class BookReviewEntity extends DatedRecordEntity {
   @RelationId((entity: BookReviewEntity) => entity.release)
   releaseId: number;
 
+  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(partial: Partial<BookReviewEntity>) {
-    super();
-    Object.assign(this, partial);
+    super(partial);
   }
 }

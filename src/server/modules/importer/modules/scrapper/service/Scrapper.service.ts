@@ -3,12 +3,10 @@ import {Injectable} from '@nestjs/common';
 import {classToPlain} from 'class-transformer';
 
 import {SERVER_ENV} from '@server/constants/env';
+import {extractHostname} from '@shared/helpers/urlExtract';
 
 import {TmpDirService} from '@server/modules/tmp-dir/TmpDir.service';
-import {
-  RemoteRecordEntity,
-  RemoteWebsiteEntity,
-} from '@server/modules/remote/entity';
+import {RemoteWebsiteEntity} from '@server/modules/remote/entity';
 
 import {
   ScrapperMetadataEntity,
@@ -90,16 +88,12 @@ export class ScrapperService {
     return new ScrapperMetadataEntity(
       {
         status,
+        remoteId: R.toString(item.remoteId),
+        websiteId: website.id,
         content: {
           ...item,
           dto: classToPlain(item.dto),
         },
-        remote: new RemoteRecordEntity(
-          {
-            remoteId: R.toString(item.remoteId),
-            websiteId: website.id,
-          },
-        ),
       },
     );
   }
@@ -112,10 +106,10 @@ export class ScrapperService {
    * @memberof ScrapperService
    */
   getScrappersGroupByWebsiteURL(url: string): WebsiteScrappersGroup {
-    url = new URL(url).hostname;
+    const hostname = extractHostname(url);
 
     return R.find(
-      (scrapper) => new URL(scrapper.websiteURL).hostname === url,
+      (scrapper) => extractHostname(scrapper.websiteURL) === hostname,
       this.scrappersGroups,
     );
   }

@@ -5,11 +5,11 @@ import {
 } from 'class-validator';
 
 import {VotingStatsEmbeddable} from '@server/modules/shared/VotingStats.embeddable';
-import {CreateBookDto} from '@server/modules/book/dto/CreateBook.dto';
 import {CreateRemoteRecordDto} from '@server/modules/remote/dto/CreateRemoteRecord.dto';
+import {CreateBookDto} from '@server/modules/book/dto/CreateBook.dto';
 import {CreateBookReviewerDto} from '../../reviewer/dto/CreateBookReviewer.dto';
 
-export class CreateBookReviewDto {
+export class CreateBookReviewDto extends CreateRemoteRecordDto {
   @IsDefined()
   @Type(() => CreateBookReviewerDto)
   @ValidateNested()
@@ -37,12 +37,8 @@ export class CreateBookReviewDto {
   @ValidateNested()
   readonly book: CreateBookDto;
 
-  @Type(() => CreateRemoteRecordDto)
-  @IsDefined()
-  @ValidateNested()
-  readonly remote: CreateRemoteRecordDto;
-
+  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(partial: Partial<CreateBookReviewDto>) {
-    Object.assign(this, partial);
+    super(partial);
   }
 }

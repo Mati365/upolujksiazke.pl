@@ -7,7 +7,7 @@ import {Connection, Equal, In} from 'typeorm';
 import {upsert} from '@server/common/helpers/db/upsert';
 
 import {RemoteID, IdentifiedItem} from '@shared/types';
-import {RemoteRecordEntity, RemoteWebsiteEntity} from '@server/modules/remote/entity';
+import {RemoteWebsiteEntity} from '@server/modules/remote/entity';
 import {MetadataDbLoaderQueueService} from '@server/modules/importer/modules/db-loader/services';
 
 import {WebsiteInfoScrapperService} from '../WebsiteInfoScrapper.service';
@@ -43,15 +43,12 @@ export class ScrapperRefreshService {
       scrappedPage: WebsiteScrapperItemInfo[],
     },
   ) {
-    const {
-      connection,
-      dbLoaderQueueService,
-    } = this;
+    const {dbLoaderQueueService} = this;
 
     // detect which ids has been already scrapped
     const scrappedIds = R.pluck(
       'remoteId',
-      await RemoteRecordEntity.find(
+      await ScrapperMetadataEntity.find(
         {
           where: {
             websiteId: Equal(website.id),
@@ -77,11 +74,7 @@ export class ScrapperRefreshService {
 
     // load to database
     if (metadataEntities.length) {
-      await connection.transaction(async (transaction) => {
-        await transaction.save(R.pluck('remote', metadataEntities));
-        await transaction.save(metadataEntities);
-      });
-
+      await ScrapperMetadataEntity.save(metadataEntities);
       await dbLoaderQueueService.addBulkMetadataToQueue(metadataEntities);
     }
   }
@@ -208,28 +201,15 @@ export class ScrapperRefreshService {
     } = this;
 
     const website = await websiteInfoScrapperService.findOrCreateWebsiteEntity(scrappersGroup.websiteInfoScrapper);
-    const updatedEntity = await connection.transaction(async (transaction) => {
-      const newEntity = ScrapperService.scrapperResultToMetadataEntity(website, item);
-      await upsert(
-        {
-          connection,
-          entityManager: transaction,
-          Entity: RemoteRecordEntity,
-          constraint: 'remote_record_unique_remote_entry',
-          data: newEntity.remote,
-        },
-      );
-
-      return upsert(
-        {
-          connection,
-          entityManager: transaction,
-          Entity: ScrapperMetadataEntity,
-          primaryKey: ['remoteId'],
-          data: newEntity,
-        },
-      );
-    });
+    const newEntity = ScrapperService.scrapperResultToMetadataEntity(website, item);
+    const updatedEntity = await upsert(
+      {
+        connection,
+        Entity: ScrapperMetadataEntity,
+        constraint: 'scrapper_metadata_unique_remote',
+        data: newEntity,
+      },
+    );
 
     await dbLoaderQueueService.addMetadataToQueue(updatedEntity);
     return updatedEntity;

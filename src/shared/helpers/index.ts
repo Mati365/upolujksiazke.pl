@@ -8,6 +8,7 @@ export * from './pickNonEmpty';
 export * from './removeById';
 export * from './adjustById';
 export * from './urlEncoder';
+export * from './urlExtract';
 export * from './isSSR';
 export * from './renderFunctionalChildren';
 export * from './safeArray';

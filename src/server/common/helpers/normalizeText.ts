@@ -24,7 +24,13 @@ export const normalizeURL = R.when(
 );
 
 export function normalizePrice(str: string) {
-  const [, value, currency] = R.match(/(\d+[.,]\d+)\s*(\S+)?/, str);
+  if (!str)
+    return null;
+
+  const [, value, currency] = R.match(
+    /(\d+[.,]\d+)\s*(\S+)?/,
+    normalizeParsedText(str),
+  );
 
   if (R.isNil(value) || R.isNil(currency))
     return null;

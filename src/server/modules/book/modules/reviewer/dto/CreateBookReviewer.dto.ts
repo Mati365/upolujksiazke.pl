@@ -6,21 +6,13 @@ import {
 } from 'class-validator';
 
 import {Gender} from '@shared/types';
-import {CreateRemoteRecordDto} from '@server/modules/remote/dto/CreateRemoteRecord.dto';
 import {CreateAttachmentDto} from '@server/modules/attachment/dto';
+import {CreateRemoteRecordDto} from '@server/modules/remote/dto/CreateRemoteRecord.dto';
 
-export class CreateBookReviewerDto {
+export class CreateBookReviewerDto extends CreateRemoteRecordDto {
   @IsOptional()
   @IsNumber()
   readonly id: number;
-
-  @IsDefined()
-  @ValidateNested()
-  readonly remote: CreateRemoteRecordDto;
-
-  @IsDefined()
-  @IsNumber()
-  readonly websiteId: number;
 
   @IsDefined()
   @IsNotEmpty()
@@ -36,7 +28,8 @@ export class CreateBookReviewerDto {
   @ValidateNested()
   readonly avatar: CreateAttachmentDto;
 
+  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(partial: Partial<CreateBookReviewerDto>) {
-    Object.assign(this, partial);
+    super(partial);
   }
 }

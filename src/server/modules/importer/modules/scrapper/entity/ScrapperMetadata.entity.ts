@@ -1,10 +1,6 @@
-import {
-  Column, Entity, Index,
-  JoinColumn, OneToOne,
-} from 'typeorm';
+import {Column, Index} from 'typeorm';
 
-import {DatedRecordEntity} from '@server/modules/database/DatedRecord.entity';
-import {RemoteRecordEntity} from '@server/modules/remote/entity';
+import {RemoteRecordEntity, RemoteRecordFields} from '@server/modules/remote/entity';
 import {WebsiteScrapperItemInfo} from '../service/shared';
 
 export enum ScrapperMetadataKind {
@@ -25,14 +21,14 @@ export enum ScrapperMetadataStatus {
  *
  * @export
  * @class ScrapperMetadataEntity
- * @extends {DatedRecordEntity}
+ * @extends {RemoteRecordFields}
  */
-@Entity(
+@RemoteRecordEntity(
   {
     name: 'scrapper_metadata',
   },
 )
-export class ScrapperMetadataEntity extends DatedRecordEntity {
+export class ScrapperMetadataEntity extends RemoteRecordFields {
   static get inactive() {
     return (
       ScrapperMetadataEntity
@@ -64,12 +60,8 @@ export class ScrapperMetadataEntity extends DatedRecordEntity {
   )
   status: ScrapperMetadataStatus;
 
-  @OneToOne(() => RemoteRecordEntity, {onDelete: 'CASCADE'})
-  @JoinColumn()
-  remote: RemoteRecordEntity;
-
+  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(partial: Partial<ScrapperMetadataEntity>) {
-    super();
-    Object.assign(this, partial);
+    super(partial);
   }
 }

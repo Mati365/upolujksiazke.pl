@@ -1,5 +1,6 @@
 import {Injectable} from '@nestjs/common';
 import {Connection, EntityManager} from 'typeorm';
+import sequential from 'promise-sequential';
 
 import {upsert} from '@server/common/helpers/db';
 
@@ -26,6 +27,28 @@ export class BookAvailabilityService {
   }
 
   /**
+   * Remove multiple book availability
+   *
+   * @param {number[]} ids
+   * @param {EntityManager} [entityManager=<any> BookAvailabilityEntity]
+   * @memberof BookAvailabilityService
+   */
+  async delete(
+    ids: number[],
+    entityManager: EntityManager = <any> BookAvailabilityEntity,
+  ) {
+    await entityManager.remove(
+      ids.map(
+        (id) => new BookAvailabilityEntity(
+          {
+            id,
+          },
+        ),
+      ),
+    );
+  }
+
+  /**
    * Inserts or updates remote entity
    *
    * @param {CreateBookAvailabilityDto} dto
@@ -40,10 +63,35 @@ export class BookAvailabilityService {
       {
         entityManager,
         connection,
+        constraint: 'book_availability_unique_remote',
         Entity: BookAvailabilityEntity,
-        constraint: 'remote_record_unique_remote_entry',
         data: new BookAvailabilityEntity(dto),
       },
+    );
+  }
+
+  /**
+   * Create or update array of books
+   *
+   * @param {CreateBookAvailabilityDto[]} dtos
+   * @param {EntityManager} [entityManager]
+   * @returns {Promise<BookAvailabilityEntity[]>}
+   * @memberof BookAvailabilityService
+   */
+  async upsertList(
+    dtos: CreateBookAvailabilityDto[],
+    entityManager?: EntityManager,
+  ): Promise<BookAvailabilityEntity[]> {
+    if (!dtos?.length)
+      return [];
+
+    // do not use Promise.all! It breaks typeorm!
+    return sequential(
+      dtos.map(
+        (item) => () => Promise.resolve(
+          this.upsert(item, entityManager),
+        ),
+      ),
     );
   }
 }

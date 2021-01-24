@@ -44,7 +44,7 @@ export class CreateBookDto {
   @IsDefined()
   @ValidateNested()
   @Type(() => CreateBookAvailabilityDto)
-  readonly availability: CreateBookAvailabilityDto;
+  readonly availability: CreateBookAvailabilityDto[];
 
   @IsArray()
   @ValidateNested()

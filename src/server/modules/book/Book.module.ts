@@ -5,7 +5,6 @@ import {BookAuthorModule} from './modules/author/BookAuthor.module';
 import {BookReviewerModule} from './modules/reviewer/BookReviewer.module';
 import {BookCategoryModule} from './modules/category/BookCategory.module';
 import {BookReviewModule} from './modules/review/BookReview.module';
-import {RemoteModule} from '../remote';
 import {TagModule} from '../tag';
 import {BookReleaseModule} from './modules/release';
 import {BookPublisherModule} from './modules/publisher';
@@ -20,7 +19,6 @@ import {BookService} from './Book.service';
       BookAvailabilityModule,
       BookPublisherModule,
       BookReleaseModule,
-      RemoteModule,
       BookAuthorModule,
       BookReviewerModule,
       BookReviewModule,

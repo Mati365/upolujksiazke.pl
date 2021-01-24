@@ -1,23 +1,23 @@
 import {
-  Column, Entity, JoinColumn,
-  ManyToOne, OneToOne, RelationId,
+  Column, Index, JoinColumn,
+  ManyToOne, RelationId, Unique,
 } from 'typeorm';
 
-import {RemoteRecordEntity} from '@server/modules/remote/entity';
-import {DatedRecordEntity} from '@server/modules/database/DatedRecord.entity';
+import {RemoteRecordEntity, RemoteRecordFields} from '@server/modules/remote/entity/RemoteRecord.entity';
 import {BookEntity} from '../../Book.entity';
 import {BookVolumeEntity} from '../volume/BookVolume.entity';
 
-@Entity(
+@RemoteRecordEntity(
   {
     name: 'book_availability',
   },
 )
-export class BookAvailabilityEntity extends DatedRecordEntity {
-  @OneToOne(() => RemoteRecordEntity, {onDelete: 'CASCADE'})
-  @JoinColumn()
-  remote: RemoteRecordEntity;
-
+@Index(['book'])
+@Unique(
+  'book_availability_unique_book_volume_website',
+  ['book', 'volume', 'website'],
+)
+export class BookAvailabilityEntity extends RemoteRecordFields {
   @Column(
     'decimal',
     {
@@ -60,8 +60,8 @@ export class BookAvailabilityEntity extends DatedRecordEntity {
   @RelationId((entity: BookAvailabilityEntity) => entity.volume)
   volumeId: number;
 
+  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(partial: Partial<BookAvailabilityEntity>) {
-    super();
-    Object.assign(this, partial);
+    super(partial);
   }
 }

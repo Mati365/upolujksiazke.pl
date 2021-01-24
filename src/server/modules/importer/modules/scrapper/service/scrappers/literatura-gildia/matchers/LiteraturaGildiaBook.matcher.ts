@@ -19,16 +19,19 @@ import {CreateBookReleaseDto} from '@server/modules/book/modules/release/dto/Cre
 import {CreateBookAuthorDto} from '@server/modules/book/modules/author/dto/CreateBookAuthor.dto';
 import {CreateBookPublisherDto} from '@server/modules/book/modules/publisher/dto/BookPublisher.dto';
 import {CreateImageAttachmentDto} from '@server/modules/attachment/dto';
-import {CreateRemoteRecordDto} from '@server/modules/remote/dto/CreateRemoteRecord.dto';
+import {CreateBookAvailabilityDto} from '@server/modules/book/modules/availability/dto/CreateBookAvailability.dto';
 
 import {ScrapperMatcherResult, WebsiteScrapperMatcher} from '@scrapper/service/shared/ScrapperMatcher';
 import {MatchRecordAttrs} from '@scrapper/service/shared/WebsiteScrappersGroup';
 import {ScrapperMetadataKind} from '@scrapper/entity/ScrapperMetadata.entity';
 import {BookShopScrappersGroupConfig} from '../../BookShopScrappersGroup';
+import {BookAvailabilityScrapperMatcher} from '../../Book.scrapper';
 import {LiteraturaGildiaBookAuthorMatcher} from './LiteraturaGildiaBookAuthor.matcher';
 import {LiteraturaGildiaBookPublisherMatcher} from './LiteraturaGildiaBookPublisher.matcher';
 
-export class LiteraturaGildiaBookMatcher extends WebsiteScrapperMatcher<CreateBookDto, BookShopScrappersGroupConfig> {
+export class LiteraturaGildiaBookMatcher
+  extends WebsiteScrapperMatcher<CreateBookDto, BookShopScrappersGroupConfig>
+  implements BookAvailabilityScrapperMatcher<AsyncURLParseResult> {
   static readonly bindingMappings = Object.freeze(
     {
       /* eslint-disable quote-props */
@@ -37,6 +40,25 @@ export class LiteraturaGildiaBookMatcher extends WebsiteScrapperMatcher<CreateBo
       /* eslint-enable quote-props */
     },
   );
+
+  /**
+   * Search all remote book urls
+   *
+   * @param {AsyncURLParseResult} {url}
+   * @returns {Promise<CreateBookAvailabilityDto[]>}
+   * @memberof LiteraturaGildiaBookMatcher
+   */
+  searchAvailability({url}: AsyncURLParseResult): Promise<CreateBookAvailabilityDto[]> {
+    return Promise.resolve([
+      new CreateBookAvailabilityDto(
+        {
+          showOnlyAsQuote: false,
+          remoteId: url.split('/').slice(-2).join('/'),
+          url,
+        },
+      ),
+    ]);
+  }
 
   /**
    * @inheritdoc
@@ -102,7 +124,7 @@ export class LiteraturaGildiaBookMatcher extends WebsiteScrapperMatcher<CreateBo
    * @memberof LiteraturaGildiaBookMatcher
    */
   private async extractRelease(bookPage: AsyncURLParseResult) {
-    const {$, url} = bookPage;
+    const {$} = bookPage;
     const $wideText = $('#yui-main .content .widetext');
 
     const publisher = await this.extractPublisher($wideText);
@@ -125,13 +147,6 @@ export class LiteraturaGildiaBookMatcher extends WebsiteScrapperMatcher<CreateBo
         cover: $coverImage && new CreateImageAttachmentDto(
           {
             originalUrl: normalizeURL($coverImage.attr('src')),
-          },
-        ),
-        remoteDescription: new CreateRemoteRecordDto(
-          {
-            showOnlyAsQuote: false,
-            remoteId: url.split('/').slice(-2).join('/'),
-            url,
           },
         ),
       },

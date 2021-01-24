@@ -1,13 +1,12 @@
 import {Type} from 'class-transformer';
 import {
-  IsEnum, IsNumber,
+  IsEnum, IsNumber, IsDefined,
   IsOptional, IsString,
   MinLength, ValidateNested,
 } from 'class-validator';
 
 import {Language} from '@server/constants/language';
 import {CreateImageAttachmentDto} from '@server/modules/attachment/dto';
-import {CreateRemoteRecordDto} from '@server/modules/remote/dto/CreateRemoteRecord.dto';
 import {CreateBookPublisherDto} from '../../publisher/dto/BookPublisher.dto';
 import {CreateBookVolumeDto} from '../../volume/dto/CreateBookVolume.dto';
 import {BookBindingKind} from '../BookRelease.entity';
@@ -41,7 +40,7 @@ export class CreateBookReleaseDto {
   @IsString()
   readonly place: string;
 
-  @IsOptional()
+  @IsDefined()
   @IsString()
   readonly isbn: string;
 
@@ -85,15 +84,6 @@ export class CreateBookReleaseDto {
   @IsEnum(Language)
   @IsOptional()
   readonly lang: Language;
-
-  @IsOptional()
-  @ValidateNested()
-  @Type(() => CreateRemoteRecordDto)
-  readonly remoteDescription: CreateRemoteRecordDto;
-
-  @IsOptional()
-  @IsNumber()
-  readonly remoteDescriptionId: number;
 
   @IsOptional()
   @IsNumber()

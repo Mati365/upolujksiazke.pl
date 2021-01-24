@@ -1,12 +1,11 @@
 import {
   BeforeInsert, BeforeUpdate, Column,
   Entity, Index, JoinColumn, JoinTable, ManyToMany,
-  ManyToOne, OneToMany, OneToOne, RelationId, Unique,
+  ManyToOne, OneToMany, RelationId,
 } from 'typeorm';
 
 import {Language} from '@server/constants/language';
 import {ImageAttachmentEntity} from '@server/modules/attachment/entity/ImageAttachment.entity';
-import {RemoteRecordEntity} from '@server/modules/remote/entity/RemoteRecord.entity';
 import {DatedRecordEntity} from '../../../database/DatedRecord.entity';
 import {BookEntity} from '../../Book.entity';
 import {BookPublisherEntity} from '../publisher/BookPublisher.entity';
@@ -25,7 +24,6 @@ export enum BookBindingKind {
     name: 'book_release',
   },
 )
-@Unique('book_release_unique_publisher_edition', ['title', 'publisher', 'edition'])
 @Index(['book'])
 @Index(['volume'])
 export class BookReleaseEntity extends DatedRecordEntity {
@@ -41,7 +39,7 @@ export class BookReleaseEntity extends DatedRecordEntity {
   @Column('text', {nullable: true})
   place: string;
 
-  @Column('text', {nullable: true})
+  @Column('text', {unique: true})
   isbn: string;
 
   @Column('text', {nullable: true})
@@ -113,14 +111,6 @@ export class BookReleaseEntity extends DatedRecordEntity {
   @Column()
   @RelationId((entity: BookReleaseEntity) => entity.book)
   bookId: number;
-
-  @OneToOne(() => RemoteRecordEntity, {onDelete: 'CASCADE'})
-  @JoinColumn({name: 'remoteDescriptionId'})
-  remoteDescription: RemoteRecordEntity;
-
-  @Column()
-  @RelationId((entity: BookReleaseEntity) => entity.remoteDescription)
-  remoteDescriptionId: number;
 
   @ManyToOne(() => BookVolumeEntity, (entity) => entity.release, {onDelete: 'CASCADE'})
   @JoinColumn({name: 'volumeId'})

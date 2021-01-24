@@ -1,7 +1,6 @@
 export {MetadataDbLoaderModule} from './importer/modules/db-loader/MetadataDbLoader.module';
 export {TmpDirModule} from './tmp-dir/TmpDir.module';
 export {ScrapperModule} from './importer/modules/scrapper/Scrapper.module';
-export {RemoteModule} from './remote/Remote.module';
 export {TagModule} from './tag/Tag.module';
 export {BookAuthorModule} from './book/modules/author/BookAuthor.module';
 export {BookReviewerModule} from './book/modules/reviewer/BookReviewer.module';

@@ -55,7 +55,6 @@ export class MetadataDbLoaderConsumerProcessor {
     const {metadataDbLoaderService} = this;
     const metadataItems = await ScrapperMetadataEntity.find(
       {
-        relations: ['remote'],
         where: {
           id: In(R.pluck('metadataId', job.data)),
         },

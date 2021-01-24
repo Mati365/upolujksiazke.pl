@@ -7,10 +7,7 @@ import {isDevMode} from '@shared/helpers';
 import {TagEntity} from '@server/modules/tag/Tag.entity';
 
 import {ScrapperMetadataEntity} from '../../importer/modules/scrapper/entity';
-import {
-  RemoteRecordEntity,
-  RemoteWebsiteEntity,
-} from '../../remote/entity';
+import {RemoteWebsiteEntity} from '../../remote/entity';
 
 import {
   ImageAttachmentEntity,
@@ -29,7 +26,6 @@ import {BookVolumeEntity} from '../../book/modules/volume/BookVolume.entity';
 
 export const DB_ENTITIES = {
   RemoteWebsiteEntity,
-  RemoteRecordEntity,
   ImageAttachmentEntity,
   AttachmentEntity,
   BookAvailabilityEntity,

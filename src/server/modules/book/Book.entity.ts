@@ -50,10 +50,10 @@ export class BookEntity extends DatedRecordEntity {
   @ManyToMany(() => TagEntity, {cascade: true})
   tags: TagEntity[];
 
-  @OneToMany(() => BookReleaseEntity, (entity) => entity.book)
+  @OneToMany(() => BookReleaseEntity, (entity) => entity.book, {cascade: true})
   releases: BookReleaseEntity[];
 
-  @OneToMany(() => BookVolumeEntity, (entity) => entity.book)
+  @OneToMany(() => BookVolumeEntity, (entity) => entity.book, {cascade: true})
   volumes: BookReleaseEntity[];
 
   @OneToMany(() => BookAvailabilityEntity, (entity) => entity.book)

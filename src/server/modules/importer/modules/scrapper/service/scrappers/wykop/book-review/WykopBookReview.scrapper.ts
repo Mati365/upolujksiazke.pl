@@ -9,7 +9,6 @@ import {ScrapperMetadataKind} from '@scrapper/entity';
 import {AsyncScrapper, ScrapperBasicPagination} from '@scrapper/service/shared';
 
 import {CreateBookReviewDto} from '@server/modules/book/modules/review/dto/CreateBookReview.dto';
-import {CreateRemoteRecordDto} from '@server/modules/remote/dto/CreateRemoteRecord.dto';
 import {CreateBookReviewerDto} from '@server/modules/book/modules/reviewer/dto/CreateBookReviewer.dto';
 import {VotingStatsEmbeddable} from '@server/modules/shared/VotingStats.embeddable';
 import {CreateImageAttachmentDto} from '@server/modules/attachment/dto';
@@ -166,18 +165,14 @@ export class WykopBookReviewScrapper extends AsyncScrapper<BookReviewScrapperInf
       dto: new CreateBookReviewDto(
         {
           description,
+          book,
+          remoteId,
           rating: properties.score,
           publishDate: new Date(post.date),
-          book,
           stats: new VotingStatsEmbeddable(
             {
               upvotes: post.vote_count,
               comments: post.comments_count,
-            },
-          ),
-          remote: new CreateRemoteRecordDto(
-            {
-              remoteId,
             },
           ),
           reviewer: new CreateBookReviewerDto(

@@ -48,7 +48,7 @@ export class ScrapperReanalyzerService {
         limit: analyzerRecordsPageSize,
         queryExecutor: ({limit, offset}) => ScrapperMetadataEntity.find(
           {
-            relations: ['remote', 'remote.website'],
+            relations: ['website'],
             skip: offset,
             take: limit,
           },
@@ -60,7 +60,7 @@ export class ScrapperReanalyzerService {
       // eslint-disable-next-line @typescript-eslint/no-loop-func
       await connection.transaction(async (transaction) => {
         for (const item of page) {
-          const scrappersGroup = scrapperService.getScrappersGroupByWebsiteURL(item.remote.website.url);
+          const scrappersGroup = scrapperService.getScrappersGroupByWebsiteURL(item.website.url);
           const parserInfo = (
             scrappersGroup
               .scrappers[item.kind]

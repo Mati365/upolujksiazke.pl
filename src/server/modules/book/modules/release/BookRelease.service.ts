@@ -12,7 +12,6 @@ import {
 
 import {ImageAttachmentService} from '@server/modules/attachment/services';
 import {ImageAttachmentEntity, ImageVersion} from '@server/modules/attachment/entity/ImageAttachment.entity';
-import {RemoteRecordService} from '@server/modules/remote/service/RemoteRecord.service';
 import {CreateBookReleaseDto} from './dto/CreateBookRelease.dto';
 import {BookReleaseEntity} from './BookRelease.entity';
 import {BookPublisherService} from '../publisher/BookPublisher.service';
@@ -33,12 +32,11 @@ export class BookReleaseService {
     private readonly connection: Connection,
     private readonly publisherService: BookPublisherService,
     private readonly volumeService: BookVolumeService,
-    private readonly remoteRecordService: RemoteRecordService,
     private readonly imageAttachmentService: ImageAttachmentService,
   ) {}
 
   /**
-   * Remove single book release
+   * Remove multiple book releases
    *
    * @param {number[]} ids
    * @param {EntityManager} [entityManager]
@@ -80,7 +78,6 @@ export class BookReleaseService {
     {
       cover,
       volumeId, volume,
-      remoteDescriptionId, remoteDescription,
       publisher, publisherId,
       ...dto
     }: CreateBookReleaseDto,
@@ -90,7 +87,6 @@ export class BookReleaseService {
     const {
       connection,
       publisherService,
-      remoteRecordService,
       volumeService,
       imageAttachmentService,
     } = this;
@@ -107,10 +103,6 @@ export class BookReleaseService {
             await (volume && volumeService?.upsert(volume, entityManager))
           )?.id,
 
-          remoteDescriptionId: remoteDescriptionId ?? (
-            await (remoteDescription && remoteRecordService?.upsert(remoteDescription, entityManager))
-          )?.id,
-
           publisherId: publisherId ?? (
             await (publisher && publisherService.upsert(publisher, entityManager))
           )?.id,
@@ -118,23 +110,12 @@ export class BookReleaseService {
       ),
     };
 
-    const releaseEntity = await (async () => {
-      try {
-        return await upsert(
-          {
-            ...upsertParams,
-            primaryKey: 'remoteDescriptionId',
-          },
-        );
-      } catch (e) {
-        return upsert(
-          {
-            ...upsertParams,
-            constraint: 'book_release_unique_publisher_edition',
-          },
-        );
-      }
-    })();
+    const releaseEntity = await upsert(
+      {
+        ...upsertParams,
+        primaryKey: 'isbn',
+      },
+    );
 
     if (cover?.originalUrl) {
       const coverAlreadyCached = await checkIfExists(

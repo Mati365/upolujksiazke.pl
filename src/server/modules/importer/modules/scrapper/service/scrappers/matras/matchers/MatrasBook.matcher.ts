@@ -16,15 +16,18 @@ import {CreateBookDto} from '@server/modules/book/dto/CreateBook.dto';
 import {CreateBookReleaseDto} from '@server/modules/book/modules/release/dto/CreateBookRelease.dto';
 import {CreateBookPublisherDto} from '@server/modules/book/modules/publisher/dto/BookPublisher.dto';
 import {CreateImageAttachmentDto} from '@server/modules/attachment/dto';
-import {CreateRemoteRecordDto} from '@server/modules/remote/dto/CreateRemoteRecord.dto';
+import {CreateBookAvailabilityDto} from '@server/modules/book/modules/availability/dto/CreateBookAvailability.dto';
 
 import {ScrapperMetadataKind} from '@scrapper/entity/ScrapperMetadata.entity';
+import {BookAvailabilityScrapperMatcher} from '../../Book.scrapper';
 import {MatchRecordAttrs} from '../../../shared/WebsiteScrappersGroup';
 import {WebsiteScrapperMatcher, ScrapperMatcherResult} from '../../../shared/ScrapperMatcher';
 import {BookShopScrappersGroupConfig} from '../../BookShopScrappersGroup';
 import {MatrasBookAuthorMatcher} from './MatrasBookAuthor.matcher';
 
-export class MatrasBookMatcher extends WebsiteScrapperMatcher<CreateBookDto, BookShopScrappersGroupConfig> {
+export class MatrasBookMatcher
+  extends WebsiteScrapperMatcher<CreateBookDto, BookShopScrappersGroupConfig>
+  implements BookAvailabilityScrapperMatcher<AsyncURLParseResult> {
   static readonly bindingMappings = Object.freeze(
     {
       /* eslint-disable quote-props */
@@ -33,6 +36,20 @@ export class MatrasBookMatcher extends WebsiteScrapperMatcher<CreateBookDto, Boo
       /* eslint-enable quote-props */
     },
   );
+
+  searchAvailability({$, url}: AsyncURLParseResult): Promise<CreateBookAvailabilityDto[]> {
+    return Promise.resolve([
+      new CreateBookAvailabilityDto(
+        {
+          showOnlyAsQuote: true,
+          remoteId: $('.buy[data-id]').data('id'),
+          prevPrice: normalizePrice($('.lastPrice').text())?.price,
+          price: $('[data-price-current]').data('priceCurrent'),
+          url,
+        },
+      ),
+    ]);
+  }
 
   /**
    * @inheritdoc
@@ -43,13 +60,14 @@ export class MatrasBookMatcher extends WebsiteScrapperMatcher<CreateBookDto, Boo
       return null;
 
     const authors = await this.extractAuthors(bookPage.$);
-    const {detailsText, release} = this.extractRelease(bookPage);
+    const {detailsText, release} = this.extractRelease(bookPage.$);
 
     const result = new CreateBookDto(
       {
-        defaultTitle: release.title,
-        originalPublishDate: normalizeParsedText(detailsText.match(/Data pierwszego wydania:[\s]*([\S]+)/)?.[1]),
         authors,
+        defaultTitle: release.title,
+        originalPublishDate: normalizeParsedText(detailsText.match(/Data pierwszego wydania:\s*(\S+)/)?.[1]),
+        availability: await this.searchAvailability(bookPage),
         releases: [
           release,
         ],
@@ -65,11 +83,11 @@ export class MatrasBookMatcher extends WebsiteScrapperMatcher<CreateBookDto, Boo
    * Pick release info from fetched page
    *
    * @private
-   * @param {AsyncURLParseResult} bookPage
+   * @param {cheerio.Root} $
    * @returns
    * @memberof MatrasBookMatcher
    */
-  private extractRelease({$, url}: AsyncURLParseResult) {
+  private extractRelease($: cheerio.Root) {
     const detailsText = $('#con-notes > div.colsInfo').text();
 
     return {
@@ -95,13 +113,6 @@ export class MatrasBookMatcher extends WebsiteScrapperMatcher<CreateBookDto, Boo
               originalUrl: normalizeURL(
                 $('section.pageInfo .imgBox > .img-responsive').attr('src'),
               ),
-            },
-          ),
-          remoteDescription: new CreateRemoteRecordDto(
-            {
-              showOnlyAsQuote: true,
-              remoteId: $('.buy[data-id]').data('id'),
-              url,
             },
           ),
         },

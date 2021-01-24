@@ -1,11 +1,10 @@
 import * as R from 'ramda';
 import {
   BeforeInsert, BeforeUpdate,
-  Column, Entity, OneToMany,
+  Column, Entity,
 } from 'typeorm';
 
 import {DatedRecordEntity} from '@server/modules/database/DatedRecord.entity';
-import {RemoteRecordEntity} from './RemoteRecord.entity';
 
 @Entity(
   {
@@ -24,9 +23,6 @@ export class RemoteWebsiteEntity extends DatedRecordEntity {
 
   @Column('text', {nullable: true})
   faviconUrl: string;
-
-  @OneToMany(() => RemoteRecordEntity, (remote) => remote.website)
-  remoteRecords: RemoteRecordEntity[];
 
   constructor(partial: Partial<RemoteWebsiteEntity>) {
     super();

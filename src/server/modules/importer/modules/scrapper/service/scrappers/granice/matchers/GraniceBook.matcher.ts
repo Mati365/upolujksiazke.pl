@@ -1,6 +1,6 @@
 import {escapeIso88592} from '@server/common/helpers/encoding/escapeIso88592';
 import {concatUrls} from '@shared/helpers/concatUrls';
-import {parseAsyncURLIfOK} from '@server/common/helpers/fetchAsyncHTML';
+import {AsyncURLParseResult, parseAsyncURLIfOK} from '@server/common/helpers/fetchAsyncHTML';
 import {fuzzyFindBookAnchor} from '@scrapper/helpers/fuzzyFindBookAnchor';
 import {
   normalizeISBN,
@@ -16,13 +16,37 @@ import {CreateBookReleaseDto} from '@server/modules/book/modules/release/dto/Cre
 import {CreateBookCategoryDto} from '@server/modules/book/modules/category/dto/CreateBookCategory.dto';
 import {CreateBookPublisherDto} from '@server/modules/book/modules/publisher/dto/BookPublisher.dto';
 import {CreateImageAttachmentDto} from '@server/modules/attachment/dto';
+import {CreateBookAvailabilityDto} from '@server/modules/book/modules/availability/dto/CreateBookAvailability.dto';
 
-import {CreateRemoteRecordDto} from '@server/modules/remote/dto/CreateRemoteRecord.dto';
 import {ScrapperMatcherResult, WebsiteScrapperMatcher} from '../../../shared/ScrapperMatcher';
 import {MatchRecordAttrs} from '../../../shared/WebsiteScrappersGroup';
 import {BookShopScrappersGroupConfig} from '../../BookShopScrappersGroup';
+import {BookAvailabilityScrapperMatcher} from '../../Book.scrapper';
 
-export class GraniceBookMatcher extends WebsiteScrapperMatcher<CreateBookDto, BookShopScrappersGroupConfig> {
+export class GraniceBookMatcher
+  extends WebsiteScrapperMatcher<CreateBookDto, BookShopScrappersGroupConfig>
+  implements BookAvailabilityScrapperMatcher<AsyncURLParseResult> {
+  /**
+   * Search all remote book urls
+   *
+   * @param {AsyncURLParseResult} {$, url}
+   * @returns {Promise<CreateBookAvailabilityDto[]>}
+   * @memberof GraniceBookMatcher
+   */
+  searchAvailability({$, url}: AsyncURLParseResult): Promise<CreateBookAvailabilityDto[]> {
+    const remoteId = $('#book_id.detailsbig').attr('book-id');
+
+    return Promise.resolve([
+      new CreateBookAvailabilityDto(
+        {
+          showOnlyAsQuote: true,
+          remoteId,
+          url,
+        },
+      ),
+    ]);
+  }
+
   /**
    * @inheritdoc
    */
@@ -31,12 +55,11 @@ export class GraniceBookMatcher extends WebsiteScrapperMatcher<CreateBookDto, Bo
     if (!bookPage)
       return null;
 
-    const {$, url} = bookPage;
+    const {$} = bookPage;
     const $content = $('.web > .sub > .column1');
     const $details = $content.find('#book_id.detailsbig');
     const [detailsText, detailsHTML] = [$details.text(), $details.html()];
 
-    const remoteId = $details.attr('book-id');
     const title = normalizeParsedText($content.find('h1 > [itemprop="name"]').text());
 
     const categories = (
@@ -79,13 +102,6 @@ export class GraniceBookMatcher extends WebsiteScrapperMatcher<CreateBookDto, Bo
             ),
           },
         ),
-        remoteDescription: new CreateRemoteRecordDto(
-          {
-            showOnlyAsQuote: true,
-            remoteId,
-            url,
-          },
-        ),
       },
     );
 
@@ -93,10 +109,9 @@ export class GraniceBookMatcher extends WebsiteScrapperMatcher<CreateBookDto, Bo
       {
         defaultTitle: title,
         originalTitle: normalizeParsedText(detailsHTML.match(/Tytuł oryginału: ([^\n<>]+)/)?.[1]),
+        availability: await this.searchAvailability(bookPage),
         authors: [author],
-        releases: [
-          release,
-        ],
+        releases: [release],
         categories,
       },
     );

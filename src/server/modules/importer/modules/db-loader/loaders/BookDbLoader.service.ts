@@ -89,23 +89,23 @@ export class BookDbLoader implements MetadataDbLoader {
 
     if (!matchedBook.cached) {
       const {result} = matchedBook;
-      const releaseBook = (
+      const releaseBookId = (
         await BookReleaseEntity.findOne(
           {
-            relations: ['book'],
+            select: ['bookId'],
             where: {
               title: In(R.pluck('title', result.releases)),
             },
           },
         )
-      )?.book;
+      )?.bookId;
 
       const availability = await Promise.all(
         result.availability.map(
           async (release) => new CreateBookAvailabilityDto(
             {
               ...release,
-              bookId: releaseBook?.id,
+              bookId: releaseBookId,
               websiteId: (
                 await scrapperService.findOrCreateWebsiteByUrl(release.url)
               ).id,
@@ -117,7 +117,7 @@ export class BookDbLoader implements MetadataDbLoader {
       return bookService.upsert(
         new CreateBookDto(
           {
-            id: releaseBook?.id,
+            id: releaseBookId,
             ...result,
             availability,
           },

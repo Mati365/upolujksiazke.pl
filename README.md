@@ -8,6 +8,9 @@ OpenSource book reviews aggregator, something like Metacritic / Digg for books. 
 
 ## Goals
 
+- [ ] Mark as school reading
+- [ ] Book summary aggregation
+- [ ] Free readings download button
 - [ ] Discover all author books (links discover queue, discover all series book, all author book)
 - [ ] Add article scrapping (wykop, reddit, etc)
 - [ ] Book series tree (al'a tree box)
@@ -36,6 +39,7 @@ OpenSource book reviews aggregator, something like Metacritic / Digg for books. 
 - [x] Gildia.pl (Literatura Gildia)
 - [x] Granice.pl
 - [x] Matras.pl
+- [ ] Wolnelektury.pl
 - [ ] Booklips.pl
 - [ ] Swiatksiazki.pl
 - [ ] Allegro.pl

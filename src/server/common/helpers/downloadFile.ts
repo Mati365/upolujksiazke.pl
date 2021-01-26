@@ -15,6 +15,7 @@ export type RemoteFileStats = {
 };
 
 export type FileDownloaderAttrs = {
+  timeout?: number,
   url: string,
   outputPath: string,
   headerValidatorFn?(stats: RemoteFileStats): boolean,
@@ -55,6 +56,7 @@ export async function fetchRemoteFileStats(url: string): Promise<RemoteFileStats
  */
 export async function downloadFile(
   {
+    timeout = 4000,
     url,
     outputPath,
     headerValidatorFn,
@@ -65,7 +67,21 @@ export async function downloadFile(
       return undefined;
   }
 
-  const res = await fetch(url);
+  const controller = new AbortController;
+  const timeoutTimer = setTimeout(
+    () => {
+      controller.abort();
+    },
+    timeout,
+  );
+
+  const res = await fetch(
+    url,
+    {
+      signal: controller.signal,
+    },
+  );
+
   if (!res.ok)
     throw new Error(`unexpected response ${res.statusText}`);
 
@@ -74,6 +90,7 @@ export async function downloadFile(
     fs.createWriteStream(outputPath),
   );
 
+  clearTimeout(timeoutTimer);
   return {
     outputPath,
   };

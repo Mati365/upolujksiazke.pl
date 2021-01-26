@@ -10,6 +10,7 @@ import {CreateBookAvailabilityDto} from '../modules/availability/dto/CreateBookA
 import {CreateBookReleaseDto} from '../modules/release/dto/CreateBookRelease.dto';
 import {CreateBookAuthorDto} from '../modules/author/dto/CreateBookAuthor.dto';
 import {CreateBookCategoryDto} from '../modules/category/dto/CreateBookCategory.dto';
+import {CreateBookVolumeDto} from '../modules/volume/dto/CreateBookVolume.dto';
 
 export class CreateBookDto {
   @IsOptional()
@@ -45,6 +46,11 @@ export class CreateBookDto {
   @ValidateNested()
   @Type(() => CreateBookAvailabilityDto)
   readonly availability: CreateBookAvailabilityDto[];
+
+  @IsDefined()
+  @ValidateNested()
+  @Type(() => CreateBookVolumeDto)
+  readonly volumes: CreateBookVolumeDto[];
 
   @IsArray()
   @ValidateNested()

@@ -27,3 +27,7 @@ export async function removeAndCreateDirAsync(path: string) {
   await mkdirp(path);
   return path;
 }
+
+export async function isEmptyDirAsync(path: string) {
+  return fs.promises.readdir(path).then((files) => !files.length);
+}

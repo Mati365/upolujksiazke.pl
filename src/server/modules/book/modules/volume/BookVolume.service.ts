@@ -17,7 +17,7 @@ export class BookVolumeService {
    *
    * @param {CreateBookVolumeDto} dto
    * @returns {Promise<BookVolumeEntity>}
-   * @memberof BookAvailabilityService
+   * @memberof BookVolumeService
    */
   create(dto: CreateBookVolumeDto): Promise<BookVolumeEntity> {
     return BookVolumeEntity.save(
@@ -31,7 +31,7 @@ export class BookVolumeService {
    * @param {CreateBookVolumeDto} dto
    * @param {EntityManager} [entityManager]
    * @returns {Promise<BookVolumeEntity>}
-   * @memberof BookAvailabilityService
+   * @memberof BookVolumeService
    */
   async upsert(dto: CreateBookVolumeDto, entityManager?: EntityManager): Promise<BookVolumeEntity> {
     const {connection} = this;

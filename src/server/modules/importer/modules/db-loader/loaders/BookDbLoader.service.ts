@@ -56,6 +56,10 @@ export class BookDbLoader implements MetadataDbLoader {
   /**
    * Load book into database
    *
+   * @todo
+   *  - Pick only title with lowest length!
+   *  - Merge properties
+   *
    * @param {Object} attrs
    * @memberof BookDbLoader
    */

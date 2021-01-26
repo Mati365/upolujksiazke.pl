@@ -8,6 +8,7 @@ import {AsyncURLParseResult} from '@server/common/helpers/fetchAsyncHTML';
 import {
   normalizeISBN,
   normalizeParsedText,
+  normalizeParsedTitle,
   normalizeURL,
 } from '@server/common/helpers';
 
@@ -102,20 +103,6 @@ export class LiteraturaGildiaBookMatcher
   }
 
   /**
-   * Picks title of book but removes hash
-   *
-   * @private
-   * @static
-   * @param {string} title
-   * @memberof LiteraturaGildiaBookMatcher
-   */
-  private static parseTitle(title: string) {
-    const normalizedText = normalizeParsedText(title);
-
-    return normalizedText.match(/#\d+\s-\s*(.*)/)?.[1] ?? normalizedText;
-  }
-
-  /**
    * Extracts info about release from book page
    *
    * @private
@@ -135,7 +122,7 @@ export class LiteraturaGildiaBookMatcher
       {
         publisher,
         lang: Language.PL,
-        title: LiteraturaGildiaBookMatcher.parseTitle($('h1').text()),
+        title: normalizeParsedTitle($('h1').text()),
         description: normalizeParsedText($wideText.find('div > p').text()),
         edition: normalizeParsedText(text.match(/Wydanie: ([\S]+)/)?.[1]),
         isbn: normalizeISBN(text.match(/ISBN: ([\w-]+)/)?.[1]),

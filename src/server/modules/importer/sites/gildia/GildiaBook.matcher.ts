@@ -6,6 +6,7 @@ import {fuzzyFindBookAnchor} from '@scrapper/helpers/fuzzyFindBookAnchor';
 import {
   normalizeISBN,
   normalizeParsedText,
+  normalizeParsedTitle,
   normalizePrice,
   normalizeURL,
 } from '@server/common/helpers';
@@ -136,7 +137,7 @@ export class GildiaBookMatcher
     return new CreateBookReleaseDto(
       {
         lang: Language.PL,
-        title: normalizeParsedText($('.product-page-description .product-page-title').text()),
+        title: normalizeParsedTitle($('.product-page-description .product-page-title').text()),
         description: normalizeParsedText($('.product-page-description-details > p').text()),
         isbn: normalizeISBN(basicProps['isbn-13'] ?? basicProps['isbn']),
         totalPages: +basicProps['liczba stron'] || null,
@@ -177,7 +178,7 @@ export class GildiaBookMatcher
         buildURL(
           config.searchURL,
           {
-            q: `${title} ${authors[0].name}`,
+            q: title, // it works a bit better without author
           },
         ),
       )

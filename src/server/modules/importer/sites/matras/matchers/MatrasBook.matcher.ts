@@ -3,6 +3,7 @@ import {fuzzyFindBookAnchor} from '@scrapper/helpers/fuzzyFindBookAnchor';
 import {
   normalizeISBN,
   normalizeParsedText,
+  normalizeParsedTitle,
   normalizePrice,
   normalizeURL,
 } from '@server/common/helpers';
@@ -69,6 +70,7 @@ export class MatrasBookMatcher
         {
           authors: await this.extractAuthors(bookPage.$),
           defaultTitle: release.title,
+          originalTitle: normalizeParsedText(detailsText.match(/Tytuł oryginalny:\s*([^\n]+)/)?.[1]),
           originalPublishDate: normalizeParsedText(detailsText.match(/Data pierwszego wydania:\s*(\S+)/)?.[1]),
           availability: await this.searchAvailability(bookPage),
           releases: [
@@ -95,14 +97,14 @@ export class MatrasBookMatcher
       release: new CreateBookReleaseDto(
         {
           lang: Language.PL,
-          title: normalizeParsedText($('h1').text()),
+          title: normalizeParsedTitle($('h1').text()),
           description: normalizeParsedText($('#con-notes > .text:first-child').text()),
           isbn: normalizeISBN(detailsText.match(/ISBN:\s*([\w-]+)/)?.[1]),
           totalPages: (+detailsText.match(/Liczba stron:\s*(\d+)/)?.[1]) || null,
           edition: normalizeParsedText(detailsText.match(/Wydanie:\s*(\S+)/)?.[1]),
           format: normalizeParsedText(detailsText.match(/Format:\s*(\S+)/)?.[1]),
           publishDate: normalizeParsedText(detailsText.match(/Rok wydania:\s*(\S+)/)?.[1]),
-          defaultPrice: normalizePrice(detailsText.match(/Cena katalogowa:\s*(\S+\s\S+)/)?.[1])?.price,
+          defaultPrice: normalizePrice(detailsText.match(/Cena katalogowa:\s*(\S+)/)?.[1])?.price,
           translator: normalizeParsedText(detailsText.match(/Tłumaczenie:\s*(\S+\s\S+)/)?.[1]),
           binding: MatrasBookMatcher.bindingMappings[
             normalizeParsedText(detailsText.match(/Oprawa\s*(\S+)/)?.[1])?.toLowerCase()

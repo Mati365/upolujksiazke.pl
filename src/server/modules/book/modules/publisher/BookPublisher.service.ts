@@ -105,7 +105,7 @@ export class BookPublisherService {
           publisher.logo = R.values(
             await imageAttachmentService.fetchAndCreateScaled(
               {
-                destSubDir: 'logo',
+                destSubDir: `logo/${publisher.id}`,
                 sizes: BookPublisherService.LOGO_IMAGE_SIZES,
                 dto: logo,
               },

@@ -135,7 +135,7 @@ export class BookReleaseService {
           releaseEntity.cover = R.values(
             await imageAttachmentService.fetchAndCreateScaled(
               {
-                destSubDir: 'cover',
+                destSubDir: `cover/${releaseEntity.id}`,
                 sizes: BookReleaseService.COVER_IMAGE_SIZES,
                 dto: cover,
               },

@@ -9,11 +9,11 @@ import {TmpDirService} from '@server/modules/tmp-dir/TmpDir.service';
 import {RemoteWebsiteEntity} from '@server/modules/remote/entity';
 import {WykopAPI} from '@server/modules/importer/sites/wykop/api/WykopAPI';
 import {
-  // GraniceScrappersGroup,
-  // MatrasScrappersGroup,
+  GraniceScrappersGroup,
+  MatrasScrappersGroup,
   GildiaScrappersGroup,
   EIsbnScrappersGroup,
-  // LiteraturaGildiaScrappersGroup,
+  LiteraturaGildiaScrappersGroup,
   // WikipediaScrappersGroup,
   WykopScrappersGroup,
   // SkupszopScrappersGroup,
@@ -42,12 +42,11 @@ export class ScrapperService {
     tmpDirService: TmpDirService,
   ) {
     this.scrappersGroups = [
-      // new LiteraturaGildiaScrappersGroup(PARSERS_ENV.literaturaGildia),
       // new SkupszopScrappersGroup(PARSERS_ENV.skupszop),
-      // new MatrasScrappersGroup(PARSERS_ENV.matras),
-      // new GraniceScrappersGroup(PARSERS_ENV.granice),
-      // new MatrasScrappersGroup(PARSERS_ENV.matras),
       new GildiaScrappersGroup(PARSERS_ENV.gildia),
+      new GraniceScrappersGroup(PARSERS_ENV.granice),
+      new LiteraturaGildiaScrappersGroup(PARSERS_ENV.literaturaGildia),
+      new MatrasScrappersGroup(PARSERS_ENV.matras), // sucky DB
       new WykopScrappersGroup(
         {
           homepageURL: PARSERS_ENV.wykop.homepageURL,

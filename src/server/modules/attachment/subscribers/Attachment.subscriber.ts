@@ -7,6 +7,11 @@ import {
   EventSubscriber, RemoveEvent,
 } from 'typeorm';
 
+import {
+  isEmptyDirAsync,
+  removeDirIfExistsAsync,
+} from '@server/common/helpers/dirUtils';
+
 import {AttachmentEntity} from '../entity/Attachment.entity';
 import {
   AttachmentServiceOptions,
@@ -31,9 +36,19 @@ export class AttachmentSubscriber implements EntitySubscriberInterface<Attachmen
     const {options} = this;
 
     try {
-      await fs.unlink(
-        path.join(options.dest, event.entity.file),
-      );
+      const filePath = event.entity.file;
+      const fullPath = path.join(options.dest, filePath);
+      const fileFolders = filePath.substring(0, filePath.lastIndexOf('/')).split('/');
+
+      await fs.unlink(fullPath);
+      for (;;) {
+        const folder = path.join(options.dest, ...fileFolders);
+        if (await isEmptyDirAsync(folder)) {
+          await removeDirIfExistsAsync(folder);
+          fileFolders.pop();
+        } else
+          break;
+      }
     } catch (e) {
       console.error(e);
     }

@@ -8,6 +8,8 @@ import {
   forwardTransaction,
   upsert,
   checkIfExists,
+  runInPostHookIfPresent,
+  PostHookEntityManager,
 } from '@server/common/helpers/db';
 
 import {ImageAttachmentService} from '@server/modules/attachment/services';
@@ -70,7 +72,7 @@ export class BookReleaseService {
    * Inserts or updates remote entity
    *
    * @param {CreateRemoteRecordDto} dto
-   * @param {EntityManager} [entityManager]
+   * @param {PostHookEntityManager} [entityManager]
    * @returns {Promise<BookReleaseEntity>}
    * @memberof BookReleaseService
    */
@@ -82,7 +84,7 @@ export class BookReleaseService {
       ...dto
     }: CreateBookReleaseDto,
 
-    entityManager: EntityManager = <any> BookReleaseEntity,
+    entityManager: PostHookEntityManager = <any> BookReleaseEntity,
   ): Promise<BookReleaseEntity> {
     const {
       connection,
@@ -118,49 +120,45 @@ export class BookReleaseService {
     );
 
     if (cover?.originalUrl) {
-      const coverAlreadyCached = await checkIfExists(
-        {
-          entityManager,
-          tableName: 'book_release_cover_image_attachments',
-          where: {
-            bookReleaseId: releaseEntity.id,
+      await runInPostHookIfPresent(entityManager, async (hookEntityManager) => {
+        const coverAlreadyCached = await checkIfExists(
+          {
+            entityManager: hookEntityManager,
+            tableName: 'book_release_cover_image_attachments',
+            where: {
+              bookReleaseId: releaseEntity.id,
+            },
           },
-        },
-      );
-
-      /**
-       * @todo
-       *  - Add rollback changes support!
-       *  - Add callback support
-       */
-
-      if (!coverAlreadyCached) {
-        releaseEntity.cover = R.values(
-          await imageAttachmentService.fetchAndCreateScaled(
-            {
-              destSubDir: 'cover',
-              sizes: BookReleaseService.COVER_IMAGE_SIZES,
-              dto: cover,
-            },
-            entityManager,
-          ),
         );
 
-        await entityManager.save(
-          new BookReleaseEntity(
-            {
-              id: releaseEntity.id,
-              cover: releaseEntity.cover.map(
-                (item) => new ImageAttachmentEntity(
-                  {
-                    id: item.id,
-                  },
+        if (!coverAlreadyCached) {
+          releaseEntity.cover = R.values(
+            await imageAttachmentService.fetchAndCreateScaled(
+              {
+                destSubDir: 'cover',
+                sizes: BookReleaseService.COVER_IMAGE_SIZES,
+                dto: cover,
+              },
+              hookEntityManager,
+            ),
+          );
+
+          await hookEntityManager.save(
+            new BookReleaseEntity(
+              {
+                id: releaseEntity.id,
+                cover: releaseEntity.cover.map(
+                  (item) => new ImageAttachmentEntity(
+                    {
+                      id: item.id,
+                    },
+                  ),
                 ),
-              ),
-            },
-          ),
-        );
-      }
+              },
+            ),
+          );
+        }
+      });
     }
 
     return releaseEntity;

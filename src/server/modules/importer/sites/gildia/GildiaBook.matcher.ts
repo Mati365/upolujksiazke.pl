@@ -46,6 +46,7 @@ export class GildiaBookMatcher
     return Promise.resolve([
       new CreateBookAvailabilityDto(
         {
+          url,
           showOnlyAsQuote: false,
           remoteId: $('.product-page-description [data-add-product]').data('addProduct'),
           totalRatings: null,
@@ -54,9 +55,13 @@ export class GildiaBookMatcher
             $('.product-page-description .rating-stars').data('content'),
           ) * 2,
 
-          prevPrice: normalizePrice($basicProductInfo.text())?.price,
-          price: normalizePrice($basicProductInfo.text())?.price,
-          url,
+          prevPrice: normalizePrice(
+            $basicProductInfo.find('.previous-price').text(),
+          )?.price,
+
+          price: normalizePrice(
+            $basicProductInfo.find('.current-price').text(),
+          )?.price,
         },
       ),
     ]);

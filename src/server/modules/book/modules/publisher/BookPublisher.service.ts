@@ -5,7 +5,9 @@ import * as R from 'ramda';
 import {
   checkIfExists,
   forwardTransaction,
+  runInPostHookIfPresent,
   upsert,
+  PostHookEntityManager,
 } from '@server/common/helpers/db';
 
 import {Size} from '@shared/types';
@@ -64,13 +66,13 @@ export class BookPublisherService {
    * Inserts or updates remote entity
    *
    * @param {CreateBookPublisherDto} {logo, ...dto}
-   * @param {EntityManager} [entityManager=<any> BookPublisherEntity]
+   * @param {PostHookEntityManager} [entityManager=<any> BookPublisherEntity]
    * @returns {Promise<BookPublisherEntity>}
    * @memberof BookPublisherService
    */
   async upsert(
     {logo, ...dto}: CreateBookPublisherDto,
-    entityManager: EntityManager = <any> BookPublisherEntity,
+    entityManager: PostHookEntityManager = <any> BookPublisherEntity,
   ): Promise<BookPublisherEntity> {
     const {
       connection,
@@ -88,43 +90,45 @@ export class BookPublisherService {
     );
 
     if (logo?.originalUrl) {
-      const logoAlreadyCached = await checkIfExists(
-        {
-          entityManager,
-          tableName: 'book_publisher_logo_image_attachments',
-          where: {
-            bookPublisherId: publisher.id,
+      await runInPostHookIfPresent(entityManager, async (hookEntityManager) => {
+        const logoAlreadyCached = await checkIfExists(
+          {
+            entityManager: hookEntityManager,
+            tableName: 'book_publisher_logo_image_attachments',
+            where: {
+              bookPublisherId: publisher.id,
+            },
           },
-        },
-      );
-
-      if (!logoAlreadyCached) {
-        publisher.logo = R.values(
-          await imageAttachmentService.fetchAndCreateScaled(
-            {
-              destSubDir: 'logo',
-              sizes: BookPublisherService.LOGO_IMAGE_SIZES,
-              dto: logo,
-            },
-            entityManager,
-          ),
         );
 
-        await entityManager.save(
-          new BookPublisherEntity(
-            {
-              id: publisher.id,
-              logo: publisher.logo.map(
-                (item) => new ImageAttachmentEntity(
-                  {
-                    id: item.id,
-                  },
+        if (!logoAlreadyCached) {
+          publisher.logo = R.values(
+            await imageAttachmentService.fetchAndCreateScaled(
+              {
+                destSubDir: 'logo',
+                sizes: BookPublisherService.LOGO_IMAGE_SIZES,
+                dto: logo,
+              },
+              hookEntityManager,
+            ),
+          );
+
+          await hookEntityManager.save(
+            new BookPublisherEntity(
+              {
+                id: publisher.id,
+                logo: publisher.logo.map(
+                  (item) => new ImageAttachmentEntity(
+                    {
+                      id: item.id,
+                    },
+                  ),
                 ),
-              ),
-            },
-          ),
-        );
-      }
+              },
+            ),
+          );
+        }
+      });
     }
 
     return publisher;

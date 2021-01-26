@@ -4,6 +4,7 @@ import * as R from 'ramda';
 
 import {
   forwardTransaction,
+  runTransactionWithPostHooks,
   upsert,
 } from '@server/common/helpers/db';
 
@@ -76,7 +77,7 @@ export class BookService {
       availabilityService,
     } = this;
 
-    return connection.transaction(async (transaction) => {
+    return runTransactionWithPostHooks(connection, async (transaction) => {
       const {
         tagService, authorService,
         releaseService, categoryService,

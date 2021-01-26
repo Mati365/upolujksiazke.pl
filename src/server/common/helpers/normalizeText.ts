@@ -18,9 +18,12 @@ export const normalizeISBN = R.unless(
   ),
 );
 
-export const normalizeURL = R.when(
-  R.startsWith('//'),
-  R.concat('https:'),
+export const normalizeURL = R.unless(
+  R.isNil,
+  R.when(
+    R.startsWith('//'),
+    R.concat('https:'),
+  ),
 );
 
 export function normalizePrice(str: string) {

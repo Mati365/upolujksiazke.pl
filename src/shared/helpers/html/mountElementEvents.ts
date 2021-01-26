@@ -8,7 +8,6 @@ import {assignListenersChain, ListenersChain} from './assignListenersChain';
  * @todo
  *  Fixme when react introduce Passive events
  *
- *
  * @export
  * @param {AddEventListenerOptions} flags
  * @param {ListenersChain<EventListener> | Record<string, EventListener>} chain

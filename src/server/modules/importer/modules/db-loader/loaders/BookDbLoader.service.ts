@@ -97,9 +97,14 @@ export class BookDbLoader implements MetadataDbLoader {
         await BookReleaseEntity.findOne(
           {
             select: ['bookId'],
-            where: {
-              title: In(R.pluck('title', result.releases)),
-            },
+            where: [
+              {
+                title: In(R.pluck('title', result.releases)),
+              },
+              {
+                isbn: In(R.pluck('isbn', result.releases)),
+              },
+            ],
           },
         )
       )?.bookId;

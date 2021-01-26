@@ -12,13 +12,8 @@ export const normalizeParsedText = R.unless(
 
 export const normalizeParsedTitle = (title: string) => {
   const normalizedText = normalizeParsedText(title);
-  const normalizedTitle = normalizedText.match(/#\d+\s-\s*([^()]*)/)?.[1] ?? normalizedText;
 
-  return (
-    R.endsWith('.', normalizedTitle)
-      ? R.init(normalizedTitle)
-      : normalizedTitle
-  );
+  return normalizedText.match(/(?:.*#\d+\s-\s*)?([^().#]*)/)?.[1] ?? normalizedText;
 };
 
 export const normalizeISBN = R.unless(

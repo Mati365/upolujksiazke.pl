@@ -1,8 +1,8 @@
 import * as R from 'ramda';
 import 'jest-expect-message';
 
-import {WykopAPI} from '@scrapper/service/scrappers/wykop/api/WykopAPI';
-import {WykopBookReviewScrapper} from '@scrapper/service/scrappers/wykop/book-review/WykopBookReview.scrapper';
+import {WykopAPI} from '@sites/wykop/api/WykopAPI';
+import {WykopBookReviewScrapper} from '@sites/wykop/book-review/WykopBookReview.scrapper';
 
 import ENTRIES_DB from './cache/entries.json';
 

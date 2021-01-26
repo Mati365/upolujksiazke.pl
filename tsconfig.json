@@ -27,7 +27,10 @@
       "@assets/*": ["assets/*"],
 
       "@scrapper": ["./src/server/modules/importer/modules/scrapper"],
-      "@scrapper/*": ["./src/server/modules/importer/modules/scrapper/*"]
+      "@scrapper/*": ["./src/server/modules/importer/modules/scrapper/*"],
+
+      "@sites": ["./src/server/modules/importer/sites"],
+      "@sites/*": ["./src/server/modules/importer/sites/*"]
     }
   },
   "exclude": [

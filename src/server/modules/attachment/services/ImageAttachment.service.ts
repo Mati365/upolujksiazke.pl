@@ -125,7 +125,7 @@ export class ImageAttachmentService {
     function loggerWrapper(
       this: ImageAttachmentService,
       {dto}: ImageFetcherAttrs,
-      entityManager: EntityManager,
+      _: EntityManager,
       {
         tmpFolderPath,
       }: TmpFolderScopeAttrs,
@@ -197,8 +197,6 @@ export class ImageAttachmentService {
               src: convertResult.path,
               dst: path.resolve(dest, fileName),
               width: size.w,
-
-              // todo: check it
               ...size.h && {
                 height: size.h,
               },

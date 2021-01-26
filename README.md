@@ -122,7 +122,7 @@ gulp scrapper:reanalyze:all
   1. Create scrapper file
 
   ```bash
-    cd ./src/server/modules/importer/modules/scrapper/service/scrappers/
+    cd ./src/server/modules/importer/sites/
     mkdir example-scrapper/
     touch example-scrapper/ExampleScrapperGroup.ts
   ```

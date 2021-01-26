@@ -7,6 +7,17 @@ import {extractHostname} from '@shared/helpers/urlExtract';
 
 import {TmpDirService} from '@server/modules/tmp-dir/TmpDir.service';
 import {RemoteWebsiteEntity} from '@server/modules/remote/entity';
+import {WykopAPI} from '@server/modules/importer/sites/wykop/api/WykopAPI';
+import {
+  // GraniceScrappersGroup,
+  // MatrasScrappersGroup,
+  GildiaScrappersGroup,
+  EIsbnScrappersGroup,
+  // LiteraturaGildiaScrappersGroup,
+  // WikipediaScrappersGroup,
+  WykopScrappersGroup,
+  // SkupszopScrappersGroup,
+} from '@server/modules/importer/sites';
 
 import {
   ScrapperMetadataEntity,
@@ -17,18 +28,6 @@ import {
   WebsiteScrapperItemInfo,
   WebsiteScrappersGroup,
 } from './shared';
-
-import {WykopAPI} from './scrappers/wykop/api/WykopAPI';
-import {
-  // GraniceScrappersGroup,
-  // MatrasScrappersGroup,
-  GildiaScrappersGroup,
-  EIsbnScrappersGroup,
-  // LiteraturaGildiaScrappersGroup,
-  // WikipediaScrappersGroup,
-  WykopScrappersGroup,
-  // SkupszopScrappersGroup,
-} from './scrappers';
 
 import {WebsiteInfoScrapperService} from './WebsiteInfoScrapper.service';
 

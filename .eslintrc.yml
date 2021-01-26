@@ -12,6 +12,7 @@
           ['@client', './src/client/'],
           ['@server', './src/server/'],
           ['@scrapper', './src/server/modules/importer/modules/scrapper'],
+          ['@sites', './src/server/modules/importer/sites'],
           ['@shared', './src/shared/'],
           ['@tasks', './src/tasks/'],
           ['@assets', './assets/'],

@@ -77,6 +77,7 @@ const createConfig = ({
         '@shared': resolveSource('shared/'),
         '@tasks': resolveSource('tasks/'),
         '@scrapper': resolveSource('server/modules/importer/modules/scrapper'),
+        '@sites': resolveSource('server/modules/importer/sites'),
         '@assets': path.resolve(__dirname, '../assets/'),
       },
     },

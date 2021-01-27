@@ -13,7 +13,6 @@ import {
 } from '@server/common/helpers';
 
 import {Language} from '@server/constants/language';
-import {BookBindingKind} from '@server/modules/book/modules/release/BookRelease.entity';
 
 import {CreateBookDto} from '@server/modules/book/dto/CreateBook.dto';
 import {CreateBookReleaseDto} from '@server/modules/book/modules/release/dto/CreateBookRelease.dto';
@@ -22,26 +21,21 @@ import {CreateBookPublisherDto} from '@server/modules/book/modules/publisher/dto
 import {CreateImageAttachmentDto} from '@server/modules/attachment/dto';
 import {CreateBookAvailabilityDto} from '@server/modules/book/modules/availability/dto/CreateBookAvailability.dto';
 
+import {
+  BINDING_TRANSLATION_MAPPINGS,
+  BookAvailabilityScrapperMatcher,
+} from '@scrapper/service/scrappers/Book.scrapper';
+
 import {ScrapperMatcherResult, WebsiteScrapperMatcher} from '@scrapper/service/shared/ScrapperMatcher';
 import {MatchRecordAttrs} from '@scrapper/service/shared/WebsiteScrappersGroup';
 import {ScrapperMetadataKind} from '@scrapper/entity/ScrapperMetadata.entity';
 import {BookShopScrappersGroupConfig} from '@scrapper/service/scrappers/BookShopScrappersGroup';
-import {BookAvailabilityScrapperMatcher} from '@scrapper/service/scrappers/Book.scrapper';
 import {LiteraturaGildiaBookAuthorMatcher} from './LiteraturaGildiaBookAuthor.matcher';
 import {LiteraturaGildiaBookPublisherMatcher} from './LiteraturaGildiaBookPublisher.matcher';
 
 export class LiteraturaGildiaBookMatcher
   extends WebsiteScrapperMatcher<CreateBookDto, BookShopScrappersGroupConfig>
   implements BookAvailabilityScrapperMatcher<AsyncURLParseResult> {
-  static readonly bindingMappings = Object.freeze(
-    {
-      /* eslint-disable quote-props */
-      'miękka': BookBindingKind.NOTEBOOK,
-      'twarda': BookBindingKind.HARDCOVER,
-      /* eslint-enable quote-props */
-    },
-  );
-
   /**
    * Search all remote book urls
    *
@@ -126,7 +120,7 @@ export class LiteraturaGildiaBookMatcher
         isbn: normalizeISBN(text.match(/ISBN: ([\w-]+)/)?.[1]),
         totalPages: (+text.match(/Liczba stron: (\d+)/)?.[1]) || null,
         format: normalizeParsedText(text.match(/Format: ([\S]+)/)?.[1]),
-        binding: LiteraturaGildiaBookMatcher.bindingMappings[
+        binding: BINDING_TRANSLATION_MAPPINGS[
           normalizeParsedText(text.match(/Oprawa: ([\S]+)/)?.[1])?.toLowerCase()
         ],
         cover: $coverImage && new CreateImageAttachmentDto(

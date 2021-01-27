@@ -8,3 +8,4 @@ export * from './skupszop';
 export * from './granice';
 export * from './wbibliotece';
 export * from './bonito';
+export * from './dadada';

@@ -37,15 +37,23 @@ OpenSource book reviews aggregator, something like Metacritic / Digg for books. 
 🇵🇱 Poland
 
 - [x] Wykop.pl (#bookmeter tag)
-- [x] Gildia.pl (Literatura Gildia)
+- [x] Gildia.pl
+- [x] Literatura Gildia
 - [x] Granice.pl
 - [x] Matras.pl
+- [x] Bonito.pl
+- [x] Skupszop.pl
+- [ ] Dadada.pl
+- [ ] Aros.pl
+- [ ] Taniaksiazka.pl
+- [ ] Tantis.pl
+- [ ] Gandalf.com
 - [ ] Wolnelektury.pl
 - [ ] Booklips.pl
 - [ ] Swiatksiazki.pl
 - [ ] Allegro.pl
-- [ ] Skupszop.pl
 - [ ] wbibliotece.pl
+- [ ] Amazon.com
 
 🌍 World
 

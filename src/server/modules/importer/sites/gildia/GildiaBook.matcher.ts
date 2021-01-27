@@ -12,7 +12,6 @@ import {
 } from '@server/common/helpers';
 
 import {Language} from '@server/constants/language';
-import {BookBindingKind} from '@server/modules/book/modules/release/BookRelease.entity';
 import {AsyncURLParseResult} from '@server/common/helpers/fetchAsyncHTML';
 
 import {CreateBookDto} from '@server/modules/book/dto/CreateBook.dto';
@@ -25,22 +24,15 @@ import {CreateImageAttachmentDto} from '@server/modules/attachment/dto/CreateIma
 import {MatchRecordAttrs} from '@scrapper/service/shared/WebsiteScrappersGroup';
 import {WebsiteScrapperMatcher, ScrapperMatcherResult} from '@scrapper/service/shared/ScrapperMatcher';
 
-import {BookAvailabilityScrapperMatcher} from '@scrapper/service/scrappers/Book.scrapper';
 import {BookShopScrappersGroupConfig} from '@scrapper/service/scrappers/BookShopScrappersGroup';
+import {
+  BINDING_TRANSLATION_MAPPINGS,
+  BookAvailabilityScrapperMatcher,
+} from '@scrapper/service/scrappers/Book.scrapper';
 
 export class GildiaBookMatcher
   extends WebsiteScrapperMatcher<CreateBookDto, BookShopScrappersGroupConfig>
   implements BookAvailabilityScrapperMatcher<AsyncURLParseResult> {
-  static readonly bindingMappings = Object.freeze(
-    {
-      /* eslint-disable quote-props */
-      'miękka ze skrzydełkami': BookBindingKind.NOTEBOOK,
-      'miękka': BookBindingKind.NOTEBOOK,
-      'twarda': BookBindingKind.HARDCOVER,
-      /* eslint-enable quote-props */
-    },
-  );
-
   searchAvailability({$, url}: AsyncURLParseResult): Promise<CreateBookAvailabilityDto[]> {
     const $basicProductInfo = $('.basic-product-info');
 
@@ -144,7 +136,7 @@ export class GildiaBookMatcher
         format: normalizeParsedText(basicProps['format']),
         publishDate: normalizeParsedText(basicProps['data wydania']),
         translator: normalizeParsedText(basicProps['tłumacz']),
-        binding: GildiaBookMatcher.bindingMappings[
+        binding: BINDING_TRANSLATION_MAPPINGS[
           normalizeParsedText(basicProps['oprawa'])?.toLowerCase()
         ],
         publisher: new CreateBookPublisherDto(

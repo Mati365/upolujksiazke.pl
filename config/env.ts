@@ -41,6 +41,7 @@ export type AppEnv = Partial<{
       bonito: BookShopUrlsConfig,
       granice: BookShopUrlsConfig,
       skupszop: BookShopUrlsConfig,
+      dadada: BookShopUrlsConfig,
       wykop: {
         homepageURL: string,
         authConfig: WykopAPIAuthParams,
@@ -139,6 +140,9 @@ export const GLOBAL_CONFIG: Record<string, AppEnv> = {
         skupszop: {
           homepageURL: 'https://skupszop.pl/',
           searchURL: 'https://skupszop.pl/wyszukiwarka',
+        },
+        dadada: {
+          homepageURL: 'https://dadada.pl/',
         },
         granice: {
           homepageURL: 'https://www.granice.pl/',

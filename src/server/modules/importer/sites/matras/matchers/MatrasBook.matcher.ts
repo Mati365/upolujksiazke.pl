@@ -8,7 +8,6 @@ import {
 } from '@server/common/helpers';
 
 import {Language} from '@server/constants/language';
-import {BookBindingKind} from '@server/modules/book/modules/release/BookRelease.entity';
 import {AsyncURLParseResult} from '@server/common/helpers/fetchAsyncHTML';
 
 import {CreateBookAuthorDto} from '@server/modules/book/modules/author/dto/CreateBookAuthor.dto';
@@ -18,25 +17,20 @@ import {CreateBookPublisherDto} from '@server/modules/book/modules/publisher/dto
 import {CreateImageAttachmentDto} from '@server/modules/attachment/dto';
 import {CreateBookAvailabilityDto} from '@server/modules/book/modules/availability/dto/CreateBookAvailability.dto';
 
+import {
+  BINDING_TRANSLATION_MAPPINGS,
+  BookAvailabilityScrapperMatcher,
+} from '@scrapper/service/scrappers/Book.scrapper';
+
 import {ScrapperMetadataKind} from '@scrapper/entity/ScrapperMetadata.entity';
 import {MatchRecordAttrs} from '@scrapper/service/shared/WebsiteScrappersGroup';
 import {WebsiteScrapperMatcher, ScrapperMatcherResult} from '@scrapper/service/shared/ScrapperMatcher';
 import {BookShopScrappersGroupConfig} from '@scrapper/service/scrappers/BookShopScrappersGroup';
-import {BookAvailabilityScrapperMatcher} from '@scrapper/service/scrappers/Book.scrapper';
 import {MatrasBookAuthorMatcher} from './MatrasBookAuthor.matcher';
 
 export class MatrasBookMatcher
   extends WebsiteScrapperMatcher<CreateBookDto, BookShopScrappersGroupConfig>
   implements BookAvailabilityScrapperMatcher<AsyncURLParseResult> {
-  static readonly bindingMappings = Object.freeze(
-    {
-      /* eslint-disable quote-props */
-      'miękka': BookBindingKind.NOTEBOOK,
-      'twarda': BookBindingKind.HARDCOVER,
-      /* eslint-enable quote-props */
-    },
-  );
-
   searchAvailability({$, url}: AsyncURLParseResult): Promise<CreateBookAvailabilityDto[]> {
     return Promise.resolve([
       new CreateBookAvailabilityDto(
@@ -105,7 +99,7 @@ export class MatrasBookMatcher
           publishDate: normalizeParsedText(detailsText.match(/Rok wydania:\s*(\S+)/)?.[1]),
           defaultPrice: normalizePrice(detailsText.match(/Cena katalogowa:\s*(\S+)/)?.[1])?.price,
           translator: normalizeParsedText(detailsText.match(/Tłumaczenie:\s*(\S+\s\S+)/)?.[1]),
-          binding: MatrasBookMatcher.bindingMappings[
+          binding: BINDING_TRANSLATION_MAPPINGS[
             normalizeParsedText(detailsText.match(/Oprawa\s*(\S+)/)?.[1])?.toLowerCase()
           ],
           publisher: this.extractPublisher($),

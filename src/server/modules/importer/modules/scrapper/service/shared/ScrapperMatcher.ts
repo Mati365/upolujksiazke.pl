@@ -97,13 +97,20 @@ export abstract class WebsiteScrapperMatcher<
    * @memberof WebsiteScrapperMatcher
    */
   protected async fetchPageBySearch(queryParams: object|string) {
-    const {config: {searchURL}} = this;
+    const {
+      config: {
+        searchURL,
+        homepageURL,
+      },
+    } = this;
+
+    const prependURL = searchURL ?? homepageURL;
     let url: string = null;
 
     if (typeof queryParams === 'string')
-      url = concatUrls(searchURL, queryParams);
+      url = concatUrls(prependURL, queryParams);
     else
-      url = buildURL(searchURL, queryParams);
+      url = buildURL(prependURL, queryParams);
 
     return parseAsyncURLIfOK(url);
   }

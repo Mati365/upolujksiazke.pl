@@ -16,8 +16,10 @@ import {MatchRecordAttrs} from '@scrapper/service/shared/WebsiteScrappersGroup';
 import {WebsiteScrapperMatcher, ScrapperMatcherResult} from '@scrapper/service/shared/ScrapperMatcher';
 import {BookShopScrappersGroupConfig} from '@scrapper/service/scrappers/BookShopScrappersGroup';
 import {AsyncURLParseResult} from '@server/common/helpers/fetchAsyncHTML';
-import {BookAvailabilityScrapperMatcher} from '@scrapper/service/scrappers/Book.scrapper';
-import {BookBindingKind} from '@server/modules/book/modules/release/BookRelease.entity';
+import {
+  BINDING_TRANSLATION_MAPPINGS,
+  BookAvailabilityScrapperMatcher,
+} from '@scrapper/service/scrappers/Book.scrapper';
 
 /**
  * @todo
@@ -31,15 +33,6 @@ import {BookBindingKind} from '@server/modules/book/modules/release/BookRelease.
 export class BonitoBookMatcher
   extends WebsiteScrapperMatcher<CreateBookDto, BookShopScrappersGroupConfig>
   implements BookAvailabilityScrapperMatcher<AsyncURLParseResult> {
-  static readonly bindingMappings = Object.freeze(
-    {
-      /* eslint-disable quote-props */
-      'miękka': BookBindingKind.NOTEBOOK,
-      'twarda': BookBindingKind.HARDCOVER,
-      /* eslint-enable quote-props */
-    },
-  );
-
   searchAvailability({$, url}: AsyncURLParseResult): Promise<CreateBookAvailabilityDto[]> {
     return Promise.resolve(
       [
@@ -79,7 +72,7 @@ export class BonitoBookMatcher
         publishDate: basicProps['rok wydania'],
         isbn: normalizeISBN(basicProps['numer isbn']),
         weight: Number.parseInt(basicProps['waga'], 10),
-        binding: BonitoBookMatcher.bindingMappings[
+        binding: BINDING_TRANSLATION_MAPPINGS[
           normalizeParsedText(basicProps['oprawa'])?.toLowerCase()
         ],
         publisher: new CreateBookPublisherDto(

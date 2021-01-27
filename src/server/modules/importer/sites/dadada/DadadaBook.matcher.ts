@@ -1,13 +1,15 @@
-import {escapeIso88592} from '@server/common/helpers/encoding/escapeIso88592';
-import {AsyncURLParseResult} from '@server/common/helpers/fetchAsyncHTML';
-import {fuzzyFindBookAnchor} from '@scrapper/helpers/fuzzyFindBookAnchor';
+import * as R from 'ramda';
+
+import {fuzzyFindBookAnchor} from '@scrapper/helpers';
 import {
   normalizeISBN,
   normalizeParsedText,
+  normalizePrice,
   normalizeURL,
 } from '@server/common/helpers';
 
 import {Language} from '@server/constants/language';
+import {AsyncURLParseResult} from '@server/common/helpers/fetchAsyncHTML';
 
 import {CreateBookAuthorDto} from '@server/modules/book/modules/author/dto/CreateBookAuthor.dto';
 import {CreateBookDto} from '@server/modules/book/dto/CreateBook.dto';
@@ -20,9 +22,12 @@ import {CreateBookAvailabilityDto} from '@server/modules/book/modules/availabili
 import {ScrapperMatcherResult, WebsiteScrapperMatcher} from '@scrapper/service/shared/ScrapperMatcher';
 import {MatchRecordAttrs} from '@scrapper/service/shared/WebsiteScrappersGroup';
 import {BookShopScrappersGroupConfig} from '@scrapper/service/scrappers/BookShopScrappersGroup';
-import {BookAvailabilityScrapperMatcher} from '@scrapper/service/scrappers/Book.scrapper';
+import {
+  BINDING_TRANSLATION_MAPPINGS,
+  BookAvailabilityScrapperMatcher,
+} from '@scrapper/service/scrappers/Book.scrapper';
 
-export class GraniceBookMatcher
+export class DadadaBookMatcher
   extends WebsiteScrapperMatcher<CreateBookDto, BookShopScrappersGroupConfig>
   implements BookAvailabilityScrapperMatcher<AsyncURLParseResult> {
   /**
@@ -30,14 +35,18 @@ export class GraniceBookMatcher
    *
    * @param {AsyncURLParseResult} {$, url}
    * @returns {Promise<CreateBookAvailabilityDto[]>}
-   * @memberof GraniceBookMatcher
+   * @memberof DadadaBookMatcher
    */
   searchAvailability({$, url}: AsyncURLParseResult): Promise<CreateBookAvailabilityDto[]> {
-    const remoteId = $('#book_id.detailsbig').attr('book-id');
+    const remoteId = $('form#FormaRate > input[name="Id"]').val();
 
     return Promise.resolve([
       new CreateBookAvailabilityDto(
         {
+          price: normalizePrice($('.productPromo .productFinalPrice').text())?.price,
+          prevPrice: normalizePrice($('.productPromo .productBasePrice').text())?.price,
+          avgRating: Number.parseFloat($('[data-rateit-value]').attr('rateitValue')) || null,
+          totalRatings: +$('.reviewCount[onclick]').text()?.match(/\(\d+\)/)[1] || null,
           showOnlyAsQuote: true,
           remoteId,
           url,
@@ -49,34 +58,20 @@ export class GraniceBookMatcher
   /**
    * @inheritdoc
    */
+  /* eslint-disable @typescript-eslint/dot-notation */
   async searchRemoteRecord({data}: MatchRecordAttrs<CreateBookDto>): Promise<ScrapperMatcherResult<CreateBookDto>> {
     const bookPage = await this.searchByPhrase(data);
     if (!bookPage)
       return null;
 
     const {$} = bookPage;
-    const $content = $('.web > .sub > .column1');
-    const $details = $content.find('#book_id.detailsbig');
-    const [detailsText, detailsHTML] = [$details.text(), $details.html()];
+    const basicProps = DadadaBookMatcher.extractBookProps($);
 
-    const title = normalizeParsedText($content.find('h1 > [itemprop="name"]').text());
-
-    const categories = (
-      (normalizeParsedText(detailsText.match(/Kategoria: ([\S]+)/)?.[1]) || '')
-        .split(',')
-        .map((item) => item.trim())
-        .filter(Boolean)
-        .map((name) => new CreateBookCategoryDto(
-          {
-            name,
-          },
-        ))
-    );
-
-    const authors = $details.find('[itemprop="author"]').text().split(',').map(
-      (name) => new CreateBookAuthorDto(
+    const title = normalizeParsedText($('h1.productName').text());
+    const authors = $(basicProps['liczba stron'][1]).find('a').toArray().map(
+      (author) => new CreateBookAuthorDto(
         {
-          name: normalizeParsedText(name),
+          name: normalizeParsedText($(author).text()),
         },
       ),
     );
@@ -85,21 +80,21 @@ export class GraniceBookMatcher
       {
         title,
         lang: Language.PL,
-        description: normalizeParsedText($content.find('> .desc > p:not(:empty):not(.tags)').text()),
-        totalPages: +$details.find('span[itemprop="numberOfPages"]').text() || null,
-        publishDate: normalizeParsedText(detailsText.match(/Data wydania: ([\S]+)/)?.[1]),
-        isbn: normalizeISBN(
-          $details.find('isbn[itemprop="isbn"]').text(),
-        ),
+        description: normalizeParsedText($('.productDescriptionContent').text()),
+        totalPages: +basicProps['liczba stron'][0] || null,
+        format: basicProps['format'][0],
+        publishDate: basicProps['rok wydania'][0],
+        isbn: normalizeISBN(basicProps['isbn'][0]),
+        binding: BINDING_TRANSLATION_MAPPINGS[basicProps['oprawa']?.[0]?.toLowerCase()],
         publisher: new CreateBookPublisherDto(
           {
-            name: normalizeParsedText($details.find('[itemprop="publisher"] > a').text()),
+            name: basicProps['wydawca'][0],
           },
         ),
         cover: new CreateImageAttachmentDto(
           {
             originalUrl: normalizeURL(
-              $details.find('[itemprop="image"]').attr('src'),
+              $('.productPhoto > #imgSmall').attr('originalphotopath'),
             ),
           },
         ),
@@ -110,14 +105,52 @@ export class GraniceBookMatcher
       result: new CreateBookDto(
         {
           defaultTitle: title,
-          originalTitle: normalizeParsedText(detailsHTML.match(/Tytuł oryginału: ([^\n<>]+)/)?.[1]),
           availability: await this.searchAvailability(bookPage),
           authors,
           releases: [release],
-          categories,
+          categories: $('#breadCrumbs > .breadCrumbsItem:not(:first-child) > a .name').toArray().map(
+            (name) => new CreateBookCategoryDto(
+              {
+                name: $(name).text(),
+              },
+            ),
+          ),
         },
       ),
     };
+  }
+  /* eslint-enable @typescript-eslint/dot-notation */
+
+  /**
+   * Extract info about book from table
+   *
+   * @static
+   * @param {cheerio.Root} $
+   * @returns {Record<string, [string, cheerio.Cheerio]>}
+   * @memberof DadadaBookMatcher
+   */
+  static extractBookProps($: cheerio.Root): Record<string, [string, cheerio.Cheerio]> {
+    const rows = (
+      $('.productDataDetails > .productDataItem')
+        .toArray()
+    );
+
+    return R.fromPairs(
+      rows.map(
+        (row) => {
+          const $row = $(row);
+          const $value = $row.children().eq(0);
+
+          return [
+            normalizeParsedText($row.text()).match(/^([^:]+)/)[1]?.toLowerCase(),
+            [
+              normalizeParsedText($value.text()),
+              $value,
+            ],
+          ];
+        },
+      ),
+    );
   }
 
   /**
@@ -125,11 +158,13 @@ export class GraniceBookMatcher
    *
    * @private
    * @param {CreateBookDto} scrapperInfo
-   * @memberof GraniceBookMatcher
+   * @memberof DadadaBookMatcher
    */
   private async searchByPhrase({authors, title}: CreateBookDto) {
     const $ = (await this.fetchPageBySearch(
-      `?search=${escapeIso88592(`${title} ${authors[0].name}`)}`,
+      {
+        filter: title,
+      },
     ))?.$;
 
     if (!$)
@@ -137,21 +172,21 @@ export class GraniceBookMatcher
 
     const matchedAnchor = fuzzyFindBookAnchor(
       {
-        $: $('[book-id]'),
+        $: $('#productList > .productContainer'),
         book: {
           title,
           author: authors[0].name,
         },
         anchorSelector: (anchor) => ({
-          title: $(anchor).find('.cont > .title').text(),
-          author: $(anchor).find('.cont > .details > .author').text(),
+          title: $(anchor).find('.productContainerDataValues > a > .productContainerDataName').text(),
+          author: $(anchor).find('.productContainerDataAuthor a:first-child').text(),
         }),
       },
     );
 
     return matchedAnchor && this.fetchPageByPath(
       $(matchedAnchor)
-        .find('a.title[href^="/ksiazka/"]')
+        .find('.productContainerDataValues > a')
         .attr('href'),
     );
   }

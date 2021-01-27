@@ -1,6 +1,5 @@
 import {escapeIso88592} from '@server/common/helpers/encoding/escapeIso88592';
-import {concatUrls} from '@shared/helpers/concatUrls';
-import {AsyncURLParseResult, parseAsyncURLIfOK} from '@server/common/helpers/fetchAsyncHTML';
+import {AsyncURLParseResult} from '@server/common/helpers/fetchAsyncHTML';
 import {fuzzyFindBookAnchor} from '@scrapper/helpers/fuzzyFindBookAnchor';
 import {
   normalizeISBN,
@@ -105,19 +104,17 @@ export class GraniceBookMatcher
       },
     );
 
-    const result = new CreateBookDto(
-      {
-        defaultTitle: title,
-        originalTitle: normalizeParsedText(detailsHTML.match(/Tytuł oryginału: ([^\n<>]+)/)?.[1]),
-        availability: await this.searchAvailability(bookPage),
-        authors: [author],
-        releases: [release],
-        categories,
-      },
-    );
-
     return {
-      result,
+      result: new CreateBookDto(
+        {
+          defaultTitle: title,
+          originalTitle: normalizeParsedText(detailsHTML.match(/Tytuł oryginału: ([^\n<>]+)/)?.[1]),
+          availability: await this.searchAvailability(bookPage),
+          authors: [author],
+          releases: [release],
+          categories,
+        },
+      ),
     };
   }
 
@@ -129,15 +126,9 @@ export class GraniceBookMatcher
    * @memberof GraniceBookMatcher
    */
   private async searchByPhrase({authors, title}: CreateBookDto) {
-    const {config} = this;
-    const $ = (
-      await parseAsyncURLIfOK(
-        concatUrls(
-          config.searchURL,
-          `?search=${escapeIso88592(`${title} ${authors[0].name}`)}`,
-        ),
-      )
-    )?.$;
+    const $ = (await this.fetchPageBySearch(
+      `?search=${escapeIso88592(`${title} ${authors[0].name}`)}`,
+    ))?.$;
 
     if (!$)
       return null;
@@ -156,7 +147,7 @@ export class GraniceBookMatcher
       },
     );
 
-    return matchedAnchor && this.searchByPath(
+    return matchedAnchor && this.fetchPageByPath(
       $(matchedAnchor)
         .find('a.title[href^="/ksiazka/"]')
         .attr('href'),

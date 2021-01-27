@@ -84,21 +84,19 @@ export class LiteraturaGildiaBookMatcher
       ],
     );
 
-    const result = new CreateBookDto(
-      {
-        defaultTitle: release.title,
-        originalPublishDate: normalizeParsedText(text.match(/Rok wydania oryginału: ([\S]+)/)?.[1]),
-        authors: [
-          author,
-        ],
-        releases: [
-          release,
-        ],
-      },
-    );
-
     return {
-      result,
+      result: new CreateBookDto(
+        {
+          defaultTitle: release.title,
+          originalPublishDate: normalizeParsedText(text.match(/Rok wydania oryginału: ([\S]+)/)?.[1]),
+          authors: [
+            author,
+          ],
+          releases: [
+            release,
+          ],
+        },
+      ),
     };
   }
 
@@ -201,7 +199,7 @@ export class LiteraturaGildiaBookMatcher
    * @memberof LiteraturaGildiaBookMatcher
    */
   private directSearch({authors, title}: CreateBookDto) {
-    return this.searchByPath(
+    return this.fetchPageByPath(
       `tworcy/${underscoreParameterize(authors[0].name)}/${underscoreParameterize(title)}`,
     );
   }
@@ -216,7 +214,7 @@ export class LiteraturaGildiaBookMatcher
    */
   private async searchByFirstLetter({title}: CreateBookDto) {
     const $ = (
-      await this.searchByPath(`ksiazki,${LiteraturaGildiaBookMatcher.getFilterFirstLetter(title)}`)
+      await this.fetchPageByPath(`ksiazki,${LiteraturaGildiaBookMatcher.getFilterFirstLetter(title)}`)
     )?.$;
 
     if (!$)
@@ -234,7 +232,7 @@ export class LiteraturaGildiaBookMatcher
       },
     );
 
-    return matchedAnchor && this.searchByPath(
+    return matchedAnchor && this.fetchPageByPath(
       $(matchedAnchor).attr('href'),
     );
   }

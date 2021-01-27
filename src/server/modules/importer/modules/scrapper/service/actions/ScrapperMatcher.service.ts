@@ -12,6 +12,9 @@ export class ScrapperMatcherService {
   /**
    * Iterate sequentially over scrappers and tries
    *
+   * @todo
+   *   Use Promise.all and pool!
+   *
    * @template R Result type
    * @param {MatchRecordAttrs} attrs
    * @returns {Promise<R>}

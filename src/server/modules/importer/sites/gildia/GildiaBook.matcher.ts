@@ -1,6 +1,6 @@
 import * as R from 'ramda';
 
-import {buildURL, countLetter} from '@shared/helpers';
+import {countLetter} from '@shared/helpers';
 import {fuzzyFindBookAnchor} from '@scrapper/helpers/fuzzyFindBookAnchor';
 
 import {
@@ -13,7 +13,7 @@ import {
 
 import {Language} from '@server/constants/language';
 import {BookBindingKind} from '@server/modules/book/modules/release/BookRelease.entity';
-import {AsyncURLParseResult, parseAsyncURLIfOK} from '@server/common/helpers/fetchAsyncHTML';
+import {AsyncURLParseResult} from '@server/common/helpers/fetchAsyncHTML';
 
 import {CreateBookDto} from '@server/modules/book/dto/CreateBook.dto';
 import {CreateBookAuthorDto} from '@server/modules/book/modules/author/dto/CreateBookAuthor.dto';
@@ -172,17 +172,11 @@ export class GildiaBookMatcher
    * @memberof GildiaBookMatcher
    */
   private async searchByPhrase({title, authors}: CreateBookDto) {
-    const {config} = this;
-    const $ = (
-      await parseAsyncURLIfOK(
-        buildURL(
-          config.searchURL,
-          {
-            q: title, // it works a bit better without author
-          },
-        ),
-      )
-    )?.$;
+    const $ = (await this.fetchPageBySearch(
+      {
+        q: title, // it works a bit better without author
+      },
+    ))?.$;
 
     const matchedAnchor = fuzzyFindBookAnchor(
       {
@@ -202,7 +196,7 @@ export class GildiaBookMatcher
       },
     );
 
-    return matchedAnchor && this.searchByPath(
+    return matchedAnchor && this.fetchPageByPath(
       $(matchedAnchor).find('.title .pjax').attr('href'),
     );
   }

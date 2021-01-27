@@ -38,8 +38,8 @@ export function fuzzyFindBookAnchor(
         .map((el): [number, cheerio.Element] => {
           const selected = <BookSimilarityFields> normalizeObjFields(anchorSelector(el));
           const similarity = (
-            stringSimilarity.compareTwoStrings(lowerTitle, selected.title)
-              * (selected.author ? stringSimilarity.compareTwoStrings(lowerAuthor, selected.author) : 1)
+            stringSimilarity.compareTwoStrings(lowerTitle || '', selected.title || '')
+              * (selected.author ? stringSimilarity.compareTwoStrings(lowerAuthor || '', selected.author || '') : 1)
           );
 
           return (

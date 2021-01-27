@@ -30,3 +30,4 @@ export * from './escapeDiacritics';
 export * from './removeSpecialCharacters';
 export * from './convert';
 export * from './countLetter';
+export * from './safeJsonParse';

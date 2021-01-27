@@ -92,7 +92,7 @@ export function convertOnixToBookDto(onix: OnixBookFormat): CreateBookDto {
   if (!Contributor?.PersonNameInverted || !TitleDetail)
     return null;
 
-  const result = new CreateBookDto(
+  return new CreateBookDto(
     {
       defaultTitle: TitleDetail.TitleElement.TitleText,
       tags: [],
@@ -113,6 +113,4 @@ export function convertOnixToBookDto(onix: OnixBookFormat): CreateBookDto {
       ],
     },
   );
-
-  return result;
 }

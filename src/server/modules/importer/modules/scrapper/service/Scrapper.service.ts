@@ -5,18 +5,18 @@ import {classToPlain} from 'class-transformer';
 import {SERVER_ENV} from '@server/constants/env';
 import {extractHostname} from '@shared/helpers/urlExtract';
 
-import {TmpDirService} from '@server/modules/tmp-dir/TmpDir.service';
+// import {TmpDirService} from '@server/modules/tmp-dir/TmpDir.service';
 import {RemoteWebsiteEntity} from '@server/modules/remote/entity';
 import {WykopAPI} from '@server/modules/importer/sites/wykop/api/WykopAPI';
 import {
-  GraniceScrappersGroup,
-  MatrasScrappersGroup,
-  GildiaScrappersGroup,
-  EIsbnScrappersGroup,
-  LiteraturaGildiaScrappersGroup,
+  // GraniceScrappersGroup,
+  // MatrasScrappersGroup,
+  // GildiaScrappersGroup,
+  // EIsbnScrappersGroup,
+  // LiteraturaGildiaScrappersGroup,
   // WikipediaScrappersGroup,
   WykopScrappersGroup,
-  // SkupszopScrappersGroup,
+  SkupszopScrappersGroup,
 } from '@server/modules/importer/sites';
 
 import {
@@ -39,14 +39,14 @@ export class ScrapperService {
 
   constructor(
     private readonly websiteInfoService: WebsiteInfoScrapperService,
-    tmpDirService: TmpDirService,
+    // tmpDirService: TmpDirService,
   ) {
     this.scrappersGroups = [
-      // new SkupszopScrappersGroup(PARSERS_ENV.skupszop),
-      new GildiaScrappersGroup(PARSERS_ENV.gildia),
-      new GraniceScrappersGroup(PARSERS_ENV.granice),
-      new LiteraturaGildiaScrappersGroup(PARSERS_ENV.literaturaGildia),
-      new MatrasScrappersGroup(PARSERS_ENV.matras), // sucky DB
+      new SkupszopScrappersGroup(PARSERS_ENV.skupszop),
+      // new GildiaScrappersGroup(PARSERS_ENV.gildia),
+      // new GraniceScrappersGroup(PARSERS_ENV.granice),
+      // new LiteraturaGildiaScrappersGroup(PARSERS_ENV.literaturaGildia),
+      // new MatrasScrappersGroup(PARSERS_ENV.matras), // sucky DB
       new WykopScrappersGroup(
         {
           homepageURL: PARSERS_ENV.wykop.homepageURL,
@@ -58,15 +58,15 @@ export class ScrapperService {
         },
       ),
       // new WikipediaScrappersGroup(PARSERS_ENV.wikipedia),
-      new EIsbnScrappersGroup(
-        {
-          ...PARSERS_ENV.eisbn,
-          tmp: {
-            ...PARSERS_ENV.eisbn.tmp,
-            dirService: tmpDirService,
-          },
-        },
-      ),
+      // new EIsbnScrappersGroup(
+      //   {
+      //     ...PARSERS_ENV.eisbn,
+      //     tmp: {
+      //       ...PARSERS_ENV.eisbn.tmp,
+      //       dirService: tmpDirService,
+      //     },
+      //   },
+      // ),
     ];
   }
 

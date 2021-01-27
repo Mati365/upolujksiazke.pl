@@ -1,4 +1,3 @@
-import {buildURL} from '@shared/helpers';
 import {fuzzyFindBookAnchor} from '@scrapper/helpers/fuzzyFindBookAnchor';
 import {
   normalizeISBN,
@@ -10,7 +9,7 @@ import {
 
 import {Language} from '@server/constants/language';
 import {BookBindingKind} from '@server/modules/book/modules/release/BookRelease.entity';
-import {AsyncURLParseResult, parseAsyncURLIfOK} from '@server/common/helpers/fetchAsyncHTML';
+import {AsyncURLParseResult} from '@server/common/helpers/fetchAsyncHTML';
 
 import {CreateBookAuthorDto} from '@server/modules/book/modules/author/dto/CreateBookAuthor.dto';
 import {CreateBookDto} from '@server/modules/book/dto/CreateBook.dto';
@@ -42,7 +41,7 @@ export class MatrasBookMatcher
     return Promise.resolve([
       new CreateBookAvailabilityDto(
         {
-          showOnlyAsQuote: true,
+          showOnlyAsQuote: false,
           remoteId: $('.buy[data-id]').data('id'),
           prevPrice: normalizePrice($('.lastPrice').text())?.price,
           price: $('[data-price-current]').data('priceCurrent'),
@@ -197,17 +196,11 @@ export class MatrasBookMatcher
    * @memberof MatrasBookMatcher
    */
   private async searchByPhrase({title, authors}: CreateBookDto) {
-    const {config} = this;
-    const $ = (
-      await parseAsyncURLIfOK(
-        buildURL(
-          config.searchURL,
-          {
-            szukaj: `${title} ${authors[0].name}`,
-          },
-        ),
-      )
-    )?.$;
+    const $ = (await this.fetchPageBySearch(
+      {
+        szukaj: `${title} ${authors[0].name}`,
+      },
+    ))?.$;
 
     const matchedAnchor = fuzzyFindBookAnchor(
       {
@@ -227,7 +220,7 @@ export class MatrasBookMatcher
       },
     );
 
-    return matchedAnchor && this.searchByPath(
+    return matchedAnchor && this.fetchPageByPath(
       $(matchedAnchor).find('a.show').attr('href'),
     );
   }

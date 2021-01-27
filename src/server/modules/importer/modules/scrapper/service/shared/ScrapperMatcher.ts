@@ -1,5 +1,6 @@
 import * as R from 'ramda';
 
+import {buildURL} from '@shared/helpers/urlEncoder';
 import {parseAsyncURLIfOK} from '@server/common/helpers/fetchAsyncHTML';
 import {concatUrls} from '@shared/helpers/concatUrls';
 
@@ -42,6 +43,7 @@ export abstract class ScrapperMatcher<Type> implements ScrapperGroupChild, Scrap
 
 export type BaseWebsiteMatcherConfig = {
   homepageURL?: string,
+  searchURL?: string,
 };
 
 /**
@@ -72,7 +74,7 @@ export abstract class WebsiteScrapperMatcher<
    * @returns
    * @memberof WebsiteScrapperMatcher
    */
-  protected async searchByPath(path: string) {
+  protected async fetchPageByPath(path: string) {
     const {config: {homepageURL}} = this;
 
     if (!path)
@@ -84,5 +86,25 @@ export abstract class WebsiteScrapperMatcher<
         R.partial(concatUrls, [homepageURL]),
       )(path),
     );
+  }
+
+  /**
+   * Fetches result of search
+   *
+   * @protected
+   * @param {object|string} queryParams
+   * @returns
+   * @memberof WebsiteScrapperMatcher
+   */
+  protected async fetchPageBySearch(queryParams: object|string) {
+    const {config: {searchURL}} = this;
+    let url: string = null;
+
+    if (typeof queryParams === 'string')
+      url = concatUrls(searchURL, queryParams);
+    else
+      url = buildURL(searchURL, queryParams);
+
+    return parseAsyncURLIfOK(url);
   }
 }

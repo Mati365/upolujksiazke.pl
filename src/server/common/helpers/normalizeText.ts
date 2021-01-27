@@ -41,11 +41,11 @@ export function normalizePrice(str: string) {
     normalizeParsedText(str),
   );
 
-  if (R.isNil(value) || R.isNil(currency))
+  if (R.isNil(value) && R.isNil(currency))
     return null;
 
   return {
     price: Number.parseFloat(value.replace(',', '.')), // it should be decimal?
-    currency: currency.toLowerCase(),
+    currency: currency?.toLowerCase(),
   };
 }

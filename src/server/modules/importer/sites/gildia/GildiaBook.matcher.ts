@@ -76,11 +76,11 @@ export class GildiaBookMatcher
     if (!bookPage)
       return null;
 
-    const release = this.extractRelease(bookPage.$);
+    const release = GildiaBookMatcher.extractRelease(bookPage.$);
     return {
       result: new CreateBookDto(
         {
-          authors: this.extractAuthors(bookPage.$),
+          authors: GildiaBookMatcher.extractAuthors(bookPage.$),
           defaultTitle: release.title,
           availability: await this.searchAvailability(bookPage),
           releases: [
@@ -94,11 +94,11 @@ export class GildiaBookMatcher
   /**
    * Extracts multiple book authors from page
    *
-   * @private
+   * @static
    * @param {cheerio.Root} $
    * @memberof GildiaBookMatcher
    */
-  private extractAuthors($: cheerio.Root) {
+  static extractAuthors($: cheerio.Root) {
     return $('.basic-product-info > a[href^="/szukaj/osoba/"]').toArray().map(
       (el) => new CreateBookAuthorDto(
         {
@@ -111,12 +111,12 @@ export class GildiaBookMatcher
   /**
    * Pick release info from fetched page
    *
-   * @private
+   * @static
    * @param {cheerio.Root} $
    * @returns
    * @memberof GildiaBookMatcher
    */
-  private extractRelease($: cheerio.Root) {
+  static extractRelease($: cheerio.Root) {
     const basicProps = R.fromPairs(
       $('.basic-product-info > li')
         .toArray()

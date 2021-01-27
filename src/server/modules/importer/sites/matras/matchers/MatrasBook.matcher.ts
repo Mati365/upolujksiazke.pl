@@ -62,7 +62,7 @@ export class MatrasBookMatcher
     const {
       detailsText,
       release,
-    } = this.extractRelease(bookPage.$);
+    } = MatrasBookMatcher.extractRelease(bookPage.$);
 
     return {
       result: new CreateBookDto(
@@ -83,12 +83,12 @@ export class MatrasBookMatcher
   /**
    * Pick release info from fetched page
    *
-   * @private
+   * @static
    * @param {cheerio.Root} $
    * @returns
    * @memberof MatrasBookMatcher
    */
-  private extractRelease($: cheerio.Root) {
+  static extractRelease($: cheerio.Root) {
     const detailsText = $('#con-notes > div.colsInfo').text();
 
     return {
@@ -124,12 +124,12 @@ export class MatrasBookMatcher
   /**
    * Reads publisher name and logo
    *
-   * @private
+   * @static
    * @param {cheerio.Root} $
    * @returns
    * @memberof MatrasBookMatcher
    */
-  private extractPublisher($: cheerio.Root) {
+  static extractPublisher($: cheerio.Root) {
     const publisherContainer = $('#con-notes > div.colsInfo > div.col-lg-2.col-md-2.col-sm-4.col-xs-12.col-1');
     const logo = publisherContainer.find('img');
 

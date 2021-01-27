@@ -38,6 +38,7 @@ export type AppEnv = Partial<{
       literaturaGildia: BookShopUrlsConfig,
       gildia: BookShopUrlsConfig,
       matras: BookShopUrlsConfig,
+      bonito: BookShopUrlsConfig,
       granice: BookShopUrlsConfig,
       skupszop: BookShopUrlsConfig,
       wykop: {
@@ -154,6 +155,9 @@ export const GLOBAL_CONFIG: Record<string, AppEnv> = {
         matras: {
           homepageURL: 'https://www.matras.pl',
           searchURL: 'https://www.matras.pl/wyszukiwanie',
+        },
+        bonito: {
+          homepageURL: 'https://bonito.pl',
         },
         wikipedia: {
           homepageURL: 'https://pl.wikipedia.org',

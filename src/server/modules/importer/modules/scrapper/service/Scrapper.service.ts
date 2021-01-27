@@ -15,8 +15,9 @@ import {
   // EIsbnScrappersGroup,
   // LiteraturaGildiaScrappersGroup,
   // WikipediaScrappersGroup,
+  // SkupszopScrappersGroup,
+  BonitoScrappersGroup,
   WykopScrappersGroup,
-  SkupszopScrappersGroup,
 } from '@server/modules/importer/sites';
 
 import {
@@ -42,7 +43,8 @@ export class ScrapperService {
     // tmpDirService: TmpDirService,
   ) {
     this.scrappersGroups = [
-      new SkupszopScrappersGroup(PARSERS_ENV.skupszop),
+      new BonitoScrappersGroup(PARSERS_ENV.bonito),
+      // new SkupszopScrappersGroup(PARSERS_ENV.skupszop),
       // new GildiaScrappersGroup(PARSERS_ENV.gildia),
       // new GraniceScrappersGroup(PARSERS_ENV.granice),
       // new LiteraturaGildiaScrappersGroup(PARSERS_ENV.literaturaGildia),

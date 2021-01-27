@@ -97,6 +97,10 @@ export class CreateBookReleaseDto {
   @IsNumber()
   readonly defaultPrice: number;
 
+  @IsOptional()
+  @IsNumber()
+  readonly weight: number;
+
   constructor(partial: Partial<CreateBookReleaseDto>) {
     Object.assign(this, partial);
   }

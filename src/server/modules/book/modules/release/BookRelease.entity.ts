@@ -54,6 +54,9 @@ export class BookReleaseEntity extends DatedRecordEntity {
   @Column('int', {nullable: true})
   totalPages: number;
 
+  @Column('float', {nullable: true})
+  weight: number;
+
   @Column(
     'decimal',
     {

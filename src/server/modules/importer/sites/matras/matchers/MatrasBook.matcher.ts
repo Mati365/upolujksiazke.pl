@@ -98,7 +98,12 @@ export class MatrasBookMatcher
           format: normalizeParsedText(detailsText.match(/Format:\s*(\S+)/)?.[1]),
           publishDate: normalizeParsedText(detailsText.match(/Rok wydania:\s*(\S+)/)?.[1]),
           defaultPrice: normalizePrice(detailsText.match(/Cena katalogowa:\s*(\S+)/)?.[1])?.price,
-          translator: normalizeParsedText(detailsText.match(/Tłumaczenie:\s*(\S+\s\S+)/)?.[1]),
+          translator: (
+            detailsText
+              .match(/Tłumaczenie:\s*(\S+\s\S+)/)?.[1]
+              ?.split(',')
+              .map((str) => normalizeParsedText(str))
+          ),
           binding: BINDING_TRANSLATION_MAPPINGS[
             normalizeParsedText(detailsText.match(/Oprawa\s*(\S+)/)?.[1])?.toLowerCase()
           ],

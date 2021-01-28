@@ -10,3 +10,4 @@ export * from './wbibliotece';
 export * from './bonito';
 export * from './dadada';
 export * from './aros';
+export * from './publio';

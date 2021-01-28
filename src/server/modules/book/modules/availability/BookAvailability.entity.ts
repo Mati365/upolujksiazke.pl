@@ -5,8 +5,14 @@ import {
 
 import {RemoteRecordEntity, RemoteRecordFields} from '@server/modules/remote/entity/RemoteRecord.entity';
 import {BookEntity} from '../../Book.entity';
-import {BookVolumeEntity} from '../volume/BookVolume.entity';
 
+/**
+ * @todo Add book type to unique
+ *
+ * @export
+ * @class BookAvailabilityEntity
+ * @extends {RemoteRecordFields}
+ */
 @RemoteRecordEntity(
   {
     name: 'book_availability',
@@ -14,8 +20,8 @@ import {BookVolumeEntity} from '../volume/BookVolume.entity';
 )
 @Index(['book'])
 @Unique(
-  'book_availability_unique_book_volume_website',
-  ['book', 'volume', 'website'],
+  'book_availability_unique_book_website',
+  ['book', 'website'],
 )
 export class BookAvailabilityEntity extends RemoteRecordFields {
   @Column(
@@ -51,14 +57,6 @@ export class BookAvailabilityEntity extends RemoteRecordFields {
   @Column({nullable: true})
   @RelationId((entity: BookAvailabilityEntity) => entity.book)
   bookId: number;
-
-  @ManyToOne(() => BookVolumeEntity, (entity) => entity.availability, {onDelete: 'CASCADE'})
-  @JoinColumn({name: 'volumeId'})
-  volume: BookVolumeEntity;
-
-  @Column({nullable: true})
-  @RelationId((entity: BookAvailabilityEntity) => entity.volume)
-  volumeId: number;
 
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(partial: Partial<BookAvailabilityEntity>) {

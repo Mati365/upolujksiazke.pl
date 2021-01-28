@@ -1,5 +1,5 @@
 import {Injectable} from '@nestjs/common';
-import {Connection, EntityManager} from 'typeorm';
+import {Connection, EntityManager, In, IsNull} from 'typeorm';
 import * as R from 'ramda';
 
 import {
@@ -13,11 +13,15 @@ import {BookAuthorService} from './modules/author/BookAuthor.service';
 import {BookReleaseService} from './modules/release/BookRelease.service';
 import {BookCategoryService} from './modules/category';
 import {BookAvailabilityService} from './modules/availability/BookAvailability.service';
+import {BookVolumeService} from './modules/volume/BookVolume.service';
+import {BookSeriesService} from './modules/series/BookSeries.service';
+import {BookPrizeService} from './modules/prize/BookPrize.service';
 
 import {CreateBookDto} from './dto/CreateBook.dto';
 import {CreateBookReleaseDto} from './modules/release/dto/CreateBookRelease.dto';
 import {CreateBookAvailabilityDto} from './modules/availability/dto/CreateBookAvailability.dto';
 import {BookEntity} from './Book.entity';
+import {BookVolumeEntity} from './modules/volume/BookVolume.entity';
 
 @Injectable()
 export class BookService {
@@ -28,6 +32,9 @@ export class BookService {
     private readonly releaseService: BookReleaseService,
     private readonly categoryService: BookCategoryService,
     private readonly availabilityService: BookAvailabilityService,
+    private readonly volumeService: BookVolumeService,
+    private readonly seriesService: BookSeriesService,
+    private readonly prizeServices: BookPrizeService,
   ) {}
 
   /**
@@ -60,6 +67,19 @@ export class BookService {
         await availabilityService.delete(entity.availability as any[], transaction);
       }
 
+      await transaction
+        .getRepository(BookVolumeEntity)
+        .createQueryBuilder('b')
+        .leftJoin('b.volumeId = v.id', 'book')
+        .select('b.id as bookId')
+        .where(
+          {
+            id: In(R.pluck('volumeId', entities)),
+            bookId: IsNull(),
+          },
+        )
+        .execute();
+
       await transaction.remove(entities);
     });
   }
@@ -80,15 +100,23 @@ export class BookService {
     return runTransactionWithPostHooks(connection, async (transaction) => {
       const {
         tagService, authorService,
-        releaseService, categoryService,
+        volumeService, releaseService,
+        categoryService, seriesService,
+        prizeServices,
       } = this;
 
       const [
+        volume,
+        series,
+        prizes,
         authors,
         tags,
         categories,
       ] = (
         [
+          dto.volume && await volumeService.upsert(dto.volume),
+          dto.series && await seriesService.upsert(dto.series),
+          dto.prizes && await prizeServices.upsert(dto.prizes),
           await authorService.upsertList(dto.authors, transaction),
           await tagService.upsertList(dto.tags, transaction),
           await categoryService.upsertList(dto.categories, transaction),
@@ -108,6 +136,9 @@ export class BookService {
                 defaultTitle: dto.defaultTitle,
                 originalTitle: dto.originalTitle,
                 originalPublishDate: dto.originalPublishDate,
+                volume,
+                series,
+                prizes,
                 authors,
                 tags,
                 categories,

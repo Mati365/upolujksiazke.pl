@@ -9,7 +9,6 @@ import {ImageAttachmentEntity} from '@server/modules/attachment/entity/ImageAtta
 import {DatedRecordEntity} from '../../../database/DatedRecord.entity';
 import {BookEntity} from '../../Book.entity';
 import {BookPublisherEntity} from '../publisher/BookPublisher.entity';
-import {BookVolumeEntity} from '../volume/BookVolume.entity';
 import {BookReviewEntity} from '../review/BookReview.entity';
 
 export enum BookBindingKind {
@@ -19,13 +18,17 @@ export enum BookBindingKind {
   SPIRAL = 4,
 }
 
+export enum BookType {
+  EBOOK = 1,
+  PAPER = 2,
+}
+
 @Entity(
   {
     name: 'book_release',
   },
 )
 @Index(['book'])
-@Index(['volume'])
 export class BookReleaseEntity extends DatedRecordEntity {
   @Column('citext')
   title: string;
@@ -48,8 +51,8 @@ export class BookReleaseEntity extends DatedRecordEntity {
   @Column('citext', {nullable: true})
   edition: string;
 
-  @Column('citext', {nullable: true})
-  translator: string;
+  @Column('citext', {nullable: true, array: true})
+  translator: string[];
 
   @Column('int', {nullable: true})
   totalPages: number;
@@ -84,6 +87,15 @@ export class BookReleaseEntity extends DatedRecordEntity {
   @Column(
     {
       type: 'enum',
+      enum: BookType,
+      nullable: true,
+    },
+  )
+  type: BookType;
+
+  @Column(
+    {
+      type: 'enum',
       enum: BookBindingKind,
       nullable: true,
     },
@@ -114,14 +126,6 @@ export class BookReleaseEntity extends DatedRecordEntity {
   @Column()
   @RelationId((entity: BookReleaseEntity) => entity.book)
   bookId: number;
-
-  @ManyToOne(() => BookVolumeEntity, (entity) => entity.release, {onDelete: 'CASCADE'})
-  @JoinColumn({name: 'volumeId'})
-  volume: BookVolumeEntity;
-
-  @Column({nullable: true})
-  @RelationId((entity: BookReleaseEntity) => entity.volume)
-  volumeId: number;
 
   @OneToMany(() => BookReviewEntity, (review) => review.release)
   reviews: BookReviewEntity[];

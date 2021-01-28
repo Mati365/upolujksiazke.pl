@@ -135,7 +135,7 @@ export class GildiaBookMatcher
         totalPages: +basicProps['liczba stron'] || null,
         format: normalizeParsedText(basicProps['format']),
         publishDate: normalizeParsedText(basicProps['data wydania']),
-        translator: normalizeParsedText(basicProps['tłumacz']),
+        translator: basicProps['tłumacz']?.split(',').map((str) => normalizeParsedText(str)),
         binding: BINDING_TRANSLATION_MAPPINGS[
           normalizeParsedText(basicProps['oprawa'])?.toLowerCase()
         ],

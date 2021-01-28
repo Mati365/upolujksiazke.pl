@@ -44,8 +44,20 @@ OpenSource book reviews aggregator, something like Metacritic / Digg for books. 
 - [x] Bonito.pl
 - [x] Skupszop.pl
 - [x] Dadada.pl
-- [ ] Aros.pl
-- [ ] Cyfroteka.pl
+- [x] Aros.pl
+- [ ] Publio.pl
+- [ ] Madbooks.pl
+- [ ] ibuk.pl
+- [ ] LitRes.pl
+- [ ] Gandalf.com.pl
+- [ ] tantis.pl
+- [ ] Woblink.com
+- [ ] Znak.com.pl
+- [ ] Chodnikliteracki.pl
+- [ ] czeskieklimaty.pl
+- [ ] paskarz.pl
+- [ ] litres.pl
+- [ ] selkar.pl
 - [ ] Taniaksiazka.pl
 - [ ] Tantis.pl
 - [ ] Gandalf.com
@@ -54,6 +66,7 @@ OpenSource book reviews aggregator, something like Metacritic / Digg for books. 
 - [ ] Swiatksiazki.pl
 - [ ] Allegro.pl
 - [ ] wbibliotece.pl
+- [ ] Cyfroteka.pl
 - [ ] Amazon.com
 
 🌍 World

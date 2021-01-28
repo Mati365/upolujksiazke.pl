@@ -2,7 +2,7 @@ import * as R from 'ramda';
 import {Transform} from 'class-transformer';
 import {
   Entity, Column,
-  ManyToMany, OneToMany, JoinTable,
+  ManyToMany, OneToMany, JoinTable, JoinColumn, ManyToOne, RelationId,
 } from 'typeorm';
 
 import {DatedRecordEntity} from '../database/DatedRecord.entity';
@@ -14,6 +14,8 @@ import {BookReviewerEntity} from './modules/reviewer/BookReviewer.entity';
 import {BookReleaseEntity} from './modules/release/BookRelease.entity';
 import {BookVolumeEntity} from './modules/volume/BookVolume.entity';
 import {BookAvailabilityEntity} from './modules/availability/BookAvailability.entity';
+import {BookSeriesEntity} from './modules/series/BookSeries.entity';
+import {BookPrizeEntity} from './modules/prize/BookPrize.entity';
 
 @Entity(
   {
@@ -53,11 +55,24 @@ export class BookEntity extends DatedRecordEntity {
   @OneToMany(() => BookReleaseEntity, (entity) => entity.book, {cascade: true})
   releases: BookReleaseEntity[];
 
-  @OneToMany(() => BookVolumeEntity, (entity) => entity.book, {cascade: true})
-  volumes: BookVolumeEntity[];
-
   @OneToMany(() => BookAvailabilityEntity, (entity) => entity.book)
   availability: BookAvailabilityEntity[];
+
+  @ManyToOne(() => BookVolumeEntity, {onDelete: 'CASCADE'})
+  @JoinColumn({name: 'volumeId'})
+  volume: BookVolumeEntity;
+
+  @Column({nullable: true})
+  @RelationId((entity: BookEntity) => entity.volume)
+  volumeId: number;
+
+  @JoinTable()
+  @ManyToMany(() => BookSeriesEntity)
+  series: BookSeriesEntity[];
+
+  @JoinTable()
+  @ManyToMany(() => BookPrizeEntity, {cascade: ['insert']})
+  prizes: BookPrizeEntity[];
 
   constructor(partial: Partial<BookEntity>) {
     super();

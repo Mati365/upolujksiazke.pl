@@ -23,6 +23,9 @@ import {BookReleaseEntity} from '../../book/modules/release/BookRelease.entity';
 import {BookPublisherEntity} from '../../book/modules/publisher/BookPublisher.entity';
 import {BookAvailabilityEntity} from '../../book/modules/availability/BookAvailability.entity';
 import {BookVolumeEntity} from '../../book/modules/volume/BookVolume.entity';
+import {BookKindEntity} from '../../book/modules/kind/BookKind.entity';
+import {BookPrizeEntity} from '../../book/modules/prize/BookPrize.entity';
+import {BookSeriesEntity} from '../../book/modules/series/BookSeries.entity';
 
 export const DB_ENTITIES = {
   RemoteWebsiteEntity,
@@ -37,6 +40,9 @@ export const DB_ENTITIES = {
   BookCategoryEntity,
   BookReviewerEntity,
   BookVolumeEntity,
+  BookKindEntity,
+  BookPrizeEntity,
+  BookSeriesEntity,
   ScrapperMetadataEntity,
   TagEntity,
 };

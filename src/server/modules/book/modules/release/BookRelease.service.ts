@@ -17,7 +17,6 @@ import {ImageAttachmentEntity, ImageVersion} from '@server/modules/attachment/en
 import {CreateBookReleaseDto} from './dto/CreateBookRelease.dto';
 import {BookReleaseEntity} from './BookRelease.entity';
 import {BookPublisherService} from '../publisher/BookPublisher.service';
-import {BookVolumeService} from '../volume/BookVolume.service';
 
 @Injectable()
 export class BookReleaseService {
@@ -33,7 +32,6 @@ export class BookReleaseService {
   constructor(
     private readonly connection: Connection,
     private readonly publisherService: BookPublisherService,
-    private readonly volumeService: BookVolumeService,
     private readonly imageAttachmentService: ImageAttachmentService,
   ) {}
 
@@ -77,19 +75,12 @@ export class BookReleaseService {
    * @memberof BookReleaseService
    */
   async upsert(
-    {
-      cover,
-      volumeId, volume,
-      publisher, publisherId,
-      ...dto
-    }: CreateBookReleaseDto,
-
+    {cover, publisher, publisherId, ...dto}: CreateBookReleaseDto,
     entityManager: PostHookEntityManager = <any> BookReleaseEntity,
   ): Promise<BookReleaseEntity> {
     const {
       connection,
       publisherService,
-      volumeService,
       imageAttachmentService,
     } = this;
 
@@ -100,10 +91,6 @@ export class BookReleaseService {
       data: new BookReleaseEntity(
         {
           ...dto,
-
-          volumeId: volumeId ?? (
-            await (volume && volumeService?.upsert(volume, entityManager))
-          )?.id,
 
           publisherId: publisherId ?? (
             await (publisher && publisherService.upsert(publisher, entityManager))

@@ -8,8 +8,7 @@ import {
 import {Language} from '@server/constants/language';
 import {CreateImageAttachmentDto} from '@server/modules/attachment/dto';
 import {CreateBookPublisherDto} from '../../publisher/dto/BookPublisher.dto';
-import {CreateBookVolumeDto} from '../../volume/dto/CreateBookVolume.dto';
-import {BookBindingKind} from '../BookRelease.entity';
+import {BookBindingKind, BookType} from '../BookRelease.entity';
 
 /**
  * @todo
@@ -49,15 +48,6 @@ export class CreateBookReleaseDto {
 
   @IsOptional()
   @ValidateNested()
-  @Type(() => CreateBookVolumeDto)
-  readonly volume: CreateBookVolumeDto;
-
-  @IsOptional()
-  @IsNumber()
-  readonly volumeId: number;
-
-  @IsOptional()
-  @ValidateNested()
   @Type(() => CreateBookPublisherDto)
   readonly publisher: CreateBookPublisherDto;
 
@@ -68,6 +58,10 @@ export class CreateBookReleaseDto {
   @IsOptional()
   @IsString()
   readonly format: string;
+
+  @IsOptional()
+  @IsEnum(BookType)
+  readonly type: BookType;
 
   @IsOptional()
   @IsEnum(BookBindingKind)
@@ -90,8 +84,8 @@ export class CreateBookReleaseDto {
   readonly bookId: number;
 
   @IsOptional()
-  @IsString()
-  readonly translator: string;
+  @IsString({each: true})
+  readonly translator: string[];
 
   @IsOptional()
   @IsNumber()

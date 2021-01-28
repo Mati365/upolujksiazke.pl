@@ -3,17 +3,17 @@ import {
   IsOptional, IsString,
 } from 'class-validator';
 
-export class CreateBookVolumeDto {
+export class CreateBookSeriesDto {
   @IsOptional()
   @IsNumber()
   readonly id: number;
 
   @IsDefined()
-  @IsNumber()
-  readonly bookId: number;
-
-  @IsDefined()
   @IsNotEmpty()
   @IsString()
   readonly name: string;
+
+  @IsOptional()
+  @IsNumber()
+  readonly publisherId: number;
 }

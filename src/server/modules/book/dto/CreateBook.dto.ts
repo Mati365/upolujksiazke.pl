@@ -11,6 +11,8 @@ import {CreateBookReleaseDto} from '../modules/release/dto/CreateBookRelease.dto
 import {CreateBookAuthorDto} from '../modules/author/dto/CreateBookAuthor.dto';
 import {CreateBookCategoryDto} from '../modules/category/dto/CreateBookCategory.dto';
 import {CreateBookVolumeDto} from '../modules/volume/dto/CreateBookVolume.dto';
+import {CreateBookSeriesDto} from '../modules/series/dto/CreateBookSeries.dto';
+import {CreateBookPrizeDto} from '../modules/prize/dto/CreateBookPrize.dto';
 
 export class CreateBookDto {
   @IsOptional()
@@ -50,7 +52,21 @@ export class CreateBookDto {
   @IsDefined()
   @ValidateNested()
   @Type(() => CreateBookVolumeDto)
-  readonly volumes: CreateBookVolumeDto[];
+  readonly volume: CreateBookVolumeDto;
+
+  @IsOptional()
+  @IsNumber()
+  readonly volumeId: number;
+
+  @IsDefined()
+  @ValidateNested()
+  @Type(() => CreateBookSeriesDto)
+  readonly series: CreateBookSeriesDto[];
+
+  @IsDefined()
+  @ValidateNested()
+  @Type(() => CreateBookPrizeDto)
+  readonly prizes: CreateBookPrizeDto[];
 
   @IsArray()
   @ValidateNested()

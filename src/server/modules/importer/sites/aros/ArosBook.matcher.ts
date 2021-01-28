@@ -1,11 +1,9 @@
-import * as R from 'ramda';
-
+import {escapeIso88592} from '@server/common/helpers/encoding/escapeIso88592';
 import {fuzzyFindBookAnchor} from '@scrapper/helpers';
 import {
   normalizeISBN,
   normalizeParsedText,
   normalizePrice,
-  normalizeURL,
 } from '@server/common/helpers';
 
 import {Language} from '@server/constants/language';
@@ -27,7 +25,9 @@ import {
   BookAvailabilityScrapperMatcher,
 } from '@scrapper/service/scrappers/Book.scrapper';
 
-export class DadadaBookMatcher
+import {BonitoBookMatcher} from '../bonito/BonitoBook.matcher';
+
+export class ArosBookMatcher
   extends WebsiteScrapperMatcher<CreateBookDto, BookShopScrappersGroupConfig>
   implements BookAvailabilityScrapperMatcher<AsyncURLParseResult> {
   /**
@@ -35,20 +35,17 @@ export class DadadaBookMatcher
    *
    * @param {AsyncURLParseResult} {$, url}
    * @returns {Promise<CreateBookAvailabilityDto[]>}
-   * @memberof DadadaBookMatcher
+   * @memberof ArosBookMatcher
    */
   searchAvailability({$, url}: AsyncURLParseResult): Promise<CreateBookAvailabilityDto[]> {
-    const remoteId = $('form#FormaRate > input[name="Id"]').val();
-
     return Promise.resolve([
       new CreateBookAvailabilityDto(
         {
-          price: normalizePrice($('.productPromo .productFinalPrice').text())?.price,
-          prevPrice: normalizePrice($('.productPromo .productBasePrice').text())?.price,
-          avgRating: Number.parseFloat($('[data-rateit-value]').attr('rateitValue')) * 2 || null,
-          totalRatings: +$('.reviewCount[onclick]').text()?.match(/\(\d+\)/)[1] || null,
-          showOnlyAsQuote: true,
-          remoteId,
+          remoteId: $('input[type="hidden"][name="dodaj"]').attr('value'),
+          price: normalizePrice($('[itemprop="offerDetails"] [itemprop="price"]').attr('content'))?.price,
+          avgRating: (Number.parseFloat($('[itemprop="ratingValue"]').text()) / 6) * 10 || null,
+          totalRatings: Number.parseInt($('[itemprop="ratingCount"]').text(), 10) || null,
+          showOnlyAsQuote: false,
           url,
         },
       ),
@@ -65,13 +62,13 @@ export class DadadaBookMatcher
       return null;
 
     const {$} = bookPage;
-    const basicProps = DadadaBookMatcher.extractBookProps($);
+    const basicProps = BonitoBookMatcher.extractBookProps($);
 
-    const title = normalizeParsedText($('h1.productName').text());
-    const authors = $(basicProps['autor'][1]).find('a').toArray().map(
-      (author) => new CreateBookAuthorDto(
+    const title = $('h1').text();
+    const authors = basicProps['autor'].split(',').map(
+      (name) => new CreateBookAuthorDto(
         {
-          name: normalizeParsedText($(author).text()),
+          name: normalizeParsedText(name),
         },
       ),
     );
@@ -80,22 +77,20 @@ export class DadadaBookMatcher
       {
         title,
         lang: Language.PL,
-        description: normalizeParsedText($('.productDescriptionContent').text()),
-        totalPages: +basicProps['liczba stron'][0] || null,
-        format: basicProps['format'][0],
-        publishDate: basicProps['rok wydania'][0],
-        isbn: normalizeISBN(basicProps['isbn'][0]),
-        binding: BINDING_TRANSLATION_MAPPINGS[basicProps['oprawa']?.[0]?.toLowerCase()],
+        description: normalizeParsedText($('[itemprop="description"]').text()),
+        totalPages: +basicProps['liczba stron'] || null,
+        format: basicProps['format'],
+        publishDate: basicProps['data premiery'],
+        isbn: normalizeISBN(basicProps['numer isbn']),
+        binding: BINDING_TRANSLATION_MAPPINGS[basicProps['oprawa']?.toLowerCase()],
         publisher: new CreateBookPublisherDto(
           {
-            name: basicProps['wydawca'][0],
+            name: basicProps['wydawnictwo'],
           },
         ),
         cover: new CreateImageAttachmentDto(
           {
-            originalUrl: normalizeURL(
-              $('.productPhoto > #imgSmall').attr('originalphotopath'),
-            ),
+            originalUrl: BonitoBookMatcher.normalizeImageURL($('a[title="Powiększ"] img').attr('src')),
           },
         ),
       },
@@ -108,12 +103,16 @@ export class DadadaBookMatcher
           availability: await this.searchAvailability(bookPage),
           authors,
           releases: [release],
-          categories: $('#breadCrumbs > .breadCrumbsItem:not(:first-child) > a .name').toArray().map(
-            (name) => new CreateBookCategoryDto(
-              {
-                name: $(name).text(),
-              },
-            ),
+          categories: (
+            $('td[style="height: 26px; padding-left: 7px;"] a:not(:first-child):not(:last-child):gt(0)')
+              .toArray()
+              .map(
+                (name) => new CreateBookCategoryDto(
+                  {
+                    name: $(name).text(),
+                  },
+                ),
+              )
           ),
         },
       ),
@@ -122,49 +121,15 @@ export class DadadaBookMatcher
   /* eslint-enable @typescript-eslint/dot-notation */
 
   /**
-   * Extract info about book from table
-   *
-   * @static
-   * @param {cheerio.Root} $
-   * @returns {Record<string, [string, cheerio.Cheerio]>}
-   * @memberof DadadaBookMatcher
-   */
-  static extractBookProps($: cheerio.Root): Record<string, [string, cheerio.Cheerio]> {
-    const rows = (
-      $('.productDataDetails > .productDataItem')
-        .toArray()
-    );
-
-    return R.fromPairs(
-      rows.map(
-        (row) => {
-          const $row = $(row);
-          const $value = $row.children().eq(0);
-
-          return [
-            normalizeParsedText($row.text()).match(/^([^:]+)/)[1]?.toLowerCase(),
-            [
-              normalizeParsedText($value.text()),
-              $value,
-            ],
-          ];
-        },
-      ),
-    );
-  }
-
-  /**
    * Go to website search and pick matching item
    *
    * @private
    * @param {CreateBookDto} scrapperInfo
-   * @memberof DadadaBookMatcher
+   * @memberof ArosBookMatcher
    */
   private async searchByPhrase({authors, title}: CreateBookDto) {
-    const $ = (await this.fetchPageBySearch(
-      {
-        filter: title,
-      },
+    const $ = (await this.fetchPageByPath(
+      `szukaj/${escapeIso88592(title)}/0?sortuj_wedlug=0&wyczysc_filtry=1`,
     ))?.$;
 
     if (!$)
@@ -172,21 +137,21 @@ export class DadadaBookMatcher
 
     const matchedAnchor = fuzzyFindBookAnchor(
       {
-        $: $('#productList > .productContainer'),
+        $: $('body > div > div.grid_right > table table[bgcolor="white"] td[width="100%"]'),
         book: {
           title,
           author: authors[0].name,
         },
         anchorSelector: (anchor) => ({
-          title: $(anchor).find('.productContainerDataValues > a > .productContainerDataName').text(),
-          author: $(anchor).find('.productContainerDataAuthor a:first-child').text(),
+          title: $(anchor).find('a[href*="/ksiazka/"]').text(),
+          author: $(anchor).find('a[href*="/autor/"]').text(),
         }),
       },
     );
 
     return matchedAnchor && this.fetchPageByPath(
       $(matchedAnchor)
-        .find('.productContainerDataValues > a')
+        .find('a[href*="/ksiazka/"]')
         .attr('href'),
     );
   }

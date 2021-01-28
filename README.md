@@ -43,8 +43,9 @@ OpenSource book reviews aggregator, something like Metacritic / Digg for books. 
 - [x] Matras.pl
 - [x] Bonito.pl
 - [x] Skupszop.pl
-- [ ] Dadada.pl
+- [x] Dadada.pl
 - [ ] Aros.pl
+- [ ] Cyfroteka.pl
 - [ ] Taniaksiazka.pl
 - [ ] Tantis.pl
 - [ ] Gandalf.com

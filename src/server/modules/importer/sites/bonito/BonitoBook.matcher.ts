@@ -1,6 +1,13 @@
 import * as R from 'ramda';
 
-import {normalizeISBN, normalizeParsedText, normalizePrice, normalizeURL} from '@server/common/helpers';
+import {
+  normalizeISBN,
+  normalizeParsedText,
+  normalizePrice,
+  normalizeURL,
+} from '@server/common/helpers';
+
+import {escapeIso88592} from '@server/common/helpers/encoding/escapeIso88592';
 import {fuzzyFindBookAnchor} from '@scrapper/helpers';
 
 import {Language} from '@server/constants/language';
@@ -82,12 +89,7 @@ export class BonitoBookMatcher
         ),
         cover: new CreateImageAttachmentDto(
           {
-            originalUrl: normalizeURL(
-              $('a[title="Powiększ..."] img')
-                .attr('src')
-                ?.replace('cache/', 'zdjecia/')
-                .replace('_200.', '.'),
-            ),
+            originalUrl: BonitoBookMatcher.normalizeImageURL($('a[title="Powiększ..."] img').attr('src')),
           },
         ),
       },
@@ -122,7 +124,34 @@ export class BonitoBookMatcher
   /* eslint-enable @typescript-eslint/dot-notation */
 
   /**
+   * Picks full version of image
+   *
+   * @see
+   *  Used in ArosBooks!
+   *
+   * @static
+   * @param {string} url
+   * @returns
+   * @memberof BonitoBookMatcher
+   */
+  static normalizeImageURL(url: string) {
+    if (!url)
+      return null;
+
+    return (
+      normalizeURL(
+        url
+          .replace('cache/', 'zdjecia/')
+          .replace('_200.', '.'),
+      )
+    );
+  }
+
+  /**
    * Extract info about book from table
+   *
+   * @see
+   *  Used in ArosBooks!
    *
    * @static
    * @param {cheerio.Root} $
@@ -131,7 +160,7 @@ export class BonitoBookMatcher
    */
   static extractBookProps($: cheerio.Root) {
     const rows = (
-      $('span[itemprop="productDetails"] span[itemprop="offerDetails"] > table > tbody > tr')
+      $('span[itemprop="offerDetails"] > table > tbody > tr')
         .toArray()
         .filter((row) => $(row).children().length === 2)
     );
@@ -142,7 +171,7 @@ export class BonitoBookMatcher
           const $row = $(row);
 
           return [
-            normalizeParsedText($row.children().first().text()).match(/^([^:]+)/)[1]?.toLowerCase(),
+            normalizeParsedText($row.children().first().text()).match(/^([^:]+)/)?.[1]?.toLowerCase(),
             normalizeParsedText($row.children().eq(1).text()),
           ];
         },
@@ -158,7 +187,7 @@ export class BonitoBookMatcher
    * @memberof BonitoBookMatcher
    */
   private async searchByPhrase({title, authors}: CreateBookDto) {
-    const $ = (await this.fetchPageByPath(`szukaj/${encodeURIComponent(title)}/0,0,1/0`))?.$;
+    const $ = (await this.fetchPageByPath(`szukaj/${escapeIso88592(title)}/0,0,1/0`))?.$;
     const matchedAnchor = fuzzyFindBookAnchor(
       {
         $: $('table[style="background-color: #FFFFFF; border-width: 0px; width: 100%; height: 50px;"]'),

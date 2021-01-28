@@ -54,7 +54,7 @@ export class BookEntity extends DatedRecordEntity {
   releases: BookReleaseEntity[];
 
   @OneToMany(() => BookVolumeEntity, (entity) => entity.book, {cascade: true})
-  volumes: BookReleaseEntity[];
+  volumes: BookVolumeEntity[];
 
   @OneToMany(() => BookAvailabilityEntity, (entity) => entity.book)
   availability: BookAvailabilityEntity[];

@@ -8,6 +8,7 @@ OpenSource book reviews aggregator, something like Metacritic / Digg for books. 
 
 ## Goals
 
+- [ ] Book summary
 - [ ] Changes history
 - [ ] Mark as school reading
 - [ ] Book summary aggregation

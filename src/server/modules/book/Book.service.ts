@@ -82,8 +82,12 @@ export class BookService {
           .getMany()
       );
 
-      await transaction.remove(orphanVolumes);
-      await transaction.remove(entities);
+      await transaction.remove(
+        [
+          ...orphanVolumes,
+          ...entities,
+        ],
+      );
     });
   }
 

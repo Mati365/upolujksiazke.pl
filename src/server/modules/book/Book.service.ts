@@ -1,5 +1,5 @@
 import {Injectable} from '@nestjs/common';
-import {Connection, EntityManager, In, IsNull} from 'typeorm';
+import {Connection, EntityManager, In} from 'typeorm';
 import * as R from 'ramda';
 
 import {
@@ -67,19 +67,22 @@ export class BookService {
         await availabilityService.delete(entity.availability as any[], transaction);
       }
 
-      await transaction
-        .getRepository(BookVolumeEntity)
-        .createQueryBuilder('b')
-        .leftJoin('b.volumeId = v.id', 'book')
-        .select('b.id as bookId')
-        .where(
-          {
-            id: In(R.pluck('volumeId', entities)),
-            bookId: IsNull(),
-          },
-        )
-        .execute();
+      const orphanVolumes = (
+        await transaction
+          .getRepository(BookVolumeEntity)
+          .createQueryBuilder('v')
+          .leftJoin(BookEntity, 'b', 'b.volumeId = v.id')
+          .select(['b.id'])
+          .where(
+            {
+              id: In(R.pluck('volumeId', entities)),
+            },
+          )
+          .andWhere('b.id is null')
+          .getMany()
+      );
 
+      await transaction.remove(orphanVolumes);
       await transaction.remove(entities);
     });
   }

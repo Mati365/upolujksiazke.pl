@@ -75,7 +75,12 @@ export class BookReleaseService {
    * @memberof BookReleaseService
    */
   async upsert(
-    {cover, publisher, publisherId, ...dto}: CreateBookReleaseDto,
+    {
+      cover,
+      parentRelease, parentReleaseId,
+      publisher, publisherId,
+      ...dto
+    }: CreateBookReleaseDto,
     entityManager: PostHookEntityManager = <any> BookReleaseEntity,
   ): Promise<BookReleaseEntity> {
     const {
@@ -91,6 +96,10 @@ export class BookReleaseService {
       data: new BookReleaseEntity(
         {
           ...dto,
+
+          parentReleaseId: parentReleaseId ?? (
+            await (parentRelease && this.upsert(parentRelease, entityManager))
+          )?.id,
 
           publisherId: publisherId ?? (
             await (publisher && publisherService.upsert(publisher, entityManager))

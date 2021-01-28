@@ -30,7 +30,7 @@ export enum BookType {
 )
 @Index(['book'])
 export class BookReleaseEntity extends DatedRecordEntity {
-  @Column('citext')
+  @Column('citext', {nullable: true})
   title: string;
 
   @Column('text', {nullable: true})
@@ -69,6 +69,14 @@ export class BookReleaseEntity extends DatedRecordEntity {
     },
   )
   defaultPrice: number;
+
+  @ManyToOne(() => BookReleaseEntity, {onDelete: 'CASCADE'})
+  @JoinColumn({name: 'parentReleaseId'})
+  parentRelease: BookReleaseEntity;
+
+  @Column({nullable: true})
+  @RelationId((entity: BookReleaseEntity) => entity.parentRelease)
+  parentReleaseId: number;
 
   @ManyToMany(
     () => ImageAttachmentEntity,

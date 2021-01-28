@@ -37,7 +37,13 @@ export class BookEntity extends DatedRecordEntity {
   authors: BookAuthorEntity[];
 
   @JoinTable()
-  @ManyToMany(() => BookCategoryEntity, (categoryEntity) => categoryEntity.books, {cascade: true})
+  @ManyToMany(
+    () => BookCategoryEntity,
+    (categoryEntity) => categoryEntity.books,
+    {
+      cascade: ['insert', 'update'],
+    },
+  )
   categories: BookCategoryEntity[];
 
   @OneToMany(() => BookReviewEntity, (review) => review.book)
@@ -49,7 +55,12 @@ export class BookEntity extends DatedRecordEntity {
 
   @Transform(R.map(R.prop('name')) as any)
   @JoinTable()
-  @ManyToMany(() => TagEntity, {cascade: true})
+  @ManyToMany(
+    () => TagEntity,
+    {
+      cascade: ['insert', 'update'],
+    },
+  )
   tags: TagEntity[];
 
   @OneToMany(() => BookReleaseEntity, (entity) => entity.book, {cascade: true})

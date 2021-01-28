@@ -56,6 +56,15 @@ export class CreateBookReleaseDto {
   readonly publisherId: number;
 
   @IsOptional()
+  @ValidateNested()
+  @Type(() => CreateBookPublisherDto)
+  readonly parentRelease: CreateBookReleaseDto;
+
+  @IsOptional()
+  @IsNumber()
+  readonly parentReleaseId: number;
+
+  @IsOptional()
   @IsString()
   readonly format: string;
 

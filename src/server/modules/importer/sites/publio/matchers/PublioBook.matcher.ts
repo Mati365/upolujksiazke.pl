@@ -23,6 +23,16 @@ import {MatchRecordAttrs} from '@scrapper/service/shared/WebsiteScrappersGroup';
 import {BookShopScrappersGroupConfig} from '@scrapper/service/scrappers/BookShopScrappersGroup';
 import {BookAvailabilityScrapperMatcher} from '@scrapper/service/scrappers/Book.scrapper';
 
+/**
+ * @todo
+ *  - Search for paper version if only ebook matched (and vice versa)
+ *  - Handle multiple ISBN in single release
+ *
+ * @export
+ * @class PublioBookMatcher
+ * @extends {WebsiteScrapperMatcher<CreateBookDto, BookShopScrappersGroupConfig>}
+ * @implements {BookAvailabilityScrapperMatcher<AsyncURLParseResult>}
+ */
 export class PublioBookMatcher
   extends WebsiteScrapperMatcher<CreateBookDto, BookShopScrappersGroupConfig>
   implements BookAvailabilityScrapperMatcher<AsyncURLParseResult> {
@@ -60,6 +70,7 @@ export class PublioBookMatcher
     const basicProps = PublioBookMatcher.extractBookProps($);
     const $details: any = {};
 
+    console.info(basicProps);
     const categories = (
       $(basicProps['publikacja z kategorii'][1])
         .find('a')
@@ -127,7 +138,7 @@ export class PublioBookMatcher
    * @memberof PublioBookMatcher
    */
   static extractBookProps($: cheerio.Root) {
-    const rows = $('.content-box .details-element.tab-version');
+    const rows = $('.details-element');
 
     return R.fromPairs(
       rows.toArray().map(
@@ -165,21 +176,21 @@ export class PublioBookMatcher
 
     const matchedAnchor = fuzzyFindBookAnchor(
       {
-        $: $('.product-tail'),
+        $: $('.product-tail .product-description'),
         book: {
           title,
           author: authors[0].name,
         },
         anchorSelector: (anchor) => ({
-          title: $(anchor).find('.title').text(),
-          author: $(anchor).find('.authors > a:first-child').text(),
+          title: $(anchor).find('.title').eq(0).text(),
+          author: $(anchor).find('.authors > a:first-child').eq(0).text(),
         }),
       },
     );
 
     return matchedAnchor && this.fetchPageByPath(
       $(matchedAnchor)
-        .find('.product-details > a')
+        .find('.product-description > a')
         .attr('href'),
     );
   }

@@ -9,6 +9,7 @@ import {
 
 import {parameterize} from '@shared/helpers/parameterize';
 
+import {Language} from '@server/constants/language';
 import {DatedRecordEntity} from '../database/DatedRecord.entity';
 import {TagEntity} from '../tag/Tag.entity';
 import {BookAuthorEntity} from './modules/author/BookAuthor.entity';
@@ -33,6 +34,15 @@ export class BookEntity extends DatedRecordEntity {
 
   @Column('citext')
   defaultTitle: string;
+
+  @Column(
+    {
+      type: 'enum',
+      enum: Language,
+      nullable: true,
+    },
+  )
+  originalLang: Language;
 
   @Column('citext', {unique: true, nullable: true})
   originalTitle: string;
@@ -71,7 +81,13 @@ export class BookEntity extends DatedRecordEntity {
   )
   tags: TagEntity[];
 
-  @OneToMany(() => BookReleaseEntity, (entity) => entity.book, {cascade: true})
+  @OneToMany(
+    () => BookReleaseEntity,
+    (entity) => entity.book,
+    {
+      cascade: ['remove', 'insert', 'update'],
+    },
+  )
   releases: BookReleaseEntity[];
 
   @OneToMany(() => BookAvailabilityEntity, (entity) => entity.book)

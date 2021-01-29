@@ -1,9 +1,10 @@
 import {Type} from 'class-transformer';
 import {
-  ArrayMaxSize, IsArray, IsDefined, IsNumber,
+  ArrayMaxSize, IsArray, IsDefined, IsEnum, IsNumber,
   IsOptional, IsString, ValidateNested,
 } from 'class-validator';
 
+import {Language} from '@server/constants/language';
 import {IsTagCorrect} from '@server/modules/tag/validators/IsTagCorrect';
 
 import {CreateBookAvailabilityDto} from '../modules/availability/dto/CreateBookAvailability.dto';
@@ -25,11 +26,15 @@ export class CreateBookDto {
 
   @IsOptional()
   @IsString()
-  readonly originalTitle: string;
+  readonly parameterizedTitle: string;
+
+  @IsEnum(Language)
+  @IsOptional()
+  readonly originalLang: Language;
 
   @IsOptional()
   @IsString()
-  readonly parameterizedTitle: string;
+  readonly originalTitle: string;
 
   @IsOptional()
   @IsString()

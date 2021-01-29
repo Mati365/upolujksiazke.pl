@@ -28,6 +28,7 @@ export class BookPublisherService {
 
   constructor(
     private readonly connection: Connection,
+    private readonly entityManager: EntityManager,
     private readonly imageAttachmentService: ImageAttachmentService,
   ) {}
 
@@ -89,45 +90,43 @@ export class BookPublisherService {
       },
     );
 
-    if (logo?.originalUrl) {
+    const shouldFetchLogo = !!logo?.originalUrl && !(await checkIfExists(
+      {
+        entityManager: this.entityManager,
+        tableName: 'book_publisher_logo_image_attachments',
+        where: {
+          bookPublisherId: publisher.id,
+        },
+      },
+    ));
+
+    if (shouldFetchLogo) {
       await runInPostHookIfPresent(entityManager, async (hookEntityManager) => {
-        const logoAlreadyCached = await checkIfExists(
-          {
-            entityManager: hookEntityManager,
-            tableName: 'book_publisher_logo_image_attachments',
-            where: {
-              bookPublisherId: publisher.id,
+        publisher.logo = R.values(
+          await imageAttachmentService.fetchAndCreateScaled(
+            {
+              destSubDir: `logo/${publisher.id}`,
+              sizes: BookPublisherService.LOGO_IMAGE_SIZES,
+              dto: logo,
             },
-          },
+            hookEntityManager,
+          ),
         );
 
-        if (!logoAlreadyCached) {
-          publisher.logo = R.values(
-            await imageAttachmentService.fetchAndCreateScaled(
-              {
-                destSubDir: `logo/${publisher.id}`,
-                sizes: BookPublisherService.LOGO_IMAGE_SIZES,
-                dto: logo,
-              },
-              hookEntityManager,
-            ),
-          );
-
-          await hookEntityManager.save(
-            new BookPublisherEntity(
-              {
-                id: publisher.id,
-                logo: publisher.logo.map(
-                  (item) => new ImageAttachmentEntity(
-                    {
-                      id: item.id,
-                    },
-                  ),
+        await hookEntityManager.save(
+          new BookPublisherEntity(
+            {
+              id: publisher.id,
+              logo: publisher.logo.map(
+                (item) => new ImageAttachmentEntity(
+                  {
+                    id: item.id,
+                  },
                 ),
-              },
-            ),
-          );
-        }
+              ),
+            },
+          ),
+        );
       });
     }
 

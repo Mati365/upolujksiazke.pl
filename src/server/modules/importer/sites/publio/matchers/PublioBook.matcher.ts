@@ -28,10 +28,12 @@ import {
   LANGUAGE_TRANSLATION_MAPPINGS,
 } from '@scrapper/service/scrappers/Book.scrapper';
 
+import {ScrapperMetadataKind} from '@server/modules/importer/modules/scrapper/entity/ScrapperMetadata.entity';
 import {ScrapperMatcherResult, WebsiteScrapperMatcher} from '@scrapper/service/shared/ScrapperMatcher';
 import {BookType} from '@server/modules/book/modules/release/BookRelease.entity';
 import {MatchRecordAttrs} from '@scrapper/service/shared/WebsiteScrappersGroup';
 import {BookShopScrappersGroupConfig} from '@scrapper/service/scrappers/BookShopScrappersGroup';
+import {PublioBookPublisherMatcher} from './PublioBookPublisher.matcher';
 
 type PublioAPIPrice = {
   currentPrice: number,
@@ -108,20 +110,20 @@ export class PublioBookMatcher
             ?? Language.PL
         ),
         description: normalizeParsedText($('.product-description > .teaser-wrapper').text()),
-        totalPages: +basicProps['format']?.[0]?.match(/w wersji papierowej (\d+) stron/)[1] || null,
+        totalPages: +basicProps['format']?.[0]?.match(/w wersji papierowej (\d+) stron/)?.[1] || null,
         protection: PROTECTION_TRANSLATION_MAPPINGS[basicProps['zabezpieczenie']?.[0].toLowerCase()],
         publishDate: (
           basicProps['rok pierwszej publikacji książkowej']?.[0]
-            ?? basicProps['miejsce i rok wydania']?.[0].match(/(\d{4})/)[1]
+            ?? basicProps['miejsce i rok wydania']?.[0].match(/(\d{4})/)?.[1]
         ),
-        publisher: new CreateBookPublisherDto(
-          {
-            name: normalizeParsedText(basicProps['wydawca']?.[0]),
-          },
-        ),
+        publisher: await this.extractPublisher($(basicProps['wydawca']?.[1])),
         cover: new CreateImageAttachmentDto(
           {
-            originalUrl: normalizeURL($('meta[name="og:image"]').attr('content'))?.replace('card/', 'product_w450/'),
+            originalUrl: (
+              normalizeURL($('meta[name="og:image"]')
+                .attr('content'))
+                ?.replace('card/', 'product_w450/')
+            ),
           },
         ),
         childReleases: childIsbn.map(
@@ -146,6 +148,9 @@ export class PublioBookMatcher
           tags: basicProps['tematy i słowa kluczowe']?.[1]?.find('.link-label').toArray().map(
             (item) => $(item).text().match(/([^,]+)/)[1],
           ),
+          originalLang: LANGUAGE_TRANSLATION_MAPPINGS[
+            basicProps['język oryginalny publikacji']?.[0].toLowerCase()
+          ],
           releases: [parentRelease],
           authors: PublioBookMatcher.extractAuthors($, basicProps),
           categories: PublioBookMatcher.extractCategories($, basicProps),
@@ -155,6 +160,31 @@ export class PublioBookMatcher
     };
   }
   /* eslint-enable @typescript-eslint/dot-notation */
+
+  /**
+   * Fetches publisher name from text
+   *
+   * @private
+   * @param {cheerio.Cheerio} $element
+   * @returns
+   * @memberof PublioBookMatcher
+   */
+  private async extractPublisher($element: cheerio.Cheerio) {
+    const publisherMatcher = <PublioBookPublisherMatcher> this.matchers[ScrapperMetadataKind.BOOK_PUBLISHER];
+
+    return (await publisherMatcher.searchRemoteRecord(
+      {
+        data: new CreateBookPublisherDto(
+          {
+            name: normalizeParsedText($element.text()),
+          },
+        ),
+      },
+      {
+        path: $element.find('.detail-link').attr('href'),
+      },
+    )).result;
+  }
 
   /**
    * Reads price from API

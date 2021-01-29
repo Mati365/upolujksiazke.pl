@@ -33,6 +33,7 @@ export class BookReleaseService {
     private readonly connection: Connection,
     private readonly publisherService: BookPublisherService,
     private readonly imageAttachmentService: ImageAttachmentService,
+    private readonly entityManager: EntityManager,
   ) {}
 
   /**
@@ -126,45 +127,43 @@ export class BookReleaseService {
       );
     }
 
-    if (cover?.originalUrl) {
+    const shouldFetchCover = !!cover?.originalUrl && !(await checkIfExists(
+      {
+        entityManager: this.entityManager,
+        tableName: 'book_release_cover_image_attachments',
+        where: {
+          bookReleaseId: releaseEntity.id,
+        },
+      },
+    ));
+
+    if (shouldFetchCover) {
       await runInPostHookIfPresent(entityManager, async (hookEntityManager) => {
-        const coverAlreadyCached = await checkIfExists(
-          {
-            entityManager: hookEntityManager,
-            tableName: 'book_release_cover_image_attachments',
-            where: {
-              bookReleaseId: releaseEntity.id,
+        releaseEntity.cover = R.values(
+          await imageAttachmentService.fetchAndCreateScaled(
+            {
+              destSubDir: `cover/${releaseEntity.id}`,
+              sizes: BookReleaseService.COVER_IMAGE_SIZES,
+              dto: cover,
             },
-          },
+            hookEntityManager,
+          ),
         );
 
-        if (!coverAlreadyCached) {
-          releaseEntity.cover = R.values(
-            await imageAttachmentService.fetchAndCreateScaled(
-              {
-                destSubDir: `cover/${releaseEntity.id}`,
-                sizes: BookReleaseService.COVER_IMAGE_SIZES,
-                dto: cover,
-              },
-              hookEntityManager,
-            ),
-          );
-
-          await hookEntityManager.save(
-            new BookReleaseEntity(
-              {
-                id: releaseEntity.id,
-                cover: releaseEntity.cover.map(
-                  (item) => new ImageAttachmentEntity(
-                    {
-                      id: item.id,
-                    },
-                  ),
+        await hookEntityManager.save(
+          new BookReleaseEntity(
+            {
+              id: releaseEntity.id,
+              cover: releaseEntity.cover.map(
+                (item) => new ImageAttachmentEntity(
+                  {
+                    id: item.id,
+                  },
                 ),
-              },
-            ),
-          );
-        }
+              ),
+            },
+          ),
+        );
       });
     }
 

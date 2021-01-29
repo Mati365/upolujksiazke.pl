@@ -146,6 +146,7 @@ export class BookService {
               {
                 defaultTitle: dto.defaultTitle,
                 originalTitle: dto.originalTitle,
+                originalLang: dto.originalLang,
                 originalPublishDate: dto.originalPublishDate,
                 ...dto.kindId ? {kindId: dto.kindId} : {kind},
                 ...dto.volumeId ? {volumeId: dto.volumeId} : {volume},

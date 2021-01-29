@@ -1,11 +1,9 @@
-import * as R from 'ramda';
-
-import {normalizeParsedText} from '@server/common/helpers';
-import {underscoreParameterize} from '@shared/helpers/parameterize';
-import {parseAsyncURLIfOK} from '@server/common/helpers/fetchAsyncHTML';
+import {normalizeURL} from '@server/common/helpers';
 import {concatUrls} from '@shared/helpers/concatUrls';
+import {decodeEscapedUnicode} from '@server/common/helpers/encoding/decodeEscapedUnicode';
 
 import {CreateBookPublisherDto} from '@server/modules/book/modules/publisher/dto/BookPublisher.dto';
+import {CreateImageAttachmentDto} from '@server/modules/attachment/dto/CreateImageAttachment.dto';
 
 import {ScrapperMatcherResult, WebsiteScrapperMatcher} from '@scrapper/service/shared/ScrapperMatcher';
 import {BookShopScrappersGroupConfig} from '@scrapper/service/scrappers/BookShopScrappersGroup';
@@ -22,47 +20,30 @@ export class PublioBookPublisherMatcher
       path: string,
     },
   ): Promise<ScrapperMatcherResult<CreateBookPublisherDto>> {
-    const {config} = this;
-    const {name, description, address, email} = data;
-    const $ = (
-      await parseAsyncURLIfOK(
-        concatUrls(
-          config.homepageURL,
-          attrs?.path ?? `wydawnictwa/${underscoreParameterize(name)}`,
-        ),
-      )
-    )?.$;
-
-    if (!$)
+    if (!attrs)
       return null;
 
-    const $content = $('#yui-main .widetext');
-    const segments = $content.find('p').toArray().map((item) => $(item).text());
-    const [
-      descriptionSegments,
-      propsSegments,
-    ] = (
-      R
-        .splitWhen(
-          (line: string) => (
-            line.startsWith('ul.')
-              || line.includes('Kontakt:')
-              || line.includes('Dane teleadresowe')
-          ),
-          segments,
-        )
-        .map(
-          (items) => items.join('\n'),
-        )
-    );
+    const {config} = this;
+    const {name, description} = data;
+    const $ = (await this.fetchPageByPath(attrs.path))?.$;
 
-    return {
+    return $ && {
       result: new CreateBookPublisherDto(
         {
-          name: name ?? normalizeParsedText($('h1').text()),
-          description: description ?? descriptionSegments,
-          address: address ?? propsSegments.match(/^\s*ul.\s*(.*)$/m)?.[1],
-          email: email ?? propsSegments.match(/^\s*e-mail:\s*(.*)$/m)?.[1].trim(),
+          name,
+          description: description ?? $('.listing-details .expandable.--open').text(),
+          logo: new CreateImageAttachmentDto(
+            {
+              originalUrl: concatUrls(
+                config.homepageURL,
+                normalizeURL(decodeEscapedUnicode(
+                  $
+                    .html()
+                    .match(/imagePath:"(\\u002Ffiles\\u002Fcompany[^"]*)"/)[1],
+                )),
+              ),
+            },
+          ),
         },
       ),
     };

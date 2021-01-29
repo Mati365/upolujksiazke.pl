@@ -14,6 +14,10 @@ export class CreateBookPublisherDto {
   @IsString()
   readonly name: string;
 
+  @IsDefined()
+  @IsString()
+  readonly parameterizedName: string;
+
   @IsOptional()
   @IsString()
   readonly websiteURL: string;

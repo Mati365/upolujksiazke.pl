@@ -32,7 +32,7 @@ export class BookKindService {
    * @returns {Promise<BookKindEntity[]>}
    * @memberof BookKindService
    */
-  async upsertList(dtos: CreateBookKindDto[], entityManager?: EntityManager): Promise<BookKindEntity[]> {
+  async upsert(dtos: CreateBookKindDto[], entityManager?: EntityManager): Promise<BookKindEntity[]> {
     if (!dtos?.length)
       return [];
 

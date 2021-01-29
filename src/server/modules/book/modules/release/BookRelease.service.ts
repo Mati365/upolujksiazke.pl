@@ -77,7 +77,7 @@ export class BookReleaseService {
   async upsert(
     {
       cover,
-      parentRelease, parentReleaseId,
+      childReleases,
       publisher, publisherId,
       ...dto
     }: CreateBookReleaseDto,
@@ -96,11 +96,6 @@ export class BookReleaseService {
       data: new BookReleaseEntity(
         {
           ...dto,
-
-          parentReleaseId: parentReleaseId ?? (
-            await (parentRelease && this.upsert(parentRelease, entityManager))
-          )?.id,
-
           publisherId: publisherId ?? (
             await (publisher && publisherService.upsert(publisher, entityManager))
           )?.id,
@@ -114,6 +109,22 @@ export class BookReleaseService {
         primaryKey: 'isbn',
       },
     );
+
+    if (childReleases) {
+      await this.upsertList(
+        childReleases.map(
+          (childDto) => new CreateBookReleaseDto(
+            {
+              ...childDto,
+              bookId: releaseEntity.bookId,
+              publisherId: releaseEntity.publisherId,
+              parentReleaseId: releaseEntity.id,
+            },
+          ),
+        ),
+        entityManager,
+      );
+    }
 
     if (cover?.originalUrl) {
       await runInPostHookIfPresent(entityManager, async (hookEntityManager) => {

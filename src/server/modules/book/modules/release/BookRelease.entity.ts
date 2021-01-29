@@ -11,6 +11,10 @@ import {BookEntity} from '../../Book.entity';
 import {BookPublisherEntity} from '../publisher/BookPublisher.entity';
 import {BookReviewEntity} from '../review/BookReview.entity';
 
+export enum BookProtection {
+  WATERMARK = 1,
+}
+
 export enum BookBindingKind {
   HARDCOVER = 1,
   PAPERBACK = 2,
@@ -100,6 +104,15 @@ export class BookReleaseEntity extends DatedRecordEntity {
     },
   )
   type: BookType;
+
+  @Column(
+    {
+      type: 'enum',
+      enum: BookProtection,
+      nullable: true,
+    },
+  )
+  protection: BookProtection;
 
   @Column(
     {

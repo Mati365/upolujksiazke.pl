@@ -11,6 +11,10 @@ export class CreateBookAuthorDto {
   readonly id: number;
 
   @IsDefined()
+  @IsString()
+  readonly parameterizedName: string;
+
+  @IsDefined()
   @IsNotEmpty()
   @IsString()
   @IsUniqueValue(

@@ -8,7 +8,7 @@ type BookSimilarityFields = {
 };
 
 export const normalizeObjFields = R.mapObjIndexed(
-  (title) => normalizeParsedText(title)?.toLowerCase(),
+  (title: string) => normalizeParsedText(title)?.toLowerCase(),
 );
 
 export function fuzzyFindBookAnchor(

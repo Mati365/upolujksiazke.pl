@@ -42,7 +42,7 @@ export class BookAuthorService {
         connection,
         entityManager,
         Entity: BookAuthorEntity,
-        primaryKey: 'name',
+        primaryKey: 'parameterizedName',
         data: dtos.map((dto) => new BookAuthorEntity(dto)),
       },
     );

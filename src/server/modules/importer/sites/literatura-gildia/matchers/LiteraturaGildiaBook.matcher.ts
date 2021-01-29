@@ -1,6 +1,6 @@
 import * as R from 'ramda';
 
-import {escapeDiacritics} from '@shared/helpers/escapeDiacritics';
+import slugify from 'slugify';
 import {underscoreParameterize} from '@shared/helpers/parameterize';
 import {fuzzyFindBookAnchor} from '@scrapper/helpers/fuzzyFindBookAnchor';
 
@@ -37,22 +37,22 @@ export class LiteraturaGildiaBookMatcher
   extends WebsiteScrapperMatcher<CreateBookDto, BookShopScrappersGroupConfig>
   implements BookAvailabilityScrapperMatcher<AsyncURLParseResult> {
   /**
-   * Search all remote book urls
-   *
-   * @param {AsyncURLParseResult} {url}
-   * @returns {Promise<CreateBookAvailabilityDto[]>}
-   * @memberof LiteraturaGildiaBookMatcher
+   * @inheritdoc
    */
-  searchAvailability({url}: AsyncURLParseResult): Promise<CreateBookAvailabilityDto[]> {
-    return Promise.resolve([
-      new CreateBookAvailabilityDto(
-        {
-          showOnlyAsQuote: false,
-          remoteId: url.split('/').slice(-2).join('/'),
-          url,
-        },
-      ),
-    ]);
+  searchAvailability({url}: AsyncURLParseResult) {
+    return Promise.resolve(
+      {
+        result: [
+          new CreateBookAvailabilityDto(
+            {
+              showOnlyAsQuote: false,
+              remoteId: url.split('/').slice(-2).join('/'),
+              url,
+            },
+          ),
+        ],
+      },
+    );
   }
 
   /**
@@ -83,6 +83,7 @@ export class LiteraturaGildiaBookMatcher
         {
           defaultTitle: release.title,
           originalPublishDate: normalizeParsedText(text.match(/Rok wydania oryginału: ([\S]+)/)?.[1]),
+          availability: (await this.searchAvailability(bookPage)).result,
           authors: [
             author,
           ],
@@ -248,7 +249,7 @@ export class LiteraturaGildiaBookMatcher
         return `${letter}0`;
 
       case 'Ń': case 'Ę': case 'Ą': case 'Ć': case 'Ł': case 'Ó': case 'Ś': case 'Ż':
-        return `${escapeDiacritics(letter)}1`;
+        return `${slugify(letter)}1`;
 
       case 'Ź':
         return `${letter}2`;

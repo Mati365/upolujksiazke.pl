@@ -40,18 +40,23 @@ import {
 export class BonitoBookMatcher
   extends WebsiteScrapperMatcher<CreateBookDto, BookShopScrappersGroupConfig>
   implements BookAvailabilityScrapperMatcher<AsyncURLParseResult> {
-  searchAvailability({$, url}: AsyncURLParseResult): Promise<CreateBookAvailabilityDto[]> {
+  /**
+   * @inheritdoc
+   */
+  searchAvailability({$, url}: AsyncURLParseResult) {
     return Promise.resolve(
-      [
-        new CreateBookAvailabilityDto(
-          {
-            showOnlyAsQuote: false,
-            remoteId: url.match(/k-([^-]*)-/)[1],
-            price: normalizePrice($('[itemprop="offerDetails"] [itemprop="price"]').attr('content'))?.price,
-            url,
-          },
-        ),
-      ],
+      {
+        result: [
+          new CreateBookAvailabilityDto(
+            {
+              showOnlyAsQuote: false,
+              remoteId: url.match(/k-([^-]*)-/)[1],
+              price: normalizePrice($('[itemprop="offerDetails"] [itemprop="price"]').attr('content'))?.price,
+              url,
+            },
+          ),
+        ],
+      },
     );
   }
 
@@ -99,7 +104,7 @@ export class BonitoBookMatcher
       result: new CreateBookDto(
         {
           defaultTitle: title,
-          availability: await this.searchAvailability(bookPage),
+          availability: (await this.searchAvailability(bookPage)).result,
           authors: $('span[itemprop="productDetails"] h2 a[href^="/autor/"]').toArray().map((author) => (
             new CreateBookAuthorDto(
               {

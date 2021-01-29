@@ -1,7 +1,10 @@
 import {
   Column, Entity, JoinTable,
   ManyToMany, OneToMany,
+  BeforeInsert, BeforeUpdate,
 } from 'typeorm';
+
+import {parameterize} from '@shared/helpers/parameterize';
 
 import {ImageAttachmentEntity} from '@server/modules/attachment/entity';
 import {DatedRecordEntity} from '../../../database/DatedRecord.entity';
@@ -14,12 +17,10 @@ import {BookSeriesEntity} from '../series/BookSeries.entity';
   },
 )
 export class BookPublisherEntity extends DatedRecordEntity {
-  constructor(partial: Partial<BookPublisherEntity>) {
-    super();
-    Object.assign(this, partial);
-  }
+  @Column('text', {unique: true})
+  parameterizedName: string;
 
-  @Column('citext', {unique: true})
+  @Column('citext')
   name: string;
 
   @Column('text', {nullable: true})
@@ -50,4 +51,18 @@ export class BookPublisherEntity extends DatedRecordEntity {
     },
   )
   logo: ImageAttachmentEntity[];
+
+  constructor(partial: Partial<BookPublisherEntity>) {
+    super();
+    Object.assign(this, partial);
+  }
+
+  @BeforeInsert()
+  @BeforeUpdate()
+  transformFields() {
+    const {parameterizedName, name} = this;
+    if (!parameterizedName && name) {
+      this.parameterizedName = parameterize(name);
+    }
+  }
 }

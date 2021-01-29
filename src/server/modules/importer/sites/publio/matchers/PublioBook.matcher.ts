@@ -1,6 +1,6 @@
 import * as R from 'ramda';
 
-import {AsyncURLParseResult} from '@server/common/helpers/fetchAsyncHTML';
+import {concatUrls} from '@shared/helpers/concatUrls';
 import {fuzzyFindBookAnchor} from '@scrapper/helpers/fuzzyFindBookAnchor';
 import {
   normalizeISBN,
@@ -8,8 +8,10 @@ import {
   normalizeURL,
 } from '@server/common/helpers';
 
+import {ID} from '@shared/types';
 import {Language} from '@server/constants/language';
 
+import {AsyncURLParseResult} from '@server/common/helpers/fetchAsyncHTML';
 import {CreateBookAuthorDto} from '@server/modules/book/modules/author/dto/CreateBookAuthor.dto';
 import {CreateBookDto} from '@server/modules/book/dto/CreateBook.dto';
 import {CreateBookReleaseDto} from '@server/modules/book/modules/release/dto/CreateBookRelease.dto';
@@ -17,11 +19,24 @@ import {CreateBookCategoryDto} from '@server/modules/book/modules/category/dto/C
 import {CreateBookPublisherDto} from '@server/modules/book/modules/publisher/dto/BookPublisher.dto';
 import {CreateImageAttachmentDto} from '@server/modules/attachment/dto';
 import {CreateBookAvailabilityDto} from '@server/modules/book/modules/availability/dto/CreateBookAvailability.dto';
+import {CreateBookKindDto} from '@server/modules/book/modules/kind/dto/CreateBookKind.dto';
+
+import {
+  BookScrappedPropsMap,
+  BookAvailabilityScrapperMatcher,
+  PROTECTION_TRANSLATION_MAPPINGS,
+  LANGUAGE_TRANSLATION_MAPPINGS,
+} from '@scrapper/service/scrappers/Book.scrapper';
 
 import {ScrapperMatcherResult, WebsiteScrapperMatcher} from '@scrapper/service/shared/ScrapperMatcher';
+import {BookType} from '@server/modules/book/modules/release/BookRelease.entity';
 import {MatchRecordAttrs} from '@scrapper/service/shared/WebsiteScrappersGroup';
 import {BookShopScrappersGroupConfig} from '@scrapper/service/scrappers/BookShopScrappersGroup';
-import {BookAvailabilityScrapperMatcher} from '@scrapper/service/scrappers/Book.scrapper';
+
+type PublioAPIPrice = {
+  currentPrice: number,
+  originalPrice: number,
+};
 
 /**
  * @todo
@@ -35,31 +50,36 @@ import {BookAvailabilityScrapperMatcher} from '@scrapper/service/scrappers/Book.
  */
 export class PublioBookMatcher
   extends WebsiteScrapperMatcher<CreateBookDto, BookShopScrappersGroupConfig>
-  implements BookAvailabilityScrapperMatcher<AsyncURLParseResult> {
+  implements BookAvailabilityScrapperMatcher<AsyncURLParseResult, {price: PublioAPIPrice}> {
   /**
-   * Search all remote book urls
-   *
-   * @param {AsyncURLParseResult} {$, url}
-   * @returns {Promise<CreateBookAvailabilityDto[]>}
-   * @memberof PublioBookMatcher
+   * @inheritdoc
    */
-  searchAvailability({$, url}: AsyncURLParseResult): Promise<CreateBookAvailabilityDto[]> {
-    const remoteId = $('#book_id.detailsbig').attr('book-id');
+  async searchAvailability({url}: AsyncURLParseResult) {
+    const price = await this.searchPriceByID(
+      PublioBookMatcher.extractBookIdFromURL(url),
+    );
 
-    return Promise.resolve([
-      new CreateBookAvailabilityDto(
-        {
-          showOnlyAsQuote: true,
-          remoteId,
-          url,
-        },
-      ),
-    ]);
+    return {
+      meta: {
+        price,
+      },
+      result: [
+        new CreateBookAvailabilityDto(
+          {
+            showOnlyAsQuote: true,
+            remoteId: PublioBookMatcher.extractBookIdFromURL(url),
+            price: price.currentPrice,
+            url,
+          },
+        ),
+      ],
+    };
   }
 
   /**
    * @inheritdoc
    */
+  /* eslint-disable @typescript-eslint/dot-notation */
   async searchRemoteRecord({data}: MatchRecordAttrs<CreateBookDto>): Promise<ScrapperMatcherResult<CreateBookDto>> {
     const bookPage = await this.searchByPhrase(data);
     if (!bookPage)
@@ -68,49 +88,48 @@ export class PublioBookMatcher
     const {$} = bookPage;
     const title = normalizeParsedText($('h1 > .title').text());
     const basicProps = PublioBookMatcher.extractBookProps($);
-    const $details: any = {};
+    const [parentIsbn, ...childIsbn] = basicProps['isbn']?.[0].split(',').map(normalizeISBN);
 
-    console.info(basicProps);
-    const categories = (
-      $(basicProps['publikacja z kategorii'][1])
-        .find('a')
-        .toArray()
-        .map((item) => new CreateBookCategoryDto(
-          {
-            name: normalizeParsedText($(item).text()),
-          },
-        ))
-    );
+    const {
+      result: availability,
+      meta: {
+        price,
+      },
+    } = await this.searchAvailability(bookPage);
 
-    const authors = $details.find('[itemprop="author"]').text().split(',').map(
-      (name) => new CreateBookAuthorDto(
-        {
-          name: normalizeParsedText(name),
-        },
-      ),
-    );
-
-    const release = new CreateBookReleaseDto(
+    const parentRelease = new CreateBookReleaseDto(
       {
         title,
-        lang: Language.PL,
+        defaultPrice: price.originalPrice,
+        type: BookType.EBOOK,
+        isbn: parentIsbn,
+        lang: (
+          LANGUAGE_TRANSLATION_MAPPINGS[basicProps['język publikacji']?.[0].toLowerCase()]
+            ?? Language.PL
+        ),
         description: normalizeParsedText($('.product-description > .teaser-wrapper').text()),
-        totalPages: +$details.find('span[itemprop="numberOfPages"]').text() || null,
-        publishDate: null,
-        isbn: normalizeISBN(
-          $details.find('isbn[itemprop="isbn"]').text(),
+        totalPages: +basicProps['format']?.[0]?.match(/w wersji papierowej (\d+) stron/)[1] || null,
+        protection: PROTECTION_TRANSLATION_MAPPINGS[basicProps['zabezpieczenie']?.[0].toLowerCase()],
+        publishDate: (
+          basicProps['rok pierwszej publikacji książkowej']?.[0]
+            ?? basicProps['miejsce i rok wydania']?.[0].match(/(\d{4})/)[1]
         ),
         publisher: new CreateBookPublisherDto(
           {
-            name: normalizeParsedText($details.find('[itemprop="publisher"] > a').text()),
+            name: normalizeParsedText(basicProps['wydawca']?.[0]),
           },
         ),
         cover: new CreateImageAttachmentDto(
           {
-            originalUrl: normalizeURL(
-              $details.find('[itemprop="image"]').attr('src'),
-            ),
+            originalUrl: normalizeURL($('meta[name="og:image"]').attr('content'))?.replace('card/', 'product_w450/'),
           },
+        ),
+        childReleases: childIsbn.map(
+          (isbn) => new CreateBookReleaseDto(
+            {
+              isbn,
+            },
+          ),
         ),
       },
     );
@@ -119,42 +138,45 @@ export class PublioBookMatcher
       result: new CreateBookDto(
         {
           defaultTitle: title,
-          originalTitle: null,
-          availability: await this.searchAvailability(bookPage),
-          authors,
-          releases: [release],
-          categories,
+          kind: new CreateBookKindDto(
+            {
+              name: basicProps['rodzaj publikacji']?.[0],
+            },
+          ),
+          tags: basicProps['tematy i słowa kluczowe']?.[1]?.find('.link-label').toArray().map(
+            (item) => $(item).text().match(/([^,]+)/)[1],
+          ),
+          releases: [parentRelease],
+          authors: PublioBookMatcher.extractAuthors($, basicProps),
+          categories: PublioBookMatcher.extractCategories($, basicProps),
+          availability,
         },
       ),
     };
   }
+  /* eslint-enable @typescript-eslint/dot-notation */
 
   /**
-   * Extract info about book from table
+   * Reads price from API
    *
-   * @static
-   * @param {cheerio.Root} $
-   * @returns
+   * @private
+   * @param {ID} id
+   * @returns {Promise<PublioAPIPrice>}
    * @memberof PublioBookMatcher
    */
-  static extractBookProps($: cheerio.Root) {
-    const rows = $('.details-element');
-
-    return R.fromPairs(
-      rows.toArray().map(
-        (row) => {
-          const $childs = $(row).children();
-
-          return [
-            normalizeParsedText($childs.eq(0).text()?.toLowerCase()),
-            [
-              normalizeParsedText($childs.eq(1).text()?.toLowerCase()),
-              $childs.eq(1),
-            ],
-          ];
-        },
-      ),
+  private async searchPriceByID(id: ID): Promise<PublioAPIPrice> {
+    const {config} = this;
+    const {price} = (
+      await fetch(
+        concatUrls(
+          config.homepageURL,
+          `rest/v3/catalog/product/${id}/purchase-options`,
+        ),
+      )
+        .then((r) => r.json())
     );
+
+    return price;
   }
 
   /**
@@ -192,6 +214,90 @@ export class PublioBookMatcher
       $(matchedAnchor)
         .find('.product-description > a')
         .attr('href'),
+    );
+  }
+
+  /**
+   * Converts categories elements to dtos
+   *
+   * @static
+   * @param {cheerio.Root} $
+   * @param {BookScrappedPropsMap} props
+   * @returns
+   * @memberof PublioBookMatcher
+   */
+  static extractCategories($: cheerio.Root, props: BookScrappedPropsMap) {
+    return (
+      $(props['publikacja z kategorii'][1])
+        .find('a')
+        .toArray()
+        .map((item) => new CreateBookCategoryDto(
+          {
+            name: normalizeParsedText($(item).text()),
+          },
+        ))
+    );
+  }
+
+  /**
+   * Converts authors elements to dtos
+   *
+   * @static
+   * @param {cheerio.Root} $
+   * @param {BookScrappedPropsMap} props
+   * @returns
+   * @memberof PublioBookMatcher
+   */
+  static extractAuthors($: cheerio.Root, props: BookScrappedPropsMap) {
+    return (
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      $(props['autor'][1]).find('a').toArray().map(
+        (name) => new CreateBookAuthorDto(
+          {
+            name: normalizeParsedText($(name).text()),
+          },
+        ),
+      )
+    );
+  }
+
+  /**
+   * Picks book URL from url using regex
+   *
+   * @static
+   * @param {string} url
+   * @returns
+   * @memberof PublioBookMatcher
+   */
+  static extractBookIdFromURL(url: string) {
+    return url.match(/p(\w+).html/)[1];
+  }
+
+  /**
+   * Extract info about book from table
+   *
+   * @static
+   * @param {cheerio.Root} $
+   * @returns {BookScrappedPropsMap}
+   * @memberof PublioBookMatcher
+   */
+  static extractBookProps($: cheerio.Root): BookScrappedPropsMap {
+    const rows = $('.details-element');
+
+    return R.fromPairs(
+      rows.toArray().map(
+        (row) => {
+          const $childs = $(row).children();
+
+          return [
+            normalizeParsedText($childs.eq(0).text()?.toLowerCase()),
+            [
+              normalizeParsedText($childs.eq(1).text()?.toLowerCase()),
+              $childs.eq(1),
+            ],
+          ];
+        },
+      ),
     );
   }
 }

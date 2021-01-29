@@ -33,31 +33,38 @@ import {
 export class GildiaBookMatcher
   extends WebsiteScrapperMatcher<CreateBookDto, BookShopScrappersGroupConfig>
   implements BookAvailabilityScrapperMatcher<AsyncURLParseResult> {
-  searchAvailability({$, url}: AsyncURLParseResult): Promise<CreateBookAvailabilityDto[]> {
+  /**
+   * @inheritdoc
+   */
+  searchAvailability({$, url}: AsyncURLParseResult) {
     const $basicProductInfo = $('.basic-product-info');
 
-    return Promise.resolve([
-      new CreateBookAvailabilityDto(
-        {
-          url,
-          showOnlyAsQuote: false,
-          remoteId: $('.product-page-description [data-add-product]').data('addProduct'),
-          totalRatings: null,
-          avgRating: countLetter(
-            '',
-            $('.product-page-description .rating-stars').data('content'),
-          ) * 2,
+    return Promise.resolve(
+      {
+        result: [
+          new CreateBookAvailabilityDto(
+            {
+              url,
+              showOnlyAsQuote: false,
+              remoteId: $('.product-page-description [data-add-product]').data('addProduct'),
+              totalRatings: null,
+              avgRating: countLetter(
+                '',
+                $('.product-page-description .rating-stars').data('content'),
+              ) * 2,
 
-          prevPrice: normalizePrice(
-            $basicProductInfo.find('.previous-price').text(),
-          )?.price,
+              prevPrice: normalizePrice(
+                $basicProductInfo.find('.previous-price').text(),
+              )?.price,
 
-          price: normalizePrice(
-            $basicProductInfo.find('.current-price').text(),
-          )?.price,
-        },
-      ),
-    ]);
+              price: normalizePrice(
+                $basicProductInfo.find('.current-price').text(),
+              )?.price,
+            },
+          ),
+        ],
+      },
+    );
   }
 
   /**
@@ -74,7 +81,7 @@ export class GildiaBookMatcher
         {
           authors: GildiaBookMatcher.extractAuthors(bookPage.$),
           defaultTitle: release.title,
-          availability: await this.searchAvailability(bookPage),
+          availability: (await this.searchAvailability(bookPage)).result,
           releases: [
             release,
           ],

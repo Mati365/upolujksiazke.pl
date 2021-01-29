@@ -84,7 +84,7 @@ export class BookPublisherService {
         entityManager,
         connection,
         Entity: BookPublisherEntity,
-        primaryKey: 'name',
+        primaryKey: 'parameterizedName',
         data: new BookPublisherEntity(dto),
       },
     );

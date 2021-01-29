@@ -8,7 +8,7 @@ import {
 import {Language} from '@server/constants/language';
 import {CreateImageAttachmentDto} from '@server/modules/attachment/dto';
 import {CreateBookPublisherDto} from '../../publisher/dto/BookPublisher.dto';
-import {BookBindingKind, BookType} from '../BookRelease.entity';
+import {BookBindingKind, BookProtection, BookType} from '../BookRelease.entity';
 
 /**
  * @todo
@@ -58,7 +58,7 @@ export class CreateBookReleaseDto {
   @IsOptional()
   @ValidateNested()
   @Type(() => CreateBookPublisherDto)
-  readonly parentRelease: CreateBookReleaseDto;
+  readonly childReleases: CreateBookReleaseDto[];
 
   @IsOptional()
   @IsNumber()
@@ -103,6 +103,10 @@ export class CreateBookReleaseDto {
   @IsOptional()
   @IsNumber()
   readonly weight: number;
+
+  @IsOptional()
+  @IsEnum(BookProtection)
+  readonly protection: BookProtection;
 
   constructor(partial: Partial<CreateBookReleaseDto>) {
     Object.assign(this, partial);

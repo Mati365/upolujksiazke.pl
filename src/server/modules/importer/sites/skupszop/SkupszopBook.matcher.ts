@@ -22,18 +22,23 @@ import {BookAvailabilityScrapperMatcher} from '@scrapper/service/scrappers/Book.
 export class SkupszopBookMatcher
   extends WebsiteScrapperMatcher<CreateBookDto, BookShopScrappersGroupConfig>
   implements BookAvailabilityScrapperMatcher<AsyncURLParseResult> {
-  searchAvailability({$, url}: AsyncURLParseResult): Promise<CreateBookAvailabilityDto[]> {
+  /**
+   * @inheritdoc
+   */
+  searchAvailability({$, url}: AsyncURLParseResult) {
     return Promise.resolve(
-      [
-        new CreateBookAvailabilityDto(
-          {
-            showOnlyAsQuote: false,
-            remoteId: $('body > div.wrapper.product.microdata > div.product-container').data('id'),
-            price: normalizePrice($('.condition-box-head-text > .price').text())?.price,
-            url,
-          },
-        ),
-      ],
+      {
+        result: [
+          new CreateBookAvailabilityDto(
+            {
+              showOnlyAsQuote: false,
+              remoteId: $('body > div.wrapper.product.microdata > div.product-container').data('id'),
+              price: normalizePrice($('.condition-box-head-text > .price').text())?.price,
+              url,
+            },
+          ),
+        ],
+      },
     );
   }
 
@@ -81,7 +86,7 @@ export class SkupszopBookMatcher
       result: new CreateBookDto(
         {
           defaultTitle: productSchema.name,
-          availability: await this.searchAvailability(bookPage),
+          availability: (await this.searchAvailability(bookPage)).result,
           authors: bookSchema.author.map((author: any) => (
             new CreateBookAuthorDto(
               {

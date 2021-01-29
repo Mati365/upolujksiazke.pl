@@ -26,24 +26,24 @@ export class GraniceBookMatcher
   extends WebsiteScrapperMatcher<CreateBookDto, BookShopScrappersGroupConfig>
   implements BookAvailabilityScrapperMatcher<AsyncURLParseResult> {
   /**
-   * Search all remote book urls
-   *
-   * @param {AsyncURLParseResult} {$, url}
-   * @returns {Promise<CreateBookAvailabilityDto[]>}
-   * @memberof GraniceBookMatcher
+   * @inheritdoc
    */
-  searchAvailability({$, url}: AsyncURLParseResult): Promise<CreateBookAvailabilityDto[]> {
+  searchAvailability({$, url}: AsyncURLParseResult) {
     const remoteId = $('#book_id.detailsbig').attr('book-id');
 
-    return Promise.resolve([
-      new CreateBookAvailabilityDto(
-        {
-          showOnlyAsQuote: true,
-          remoteId,
-          url,
-        },
-      ),
-    ]);
+    return Promise.resolve(
+      {
+        result: [
+          new CreateBookAvailabilityDto(
+            {
+              showOnlyAsQuote: true,
+              remoteId,
+              url,
+            },
+          ),
+        ],
+      },
+    );
   }
 
   /**
@@ -111,7 +111,7 @@ export class GraniceBookMatcher
         {
           defaultTitle: title,
           originalTitle: normalizeParsedText(detailsHTML.match(/Tytuł oryginału: ([^\n<>]+)/)?.[1]),
-          availability: await this.searchAvailability(bookPage),
+          availability: (await this.searchAvailability(bookPage)).result,
           authors,
           releases: [release],
           categories,

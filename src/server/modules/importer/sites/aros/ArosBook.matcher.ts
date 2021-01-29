@@ -31,25 +31,25 @@ export class ArosBookMatcher
   extends WebsiteScrapperMatcher<CreateBookDto, BookShopScrappersGroupConfig>
   implements BookAvailabilityScrapperMatcher<AsyncURLParseResult> {
   /**
-   * Search all remote book urls
-   *
-   * @param {AsyncURLParseResult} {$, url}
-   * @returns {Promise<CreateBookAvailabilityDto[]>}
-   * @memberof ArosBookMatcher
+   * @inheritdoc
    */
-  searchAvailability({$, url}: AsyncURLParseResult): Promise<CreateBookAvailabilityDto[]> {
-    return Promise.resolve([
-      new CreateBookAvailabilityDto(
-        {
-          remoteId: $('input[type="hidden"][name="dodaj"]').attr('value'),
-          price: normalizePrice($('[itemprop="offerDetails"] [itemprop="price"]').attr('content'))?.price,
-          avgRating: (Number.parseFloat($('[itemprop="ratingValue"]').text()) / 6) * 10 || null,
-          totalRatings: Number.parseInt($('[itemprop="ratingCount"]').text(), 10) || null,
-          showOnlyAsQuote: false,
-          url,
-        },
-      ),
-    ]);
+  searchAvailability({$, url}: AsyncURLParseResult) {
+    return Promise.resolve(
+      {
+        result: [
+          new CreateBookAvailabilityDto(
+            {
+              remoteId: $('input[type="hidden"][name="dodaj"]').attr('value'),
+              price: normalizePrice($('[itemprop="offerDetails"] [itemprop="price"]').attr('content'))?.price,
+              avgRating: (Number.parseFloat($('[itemprop="ratingValue"]').text()) / 6) * 10 || null,
+              totalRatings: Number.parseInt($('[itemprop="ratingCount"]').text(), 10) || null,
+              showOnlyAsQuote: false,
+              url,
+            },
+          ),
+        ],
+      },
+    );
   }
 
   /**
@@ -99,9 +99,9 @@ export class ArosBookMatcher
     return {
       result: new CreateBookDto(
         {
-          defaultTitle: title,
-          availability: await this.searchAvailability(bookPage),
           authors,
+          defaultTitle: title,
+          availability: (await this.searchAvailability(bookPage)).result,
           releases: [release],
           categories: (
             $('td[style="height: 26px; padding-left: 7px;"] a:not(:first-child):not(:last-child):gt(0)')

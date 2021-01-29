@@ -31,18 +31,22 @@ import {MatrasBookAuthorMatcher} from './MatrasBookAuthor.matcher';
 export class MatrasBookMatcher
   extends WebsiteScrapperMatcher<CreateBookDto, BookShopScrappersGroupConfig>
   implements BookAvailabilityScrapperMatcher<AsyncURLParseResult> {
-  searchAvailability({$, url}: AsyncURLParseResult): Promise<CreateBookAvailabilityDto[]> {
-    return Promise.resolve([
-      new CreateBookAvailabilityDto(
-        {
-          showOnlyAsQuote: false,
-          remoteId: $('.buy[data-id]').data('id'),
-          prevPrice: normalizePrice($('.lastPrice').text())?.price,
-          price: $('[data-price-current]').data('priceCurrent'),
-          url,
-        },
-      ),
-    ]);
+  searchAvailability({$, url}: AsyncURLParseResult) {
+    return Promise.resolve(
+      {
+        result: [
+          new CreateBookAvailabilityDto(
+            {
+              showOnlyAsQuote: false,
+              remoteId: $('.buy[data-id]').data('id'),
+              prevPrice: normalizePrice($('.lastPrice').text())?.price,
+              price: $('[data-price-current]').data('priceCurrent'),
+              url,
+            },
+          ),
+        ],
+      },
+    );
   }
 
   /**
@@ -65,7 +69,7 @@ export class MatrasBookMatcher
           defaultTitle: release.title,
           originalTitle: normalizeParsedText(detailsText.match(/Tytuł oryginalny:\s*([^\n]+)/)?.[1]),
           originalPublishDate: normalizeParsedText(detailsText.match(/Data pierwszego wydania:\s*(\S+)/)?.[1]),
-          availability: await this.searchAvailability(bookPage),
+          availability: (await this.searchAvailability(bookPage)).result,
           releases: [
             release,
           ],

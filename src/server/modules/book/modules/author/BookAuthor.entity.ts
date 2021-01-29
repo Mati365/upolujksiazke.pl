@@ -1,4 +1,9 @@
-import {Entity, Column, ManyToMany} from 'typeorm';
+import {
+  Entity, Column, ManyToMany,
+  BeforeInsert, BeforeUpdate,
+} from 'typeorm';
+
+import {parameterize} from '@shared/helpers/parameterize';
 
 import {DatedRecordEntity} from '../../../database/DatedRecord.entity';
 import {BookEntity} from '../../Book.entity';
@@ -9,7 +14,10 @@ import {BookEntity} from '../../Book.entity';
   },
 )
 export class BookAuthorEntity extends DatedRecordEntity {
-  @Column('citext', {unique: true})
+  @Column('text', {unique: true})
+  parameterizedName: string;
+
+  @Column('citext')
   name: string;
 
   @Column('text', {nullable: true})
@@ -21,5 +29,14 @@ export class BookAuthorEntity extends DatedRecordEntity {
   constructor(partial: Partial<BookAuthorEntity>) {
     super();
     Object.assign(this, partial);
+  }
+
+  @BeforeInsert()
+  @BeforeUpdate()
+  transformFields() {
+    const {parameterizedName, name} = this;
+    if (!parameterizedName && name) {
+      this.parameterizedName = parameterize(name);
+    }
   }
 }

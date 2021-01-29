@@ -1,6 +1,6 @@
 import * as R from 'ramda';
 
-export const normalizeParsedText = R.unless(
+export const normalizeParsedText: (str: string) => string = R.unless(
   R.isNil,
   R.pipe(
     R.replace(/[ ]{2,}/g, ' '),

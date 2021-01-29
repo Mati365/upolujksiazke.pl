@@ -13,6 +13,7 @@ import {CreateBookCategoryDto} from '../modules/category/dto/CreateBookCategory.
 import {CreateBookVolumeDto} from '../modules/volume/dto/CreateBookVolume.dto';
 import {CreateBookSeriesDto} from '../modules/series/dto/CreateBookSeries.dto';
 import {CreateBookPrizeDto} from '../modules/prize/dto/CreateBookPrize.dto';
+import {CreateBookKindDto} from '../modules/kind/dto/CreateBookKind.dto';
 
 export class CreateBookDto {
   @IsOptional()
@@ -25,6 +26,10 @@ export class CreateBookDto {
   @IsOptional()
   @IsString()
   readonly originalTitle: string;
+
+  @IsOptional()
+  @IsString()
+  readonly parameterizedTitle: string;
 
   @IsOptional()
   @IsString()
@@ -57,6 +62,15 @@ export class CreateBookDto {
   @IsOptional()
   @IsNumber()
   readonly volumeId: number;
+
+  @IsDefined()
+  @ValidateNested()
+  @Type(() => CreateBookKindDto)
+  readonly kind: CreateBookKindDto;
+
+  @IsOptional()
+  @IsNumber()
+  readonly kindId: number;
 
   @IsDefined()
   @ValidateNested()

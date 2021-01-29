@@ -1,22 +1,21 @@
-import * as R from 'ramda';
+import slugify from 'slugify';
 
-import {escapeDiacritics} from './escapeDiacritics';
-import {removeSpecialCharacters} from './removeSpecialCharacters';
+const PARAMETRIZE_REGEX = /[^\w\s-]+/g;
 
-export const separatedParameterize = (separator: string): ((str: string) => string) => R.ifElse(
-  R.either(
-    R.isNil,
-    R.isEmpty,
-  ),
-  R.always(''),
-  R.compose(
-    R.replace(/\s/g, separator),
-    R.toLower,
-    escapeDiacritics,
-    removeSpecialCharacters,
-    R.trim,
-  ),
+export const parameterize = (str: string) => slugify(
+  str,
+  {
+    lower: true,
+    remove: PARAMETRIZE_REGEX,
+    replacement: '-',
+  },
 );
 
-export const parameterize = separatedParameterize('-');
-export const underscoreParameterize = separatedParameterize('_');
+export const underscoreParameterize = (str: string) => slugify(
+  str,
+  {
+    lower: true,
+    remove: PARAMETRIZE_REGEX,
+    replacement: '_',
+  },
+);

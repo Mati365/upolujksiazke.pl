@@ -31,28 +31,28 @@ export class DadadaBookMatcher
   extends WebsiteScrapperMatcher<CreateBookDto, BookShopScrappersGroupConfig>
   implements BookAvailabilityScrapperMatcher<AsyncURLParseResult> {
   /**
-   * Search all remote book urls
-   *
-   * @param {AsyncURLParseResult} {$, url}
-   * @returns {Promise<CreateBookAvailabilityDto[]>}
-   * @memberof DadadaBookMatcher
+   * @inheritdoc
    */
-  searchAvailability({$, url}: AsyncURLParseResult): Promise<CreateBookAvailabilityDto[]> {
+  searchAvailability({$, url}: AsyncURLParseResult) {
     const remoteId = $('form#FormaRate > input[name="Id"]').val();
 
-    return Promise.resolve([
-      new CreateBookAvailabilityDto(
-        {
-          price: normalizePrice($('.productPromo .productFinalPrice').text())?.price,
-          prevPrice: normalizePrice($('.productPromo .productBasePrice').text())?.price,
-          avgRating: Number.parseFloat($('[data-rateit-value]').attr('rateitValue')) * 2 || null,
-          totalRatings: +$('.reviewCount[onclick]').text()?.match(/\(\d+\)/)[1] || null,
-          showOnlyAsQuote: true,
-          remoteId,
-          url,
-        },
-      ),
-    ]);
+    return Promise.resolve(
+      {
+        result: [
+          new CreateBookAvailabilityDto(
+            {
+              price: normalizePrice($('.productPromo .productFinalPrice').text())?.price,
+              prevPrice: normalizePrice($('.productPromo .productBasePrice').text())?.price,
+              avgRating: Number.parseFloat($('[data-rateit-value]').attr('rateitValue')) * 2 || null,
+              totalRatings: +$('.reviewCount[onclick]').text()?.match(/\(\d+\)/)[1] || null,
+              showOnlyAsQuote: true,
+              remoteId,
+              url,
+            },
+          ),
+        ],
+      },
+    );
   }
 
   /**
@@ -104,9 +104,9 @@ export class DadadaBookMatcher
     return {
       result: new CreateBookDto(
         {
-          defaultTitle: title,
-          availability: await this.searchAvailability(bookPage),
           authors,
+          defaultTitle: title,
+          availability: (await this.searchAvailability(bookPage)).result,
           releases: [release],
           categories: $('#breadCrumbs > .breadCrumbsItem:not(:first-child) > a .name').toArray().map(
             (name) => new CreateBookCategoryDto(

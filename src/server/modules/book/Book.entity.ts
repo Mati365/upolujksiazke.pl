@@ -2,8 +2,12 @@ import * as R from 'ramda';
 import {Transform} from 'class-transformer';
 import {
   Entity, Column,
-  ManyToMany, OneToMany, JoinTable, JoinColumn, ManyToOne, RelationId,
+  ManyToMany, OneToMany, JoinTable,
+  JoinColumn, ManyToOne, RelationId,
+  BeforeInsert, BeforeUpdate,
 } from 'typeorm';
+
+import {parameterize} from '@shared/helpers/parameterize';
 
 import {DatedRecordEntity} from '../database/DatedRecord.entity';
 import {TagEntity} from '../tag/Tag.entity';
@@ -16,6 +20,7 @@ import {BookVolumeEntity} from './modules/volume/BookVolume.entity';
 import {BookAvailabilityEntity} from './modules/availability/BookAvailability.entity';
 import {BookSeriesEntity} from './modules/series/BookSeries.entity';
 import {BookPrizeEntity} from './modules/prize/BookPrize.entity';
+import {BookKindEntity} from './modules/kind/BookKind.entity';
 
 @Entity(
   {
@@ -24,6 +29,9 @@ import {BookPrizeEntity} from './modules/prize/BookPrize.entity';
 )
 export class BookEntity extends DatedRecordEntity {
   @Column('citext', {unique: true})
+  parameterizedTitle: string;
+
+  @Column('citext')
   defaultTitle: string;
 
   @Column('citext', {unique: true, nullable: true})
@@ -85,8 +93,25 @@ export class BookEntity extends DatedRecordEntity {
   @ManyToMany(() => BookPrizeEntity, {cascade: ['insert']})
   prizes: BookPrizeEntity[];
 
+  @ManyToOne(() => BookKindEntity, {onDelete: 'CASCADE'})
+  @JoinColumn({name: 'kindId'})
+  kind: BookKindEntity;
+
+  @Column({nullable: true})
+  @RelationId((entity: BookEntity) => entity.kind)
+  kindId: number;
+
   constructor(partial: Partial<BookEntity>) {
     super();
     Object.assign(this, partial);
+  }
+
+  @BeforeInsert()
+  @BeforeUpdate()
+  transformFields() {
+    const {parameterizedTitle, defaultTitle} = this;
+    if (!parameterizedTitle && defaultTitle) {
+      this.parameterizedTitle = parameterize(defaultTitle);
+    }
   }
 }

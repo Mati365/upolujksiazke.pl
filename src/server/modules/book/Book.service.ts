@@ -16,6 +16,7 @@ import {BookAvailabilityService} from './modules/availability/BookAvailability.s
 import {BookVolumeService} from './modules/volume/BookVolume.service';
 import {BookSeriesService} from './modules/series/BookSeries.service';
 import {BookPrizeService} from './modules/prize/BookPrize.service';
+import {BookKindService} from './modules/kind/BookKind.service';
 
 import {CreateBookDto} from './dto/CreateBook.dto';
 import {CreateBookReleaseDto} from './modules/release/dto/CreateBookRelease.dto';
@@ -35,6 +36,7 @@ export class BookService {
     private readonly volumeService: BookVolumeService,
     private readonly seriesService: BookSeriesService,
     private readonly prizeServices: BookPrizeService,
+    private readonly kindService: BookKindService,
   ) {}
 
   /**
@@ -109,10 +111,11 @@ export class BookService {
         tagService, authorService,
         volumeService, releaseService,
         categoryService, seriesService,
-        prizeServices,
+        prizeServices, kindService,
       } = this;
 
       const [
+        kind,
         volume,
         series,
         prizes,
@@ -121,6 +124,7 @@ export class BookService {
         categories,
       ] = (
         [
+          dto.kind && (await kindService.upsert([dto.kind]))[0],
           dto.volume && await volumeService.upsert(dto.volume),
           dto.series && await seriesService.upsert(dto.series),
           dto.prizes && await prizeServices.upsert(dto.prizes),
@@ -136,14 +140,15 @@ export class BookService {
           {
             connection,
             entityManager: transaction,
-            primaryKey: 'defaultTitle',
+            primaryKey: 'parameterizedTitle',
             Entity: BookEntity,
             data: new BookEntity(
               {
                 defaultTitle: dto.defaultTitle,
                 originalTitle: dto.originalTitle,
                 originalPublishDate: dto.originalPublishDate,
-                volume,
+                ...dto.kindId ? {kindId: dto.kindId} : {kind},
+                ...dto.volumeId ? {volumeId: dto.volumeId} : {volume},
                 series,
                 prizes,
                 authors,

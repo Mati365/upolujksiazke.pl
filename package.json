@@ -135,6 +135,7 @@
     "react-router-dom": "^5.2.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^6.6.3",
+    "slugify": "^1.4.6",
     "snakecase-keys": "^3.2.1",
     "string-similarity": "^4.0.4",
     "ts-node": "^9.1.1",

@@ -26,8 +26,6 @@ export * from './async/mapObjValuesToPromise';
 export * from './async/collectAsyncIterator';
 export * from './async/timeout';
 export * from './mergeNonNullProperties';
-export * from './escapeDiacritics';
-export * from './removeSpecialCharacters';
 export * from './convert';
 export * from './countLetter';
 export * from './safeJsonParse';

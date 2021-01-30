@@ -44,7 +44,7 @@ export class BookAvailabilityEntity extends RemoteRecordFields {
   )
   price: number;
 
-  @Column('smallint', {nullable: true})
+  @Column('float', {nullable: true})
   avgRating: number;
 
   @Column('integer', {nullable: true})

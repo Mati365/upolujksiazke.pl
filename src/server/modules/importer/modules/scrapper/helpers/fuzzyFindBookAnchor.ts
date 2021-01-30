@@ -43,7 +43,7 @@ export function fuzzyFindBookAnchor(
           );
 
           return (
-            similarity < 0.3
+            similarity < 0.6
               ? null
               : [similarity, el]
           );

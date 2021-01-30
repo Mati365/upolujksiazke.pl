@@ -35,7 +35,7 @@ export class WebsiteInfoScrapper {
         url,
         title: $('title').text(),
         description: $('meta[name="description"]').attr('content'),
-        faviconUrl: concatUrls(url, faviconUrl),
+        faviconUrl: faviconUrl && concatUrls(url, faviconUrl),
       },
     );
   }

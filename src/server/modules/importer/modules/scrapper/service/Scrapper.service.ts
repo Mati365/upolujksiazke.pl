@@ -125,13 +125,24 @@ export class ScrapperService {
   /**
    * Fetches website basic info by full url
    *
-   * @param {string} url
+   * @param {string[]} urls
    * @returns {Promise<RemoteWebsiteEntity>}
    * @memberof ScrapperService
    */
-  findOrCreateWebsiteByUrl(url: string): Promise<RemoteWebsiteEntity> {
-    return this.websiteInfoService.findOrCreateWebsiteEntity(
-      this.getScrappersGroupByWebsiteURL(url).websiteInfoScrapper,
+  async findOrCreateWebsitesByUrls(urls: string[]): Promise<Record<string, RemoteWebsiteEntity>> {
+    const entities = await this.websiteInfoService.findOrCreateWebsitesEntities(
+      R.map(
+        (url) => this.getScrappersGroupByWebsiteURL(url).websiteInfoScrapper,
+        R.uniq(urls),
+      ),
+    );
+
+    return entities.reduce(
+      (acc, entity) => {
+        acc[entity.url] = entity;
+        return acc;
+      },
+      {},
     );
   }
 }

@@ -1,4 +1,7 @@
 import {Injectable} from '@nestjs/common';
+import {In} from 'typeorm';
+import pLimit from 'p-limit';
+import * as R from 'ramda';
 
 import {RemoteWebsiteEntity} from '@server/modules/remote/entity';
 import {WebsiteInfoScrapper} from './shared';
@@ -13,17 +16,43 @@ export class WebsiteInfoScrapperService {
    * @memberof ScrapperService
    */
   async findOrCreateWebsiteEntity(scrapper: WebsiteInfoScrapper) {
-    let website = await RemoteWebsiteEntity.findOne(
+    return (await this.findOrCreateWebsitesEntities([scrapper]))[0];
+  }
+
+  /**
+   * Finds or creates multiple websites
+   *
+   * @param {WebsiteInfoScrapper[]} scrappers
+   * @returns
+   * @memberof WebsiteInfoScrapperService
+   */
+  async findOrCreateWebsitesEntities(scrappers: WebsiteInfoScrapper[]) {
+    const urls = R.pluck('websiteURL', scrappers);
+    const cachedWebsites = await RemoteWebsiteEntity.find(
       {
-        url: scrapper.websiteURL,
+        url: In(urls),
       },
     );
 
-    if (!website) {
-      website = await scrapper.fetchWebsiteEntity();
-      await website.save();
-    }
+    const cachedUrls = R.pluck('url', cachedWebsites);
+    const missingWebsites = scrappers.filter(
+      ({websiteURL}) => !cachedUrls.includes(websiteURL),
+    );
 
-    return website;
+    if (R.isEmpty(missingWebsites))
+      return cachedWebsites;
+
+    const limit = pLimit(5);
+    const newEntities = await Promise.all(
+      missingWebsites.map(
+        (scrapper) => limit(() => scrapper.fetchWebsiteEntity()),
+      ),
+    );
+
+    await RemoteWebsiteEntity.save(newEntities);
+    return [
+      ...cachedWebsites,
+      ...newEntities,
+    ];
   }
 }

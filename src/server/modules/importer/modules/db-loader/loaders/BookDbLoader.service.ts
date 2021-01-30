@@ -120,17 +120,19 @@ export class BookDbLoader implements MetadataDbLoader {
       )
     );
 
-    const mappedAvailability = await Promise.all(
-      allAvailability.map(
-        async (availability) => new CreateBookAvailabilityDto(
-          {
-            ...availability,
-            bookId: releaseBook?.id,
-            websiteId: (
-              await scrapperService.findOrCreateWebsiteByUrl(availability.url)
-            ).id,
-          },
-        ),
+    const websites = await scrapperService.findOrCreateWebsitesByUrls(
+      R.pluck('url', allAvailability),
+    );
+
+    const mappedAvailability = allAvailability.map(
+      (availability) => new CreateBookAvailabilityDto(
+        {
+          ...availability,
+          bookId: releaseBook?.id,
+          websiteId: websites[
+            scrapperService.getScrappersGroupByWebsiteURL(availability.url).websiteURL
+          ].id,
+        },
       ),
     );
 

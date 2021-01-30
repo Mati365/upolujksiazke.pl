@@ -8,6 +8,7 @@ OpenSource book reviews aggregator, something like Metacritic / Digg for books. 
 
 ## Goals
 
+- [ ] wykop #książki as blog
 - [ ] Book summary
 - [ ] Changes history
 - [ ] Mark as school reading

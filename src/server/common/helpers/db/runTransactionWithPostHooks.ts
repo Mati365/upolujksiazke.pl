@@ -64,12 +64,14 @@ export async function runInPostHookIfPresent(
 
   transactionManager.pushPostTransactionHook(
     async () => {
-      if (runInNewTransaction)
-        return transactionManager.connection.transaction(fn);
+      if (runInNewTransaction) {
+        await transactionManager.connection.transaction(fn);
+        return;
+      }
 
       const entityManager = transactionManager.connection.createEntityManager();
       try {
-        return await fn(entityManager);
+        await fn(entityManager);
       } finally {
         await entityManager.release();
       }

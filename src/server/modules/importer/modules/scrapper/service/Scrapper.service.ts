@@ -16,10 +16,10 @@ import {
   // LiteraturaGildiaScrappersGroup,
   // WikipediaScrappersGroup,
   // SkupszopScrappersGroup,
-  // BonitoScrappersGroup,
+  BonitoScrappersGroup,
   // DadadaScrappersGroup,
   // ArosScrappersGroup,
-  PublioScrappersGroup,
+  // PublioScrappersGroup,
   WykopScrappersGroup,
 } from '@server/modules/importer/sites';
 
@@ -46,7 +46,8 @@ export class ScrapperService {
     // tmpDirService: TmpDirService,
   ) {
     this.scrappersGroups = [
-      // new BonitoScrappersGroup(PARSERS_ENV.bonito),
+      // new PublioScrappersGroup(PARSERS_ENV.publio),
+      new BonitoScrappersGroup(PARSERS_ENV.bonito),
       // new SkupszopScrappersGroup(PARSERS_ENV.skupszop),
       // new GildiaScrappersGroup(PARSERS_ENV.gildia),
       // new GraniceScrappersGroup(PARSERS_ENV.granice),
@@ -54,7 +55,6 @@ export class ScrapperService {
       // new MatrasScrappersGroup(PARSERS_ENV.matras), // sucky DB
       // new DadadaScrappersGroup(PARSERS_ENV.dadada),
       // new ArosScrappersGroup(PARSERS_ENV.aros),
-      new PublioScrappersGroup(PARSERS_ENV.publio),
       new WykopScrappersGroup(
         {
           homepageURL: PARSERS_ENV.wykop.homepageURL,

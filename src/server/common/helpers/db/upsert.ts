@@ -1,7 +1,6 @@
 import {
   EntityTarget, Connection,
-  getRepository, SelectQueryBuilder,
-  EntityManager,
+  EntityManager, getRepository,
 } from 'typeorm';
 
 import {safeArray} from '@shared/helpers/safeArray';
@@ -11,23 +10,23 @@ export async function upsert<T, E extends T | T[], K extends keyof T>(
   {
     Entity,
     entityManager,
-    queryBuilder,
     connection,
     data,
     constraint,
     primaryKey,
     conflictKeys,
+    coalesce = true,
     doNothing,
     skip = ['id', 'createdAt'] as K[],
   }: {
     connection: Connection,
     entityManager?: EntityManager,
     Entity: EntityTarget<T>,
-    queryBuilder?: SelectQueryBuilder<T>,
     data: E,
     constraint?: string,
     conflictKeys?: string,
     doNothing?: boolean,
+    coalesce?: boolean,
     primaryKey?: CanBeArray<(string & keyof T) | `${string & keyof T}Id`>,
     skip?: K[],
   },
@@ -38,24 +37,30 @@ export async function upsert<T, E extends T | T[], K extends keyof T>(
       : getRepository(Entity)
   );
 
-  const updateStr = !doNothing && (
-    connection
-      .getMetadata(Entity)
-      .columns
-      .map(
-        ({databaseName: key}) => (
-          skip.includes(key as K)
-            ? null
-            : `"${key}" = EXCLUDED."${key}"`
-        ),
-      )
-      .filter(Boolean)
-      .join(',')
-  );
-
+  let updateStr: string = null;
   if (doNothing)
     conflictKeys ??= '';
   else {
+    const metadata = connection.getMetadata(Entity);
+    updateStr = !doNothing && (
+      metadata
+        .columns
+        .map(
+          ({databaseName: key}) => {
+            if (skip.includes(key as K))
+              return null;
+
+            let assignValue = `EXCLUDED."${key}"`;
+            if (coalesce)
+              assignValue = `COALESCE(${assignValue}, ${metadata.tableName}."${key}")`;
+
+            return `"${key}" = ${assignValue}`;
+          },
+        )
+        .filter(Boolean)
+        .join(',')
+    );
+
     conflictKeys ??= (
       constraint
         ? `on constraint ${constraint}`
@@ -64,7 +69,8 @@ export async function upsert<T, E extends T | T[], K extends keyof T>(
   }
 
   const result = await (
-    (repo.createQueryBuilder() || queryBuilder)
+    repo
+      .createQueryBuilder()
       .insert()
       .values(data)
       .onConflict(`${conflictKeys} ${doNothing ? 'DO NOTHING' : `DO UPDATE SET ${updateStr}`}`)

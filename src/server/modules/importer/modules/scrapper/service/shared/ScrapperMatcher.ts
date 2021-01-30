@@ -1,7 +1,7 @@
 import * as R from 'ramda';
 
 import {buildURL} from '@shared/helpers/urlEncoder';
-import {parseAsyncURLIfOK} from '@server/common/helpers/fetchAsyncHTML';
+import {AsyncURLParseResult, parseAsyncURLIfOK} from '@server/common/helpers/fetchAsyncHTML';
 import {concatUrls} from '@shared/helpers/concatUrls';
 
 import {CanBePromise} from '@shared/types';
@@ -65,6 +65,16 @@ export abstract class WebsiteScrapperMatcher<
   ) {
     super();
   }
+
+  /**
+   * Extracts item data from provided page
+   *
+   * @abstract
+   * @param {AsyncURLParseResult} result
+   * @returns {CanBePromise<ScrapperMatcherResult<Type>>}
+   * @memberof WebsiteScrapperMatcher
+   */
+  abstract extractFromFetchedPage(result: AsyncURLParseResult): CanBePromise<ScrapperMatcherResult<Type>>;
 
   /**
    * Concats urls with root page url and fetches page

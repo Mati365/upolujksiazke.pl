@@ -52,12 +52,8 @@ export class ArosBookMatcher
     );
   }
 
-  /**
-   * @inheritdoc
-   */
   /* eslint-disable @typescript-eslint/dot-notation */
-  async searchRemoteRecord({data}: MatchRecordAttrs<CreateBookDto>): Promise<ScrapperMatcherResult<CreateBookDto>> {
-    const bookPage = await this.searchByPhrase(data);
+  async extractFromFetchedPage(bookPage: AsyncURLParseResult): Promise<ScrapperMatcherResult<CreateBookDto>> {
     if (!bookPage)
       return null;
 
@@ -119,6 +115,15 @@ export class ArosBookMatcher
     };
   }
   /* eslint-enable @typescript-eslint/dot-notation */
+
+  /**
+   * @inheritdoc
+   */
+  async searchRemoteRecord({data}: MatchRecordAttrs<CreateBookDto>): Promise<ScrapperMatcherResult<CreateBookDto>> {
+    return this.extractFromFetchedPage(
+      await this.searchByPhrase(data),
+    );
+  }
 
   /**
    * Go to website search and pick matching item

@@ -8,38 +8,30 @@ import {CreateImageAttachmentDto} from '@server/modules/attachment/dto/CreateIma
 import {ScrapperMatcherResult, WebsiteScrapperMatcher} from '@scrapper/service/shared/ScrapperMatcher';
 import {BookShopScrappersGroupConfig} from '@scrapper/service/scrappers/BookShopScrappersGroup';
 import {MatchRecordAttrs} from '@scrapper/service/shared/WebsiteScrappersGroup';
+import {AsyncURLParseResult} from '@server/common/helpers/fetchAsyncHTML';
 
 export class PublioBookPublisherMatcher
   extends WebsiteScrapperMatcher<CreateBookPublisherDto, BookShopScrappersGroupConfig> {
   /**
    * @inheritdoc
    */
-  async searchRemoteRecord(
-    {data}: MatchRecordAttrs<CreateBookPublisherDto>,
-    attrs?: {
-      path: string,
-    },
-  ): Promise<ScrapperMatcherResult<CreateBookPublisherDto>> {
-    if (!attrs)
+  async extractFromFetchedPage(page: AsyncURLParseResult): Promise<ScrapperMatcherResult<CreateBookPublisherDto>> {
+    if (!page)
       return null;
 
     const {config} = this;
-    const {name, description} = data;
-    const $ = (await this.fetchPageByPath(attrs.path))?.$;
-    if (!$)
-      return null;
-
+    const {$} = page;
     const logoUrl = (
       $
         .html()
         .match(/imagePath:"(\\u002Ffiles\\u002Fcompany[^"]*)"/)?.[1]
     );
 
-    return $ && {
+    return {
       result: new CreateBookPublisherDto(
         {
-          name,
-          description: description ?? $('.listing-details .expandable.--open').text(),
+          name: $('h1').text().match(/(.*)\s-\s/)[1],
+          description: $('.listing-details .expandable.--open').text(),
           logo: logoUrl && new CreateImageAttachmentDto(
             {
               originalUrl: concatUrls(
@@ -51,5 +43,22 @@ export class PublioBookPublisherMatcher
         },
       ),
     };
+  }
+
+  /**
+   * @inheritdoc
+   */
+  async searchRemoteRecord(
+    _: MatchRecordAttrs<CreateBookPublisherDto>,
+    attrs?: {
+      path: string,
+    },
+  ): Promise<ScrapperMatcherResult<CreateBookPublisherDto>> {
+    if (!attrs)
+      return null;
+
+    return this.extractFromFetchedPage(
+      await this.fetchPageByPath(attrs.path),
+    );
   }
 }

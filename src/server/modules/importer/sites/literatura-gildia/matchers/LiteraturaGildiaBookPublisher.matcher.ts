@@ -2,7 +2,7 @@ import * as R from 'ramda';
 
 import {normalizeParsedText} from '@server/common/helpers';
 import {underscoreParameterize} from '@shared/helpers/parameterize';
-import {parseAsyncURLIfOK} from '@server/common/helpers/fetchAsyncHTML';
+import {AsyncURLParseResult, parseAsyncURLIfOK} from '@server/common/helpers/fetchAsyncHTML';
 import {concatUrls} from '@shared/helpers/concatUrls';
 
 import {CreateBookPublisherDto} from '@server/modules/book/modules/publisher/dto/BookPublisher.dto';
@@ -16,26 +16,11 @@ export class LiteraturaGildiaBookPublisherMatcher
   /**
    * @inheritdoc
    */
-  async searchRemoteRecord(
-    {data}: MatchRecordAttrs<CreateBookPublisherDto>,
-    attrs?: {
-      path: string,
-    },
-  ): Promise<ScrapperMatcherResult<CreateBookPublisherDto>> {
-    const {config} = this;
-    const {name, description, address, email} = data;
-    const $ = (
-      await parseAsyncURLIfOK(
-        concatUrls(
-          config.homepageURL,
-          attrs?.path ?? `wydawnictwa/${underscoreParameterize(name)}`,
-        ),
-      )
-    )?.$;
-
-    if (!$)
+  async extractFromFetchedPage(page: AsyncURLParseResult): Promise<ScrapperMatcherResult<CreateBookPublisherDto>> {
+    if (!page)
       return null;
 
+    const {$} = page;
     const $content = $('#yui-main .widetext');
     const segments = $content.find('p').toArray().map((item) => $(item).text());
     const [
@@ -59,12 +44,33 @@ export class LiteraturaGildiaBookPublisherMatcher
     return {
       result: new CreateBookPublisherDto(
         {
-          name: name ?? normalizeParsedText($('h1').text()),
-          description: description ?? descriptionSegments,
-          address: address ?? propsSegments.match(/^\s*ul.\s*(.*)$/m)?.[1],
-          email: email ?? propsSegments.match(/^\s*e-mail:\s*(.*)$/m)?.[1].trim(),
+          name: normalizeParsedText($('h1').text()),
+          description: descriptionSegments,
+          address: propsSegments.match(/^\s*ul.\s*(.*)$/m)?.[1],
+          email: propsSegments.match(/^\s*e-mail:\s*(.*)$/m)?.[1].trim(),
         },
       ),
     };
+  }
+
+  /**
+   * @inheritdoc
+   */
+  async searchRemoteRecord(
+    {data}: MatchRecordAttrs<CreateBookPublisherDto>,
+    attrs?: {
+      path: string,
+    },
+  ): Promise<ScrapperMatcherResult<CreateBookPublisherDto>> {
+    const {config} = this;
+
+    return this.extractFromFetchedPage(
+      await parseAsyncURLIfOK(
+        concatUrls(
+          config.homepageURL,
+          attrs?.path ?? `wydawnictwa/${underscoreParameterize(data.name)}`,
+        ),
+      ),
+    );
   }
 }

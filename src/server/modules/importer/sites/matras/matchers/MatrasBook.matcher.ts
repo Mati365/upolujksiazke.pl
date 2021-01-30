@@ -52,8 +52,7 @@ export class MatrasBookMatcher
   /**
    * @inheritdoc
    */
-  async searchRemoteRecord({data}: MatchRecordAttrs<CreateBookDto>): Promise<ScrapperMatcherResult<CreateBookDto>> {
-    const bookPage = await this.searchByPhrase(data);
+  async extractFromFetchedPage(bookPage: AsyncURLParseResult): Promise<ScrapperMatcherResult<CreateBookDto>> {
     if (!bookPage)
       return null;
 
@@ -76,6 +75,15 @@ export class MatrasBookMatcher
         },
       ),
     };
+  }
+
+  /**
+   * @inheritdoc
+   */
+  async searchRemoteRecord({data}: MatchRecordAttrs<CreateBookDto>): Promise<ScrapperMatcherResult<CreateBookDto>> {
+    return this.extractFromFetchedPage(
+      await this.searchByPhrase(data),
+    );
   }
 
   /**

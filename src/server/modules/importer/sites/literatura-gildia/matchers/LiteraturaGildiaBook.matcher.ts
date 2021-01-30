@@ -58,12 +58,7 @@ export class LiteraturaGildiaBookMatcher
   /**
    * @inheritdoc
    */
-  async searchRemoteRecord({data}: MatchRecordAttrs<CreateBookDto>): Promise<ScrapperMatcherResult<CreateBookDto>> {
-    const bookPage = (
-      (await this.directSearch(data))
-        || (await this.searchByFirstLetter(data))
-    );
-
+  async extractFromFetchedPage(bookPage: AsyncURLParseResult): Promise<ScrapperMatcherResult<CreateBookDto>> {
     if (!bookPage)
       return null;
 
@@ -93,6 +88,16 @@ export class LiteraturaGildiaBookMatcher
         },
       ),
     };
+  }
+
+  /**
+   * @inheritdoc
+   */
+  async searchRemoteRecord({data}: MatchRecordAttrs<CreateBookDto>): Promise<ScrapperMatcherResult<CreateBookDto>> {
+    return this.extractFromFetchedPage(
+      (await this.directSearch(data))
+        || (await this.searchByFirstLetter(data)),
+    );
   }
 
   /**

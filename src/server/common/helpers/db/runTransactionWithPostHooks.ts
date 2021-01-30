@@ -42,22 +42,38 @@ export async function runTransactionWithPostHooks<T>(
 type HookPromiseFunction = (em: EntityManager) => Promise<void>;
 
 /**
- * Pushes fn to post transaction stack if present
+ *Pushes fn to post transaction stack if present
  *
  * @export
- * @param {PostHookEntityManager} transactionManager
+ * @param {Object} attrs
  * @param {HookPromiseFunction} fn
  * @returns {Promise<void>}
  */
 export async function runInPostHookIfPresent(
-  transactionManager: PostHookEntityManager,
+  {
+    transactionManager,
+    runInNewTransaction,
+  }: {
+    transactionManager: PostHookEntityManager,
+    runInNewTransaction?: boolean,
+  },
   fn: HookPromiseFunction,
 ): Promise<void> {
   if (!transactionManager.pushPostTransactionHook)
     return fn(transactionManager);
 
   transactionManager.pushPostTransactionHook(
-    () => transactionManager.connection.transaction(fn),
+    async () => {
+      if (runInNewTransaction)
+        return transactionManager.connection.transaction(fn);
+
+      const entityManager = transactionManager.connection.createEntityManager();
+      try {
+        return await fn(entityManager);
+      } finally {
+        await entityManager.release();
+      }
+    },
   );
 
   return Promise.resolve();

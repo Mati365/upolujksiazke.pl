@@ -32,6 +32,12 @@ export const LANGUAGE_TRANSLATION_MAPPINGS = Object.freeze(
     /* eslint-disable quote-props */
     'polski': Language.PL,
     'angielski': Language.EN,
+    'hiszpański': Language.ES,
+    'rosyjski': Language.RU,
+    'niemiecki': Language.DE,
+    'francuski': Language.FR,
+    'ukraiński': Language.UKR,
+    'włoski': Language.IT,
     /* eslint-enable quote-props */
   },
 );

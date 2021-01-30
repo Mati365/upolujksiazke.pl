@@ -101,33 +101,38 @@ export class BookPublisherService {
     ));
 
     if (shouldFetchLogo) {
-      await runInPostHookIfPresent(entityManager, async (hookEntityManager) => {
-        publisher.logo = R.values(
-          await imageAttachmentService.fetchAndCreateScaled(
-            {
-              destSubDir: `logo/${publisher.id}`,
-              sizes: BookPublisherService.LOGO_IMAGE_SIZES,
-              dto: logo,
-            },
-            hookEntityManager,
-          ),
-        );
+      await runInPostHookIfPresent(
+        {
+          transactionManager: entityManager,
+        },
+        async (hookEntityManager) => {
+          publisher.logo = R.values(
+            await imageAttachmentService.fetchAndCreateScaled(
+              {
+                destSubDir: `logo/${publisher.id}`,
+                sizes: BookPublisherService.LOGO_IMAGE_SIZES,
+                dto: logo,
+              },
+              hookEntityManager,
+            ),
+          );
 
-        await hookEntityManager.save(
-          new BookPublisherEntity(
-            {
-              id: publisher.id,
-              logo: publisher.logo.map(
-                (item) => new ImageAttachmentEntity(
-                  {
-                    id: item.id,
-                  },
+          await hookEntityManager.save(
+            new BookPublisherEntity(
+              {
+                id: publisher.id,
+                logo: publisher.logo.map(
+                  (item) => new ImageAttachmentEntity(
+                    {
+                      id: item.id,
+                    },
+                  ),
                 ),
-              ),
-            },
-          ),
-        );
-      });
+              },
+            ),
+          );
+        },
+      );
     }
 
     return publisher;

@@ -1,5 +1,6 @@
 import {Injectable} from '@nestjs/common';
 import {Connection, EntityManager} from 'typeorm';
+import * as R from 'ramda';
 
 import {upsert} from '@server/common/helpers/db';
 import {BookCategoryEntity} from './BookCategory.entity';
@@ -32,18 +33,29 @@ export class BookCategoryService {
    * @returns {Promise<BookCategoryEntity[]>}
    * @memberof BookCategoryService
    */
-  async upsertList(dtos: CreateBookCategoryDto[], entityManager?: EntityManager): Promise<BookCategoryEntity[]> {
+  async upsert(dtos: CreateBookCategoryDto[], entityManager?: EntityManager): Promise<BookCategoryEntity[]> {
     if (!dtos?.length)
       return [];
 
     const {connection} = this;
+    const uniqueDtos = R.uniq(R.unnest(dtos.map(
+      (dto) => dto.name.split(',').map(
+        (name) => new BookCategoryEntity(
+          {
+            ...dto,
+            name: name.trim(),
+          },
+        ),
+      ),
+    )));
+
     return upsert(
       {
         entityManager,
         connection,
         Entity: BookCategoryEntity,
-        primaryKey: 'name',
-        data: dtos.map((dto) => new BookCategoryEntity(dto)),
+        primaryKey: 'parameterizedName',
+        data: uniqueDtos,
       },
     );
   }

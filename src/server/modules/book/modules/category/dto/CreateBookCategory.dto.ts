@@ -10,8 +10,7 @@ export class CreateBookCategoryDto {
   @IsNumber()
   readonly id: number;
 
-  @IsDefined()
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @IsUniqueValue(
     {
@@ -19,6 +18,11 @@ export class CreateBookCategoryDto {
       message: 'Book category with provided name already exists!',
     },
   )
+  readonly parameterizedName: string;
+
+  @IsDefined()
+  @IsNotEmpty()
+  @IsString()
   readonly name: string;
 
   constructor(partial: Partial<CreateBookCategoryDto>) {

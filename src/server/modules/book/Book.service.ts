@@ -128,9 +128,9 @@ export class BookService {
           dto.volume && await volumeService.upsert(dto.volume),
           dto.series && await seriesService.upsert(dto.series),
           dto.prizes && await prizeServices.upsert(dto.prizes),
-          await authorService.upsertList(dto.authors, transaction),
-          await tagService.upsertList(dto.tags, transaction),
-          await categoryService.upsertList(dto.categories, transaction),
+          await authorService.upsert(dto.authors, transaction),
+          await tagService.upsert(dto.tags, transaction),
+          await categoryService.upsert(dto.categories, transaction),
         ]
       );
 

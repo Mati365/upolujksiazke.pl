@@ -138,33 +138,38 @@ export class BookReleaseService {
     ));
 
     if (shouldFetchCover) {
-      await runInPostHookIfPresent(entityManager, async (hookEntityManager) => {
-        releaseEntity.cover = R.values(
-          await imageAttachmentService.fetchAndCreateScaled(
-            {
-              destSubDir: `cover/${releaseEntity.id}`,
-              sizes: BookReleaseService.COVER_IMAGE_SIZES,
-              dto: cover,
-            },
-            hookEntityManager,
-          ),
-        );
+      await runInPostHookIfPresent(
+        {
+          transactionManager: entityManager,
+        },
+        async (hookEntityManager) => {
+          releaseEntity.cover = R.values(
+            await imageAttachmentService.fetchAndCreateScaled(
+              {
+                destSubDir: `cover/${releaseEntity.id}`,
+                sizes: BookReleaseService.COVER_IMAGE_SIZES,
+                dto: cover,
+              },
+              hookEntityManager,
+            ),
+          );
 
-        await hookEntityManager.save(
-          new BookReleaseEntity(
-            {
-              id: releaseEntity.id,
-              cover: releaseEntity.cover.map(
-                (item) => new ImageAttachmentEntity(
-                  {
-                    id: item.id,
-                  },
+          await hookEntityManager.save(
+            new BookReleaseEntity(
+              {
+                id: releaseEntity.id,
+                cover: releaseEntity.cover.map(
+                  (item) => new ImageAttachmentEntity(
+                    {
+                      id: item.id,
+                    },
+                  ),
                 ),
-              ),
-            },
-          ),
-        );
-      });
+              },
+            ),
+          );
+        },
+      );
     }
 
     return releaseEntity;

@@ -20,6 +20,7 @@ import {CreateBookPublisherDto} from '@server/modules/book/modules/publisher/dto
 import {CreateImageAttachmentDto} from '@server/modules/attachment/dto';
 import {CreateBookAvailabilityDto} from '@server/modules/book/modules/availability/dto/CreateBookAvailability.dto';
 import {CreateBookKindDto} from '@server/modules/book/modules/kind/dto/CreateBookKind.dto';
+import {CreateBookPrizeDto} from '@server/modules/book/modules/prize/dto/CreateBookPrize.dto';
 
 import {
   BookScrappedPropsMap,
@@ -99,6 +100,16 @@ export class PublioBookMatcher
       },
     } = await this.searchAvailability(bookPage);
 
+    const prizes = (
+      PublioBookMatcher
+        .extractTitlesRow($, $(basicProps['nagroda'][1]))
+        .map((name) => new CreateBookPrizeDto(
+          {
+            name,
+          },
+        ))
+    );
+
     const parentRelease = new CreateBookReleaseDto(
       {
         title,
@@ -112,6 +123,7 @@ export class PublioBookMatcher
         description: normalizeParsedText($('.product-description > .teaser-wrapper').text()),
         totalPages: +basicProps['format']?.[0]?.match(/w wersji papierowej (\d+) stron/)?.[1] || null,
         protection: PROTECTION_TRANSLATION_MAPPINGS[basicProps['zabezpieczenie']?.[0].toLowerCase()],
+        translator: PublioBookMatcher.extractTitlesRow($, $(basicProps['tłumacz']?.[1])),
         publishDate: (
           basicProps['rok pierwszej publikacji książkowej']?.[0]
             ?? basicProps['miejsce i rok wydania']?.[0].match(/(\d{4})/)?.[1]
@@ -136,6 +148,16 @@ export class PublioBookMatcher
       },
     );
 
+    const authors = (
+      PublioBookMatcher
+        .extractTitlesRow($, $(basicProps['autor'][1]))
+        .map((name) => new CreateBookAuthorDto(
+          {
+            name,
+          },
+        ))
+    );
+
     return {
       result: new CreateBookDto(
         {
@@ -152,8 +174,9 @@ export class PublioBookMatcher
             basicProps['język oryginalny publikacji']?.[0].toLowerCase()
           ],
           releases: [parentRelease],
-          authors: PublioBookMatcher.extractAuthors($, basicProps),
           categories: PublioBookMatcher.extractCategories($, basicProps),
+          prizes,
+          authors,
           availability,
         },
       ),
@@ -257,37 +280,47 @@ export class PublioBookMatcher
    * @memberof PublioBookMatcher
    */
   static extractCategories($: cheerio.Root, props: BookScrappedPropsMap) {
-    return (
-      $(props['publikacja z kategorii'][1])
-        .find('a')
-        .toArray()
-        .map((item) => new CreateBookCategoryDto(
-          {
-            name: normalizeParsedText($(item).text()),
-          },
-        ))
+    const names = R.uniq(
+      R.unnest(
+        $(props['publikacja z kategorii'][1])
+          .find('a')
+          .toArray()
+          .map((item) => $(item).text().split(',')),
+      )
+        .map(
+          R.pipe(R.toLower, normalizeParsedText),
+        ),
     );
+
+    return names.map((name) => new CreateBookCategoryDto(
+      {
+        name: normalizeParsedText(name),
+      },
+    ));
   }
 
   /**
-   * Converts authors elements to dtos
+   * Converts titles elements to dtos
    *
    * @static
    * @param {cheerio.Root} $
-   * @param {BookScrappedPropsMap} props
+   * @param {cheerio.Cheerio} $element
    * @returns
    * @memberof PublioBookMatcher
    */
-  static extractAuthors($: cheerio.Root, props: BookScrappedPropsMap) {
+  static extractTitlesRow($: cheerio.Root, $element: cheerio.Cheerio) {
+    if (!$element)
+      return [];
+
     return (
-      // eslint-disable-next-line @typescript-eslint/dot-notation
-      $(props['autor'][1]).find('a').toArray().map(
-        (name) => new CreateBookAuthorDto(
-          {
-            name: normalizeParsedText($(name).text()),
-          },
-        ),
-      )
+      $element
+        .find('a')
+        .toArray()
+        .map(
+          (name) => normalizeParsedText(
+            $(name).text().match(/([^,]+)/)[1],
+          ),
+        )
     );
   }
 

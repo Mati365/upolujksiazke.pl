@@ -10,8 +10,7 @@ export class CreateBookPrizeDto {
   @IsNumber()
   readonly id: number;
 
-  @IsDefined()
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @IsUniqueValue(
     {
@@ -19,6 +18,11 @@ export class CreateBookPrizeDto {
       message: 'Book prize with provided name already exists!',
     },
   )
+  readonly parameterizedName: string;
+
+  @IsDefined()
+  @IsNotEmpty()
+  @IsString()
   readonly name: string;
 
   @IsOptional()

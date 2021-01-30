@@ -3,6 +3,7 @@ import {
   BeforeInsert, BeforeUpdate,
 } from 'typeorm';
 
+import {parameterize} from '@shared/helpers/parameterize';
 import {DatedRecordEntity} from '../../../database/DatedRecord.entity';
 import {BookEntity} from '../../Book.entity';
 
@@ -12,7 +13,10 @@ import {BookEntity} from '../../Book.entity';
   },
 )
 export class BookCategoryEntity extends DatedRecordEntity {
-  @Column('citext', {unique: true})
+  @Column('text', {unique: true})
+  parameterizedName: string;
+
+  @Column('citext')
   name: string;
 
   @ManyToMany(() => BookEntity, (book) => book.categories)
@@ -27,7 +31,9 @@ export class BookCategoryEntity extends DatedRecordEntity {
   @BeforeUpdate()
   transformFields() {
     const {name} = this;
-    if (name)
+    if (name) {
       this.name = name.toLowerCase();
+      this.parameterizedName ??= parameterize(name);
+    }
   }
 }

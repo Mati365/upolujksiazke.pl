@@ -26,21 +26,25 @@ export class PublioBookPublisherMatcher
     const {config} = this;
     const {name, description} = data;
     const $ = (await this.fetchPageByPath(attrs.path))?.$;
+    if (!$)
+      return null;
+
+    const logoUrl = (
+      $
+        .html()
+        .match(/imagePath:"(\\u002Ffiles\\u002Fcompany[^"]*)"/)?.[1]
+    );
 
     return $ && {
       result: new CreateBookPublisherDto(
         {
           name,
           description: description ?? $('.listing-details .expandable.--open').text(),
-          logo: new CreateImageAttachmentDto(
+          logo: logoUrl && new CreateImageAttachmentDto(
             {
               originalUrl: concatUrls(
                 config.homepageURL,
-                normalizeURL(decodeEscapedUnicode(
-                  $
-                    .html()
-                    .match(/imagePath:"(\\u002Ffiles\\u002Fcompany[^"]*)"/)[1],
-                )),
+                normalizeURL(decodeEscapedUnicode(logoUrl)),
               ),
             },
           ),

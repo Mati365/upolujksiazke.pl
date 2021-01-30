@@ -3,6 +3,7 @@ import {
   BeforeInsert, BeforeUpdate,
 } from 'typeorm';
 
+import {parameterize} from '@shared/helpers/parameterize';
 import {DatedRecordEntity} from '../../../database/DatedRecord.entity';
 
 @Entity(
@@ -11,7 +12,10 @@ import {DatedRecordEntity} from '../../../database/DatedRecord.entity';
   },
 )
 export class BookPrizeEntity extends DatedRecordEntity {
-  @Column('citext', {unique: true})
+  @Column('text', {unique: true})
+  parameterizedName: string;
+
+  @Column('citext')
   name: string;
 
   @Column('text', {nullable: true})
@@ -26,7 +30,9 @@ export class BookPrizeEntity extends DatedRecordEntity {
   @BeforeUpdate()
   transformFields() {
     const {name} = this;
-    if (name)
+    if (name) {
       this.name = name.toLowerCase();
+      this.parameterizedName ??= parameterize(name);
+    }
   }
 }

@@ -35,7 +35,7 @@ export class TagService {
    * @returns {Promise<TagEntity[]>}
    * @memberof TagService
    */
-  async upsertList(names: (CreateTagDto | string)[], entityManager?: EntityManager): Promise<TagEntity[]> {
+  async upsert(names: (CreateTagDto | string)[], entityManager?: EntityManager): Promise<TagEntity[]> {
     if (!names?.length)
       return [];
 

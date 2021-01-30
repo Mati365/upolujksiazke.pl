@@ -9,17 +9,17 @@ import {extractHostname} from '@shared/helpers/urlExtract';
 import {RemoteWebsiteEntity} from '@server/modules/remote/entity';
 import {WykopAPI} from '@server/modules/importer/sites/wykop/api/WykopAPI';
 import {
-  // GraniceScrappersGroup,
-  // MatrasScrappersGroup,
-  // GildiaScrappersGroup,
+  GraniceScrappersGroup,
+  MatrasScrappersGroup,
+  GildiaScrappersGroup,
   // EIsbnScrappersGroup,
-  // LiteraturaGildiaScrappersGroup,
+  LiteraturaGildiaScrappersGroup,
   // WikipediaScrappersGroup,
-  // SkupszopScrappersGroup,
+  SkupszopScrappersGroup,
   BonitoScrappersGroup,
-  // DadadaScrappersGroup,
-  // ArosScrappersGroup,
-  // PublioScrappersGroup,
+  DadadaScrappersGroup,
+  ArosScrappersGroup,
+  PublioScrappersGroup,
   WykopScrappersGroup,
 } from '@server/modules/importer/sites';
 
@@ -46,15 +46,15 @@ export class ScrapperService {
     // tmpDirService: TmpDirService,
   ) {
     this.scrappersGroups = [
-      // new PublioScrappersGroup(PARSERS_ENV.publio),
+      new PublioScrappersGroup(PARSERS_ENV.publio),
       new BonitoScrappersGroup(PARSERS_ENV.bonito),
-      // new SkupszopScrappersGroup(PARSERS_ENV.skupszop),
-      // new GildiaScrappersGroup(PARSERS_ENV.gildia),
-      // new GraniceScrappersGroup(PARSERS_ENV.granice),
-      // new LiteraturaGildiaScrappersGroup(PARSERS_ENV.literaturaGildia),
-      // new MatrasScrappersGroup(PARSERS_ENV.matras), // sucky DB
-      // new DadadaScrappersGroup(PARSERS_ENV.dadada),
-      // new ArosScrappersGroup(PARSERS_ENV.aros),
+      new SkupszopScrappersGroup(PARSERS_ENV.skupszop),
+      new GildiaScrappersGroup(PARSERS_ENV.gildia),
+      new GraniceScrappersGroup(PARSERS_ENV.granice),
+      new LiteraturaGildiaScrappersGroup(PARSERS_ENV.literaturaGildia),
+      new MatrasScrappersGroup(PARSERS_ENV.matras), // sucky DB
+      new DadadaScrappersGroup(PARSERS_ENV.dadada),
+      new ArosScrappersGroup(PARSERS_ENV.aros),
       new WykopScrappersGroup(
         {
           homepageURL: PARSERS_ENV.wykop.homepageURL,

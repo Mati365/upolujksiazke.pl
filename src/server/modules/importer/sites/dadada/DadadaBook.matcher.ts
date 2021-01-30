@@ -81,9 +81,9 @@ export class DadadaBookMatcher
         title,
         lang: Language.PL,
         description: normalizeParsedText($('.productDescriptionContent').text()),
-        totalPages: +basicProps['liczba stron'][0] || null,
-        format: basicProps['format'][0],
-        publishDate: basicProps['rok wydania'][0],
+        totalPages: +basicProps['liczba stron']?.[0] || null,
+        format: basicProps['format']?.[0],
+        publishDate: basicProps['rok wydania']?.[0],
         isbn: normalizeISBN(basicProps['isbn'][0]),
         binding: BINDING_TRANSLATION_MAPPINGS[basicProps['oprawa']?.[0]?.toLowerCase()],
         publisher: new CreateBookPublisherDto(

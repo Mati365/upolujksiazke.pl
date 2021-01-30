@@ -102,7 +102,7 @@ export class PublioBookMatcher
 
     const prizes = (
       PublioBookMatcher
-        .extractTitlesRow($, $(basicProps['nagroda'][1]))
+        .extractTitlesRow($, $(basicProps['nagroda']?.[1]))
         .map((name) => new CreateBookPrizeDto(
           {
             name,

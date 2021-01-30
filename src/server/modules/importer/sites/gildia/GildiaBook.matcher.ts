@@ -48,10 +48,12 @@ export class GildiaBookMatcher
               showOnlyAsQuote: false,
               remoteId: $('.product-page-description [data-add-product]').data('addProduct'),
               totalRatings: null,
-              avgRating: countLetter(
-                '',
-                $('.product-page-description .rating-stars').data('content'),
-              ) * 2,
+              avgRating: (
+                countLetter(
+                  '',
+                  $('.product-page-description .rating-stars').data('content'),
+                ) * 2
+              ) || null,
 
               prevPrice: normalizePrice(
                 $basicProductInfo.find('.previous-price').text(),

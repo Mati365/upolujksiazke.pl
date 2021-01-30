@@ -27,7 +27,7 @@ export function fuzzyFindBookAnchor(
 ) {
   const [lowerTitle, lowerAuthor] = [
     title.toLowerCase(),
-    author.toLowerCase(),
+    author?.toLowerCase(),
   ];
 
   const item = R.head(
@@ -43,7 +43,7 @@ export function fuzzyFindBookAnchor(
           );
 
           return (
-            similarity < 0.5
+            similarity < 0.3
               ? null
               : [similarity, el]
           );
@@ -52,8 +52,5 @@ export function fuzzyFindBookAnchor(
     ),
   );
 
-  if (!item || item[0] < 0.5)
-    return null;
-
-  return item[1];
+  return item?.[1];
 }

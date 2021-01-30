@@ -180,14 +180,16 @@ export class BookService {
       );
 
       await releaseService.upsertList(
-        dto.releases.map(
-          (release) => new CreateBookReleaseDto(
-            {
-              ...release,
-              bookId: book.id,
-            },
+        dto.releases
+          .filter(({isbn}) => !!isbn)
+          .map(
+            (release) => new CreateBookReleaseDto(
+              {
+                ...release,
+                bookId: book.id,
+              },
+            ),
           ),
-        ),
         transaction,
       );
 

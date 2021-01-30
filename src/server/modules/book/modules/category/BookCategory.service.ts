@@ -39,7 +39,7 @@ export class BookCategoryService {
 
     const {connection} = this;
     const uniqueDtos = R.uniq(R.unnest(dtos.map(
-      (dto) => dto.name.split(',').map(
+      (dto) => dto.name.split(/[,/]/).map(
         (name) => new BookCategoryEntity(
           {
             ...dto,

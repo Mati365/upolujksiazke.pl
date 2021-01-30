@@ -15,24 +15,25 @@ export class ScrapperMatcherService {
    * @todo
    *   Use Promise.all and pool!
    *
-   * @template R Result type
+   * @template R
    * @param {MatchRecordAttrs} attrs
-   * @returns {Promise<R>}
+   * @returns {Promise<ScrapperMatcherResult<R>[]>}
    * @memberof ScrapperMatcherService
    */
-  async searchRemoteRecord<R>(attrs: MatchRecordAttrs): Promise<ScrapperMatcherResult<R>> {
+  async searchRemoteRecord<R>(attrs: MatchRecordAttrs): Promise<ScrapperMatcherResult<R>[]> {
     const {scrappersGroups} = this.scrapperService;
+    const results = [];
 
     for await (const scrapper of scrappersGroups) {
       try {
         const result = await scrapper.searchRemoteRecord(attrs);
         if (result)
-          return result;
+          results.push(result);
       } catch (e) {
         console.error(e);
       }
     }
 
-    return null;
+    return results;
   }
 }

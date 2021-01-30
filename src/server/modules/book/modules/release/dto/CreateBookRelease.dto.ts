@@ -70,7 +70,7 @@ export class CreateBookReleaseDto {
 
   @IsOptional()
   @IsEnum(BookType)
-  readonly type: BookType;
+  readonly type: BookType = BookType.PAPER;
 
   @IsOptional()
   @IsEnum(BookBindingKind)

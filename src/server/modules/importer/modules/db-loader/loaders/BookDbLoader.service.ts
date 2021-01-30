@@ -5,8 +5,10 @@ import {
   Logger, forwardRef,
 } from '@nestjs/common';
 
+import {mergeWithoutNulls} from '@shared/helpers/mergeWithoutNulls';
+
 import {BookService} from '@server/modules/book/Book.service';
-import {BookEntity, CreateBookDto} from '@server/modules/book';
+import {CreateBookDto} from '@server/modules/book';
 import {CreateBookAvailabilityDto} from '@server/modules/book/modules/availability/dto/CreateBookAvailability.dto';
 import {BookReleaseEntity} from '@server/modules/book/modules/release/BookRelease.entity';
 import {ScrapperMetadataEntity, ScrapperMetadataKind} from '../../scrapper/entity';
@@ -79,61 +81,68 @@ export class BookDbLoader implements MetadataDbLoader {
     if (!BookDbLoader.isIncompleteBookScrapperDto(book))
       return null; // dump cache?
 
-    const matchedBook = await scrapperMatcherService.searchRemoteRecord<CreateBookDto>(
-      {
-        kind: ScrapperMetadataKind.BOOK,
-        data: book,
-      },
+    const matchedBooks = R.pluck(
+      'result',
+      await scrapperMatcherService.searchRemoteRecord<CreateBookDto>(
+        {
+          kind: ScrapperMetadataKind.BOOK,
+          data: book,
+        },
+      ),
     );
 
-    if (!matchedBook) {
+    if (R.isEmpty(matchedBooks)) {
       logger.warn(`Book ${JSON.stringify(book)} not matched!`);
       return null;
     }
 
-    if (!matchedBook.cached) {
-      const {result} = matchedBook;
-      const releaseBookId = (
-        await BookReleaseEntity.findOne(
-          {
-            select: ['bookId'],
-            where: [
-              {
-                title: In(R.pluck('title', result.releases)),
-              },
-              {
-                isbn: In(R.pluck('isbn', result.releases)),
-              },
-            ],
-          },
-        )
-      )?.bookId;
+    const [
+      allReleases,
+      allAvailability,
+    ] = [
+      R.unnest(R.pluck('releases', matchedBooks)),
+      R.unnest(R.pluck('availability', matchedBooks)),
+    ];
 
-      const availability = await Promise.all(
-        result.availability.map(
-          async (release) => new CreateBookAvailabilityDto(
+    const releaseBook = (
+      await BookReleaseEntity.findOne(
+        {
+          select: ['bookId'],
+          where: [
             {
-              ...release,
-              bookId: releaseBookId,
-              websiteId: (
-                await scrapperService.findOrCreateWebsiteByUrl(release.url)
-              ).id,
+              title: In(R.pluck('title', allReleases)),
             },
-          ),
-        ),
-      );
+            {
+              isbn: In(R.pluck('isbn', allReleases)),
+            },
+          ],
+        },
+      )
+    );
 
-      return bookService.upsert(
-        new CreateBookDto(
+    const mappedAvailability = await Promise.all(
+      allAvailability.map(
+        async (availability) => new CreateBookAvailabilityDto(
           {
-            id: releaseBookId,
-            ...result,
-            availability,
+            ...availability,
+            bookId: releaseBook?.id,
+            websiteId: (
+              await scrapperService.findOrCreateWebsiteByUrl(availability.url)
+            ).id,
           },
         ),
-      );
-    }
+      ),
+    );
 
-    return BookEntity.findOne(matchedBook.result.id);
+    return bookService.upsert(
+      new CreateBookDto(
+        {
+          id: releaseBook?.id,
+          ...mergeWithoutNulls(matchedBooks),
+          availability: mappedAvailability,
+          releases: allReleases.filter(({isbn}) => !!isbn),
+        },
+      ),
+    );
   }
 }

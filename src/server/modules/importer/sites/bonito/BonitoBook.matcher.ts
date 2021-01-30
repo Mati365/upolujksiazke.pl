@@ -83,7 +83,7 @@ export class BonitoBookMatcher
         totalPages: +basicProps['liczba stron'] || null,
         publishDate: basicProps['rok wydania'],
         isbn: normalizeISBN(basicProps['numer isbn']),
-        weight: Number.parseInt(basicProps['waga'], 10),
+        weight: Number.parseInt(basicProps['waga'], 10) || null,
         binding: BINDING_TRANSLATION_MAPPINGS[
           normalizeParsedText(basicProps['oprawa'])?.toLowerCase()
         ],

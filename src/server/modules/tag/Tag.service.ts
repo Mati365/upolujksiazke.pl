@@ -1,9 +1,8 @@
-import {Injectable} from '@nestjs/common';
-import {EntityManager, In, Repository} from 'typeorm';
-import {plainToClass} from 'class-transformer';
 import * as R from 'ramda';
+import {Injectable} from '@nestjs/common';
+import {Connection, EntityManager} from 'typeorm';
 
-import {findByName} from '@shared/helpers/findByProp';
+import {upsert} from '@server/common/helpers/db';
 
 import {TagEntity} from './Tag.entity';
 import {CreateTagDto} from './dto/CreateTag.dto';
@@ -14,6 +13,10 @@ function isTagArray(arg: any): arg is CreateTagDto[] {
 
 @Injectable()
 export class TagService {
+  constructor(
+    private readonly connection: Connection,
+  ) {}
+
   /**
    * Creates single tag
    *
@@ -36,10 +39,11 @@ export class TagService {
    * @memberof TagService
    */
   async upsert(names: (CreateTagDto | string)[], entityManager?: EntityManager): Promise<TagEntity[]> {
+    const {connection} = this;
     if (!names?.length)
       return [];
 
-    const dto = (
+    const dtos = (
       isTagArray(names)
         ? names
         : names.map(
@@ -51,38 +55,19 @@ export class TagService {
         )
     );
 
-    let savedEntities = await TagEntity.find(
+    return upsert(
       {
-        name: In(R.pluck('name', dto)),
+        entityManager,
+        connection,
+        Entity: TagEntity,
+        primaryKey: 'name',
+        doNothing: true,
+        data: (
+          R
+            .uniqBy(R.prop('name'), dtos)
+            .map((dto) => new TagEntity(dto))
+        ),
       },
     );
-
-    const toBeInserted = dto.reduce(
-      (acc, item) => {
-        if (!findByName(item.name)(savedEntities))
-          acc.push(item);
-
-        return acc;
-      },
-      [] as CreateTagDto[],
-    );
-
-    if (toBeInserted.length) {
-      const repo = (entityManager.getRepository(TagEntity) || TagEntity) as Repository<TagEntity>;
-
-      const r = await repo
-        .createQueryBuilder()
-        .insert()
-        .into(TagEntity)
-        .values(toBeInserted)
-        .execute();
-
-      savedEntities = [
-        ...savedEntities,
-        ...plainToClass(TagEntity, r.generatedMaps),
-      ];
-    }
-
-    return savedEntities;
   }
 }

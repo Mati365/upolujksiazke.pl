@@ -22,12 +22,12 @@ export class ScrapperMatcherService {
   async searchRemoteRecord<R>(attrs: MatchRecordAttrs): Promise<ScrapperMatcherResult<R>[]> {
     const {scrappersGroups} = this.scrapperService;
     const limit = pLimit(4);
-    const result = await Promise.all(
+    const items = await Promise.all(
       scrappersGroups.map(
         (scrapper) => limit(() => scrapper.searchRemoteRecord(attrs)),
       ),
     );
 
-    return result.filter(Boolean);
+    return items.filter((item) => !!item?.result);
   }
 }

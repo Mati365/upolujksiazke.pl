@@ -1,12 +1,11 @@
 import * as R from 'ramda';
 
 import {buildURL} from '@shared/helpers/urlEncoder';
-import {AsyncURLParseResult, parseAsyncURLIfOK} from '@server/common/helpers/fetchAsyncHTML';
+import {parseAsyncURLIfOK} from '@server/common/helpers/fetchAsyncHTML';
 import {concatUrls} from '@shared/helpers/concatUrls';
 
 import {CanBePromise} from '@shared/types';
-import {ScrapperGroupChild} from './Scrapper';
-import {MatchRecordAttrs, WebsiteScrappersGroup} from './WebsiteScrappersGroup';
+import {ScrapperGroupChild, MatchRecordAttrs} from './WebsiteScrappersGroup';
 
 export type ScrapperMatcherResult<T> = {
   cached?: boolean,
@@ -27,17 +26,7 @@ export interface ScrapperMatchable<Type> {
  * @implements {ScrapperMatchable<Type>}
  * @template Type
  */
-export abstract class ScrapperMatcher<Type> implements ScrapperGroupChild, ScrapperMatchable<Type> {
-  protected group: WebsiteScrappersGroup<any>;
-
-  setParentGroup?(group: WebsiteScrappersGroup<any>): void {
-    this.group = group;
-  }
-
-  get matchers() {
-    return this.group.matchers;
-  }
-
+export abstract class ScrapperMatcher<Type> extends ScrapperGroupChild implements ScrapperMatchable<Type> {
   abstract searchRemoteRecord(attrs: MatchRecordAttrs<Type>): CanBePromise<ScrapperMatcherResult<Type>>;
 }
 
@@ -67,24 +56,13 @@ export abstract class WebsiteScrapperMatcher<
   }
 
   /**
-   * Extracts item data from provided page
-   *
-   * @abstract
-   * @param {AsyncURLParseResult} result
-   * @returns {CanBePromise<ScrapperMatcherResult<Type>>}
-   * @memberof WebsiteScrapperMatcher
-   */
-  abstract extractFromFetchedPage(result: AsyncURLParseResult): CanBePromise<ScrapperMatcherResult<Type>>;
-
-  /**
    * Concats urls with root page url and fetches page
    *
-   * @protected
    * @param {string} path
    * @returns
    * @memberof WebsiteScrapperMatcher
    */
-  protected async fetchPageByPath(path: string) {
+  async fetchPageByPath(path: string) {
     const {config: {homepageURL}} = this;
 
     if (!path)
@@ -101,12 +79,11 @@ export abstract class WebsiteScrapperMatcher<
   /**
    * Fetches result of search
    *
-   * @protected
    * @param {object|string} queryParams
    * @returns
    * @memberof WebsiteScrapperMatcher
    */
-  protected async fetchPageBySearch(queryParams: object|string) {
+  async fetchPageBySearch(queryParams: object|string) {
     const {
       config: {
         searchURL,

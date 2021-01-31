@@ -14,7 +14,7 @@ export function concatUrls(a: string, b: string): string {
   if (!b || b === '/')
     return a;
 
-  if (isAbsoluteURL(b))
+  if (!a || isAbsoluteURL(b))
     return b;
 
   return [

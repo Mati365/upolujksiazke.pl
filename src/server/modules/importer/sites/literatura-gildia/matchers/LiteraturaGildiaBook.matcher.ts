@@ -4,189 +4,23 @@ import slugify from 'slugify';
 import {underscoreParameterize} from '@shared/helpers/parameterize';
 import {fuzzyFindBookAnchor} from '@scrapper/helpers/fuzzyFindBookAnchor';
 
-import {AsyncURLParseResult} from '@server/common/helpers/fetchAsyncHTML';
-import {
-  normalizeISBN,
-  normalizeParsedText,
-  normalizeParsedTitle,
-  normalizeURL,
-} from '@server/common/helpers';
-
-import {Language} from '@server/constants/language';
-
 import {CreateBookDto} from '@server/modules/book/dto/CreateBook.dto';
-import {CreateBookReleaseDto} from '@server/modules/book/modules/release/dto/CreateBookRelease.dto';
-import {CreateBookAuthorDto} from '@server/modules/book/modules/author/dto/CreateBookAuthor.dto';
-import {CreateBookPublisherDto} from '@server/modules/book/modules/publisher/dto/BookPublisher.dto';
-import {CreateImageAttachmentDto} from '@server/modules/attachment/dto';
-import {CreateBookAvailabilityDto} from '@server/modules/book/modules/availability/dto/CreateBookAvailability.dto';
-
-import {
-  BINDING_TRANSLATION_MAPPINGS,
-  BookAvailabilityScrapperMatcher,
-} from '@scrapper/service/scrappers/Book.scrapper';
-
 import {ScrapperMatcherResult, WebsiteScrapperMatcher} from '@scrapper/service/shared/ScrapperMatcher';
 import {MatchRecordAttrs} from '@scrapper/service/shared/WebsiteScrappersGroup';
-import {ScrapperMetadataKind} from '@scrapper/entity/ScrapperMetadata.entity';
 import {BookShopScrappersGroupConfig} from '@scrapper/service/scrappers/BookShopScrappersGroup';
-import {LiteraturaGildiaBookAuthorMatcher} from './LiteraturaGildiaBookAuthor.matcher';
-import {LiteraturaGildiaBookPublisherMatcher} from './LiteraturaGildiaBookPublisher.matcher';
+import {ScrapperMetadataKind} from '@server/modules/importer/modules/scrapper/entity';
 
-export class LiteraturaGildiaBookMatcher
-  extends WebsiteScrapperMatcher<CreateBookDto, BookShopScrappersGroupConfig>
-  implements BookAvailabilityScrapperMatcher<AsyncURLParseResult> {
-  /**
-   * @inheritdoc
-   */
-  searchAvailability({url}: AsyncURLParseResult) {
-    return Promise.resolve(
-      {
-        result: [
-          new CreateBookAvailabilityDto(
-            {
-              showOnlyAsQuote: false,
-              remoteId: url.split('/').slice(-2).join('/'),
-              url,
-            },
-          ),
-        ],
-      },
-    );
-  }
-
-  /**
-   * @inheritdoc
-   */
-  async extractFromFetchedPage(bookPage: AsyncURLParseResult): Promise<ScrapperMatcherResult<CreateBookDto>> {
-    if (!bookPage)
-      return null;
-
-    const {$} = bookPage;
-    const $wideText = $('#yui-main .content .widetext');
-    const text = $wideText.text();
-
-    const [author, release] = await Promise.all(
-      [
-        this.extractAuthor($wideText),
-        this.extractRelease(bookPage),
-      ],
-    );
-
-    return {
-      result: new CreateBookDto(
-        {
-          defaultTitle: release.title,
-          originalPublishDate: normalizeParsedText(text.match(/Rok wydania oryginału: ([\S]+)/)?.[1]),
-          authors: [
-            author,
-          ],
-          releases: [
-            release,
-          ],
-        },
-      ),
-    };
-  }
-
+export class LiteraturaGildiaBookMatcher extends WebsiteScrapperMatcher<CreateBookDto, BookShopScrappersGroupConfig> {
   /**
    * @inheritdoc
    */
   async searchRemoteRecord({data}: MatchRecordAttrs<CreateBookDto>): Promise<ScrapperMatcherResult<CreateBookDto>> {
-    return this.extractFromFetchedPage(
-      (await this.directSearch(data))
-        || (await this.searchByFirstLetter(data)),
-    );
-  }
-
-  /**
-   * Extracts info about release from book page
-   *
-   * @param {AsyncURLParseResult} bookPage
-   * @returns
-   * @memberof LiteraturaGildiaBookMatcher
-   */
-  private async extractRelease(bookPage: AsyncURLParseResult) {
-    const {$} = bookPage;
-    const $wideText = $('#yui-main .content .widetext');
-
-    const publisher = await this.extractPublisher($wideText);
-    const text = $wideText.text();
-    const $coverImage = $wideText.find('img.main-article-image');
-
-    return new CreateBookReleaseDto(
-      {
-        publisher,
-        lang: Language.PL,
-        title: normalizeParsedTitle($('h1').text()),
-        description: normalizeParsedText($wideText.find('div > p').text()),
-        edition: normalizeParsedText(text.match(/Wydanie: ([\S]+)/)?.[1]),
-        isbn: normalizeISBN(text.match(/ISBN: ([\w-]+)/)?.[1]),
-        totalPages: (+text.match(/Liczba stron: (\d+)/)?.[1]) || null,
-        availability: (await this.searchAvailability(bookPage)).result,
-        format: normalizeParsedText(text.match(/Format: ([\S]+)/)?.[1]),
-        binding: BINDING_TRANSLATION_MAPPINGS[
-          normalizeParsedText(text.match(/Oprawa: ([\S]+)/)?.[1])?.toLowerCase()
-        ],
-        cover: $coverImage && new CreateImageAttachmentDto(
-          {
-            originalUrl: normalizeURL($coverImage.attr('src')),
-          },
-        ),
-      },
-    );
-  }
-
-  /**
-   * Extracts single author
-   *
-   * @private
-   * @param {cheerio.Cheerio} $parent
-   * @returns
-   * @memberof LiteraturaGildiaBookMatcher
-   */
-  private async extractAuthor($parent: cheerio.Cheerio) {
-    const authorMatcher = <LiteraturaGildiaBookAuthorMatcher> this.matchers[ScrapperMetadataKind.BOOK_AUTHOR];
-    const $authorAnchor = $parent.find('> a[href^="/tworcy/"]').first();
-
-    return (await authorMatcher.searchRemoteRecord(
-      {
-        data: new CreateBookAuthorDto(
-          {
-            name: normalizeParsedText($authorAnchor.text()),
-          },
-        ),
-      },
-      {
-        path: $authorAnchor.attr('href'),
-      },
-    )).result;
-  }
-
-  /**
-   * Fetches publisher name from text
-   *
-   * @private
-   * @param {cheerio.Cheerio} $parent
-   * @returns
-   * @memberof LiteraturaGildiaBookMatcher
-   */
-  private async extractPublisher($parent: cheerio.Cheerio) {
-    const publisherMatcher = <LiteraturaGildiaBookPublisherMatcher> this.matchers[ScrapperMetadataKind.BOOK_PUBLISHER];
-    const $publisherAnchor = $parent.find('a[href^="/wydawnictwa/"]');
-
-    return (await publisherMatcher.searchRemoteRecord(
-      {
-        data: new CreateBookPublisherDto(
-          {
-            name: normalizeParsedText($publisherAnchor.text()),
-          },
-        ),
-      },
-      {
-        path: $publisherAnchor.attr('href'),
-      },
-    )).result;
+    return {
+      result: await this.parsers[ScrapperMetadataKind.BOOK].parse(
+        (await this.directSearch(data))
+          || (await this.searchByFirstLetter(data)),
+      ),
+    };
   }
 
   /**

@@ -5,6 +5,7 @@ import {
 } from '@scrapper/service/scrappers/BookShopScrappersGroup';
 
 import {GraniceBookMatcher} from './GraniceBook.matcher';
+import {GraniceBookParser} from './GraniceBook.parser';
 
 export class GraniceScrappersGroup extends BookShopScrappersGroup {
   constructor(options: BookShopScrappersGroupConfig) {
@@ -13,6 +14,9 @@ export class GraniceScrappersGroup extends BookShopScrappersGroup {
         ...options,
         matchers: {
           [ScrapperMetadataKind.BOOK]: new GraniceBookMatcher(options),
+        },
+        parsers: {
+          [ScrapperMetadataKind.BOOK]: new GraniceBookParser(options),
         },
       },
     );

@@ -62,11 +62,17 @@ export class MetadataDbLoaderConsumerProcessor {
     );
 
     const limit = pLimit(5);
-    await Promise.all(
-      metadataItems.map(
-        (item) => limit(() => metadataDbLoaderService.extractMetadataToDb(item)),
-      ),
-    );
+
+    try {
+      await Promise.all(
+        metadataItems.map(
+          (item) => limit(() => metadataDbLoaderService.extractMetadataToDb(item)),
+        ),
+      );
+    } catch (e) {
+      console.error(e);
+      throw e;
+    }
   }
 
   /**

@@ -5,6 +5,7 @@ import {
 } from '@scrapper/service/scrappers/BookShopScrappersGroup';
 
 import {ArosBookMatcher} from './ArosBook.matcher';
+import {ArosBookParser} from './ArosBook.parser';
 
 export class ArosScrappersGroup extends BookShopScrappersGroup {
   constructor(options: BookShopScrappersGroupConfig) {
@@ -13,6 +14,9 @@ export class ArosScrappersGroup extends BookShopScrappersGroup {
         ...options,
         matchers: {
           [ScrapperMetadataKind.BOOK]: new ArosBookMatcher(options),
+        },
+        parsers: {
+          [ScrapperMetadataKind.BOOK]: new ArosBookParser(options),
         },
       },
     );

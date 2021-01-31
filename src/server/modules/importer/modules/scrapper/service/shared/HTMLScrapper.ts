@@ -1,4 +1,5 @@
 import cheerio from 'cheerio';
+import {concatUrls} from '@shared/helpers/concatUrls';
 
 import {
   AsyncScrapper,
@@ -11,7 +12,7 @@ export type HTMLParserAttrs = {
 };
 
 export type HTMLScrapperConfig = AsyncScrapperConfig & {
-  url: string,
+  homepageURL?: string,
 };
 
 /**
@@ -24,12 +25,12 @@ export type HTMLScrapperConfig = AsyncScrapperConfig & {
  * @template T
  */
 export abstract class HTMLScrapper<T extends unknown[]> extends AsyncScrapper<T, string> {
-  private readonly url: string;
+  private readonly homepageURL: string;
 
-  constructor({url, ...config}: HTMLScrapperConfig) {
+  constructor({homepageURL, ...config}: HTMLScrapperConfig) {
     super(config);
 
-    this.url = url;
+    this.homepageURL = homepageURL;
   }
 
   /**
@@ -41,7 +42,12 @@ export abstract class HTMLScrapper<T extends unknown[]> extends AsyncScrapper<T,
    * @memberof HTMLScrapper
    */
   protected async process(url: string) {
-    const html = await this.fetchHTML(url ?? this.url);
+    const html = await this.fetchHTML(
+      concatUrls(
+        this.homepageURL,
+        url,
+      ),
+    );
 
     return this.parsePage(
       {

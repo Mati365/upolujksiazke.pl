@@ -5,6 +5,7 @@ import {
 } from '@scrapper/service/scrappers/BookShopScrappersGroup';
 
 import {DadadaBookMatcher} from './DadadaBook.matcher';
+import {DadadaBookParser} from './DadadaBook.parser';
 
 export class DadadaScrappersGroup extends BookShopScrappersGroup {
   constructor(options: BookShopScrappersGroupConfig) {
@@ -13,6 +14,9 @@ export class DadadaScrappersGroup extends BookShopScrappersGroup {
         ...options,
         matchers: {
           [ScrapperMetadataKind.BOOK]: new DadadaBookMatcher(options),
+        },
+        parsers: {
+          [ScrapperMetadataKind.BOOK]: new DadadaBookParser(options),
         },
       },
     );

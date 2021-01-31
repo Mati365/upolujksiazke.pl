@@ -1,11 +1,7 @@
-import {WebsiteScrappersGroup} from './WebsiteScrappersGroup';
+import {ScrapperGroupChild} from './WebsiteScrappersGroup';
 
-export interface ScrapperGroupChild {
-  setParentGroup?(group: WebsiteScrappersGroup<any>): void;
-}
-
-export interface Scrapper<Result, Page = any> extends ScrapperGroupChild {
-  collect(pages?: number): Promise<Result[]>,
-  filterResult(result: Result): Result | Promise<Result>,
-  iterator(attrs: {maxIterations?: number, page?: Page}): AsyncGenerator<Result>,
+export abstract class Scrapper<Result, Page = any> extends ScrapperGroupChild {
+  abstract collect(pages?: number): Promise<Result[]>;
+  abstract filterResult(result: Result): Result | Promise<Result>;
+  abstract iterator(attrs: {maxIterations?: number, page?: Page}): AsyncGenerator<Result>;
 }

@@ -1,6 +1,6 @@
 import {Language} from '@server/constants/language';
+import {CreateBookDto} from '@server/modules/book/dto/CreateBook.dto';
 import {CreateBookAvailabilityDto} from '@server/modules/book/modules/availability/dto/CreateBookAvailability.dto';
-import {CreateBookReviewDto} from '@server/modules/book/modules/review/dto/CreateBookReview.dto';
 import {BookBindingKind, BookProtection} from '@server/modules/book/modules/release/BookRelease.entity';
 import {ScrapperMetadataKind} from '../../entity';
 import {
@@ -44,12 +44,12 @@ export const LANGUAGE_TRANSLATION_MAPPINGS = Object.freeze(
 
 export type BookScrappedPropsMap = Record<string, [string, cheerio.Cheerio]>;
 
-export type BookScrapperInfo = WebsiteScrapperItemInfo<CreateBookReviewDto> & {
+export type BookScrapperInfo = WebsiteScrapperItemInfo<CreateBookDto> & {
   kind: ScrapperMetadataKind.BOOK,
 };
 
 export type BookProcessResult = ScrapperResult<BookScrapperInfo[], ScrapperBasicPagination>;
 
-export interface BookAvailabilityScrapperMatcher<DataType = any, Metadata = never> {
-  searchAvailability(data: DataType): Promise<{meta?: Metadata, result: CreateBookAvailabilityDto[]}>,
+export interface BookAvailabilityParser<DataType = any, Metadata = never> {
+  parseAvailability(data: DataType): Promise<{meta?: Metadata, result: CreateBookAvailabilityDto[]}>,
 }

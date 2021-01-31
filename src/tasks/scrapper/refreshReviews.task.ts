@@ -27,7 +27,7 @@ async function refreshLatest(config: Parameters<ScrapperRefreshService['refreshL
       .refreshLatest(config)
   );
 
-  app.close();
+  await app.close();
 }
 
 /**
@@ -65,7 +65,7 @@ async function refreshScrapper(
       )
   );
 
-  app.close();
+  await app.close();
 }
 
 /**
@@ -142,6 +142,6 @@ export const refreshSingleTask: TaskFunction = async () => {
       )
   );
 
-  app.close();
+  await app.close();
   logger.log('Item refreshed!');
 };

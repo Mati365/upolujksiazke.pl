@@ -47,13 +47,11 @@ export function isValidScrappingResult<T>(result: T) {
  * @export
  * @abstract
  * @class AsyncScrapper
- * @implements {Scrapper<Result, Page>}
  * @template Result
- * @template Page
  */
 export abstract class AsyncScrapper<
     Result extends readonly unknown[],
-    Page = ScrapperBasicPagination> implements Scrapper<Result, Page> {
+    Page = ScrapperBasicPagination> extends Scrapper<Result, Page> {
   private pageProcessDelay: number;
   protected group: WebsiteScrappersGroup;
 
@@ -62,12 +60,8 @@ export abstract class AsyncScrapper<
       pageProcessDelay,
     }: AsyncScrapperConfig = {},
   ) {
+    super();
     this.pageProcessDelay = pageProcessDelay;
-  }
-
-  setParentGroup(group: WebsiteScrappersGroup): this {
-    this.group = group;
-    return this;
   }
 
   setPageProcessDelay(delay: number): this {

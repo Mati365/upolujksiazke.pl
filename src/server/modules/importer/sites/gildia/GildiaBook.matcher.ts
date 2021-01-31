@@ -1,176 +1,21 @@
-import * as R from 'ramda';
-
-import {countLetter} from '@shared/helpers';
 import {fuzzyFindBookAnchor} from '@scrapper/helpers/fuzzyFindBookAnchor';
 
-import {
-  normalizeISBN,
-  normalizeParsedText,
-  normalizeParsedTitle,
-  normalizePrice,
-  normalizeURL,
-} from '@server/common/helpers';
-
-import {Language} from '@server/constants/language';
-import {AsyncURLParseResult} from '@server/common/helpers/fetchAsyncHTML';
-
 import {CreateBookDto} from '@server/modules/book/dto/CreateBook.dto';
-import {CreateBookAuthorDto} from '@server/modules/book/modules/author/dto/CreateBookAuthor.dto';
-import {CreateBookAvailabilityDto} from '@server/modules/book/modules/availability/dto/CreateBookAvailability.dto';
-import {CreateBookReleaseDto} from '@server/modules/book/modules/release/dto/CreateBookRelease.dto';
-import {CreateBookPublisherDto} from '@server/modules/book/modules/publisher/dto/BookPublisher.dto';
-import {CreateImageAttachmentDto} from '@server/modules/attachment/dto/CreateImageAttachment.dto';
-
 import {MatchRecordAttrs} from '@scrapper/service/shared/WebsiteScrappersGroup';
 import {WebsiteScrapperMatcher, ScrapperMatcherResult} from '@scrapper/service/shared/ScrapperMatcher';
-
 import {BookShopScrappersGroupConfig} from '@scrapper/service/scrappers/BookShopScrappersGroup';
-import {
-  BINDING_TRANSLATION_MAPPINGS,
-  BookAvailabilityScrapperMatcher,
-} from '@scrapper/service/scrappers/Book.scrapper';
+import {ScrapperMetadataKind} from '../../modules/scrapper/entity';
 
-export class GildiaBookMatcher
-  extends WebsiteScrapperMatcher<CreateBookDto, BookShopScrappersGroupConfig>
-  implements BookAvailabilityScrapperMatcher<AsyncURLParseResult> {
-  /**
-   * @inheritdoc
-   */
-  searchAvailability({$, url}: AsyncURLParseResult) {
-    const $basicProductInfo = $('.basic-product-info');
-
-    return Promise.resolve(
-      {
-        result: [
-          new CreateBookAvailabilityDto(
-            {
-              url,
-              showOnlyAsQuote: false,
-              remoteId: $('.product-page-description [data-add-product]').data('addProduct'),
-              totalRatings: null,
-              avgRating: (
-                countLetter(
-                  '',
-                  $('.product-page-description .rating-stars').data('content'),
-                ) * 2
-              ) || null,
-
-              prevPrice: normalizePrice(
-                $basicProductInfo.find('.previous-price').text(),
-              )?.price,
-
-              price: normalizePrice(
-                $basicProductInfo.find('.current-price').text(),
-              )?.price,
-            },
-          ),
-        ],
-      },
-    );
-  }
-
-  /**
-   * @inheritdoc
-   */
-  async extractFromFetchedPage(bookPage: AsyncURLParseResult): Promise<ScrapperMatcherResult<CreateBookDto>> {
-    if (!bookPage)
-      return null;
-
-    const release = await this.extractRelease(bookPage);
-    return {
-      result: new CreateBookDto(
-        {
-          authors: GildiaBookMatcher.extractAuthors(bookPage.$),
-          defaultTitle: release.title,
-          releases: [
-            release,
-          ],
-        },
-      ),
-    };
-  }
-
+export class GildiaBookMatcher extends WebsiteScrapperMatcher<CreateBookDto, BookShopScrappersGroupConfig> {
   /**
    * @inheritdoc
    */
   async searchRemoteRecord({data}: MatchRecordAttrs<CreateBookDto>): Promise<ScrapperMatcherResult<CreateBookDto>> {
-    return this.extractFromFetchedPage(
-      await this.searchByPhrase(data),
-    );
-  }
-
-  /**
-   * Extracts multiple book authors from page
-   *
-   * @static
-   * @param {cheerio.Root} $
-   * @memberof GildiaBookMatcher
-   */
-  static extractAuthors($: cheerio.Root) {
-    return $('.basic-product-info > a[href^="/szukaj/osoba/"]').toArray().map(
-      (el) => new CreateBookAuthorDto(
-        {
-          name: $(el).text(),
-        },
+    return {
+      result: await this.parsers[ScrapperMetadataKind.BOOK].parse(
+        await this.searchByPhrase(data),
       ),
-    );
-  }
-
-  /**
-   * Pick release info from fetched page
-   *
-   * @param {AsyncURLParseResult} bookPage
-   * @returns
-   * @memberof GildiaBookMatcher
-   */
-  async extractRelease(bookPage: AsyncURLParseResult) {
-    const {$} = bookPage;
-    const basicProps = R.fromPairs(
-      $('.basic-product-info > li')
-        .toArray()
-        .map(
-          (el) => {
-            const childs = $(el).children();
-            const title = childs.first().text();
-
-            return [
-              R.toLower(R.init(title)),
-              $(el).text().substr(title.length),
-            ];
-          },
-        ),
-    );
-
-    /* eslint-disable @typescript-eslint/dot-notation */
-    return new CreateBookReleaseDto(
-      {
-        lang: Language.PL,
-        title: normalizeParsedTitle($('.product-page-description .product-page-title').text()),
-        description: normalizeParsedText($('.product-page-description-details > p').text()),
-        isbn: normalizeISBN(basicProps['isbn-13'] ?? basicProps['isbn']),
-        totalPages: +basicProps['liczba stron'] || null,
-        format: normalizeParsedText(basicProps['format']),
-        publishDate: normalizeParsedText(basicProps['data wydania']),
-        translator: basicProps['tłumacz']?.split(',').map((str) => normalizeParsedText(str)),
-        availability: (await this.searchAvailability(bookPage)).result,
-        binding: BINDING_TRANSLATION_MAPPINGS[
-          normalizeParsedText(basicProps['oprawa'])?.toLowerCase()
-        ],
-        publisher: new CreateBookPublisherDto(
-          {
-            name: normalizeParsedText(basicProps['wydawnictwo']),
-          },
-        ),
-        cover: new CreateImageAttachmentDto(
-          {
-            originalUrl: normalizeURL(
-              $('[data-gallery="product"] .img-responsive.product-page-cover').attr('src'),
-            ),
-          },
-        ),
-      },
-    );
-    /* eslint-enable @typescript-eslint/dot-notation */
+    };
   }
 
   /**
@@ -199,7 +44,7 @@ export class GildiaBookMatcher
 
           return {
             title: $title.find('.title .pjax').text(),
-            author: $title.find('.authir .pjax').text(),
+            author: $title.find('.author .pjax').text(),
           };
         },
       },

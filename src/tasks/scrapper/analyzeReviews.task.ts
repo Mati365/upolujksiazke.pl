@@ -25,7 +25,7 @@ export const reanalyzeAllReviewsTask: TaskFunction = async () => {
       .get(ScrapperReanalyzerService)
       .reanalyze()
   );
-  app.close();
+  await app.close();
 
   logger.log(`Reviews reanalyzed (removed: ${removed}, updated: ${updated})!`);
 };

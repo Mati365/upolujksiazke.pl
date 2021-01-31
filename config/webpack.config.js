@@ -1,11 +1,11 @@
 const path = require('path');
 const nodeExternals = require('webpack-node-externals');
-
+const {WebpackManifestPlugin} = require('webpack-manifest-plugin');
 const webpack = require('webpack');
 const NodemonPlugin = require('nodemon-webpack-plugin');
-const {WebpackManifestPlugin} = require('webpack-manifest-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const ESLintPlugin = require('eslint-webpack-plugin');
 
 const resolveSource = (_path) => path.resolve(__dirname, '../src/', _path);
 
@@ -47,17 +47,6 @@ const createConfig = ({
             },
           ],
         },
-        ...!devMode ? [] : [
-          {
-            enforce: 'pre',
-            test: /\.tsx?$/,
-            exclude: /node_modules/,
-            loader: 'eslint-loader',
-            options: {
-              emitError: true,
-            },
-          },
-        ],
         {
           test: /\.tsx?$/,
           loader: 'ts-loader',
@@ -92,6 +81,14 @@ const createConfig = ({
           mode,
         },
       ),
+      ...!devMode ? [] : [
+        new ESLintPlugin(
+          {
+            emitError: true,
+            cache: true,
+          },
+        ),
+      ],
       new webpack.optimize.LimitChunkCountPlugin(
         {
           maxChunks: 5,

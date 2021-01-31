@@ -83,6 +83,7 @@ export class BonitoBookMatcher
         publishDate: basicProps['rok wydania'],
         isbn: normalizeISBN(basicProps['numer isbn']),
         weight: Number.parseInt(basicProps['waga'], 10) || null,
+        availability: (await this.searchAvailability(bookPage)).result,
         binding: BINDING_TRANSLATION_MAPPINGS[
           normalizeParsedText(basicProps['oprawa'])?.toLowerCase()
         ],
@@ -103,7 +104,6 @@ export class BonitoBookMatcher
       result: new CreateBookDto(
         {
           defaultTitle: title,
-          availability: (await this.searchAvailability(bookPage)).result,
           authors: $('span[itemprop="productDetails"] h2 a[href^="/autor/"]').toArray().map((author) => (
             new CreateBookAuthorDto(
               {

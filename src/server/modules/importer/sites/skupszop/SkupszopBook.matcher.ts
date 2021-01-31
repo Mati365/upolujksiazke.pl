@@ -67,6 +67,7 @@ export class SkupszopBookMatcher
         description: productSchema.description,
         totalPages: +bookSchema.numberOfPages || null,
         publishDate: bookSchema.copyrightYear,
+        availability: (await this.searchAvailability(bookPage)).result,
         isbn: normalizeISBN(productSchema.sku),
         publisher: new CreateBookPublisherDto(
           {
@@ -85,7 +86,6 @@ export class SkupszopBookMatcher
       result: new CreateBookDto(
         {
           defaultTitle: productSchema.name,
-          availability: (await this.searchAvailability(bookPage)).result,
           authors: bookSchema.author.map((author: any) => (
             new CreateBookAuthorDto(
               {

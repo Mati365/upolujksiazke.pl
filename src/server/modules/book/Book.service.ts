@@ -12,7 +12,6 @@ import {TagService} from '../tag/Tag.service';
 import {BookAuthorService} from './modules/author/BookAuthor.service';
 import {BookReleaseService} from './modules/release/BookRelease.service';
 import {BookCategoryService} from './modules/category';
-import {BookAvailabilityService} from './modules/availability/BookAvailability.service';
 import {BookVolumeService} from './modules/volume/BookVolume.service';
 import {BookSeriesService} from './modules/series/BookSeries.service';
 import {BookPrizeService} from './modules/prize/BookPrize.service';
@@ -20,7 +19,6 @@ import {BookKindService} from './modules/kind/BookKind.service';
 
 import {CreateBookDto} from './dto/CreateBook.dto';
 import {CreateBookReleaseDto} from './modules/release/dto/CreateBookRelease.dto';
-import {CreateBookAvailabilityDto} from './modules/availability/dto/CreateBookAvailability.dto';
 import {BookEntity} from './Book.entity';
 import {BookVolumeEntity} from './modules/volume/BookVolume.entity';
 
@@ -32,7 +30,6 @@ export class BookService {
     private readonly authorService: BookAuthorService,
     private readonly releaseService: BookReleaseService,
     private readonly categoryService: BookCategoryService,
-    private readonly availabilityService: BookAvailabilityService,
     private readonly volumeService: BookVolumeService,
     private readonly seriesService: BookSeriesService,
     private readonly prizeServices: BookPrizeService,
@@ -49,7 +46,6 @@ export class BookService {
   async delete(ids: number[], entityManager?: EntityManager) {
     const {
       connection,
-      availabilityService,
       releaseService,
     } = this;
 
@@ -64,10 +60,8 @@ export class BookService {
     );
 
     await forwardTransaction({connection, entityManager}, async (transaction) => {
-      for await (const entity of entities) {
+      for await (const entity of entities)
         await releaseService.delete(entity.releases as any[], transaction);
-        await availabilityService.delete(entity.availability as any[], transaction);
-      }
 
       const orphanVolumes = (
         await transaction
@@ -101,10 +95,7 @@ export class BookService {
    * @memberof BookService
    */
   async upsert(dto: CreateBookDto): Promise<BookEntity> {
-    const {
-      connection,
-      availabilityService,
-    } = this;
+    const {connection} = this;
 
     return runTransactionWithPostHooks(connection, async (transaction) => {
       const {
@@ -166,18 +157,6 @@ export class BookService {
           },
         );
       }
-
-      await availabilityService.upsertList(
-        dto.availability.map(
-          (availability) => new CreateBookAvailabilityDto(
-            {
-              ...availability,
-              bookId: book.id,
-            },
-          ),
-        ),
-        transaction,
-      );
 
       await releaseService.upsertList(
         dto.releases

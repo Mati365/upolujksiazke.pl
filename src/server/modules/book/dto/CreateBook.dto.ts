@@ -7,7 +7,6 @@ import {
 import {Language} from '@server/constants/language';
 import {IsTagCorrect} from '@server/modules/tag/validators/IsTagCorrect';
 
-import {CreateBookAvailabilityDto} from '../modules/availability/dto/CreateBookAvailability.dto';
 import {CreateBookReleaseDto} from '../modules/release/dto/CreateBookRelease.dto';
 import {CreateBookAuthorDto} from '../modules/author/dto/CreateBookAuthor.dto';
 import {CreateBookCategoryDto} from '../modules/category/dto/CreateBookCategory.dto';
@@ -53,11 +52,6 @@ export class CreateBookDto {
   @ValidateNested()
   @Type(() => CreateBookReleaseDto)
   readonly releases: CreateBookReleaseDto[];
-
-  @IsDefined()
-  @ValidateNested()
-  @Type(() => CreateBookAvailabilityDto)
-  readonly availability: CreateBookAvailabilityDto[];
 
   @IsDefined()
   @ValidateNested()

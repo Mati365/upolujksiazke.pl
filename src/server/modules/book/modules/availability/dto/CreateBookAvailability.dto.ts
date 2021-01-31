@@ -8,6 +8,10 @@ export class CreateBookAvailabilityDto extends CreateRemoteRecordDto {
 
   @IsOptional()
   @IsNumber()
+  readonly releaseId: number;
+
+  @IsOptional()
+  @IsNumber()
   readonly prevPrice: number;
 
   @IsOptional()

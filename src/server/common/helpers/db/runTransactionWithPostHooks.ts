@@ -32,9 +32,14 @@ export async function runTransactionWithPostHooks<T>(
     },
   );
 
-  // maybe exec parallel?
-  for await (const queueFn of queue)
-    await queueFn();
+  for await (const queueFn of queue) {
+    try {
+      await queueFn();
+    } catch (e) {
+      console.error(e);
+      throw e;
+    }
+  }
 
   return result;
 }
@@ -69,12 +74,9 @@ export async function runInPostHookIfPresent(
         return;
       }
 
-      const entityManager = transactionManager.connection.createEntityManager();
-      try {
-        await fn(entityManager);
-      } finally {
-        await entityManager.release();
-      }
+      await fn(
+        transactionManager.connection.createEntityManager(),
+      );
     },
   );
 

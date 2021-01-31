@@ -144,6 +144,7 @@ export class PublioBookMatcher
             },
           ),
         ),
+        availability,
       },
     );
 
@@ -176,7 +177,6 @@ export class PublioBookMatcher
           categories: PublioBookMatcher.extractCategories($, basicProps),
           prizes,
           authors,
-          availability,
         },
       ),
     };

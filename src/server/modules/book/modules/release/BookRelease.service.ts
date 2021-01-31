@@ -15,8 +15,10 @@ import {
 import {ImageAttachmentService} from '@server/modules/attachment/services';
 import {ImageAttachmentEntity, ImageVersion} from '@server/modules/attachment/entity/ImageAttachment.entity';
 import {CreateBookReleaseDto} from './dto/CreateBookRelease.dto';
+import {CreateBookAvailabilityDto} from '../availability/dto/CreateBookAvailability.dto';
 import {BookReleaseEntity} from './BookRelease.entity';
 import {BookPublisherService} from '../publisher/BookPublisher.service';
+import {BookAvailabilityService} from '../availability/BookAvailability.service';
 
 @Injectable()
 export class BookReleaseService {
@@ -32,6 +34,7 @@ export class BookReleaseService {
   constructor(
     private readonly connection: Connection,
     private readonly publisherService: BookPublisherService,
+    private readonly availabilityService: BookAvailabilityService,
     private readonly imageAttachmentService: ImageAttachmentService,
     private readonly entityManager: EntityManager,
   ) {}
@@ -80,13 +83,16 @@ export class BookReleaseService {
       cover,
       childReleases,
       publisher, publisherId,
+      availability,
       ...dto
     }: CreateBookReleaseDto,
+
     entityManager: PostHookEntityManager = <any> BookReleaseEntity,
   ): Promise<BookReleaseEntity> {
     const {
       connection,
       publisherService,
+      availabilityService,
       imageAttachmentService,
     } = this;
 
@@ -111,6 +117,19 @@ export class BookReleaseService {
       },
     );
 
+    await availabilityService.upsertList(
+      availability.map(
+        (item) => new CreateBookAvailabilityDto(
+          {
+            ...item,
+            bookId: releaseEntity.bookId,
+            releaseId: releaseEntity.id,
+          },
+        ),
+      ),
+      entityManager,
+    );
+
     if (childReleases) {
       await this.upsertList(
         childReleases.map(
@@ -127,50 +146,51 @@ export class BookReleaseService {
       );
     }
 
-    const shouldFetchCover = !!cover?.originalUrl && !(await checkIfExists(
+    await runInPostHookIfPresent(
       {
-        entityManager: this.entityManager,
-        tableName: 'book_release_cover_image_attachments',
-        where: {
-          bookReleaseId: releaseEntity.id,
-        },
+        transactionManager: entityManager,
       },
-    ));
+      async (hookEntityManager) => {
+        const shouldFetchCover = !!cover?.originalUrl && !(await checkIfExists(
+          {
+            entityManager: this.entityManager,
+            tableName: 'book_release_cover_image_attachments',
+            where: {
+              bookReleaseId: releaseEntity.id,
+            },
+          },
+        ));
 
-    if (shouldFetchCover) {
-      await runInPostHookIfPresent(
-        {
-          transactionManager: entityManager,
-        },
-        async (hookEntityManager) => {
-          releaseEntity.cover = R.values(
-            await imageAttachmentService.fetchAndCreateScaled(
-              {
-                destSubDir: `cover/${releaseEntity.id}`,
-                sizes: BookReleaseService.COVER_IMAGE_SIZES,
-                dto: cover,
-              },
-              hookEntityManager,
-            ),
-          );
+        if (!shouldFetchCover)
+          return;
 
-          await hookEntityManager.save(
-            new BookReleaseEntity(
-              {
-                id: releaseEntity.id,
-                cover: releaseEntity.cover.map(
-                  (item) => new ImageAttachmentEntity(
-                    {
-                      id: item.id,
-                    },
-                  ),
+        releaseEntity.cover = R.values(
+          await imageAttachmentService.fetchAndCreateScaled(
+            {
+              destSubDir: `cover/${releaseEntity.id}`,
+              sizes: BookReleaseService.COVER_IMAGE_SIZES,
+              dto: cover,
+            },
+            hookEntityManager,
+          ),
+        );
+
+        await hookEntityManager.save(
+          new BookReleaseEntity(
+            {
+              id: releaseEntity.id,
+              cover: releaseEntity.cover.map(
+                (item) => new ImageAttachmentEntity(
+                  {
+                    id: item.id,
+                  },
                 ),
-              },
-            ),
-          );
-        },
-      );
-    }
+              ),
+            },
+          ),
+        );
+      },
+    );
 
     return releaseEntity;
   }

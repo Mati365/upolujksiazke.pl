@@ -5,6 +5,7 @@ import {
 
 import {RemoteRecordEntity, RemoteRecordFields} from '@server/modules/remote/entity/RemoteRecord.entity';
 import {BookEntity} from '../../Book.entity';
+import {BookReleaseEntity} from '../release/BookRelease.entity';
 
 /**
  * @todo Add book type to unique
@@ -19,9 +20,10 @@ import {BookEntity} from '../../Book.entity';
   },
 )
 @Index(['book'])
+@Index(['book', 'releaseId'])
 @Unique(
   'book_availability_unique_book_website',
-  ['book', 'website'],
+  ['book', 'website', 'release'],
 )
 export class BookAvailabilityEntity extends RemoteRecordFields {
   @Column(
@@ -54,9 +56,17 @@ export class BookAvailabilityEntity extends RemoteRecordFields {
   @JoinColumn({name: 'bookId'})
   book: BookEntity;
 
-  @Column({nullable: true})
+  @Column()
   @RelationId((entity: BookAvailabilityEntity) => entity.book)
   bookId: number;
+
+  @ManyToOne(() => BookReleaseEntity, (entity) => entity.availability, {onDelete: 'CASCADE'})
+  @JoinColumn({name: 'releaseId'})
+  release: BookReleaseEntity;
+
+  @Column()
+  @RelationId((entity: BookAvailabilityEntity) => entity.book)
+  releaseId: number;
 
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(partial: Partial<BookAvailabilityEntity>) {

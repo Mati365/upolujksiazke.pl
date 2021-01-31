@@ -10,6 +10,7 @@ import {DatedRecordEntity} from '../../../database/DatedRecord.entity';
 import {BookEntity} from '../../Book.entity';
 import {BookPublisherEntity} from '../publisher/BookPublisher.entity';
 import {BookReviewEntity} from '../review/BookReview.entity';
+import {BookAvailabilityEntity} from '../availability/BookAvailability.entity';
 
 export enum BookProtection {
   WATERMARK = 1,
@@ -150,6 +151,9 @@ export class BookReleaseEntity extends DatedRecordEntity {
 
   @OneToMany(() => BookReviewEntity, (review) => review.release)
   reviews: BookReviewEntity[];
+
+  @OneToMany(() => BookAvailabilityEntity, (entity) => entity.release)
+  availability: BookAvailabilityEntity[];
 
   constructor(partial: Partial<BookReleaseEntity>) {
     super();

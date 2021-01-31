@@ -59,7 +59,7 @@ export class MatrasBookMatcher
     const {
       detailsText,
       release,
-    } = MatrasBookMatcher.extractRelease(bookPage.$);
+    } = await this.extractRelease(bookPage);
 
     return {
       result: new CreateBookDto(
@@ -68,7 +68,6 @@ export class MatrasBookMatcher
           defaultTitle: release.title,
           originalTitle: normalizeParsedText(detailsText.match(/Tytuł oryginalny:\s*([^\n]+)/)?.[1]),
           originalPublishDate: normalizeParsedText(detailsText.match(/Data pierwszego wydania:\s*(\S+)/)?.[1]),
-          availability: (await this.searchAvailability(bookPage)).result,
           releases: [
             release,
           ],
@@ -89,12 +88,12 @@ export class MatrasBookMatcher
   /**
    * Pick release info from fetched page
    *
-   * @static
-   * @param {cheerio.Root} $
+   * @param {AsyncURLParseResult} bookPage
    * @returns
    * @memberof MatrasBookMatcher
    */
-  static extractRelease($: cheerio.Root) {
+  private async extractRelease(bookPage: AsyncURLParseResult) {
+    const {$} = bookPage;
     const detailsText = $('#con-notes > div.colsInfo').text();
 
     return {
@@ -110,6 +109,7 @@ export class MatrasBookMatcher
           format: normalizeParsedText(detailsText.match(/Format:\s*(\S+)/)?.[1]),
           publishDate: normalizeParsedText(detailsText.match(/Rok wydania:\s*(\S+)/)?.[1]),
           defaultPrice: normalizePrice(detailsText.match(/Cena katalogowa:\s*(\S+)/)?.[1])?.price,
+          availability: (await this.searchAvailability(bookPage)).result,
           translator: (
             detailsText
               .match(/Tłumaczenie:\s*(\S+\s\S+)/)?.[1]
@@ -119,7 +119,7 @@ export class MatrasBookMatcher
           binding: BINDING_TRANSLATION_MAPPINGS[
             normalizeParsedText(detailsText.match(/Oprawa\s*(\S+)/)?.[1])?.toLowerCase()
           ],
-          publisher: this.extractPublisher($),
+          publisher: MatrasBookMatcher.extractPublisher($),
           cover: new CreateImageAttachmentDto(
             {
               originalUrl: normalizeURL(

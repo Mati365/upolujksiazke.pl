@@ -87,6 +87,7 @@ export class GraniceBookMatcher
         description: normalizeParsedText($content.find('> .desc > p:not(:empty):not(.tags)').text()),
         totalPages: +$details.find('span[itemprop="numberOfPages"]').text() || null,
         publishDate: normalizeParsedText(detailsText.match(/Data wydania: ([\S]+)/)?.[1]),
+        availability: (await this.searchAvailability(bookPage)).result,
         isbn: normalizeISBN(
           $details.find('isbn[itemprop="isbn"]').text(),
         ),
@@ -110,7 +111,6 @@ export class GraniceBookMatcher
         {
           defaultTitle: title,
           originalTitle: normalizeParsedText(detailsHTML.match(/Tytuł oryginału: ([^\n<>]+)/)?.[1]),
-          availability: (await this.searchAvailability(bookPage)).result,
           authors,
           releases: [release],
           categories,

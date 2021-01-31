@@ -79,6 +79,7 @@ export class ArosBookMatcher
         publishDate: basicProps['data premiery'],
         isbn: normalizeISBN(basicProps['numer isbn']),
         binding: BINDING_TRANSLATION_MAPPINGS[basicProps['oprawa']?.toLowerCase()],
+        availability: (await this.searchAvailability(bookPage)).result,
         publisher: new CreateBookPublisherDto(
           {
             name: basicProps['wydawnictwo'],
@@ -97,7 +98,6 @@ export class ArosBookMatcher
         {
           authors,
           defaultTitle: title,
-          availability: (await this.searchAvailability(bookPage)).result,
           releases: [release],
           categories: (
             $('td[style="height: 26px; padding-left: 7px;"] a:not(:first-child):not(:last-child):gt(0)')

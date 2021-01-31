@@ -9,6 +9,7 @@ import {mergeWithoutNulls} from '@shared/helpers/mergeWithoutNulls';
 
 import {BookService} from '@server/modules/book/Book.service';
 import {CreateBookDto} from '@server/modules/book';
+import {CreateBookReleaseDto} from '@server/modules/book/modules/release/dto/CreateBookRelease.dto';
 import {CreateBookAvailabilityDto} from '@server/modules/book/modules/availability/dto/CreateBookAvailability.dto';
 import {BookReleaseEntity} from '@server/modules/book/modules/release/BookRelease.entity';
 import {ScrapperMetadataEntity, ScrapperMetadataKind} from '../../scrapper/entity';
@@ -96,14 +97,7 @@ export class BookDbLoader implements MetadataDbLoader {
       return null;
     }
 
-    const [
-      allReleases,
-      allAvailability,
-    ] = [
-      R.unnest(R.pluck('releases', matchedBooks)),
-      R.unnest(R.pluck('availability', matchedBooks)),
-    ];
-
+    const allReleases = R.unnest(R.pluck('releases', matchedBooks));
     const releaseBook = (
       await BookReleaseEntity.findOne(
         {
@@ -121,19 +115,31 @@ export class BookDbLoader implements MetadataDbLoader {
     );
 
     const websites = await scrapperService.findOrCreateWebsitesByUrls(
-      R.pluck('url', allAvailability),
+      R.pluck(
+        'url',
+        R.unnest(R.pluck('availability', allReleases)),
+      ),
     );
 
-    const mappedAvailability = allAvailability.map(
-      (availability) => new CreateBookAvailabilityDto(
-        {
-          ...availability,
-          bookId: releaseBook?.id,
-          websiteId: websites[
-            scrapperService.getScrappersGroupByWebsiteURL(availability.url).websiteURL
-          ].id,
-        },
-      ),
+    const releases = (
+      allReleases
+        .filter(({isbn}) => !!isbn)
+        .map((release) => new CreateBookReleaseDto(
+          {
+            ...release,
+            availability: release.availability.map(
+              (availability) => new CreateBookAvailabilityDto(
+                {
+                  ...availability,
+                  bookId: releaseBook?.id,
+                  websiteId: websites[
+                    scrapperService.getScrappersGroupByWebsiteURL(availability.url).websiteURL
+                  ].id,
+                },
+              ),
+            ),
+          },
+        ))
     );
 
     return bookService.upsert(
@@ -141,8 +147,7 @@ export class BookDbLoader implements MetadataDbLoader {
         {
           id: releaseBook?.id,
           ...mergeWithoutNulls(matchedBooks),
-          availability: mappedAvailability,
-          releases: allReleases.filter(({isbn}) => !!isbn),
+          releases,
         },
       ),
     );

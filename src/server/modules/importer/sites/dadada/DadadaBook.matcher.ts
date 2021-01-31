@@ -85,6 +85,7 @@ export class DadadaBookMatcher
         publishDate: basicProps['rok wydania']?.[0],
         isbn: normalizeISBN(basicProps['isbn'][0]),
         binding: BINDING_TRANSLATION_MAPPINGS[basicProps['oprawa']?.[0]?.toLowerCase()],
+        availability: (await this.searchAvailability(bookPage)).result,
         publisher: new CreateBookPublisherDto(
           {
             name: basicProps['wydawca'][0],
@@ -105,7 +106,6 @@ export class DadadaBookMatcher
         {
           authors,
           defaultTitle: title,
-          availability: (await this.searchAvailability(bookPage)).result,
           releases: [release],
           categories: $('#breadCrumbs > .breadCrumbsItem:not(:first-child) > a .name').toArray().map(
             (name) => new CreateBookCategoryDto(

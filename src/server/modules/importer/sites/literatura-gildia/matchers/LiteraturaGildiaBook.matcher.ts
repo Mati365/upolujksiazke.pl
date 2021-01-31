@@ -78,7 +78,6 @@ export class LiteraturaGildiaBookMatcher
         {
           defaultTitle: release.title,
           originalPublishDate: normalizeParsedText(text.match(/Rok wydania oryginału: ([\S]+)/)?.[1]),
-          availability: (await this.searchAvailability(bookPage)).result,
           authors: [
             author,
           ],
@@ -103,7 +102,6 @@ export class LiteraturaGildiaBookMatcher
   /**
    * Extracts info about release from book page
    *
-   * @private
    * @param {AsyncURLParseResult} bookPage
    * @returns
    * @memberof LiteraturaGildiaBookMatcher
@@ -125,6 +123,7 @@ export class LiteraturaGildiaBookMatcher
         edition: normalizeParsedText(text.match(/Wydanie: ([\S]+)/)?.[1]),
         isbn: normalizeISBN(text.match(/ISBN: ([\w-]+)/)?.[1]),
         totalPages: (+text.match(/Liczba stron: (\d+)/)?.[1]) || null,
+        availability: (await this.searchAvailability(bookPage)).result,
         format: normalizeParsedText(text.match(/Format: ([\S]+)/)?.[1]),
         binding: BINDING_TRANSLATION_MAPPINGS[
           normalizeParsedText(text.match(/Oprawa: ([\S]+)/)?.[1])?.toLowerCase()

@@ -76,13 +76,12 @@ export class GildiaBookMatcher
     if (!bookPage)
       return null;
 
-    const release = GildiaBookMatcher.extractRelease(bookPage.$);
+    const release = await this.extractRelease(bookPage);
     return {
       result: new CreateBookDto(
         {
           authors: GildiaBookMatcher.extractAuthors(bookPage.$),
           defaultTitle: release.title,
-          availability: (await this.searchAvailability(bookPage)).result,
           releases: [
             release,
           ],
@@ -120,12 +119,12 @@ export class GildiaBookMatcher
   /**
    * Pick release info from fetched page
    *
-   * @static
-   * @param {cheerio.Root} $
+   * @param {AsyncURLParseResult} bookPage
    * @returns
    * @memberof GildiaBookMatcher
    */
-  static extractRelease($: cheerio.Root) {
+  async extractRelease(bookPage: AsyncURLParseResult) {
+    const {$} = bookPage;
     const basicProps = R.fromPairs(
       $('.basic-product-info > li')
         .toArray()
@@ -153,6 +152,7 @@ export class GildiaBookMatcher
         format: normalizeParsedText(basicProps['format']),
         publishDate: normalizeParsedText(basicProps['data wydania']),
         translator: basicProps['tłumacz']?.split(',').map((str) => normalizeParsedText(str)),
+        availability: (await this.searchAvailability(bookPage)).result,
         binding: BINDING_TRANSLATION_MAPPINGS[
           normalizeParsedText(basicProps['oprawa'])?.toLowerCase()
         ],

@@ -1,3 +1,4 @@
+import * as R from 'ramda';
 import {
   BeforeInsert, BeforeUpdate, Column,
   Entity, Index, JoinColumn, JoinTable, ManyToMany,
@@ -165,7 +166,7 @@ export class BookReleaseEntity extends DatedRecordEntity {
   @BeforeInsert()
   @BeforeUpdate()
   transformFields() {
-    const {isbn, title, description} = this;
+    const {isbn, title, description, translator} = this;
     if (isbn)
       this.isbn = isbn.replaceAll('-', '');
 
@@ -174,5 +175,8 @@ export class BookReleaseEntity extends DatedRecordEntity {
 
     if (description)
       this.description = description.trim();
+
+    if (R.isEmpty(translator))
+      this.translator = null;
   }
 }

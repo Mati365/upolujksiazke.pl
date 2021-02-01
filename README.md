@@ -47,7 +47,7 @@ OpenSource book reviews aggregator, something like Metacritic / Digg for books. 
 - [x] Skupszop.pl
 - [x] Dadada.pl
 - [x] Aros.pl
-- [ ] Publio.pl
+- [x] Publio.pl
 - [ ] Madbooks.pl
 - [ ] ibuk.pl
 - [ ] LitRes.pl

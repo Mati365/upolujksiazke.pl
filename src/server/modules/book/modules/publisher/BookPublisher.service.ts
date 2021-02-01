@@ -2,6 +2,7 @@ import {Injectable} from '@nestjs/common';
 import {Connection, EntityManager} from 'typeorm';
 import * as R from 'ramda';
 
+import {parameterize} from '@shared/helpers/parameterize';
 import {
   checkIfExists,
   forwardTransaction,
@@ -11,7 +12,7 @@ import {
 } from '@server/common/helpers/db';
 
 import {Size} from '@shared/types';
-import {ImageAttachmentEntity, ImageVersion} from '@server/modules/attachment/entity';
+import {ImageVersion} from '@server/modules/attachment/entity';
 import {ImageAttachmentService} from '@server/modules/attachment/services';
 import {BookPublisherEntity} from './BookPublisher.entity';
 import {CreateBookPublisherDto} from './dto/BookPublisher.dto';
@@ -31,6 +32,28 @@ export class BookPublisherService {
     private readonly entityManager: EntityManager,
     private readonly imageAttachmentService: ImageAttachmentService,
   ) {}
+
+  /**
+   * Finds publishers with similar name
+   *
+   * @param {string} name
+   * @param {number} [similarity=2]
+   * @returns
+   * @memberof BookPublisherService
+   */
+  createQueryWithSimilarNames(name: string, similarity: number = 2) {
+    return (
+      BookPublisherEntity
+        .createQueryBuilder()
+        .where(
+          'levenshtein("parameterizedName", :name) <= :similarity',
+          {
+            name: parameterize(name),
+            similarity,
+          },
+        )
+    );
+  }
 
   /**
    * Remove single book publisher
@@ -98,7 +121,7 @@ export class BookPublisherService {
         const shouldFetchLogo = !!logo?.originalUrl && !(await checkIfExists(
           {
             entityManager: this.entityManager,
-            tableName: 'book_publisher_logo_image_attachments',
+            tableName: BookPublisherEntity.coverTableName,
             where: {
               bookPublisherId: publisher.id,
             },
@@ -119,19 +142,15 @@ export class BookPublisherService {
           ),
         );
 
-        await hookEntityManager.save(
-          new BookPublisherEntity(
-            {
-              id: publisher.id,
-              logo: publisher.logo.map(
-                (item) => new ImageAttachmentEntity(
-                  {
-                    id: item.id,
-                  },
-                ),
-              ),
+        await imageAttachmentService.directInsertToTable(
+          {
+            coverTableName: BookPublisherEntity.coverTableName,
+            images: publisher.logo,
+            entityManager: hookEntityManager,
+            fields: {
+              bookPublisherId: publisher.id,
             },
-          ),
+          },
         );
       },
     );

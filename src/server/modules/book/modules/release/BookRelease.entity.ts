@@ -35,6 +35,8 @@ export enum BookType {
 )
 @Index(['book'])
 export class BookReleaseEntity extends DatedRecordEntity {
+  static readonly coverTableName = 'book_release_cover_image_attachments';
+
   @Column('citext', {nullable: true})
   title: string;
 
@@ -92,7 +94,7 @@ export class BookReleaseEntity extends DatedRecordEntity {
   )
   @JoinTable(
     {
-      name: 'book_release_cover_image_attachments',
+      name: BookReleaseEntity.coverTableName,
     },
   )
   cover: ImageAttachmentEntity[];

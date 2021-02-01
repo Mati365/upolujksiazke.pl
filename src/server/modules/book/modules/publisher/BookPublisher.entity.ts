@@ -17,6 +17,8 @@ import {BookSeriesEntity} from '../series/BookSeries.entity';
   },
 )
 export class BookPublisherEntity extends DatedRecordEntity {
+  static coverTableName = 'book_publisher_logo_image_attachments';
+
   @Column('text', {unique: true})
   parameterizedName: string;
 
@@ -47,7 +49,7 @@ export class BookPublisherEntity extends DatedRecordEntity {
   )
   @JoinTable(
     {
-      name: 'book_publisher_logo_image_attachments',
+      name: BookPublisherEntity.coverTableName,
     },
   )
   logo: ImageAttachmentEntity[];
@@ -60,9 +62,10 @@ export class BookPublisherEntity extends DatedRecordEntity {
   @BeforeInsert()
   @BeforeUpdate()
   transformFields() {
-    const {parameterizedName, name} = this;
-    if (!parameterizedName && name) {
+    const {parameterizedName, name, description} = this;
+    if (!parameterizedName && name)
       this.parameterizedName = parameterize(name);
-    }
+
+    this.description = description?.trim() || null;
   }
 }

@@ -115,10 +115,10 @@ export class BookService {
         categories,
       ] = (
         [
-          dto.kind && (await kindService.upsert([dto.kind]))[0],
-          dto.volume && await volumeService.upsert(dto.volume),
-          dto.series && await seriesService.upsert(dto.series),
-          dto.prizes && await prizeServices.upsert(dto.prizes),
+          dto.kind && (await kindService.upsert([dto.kind], transaction))[0],
+          dto.volume && await volumeService.upsert(dto.volume, transaction),
+          dto.series && await seriesService.upsert(dto.series, transaction),
+          dto.prizes && await prizeServices.upsert(dto.prizes, transaction),
           await authorService.upsert(dto.authors, transaction),
           await tagService.upsert(dto.tags, transaction),
           await categoryService.upsert(dto.categories, transaction),
@@ -159,16 +159,14 @@ export class BookService {
       }
 
       await releaseService.upsertList(
-        dto.releases
-          .filter(({isbn}) => !!isbn)
-          .map(
-            (release) => new CreateBookReleaseDto(
-              {
-                ...release,
-                bookId: book.id,
-              },
-            ),
+        dto.releases.map(
+          (release) => new CreateBookReleaseDto(
+            {
+              ...release,
+              bookId: book.id,
+            },
           ),
+        ),
         transaction,
       );
 

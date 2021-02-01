@@ -13,7 +13,7 @@ import {
 } from '@server/common/helpers/db';
 
 import {ImageAttachmentService} from '@server/modules/attachment/services';
-import {ImageAttachmentEntity, ImageVersion} from '@server/modules/attachment/entity/ImageAttachment.entity';
+import {ImageVersion} from '@server/modules/attachment/entity/ImageAttachment.entity';
 import {CreateBookReleaseDto} from './dto/CreateBookRelease.dto';
 import {CreateBookAvailabilityDto} from '../availability/dto/CreateBookAvailability.dto';
 import {BookReleaseEntity} from './BookRelease.entity';
@@ -154,7 +154,7 @@ export class BookReleaseService {
         const shouldFetchCover = !!cover?.originalUrl && !(await checkIfExists(
           {
             entityManager: this.entityManager,
-            tableName: 'book_release_cover_image_attachments',
+            tableName: BookReleaseEntity.coverTableName,
             where: {
               bookReleaseId: releaseEntity.id,
             },
@@ -175,19 +175,15 @@ export class BookReleaseService {
           ),
         );
 
-        await hookEntityManager.save(
-          new BookReleaseEntity(
-            {
-              id: releaseEntity.id,
-              cover: releaseEntity.cover.map(
-                (item) => new ImageAttachmentEntity(
-                  {
-                    id: item.id,
-                  },
-                ),
-              ),
+        await imageAttachmentService.directInsertToTable(
+          {
+            entityManager: hookEntityManager,
+            coverTableName: BookReleaseEntity.coverTableName,
+            images: releaseEntity.cover,
+            fields: {
+              bookReleaseId: releaseEntity.id,
             },
-          ),
+          },
         );
       },
     );

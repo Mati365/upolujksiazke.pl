@@ -13,7 +13,7 @@ import {
   isImageMimeType,
 } from '@server/common/helpers';
 
-import {CanBeArray, Size} from '@shared/types';
+import {CanBeArray, ID, Size} from '@shared/types';
 import {InterceptMethod} from '@shared/helpers/decorators/InterceptMethod';
 import {
   EnterTmpFolderScope,
@@ -56,6 +56,42 @@ export class ImageAttachmentService {
     private readonly tmpDirService: TmpDirService,
     private readonly em: EntityManager,
   ) {}
+
+  /**
+   * Skips image attachment select in many to many relations
+   *
+   * @param {Object} attr
+   * @memberof ImageAttachmentService
+   */
+  async directInsertToTable(
+    {
+      coverTableName,
+      images,
+      fields,
+      entityManager = this.em,
+    }: {
+      entityManager?: EntityManager,
+      images: {id: ID}[],
+      coverTableName: string,
+      fields: object,
+    },
+  ) {
+    await (
+      entityManager
+        .createQueryBuilder()
+        .insert()
+        .into(coverTableName, [...R.keys(fields), 'imageAttachmentsId'])
+        .values(
+          images.map(
+            (imgAttachment) => ({
+              ...fields,
+              imageAttachmentsId: imgAttachment.id,
+            }),
+          ),
+        )
+        .execute()
+    );
+  }
 
   /**
    * Remove single image attachment

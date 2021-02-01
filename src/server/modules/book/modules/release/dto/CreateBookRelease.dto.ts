@@ -117,4 +117,20 @@ export class CreateBookReleaseDto {
   constructor(partial: Partial<CreateBookReleaseDto>) {
     Object.assign(this, partial);
   }
+
+  /**
+   * Maps new publisher and returns new object instance
+   *
+   * @param {(publisher: CreateBookPublisherDto) => CreateBookPublisherDto} fn
+   * @returns {CreateBookReleaseDto}
+   * @memberof CreateBookReleaseDto
+   */
+  mapPublisher(fn: (publisher: CreateBookPublisherDto) => CreateBookPublisherDto): CreateBookReleaseDto {
+    return new CreateBookReleaseDto(
+      {
+        ...this,
+        publisher: fn(this.publisher),
+      },
+    );
+  }
 }

@@ -9,7 +9,7 @@ import {
   upsert,
   checkIfExists,
   runInPostHookIfPresent,
-  PostHookEntityManager,
+  UpsertResourceAttrs,
 } from '@server/common/helpers/db';
 
 import {ImageAttachmentService} from '@server/modules/attachment/services';
@@ -87,8 +87,13 @@ export class BookReleaseService {
       ...dto
     }: CreateBookReleaseDto,
 
-    entityManager: PostHookEntityManager = <any> BookReleaseEntity,
+    attrs: UpsertResourceAttrs = {},
   ): Promise<BookReleaseEntity> {
+    const {
+      upsertResources = false,
+      entityManager = <any> BookReleaseEntity,
+    } = attrs;
+
     const {
       connection,
       publisherService,
@@ -104,7 +109,7 @@ export class BookReleaseService {
         {
           ...dto,
           publisherId: publisherId ?? (
-            await (publisher && publisherService.upsert(publisher, entityManager))
+            await (publisher && publisherService.upsert(publisher, attrs))
           )?.id,
         },
       ),
@@ -142,7 +147,7 @@ export class BookReleaseService {
             },
           ),
         ),
-        entityManager,
+        attrs,
       );
     }
 
@@ -151,20 +156,7 @@ export class BookReleaseService {
         transactionManager: entityManager,
       },
       async (hookEntityManager) => {
-        const shouldFetchCover = !!cover?.originalUrl && !(await checkIfExists(
-          {
-            entityManager: this.entityManager,
-            tableName: BookReleaseEntity.coverTableName,
-            where: {
-              bookReleaseId: releaseEntity.id,
-            },
-          },
-        ));
-
-        if (!shouldFetchCover)
-          return;
-
-        releaseEntity.cover = R.values(
+        const fetchCover = async () => R.values(
           await imageAttachmentService.fetchAndCreateScaled(
             {
               destSubDir: `cover/${releaseEntity.id}`,
@@ -175,16 +167,42 @@ export class BookReleaseService {
           ),
         );
 
-        await imageAttachmentService.directInsertToTable(
-          {
-            entityManager: hookEntityManager,
-            coverTableName: BookReleaseEntity.coverTableName,
-            images: releaseEntity.cover,
-            fields: {
-              bookReleaseId: releaseEntity.id,
+        if (upsertResources) {
+          releaseEntity.cover = await fetchCover();
+          await hookEntityManager.save(
+            new BookReleaseEntity(
+              {
+                id: publisher.id,
+                cover: releaseEntity.cover,
+              },
+            ),
+          );
+        } else {
+          const shouldFetchCover = !!cover?.originalUrl && !(await checkIfExists(
+            {
+              entityManager: this.entityManager,
+              tableName: BookReleaseEntity.coverTableName,
+              where: {
+                bookReleaseId: releaseEntity.id,
+              },
             },
-          },
-        );
+          ));
+
+          if (!shouldFetchCover)
+            return;
+
+          releaseEntity.cover = await fetchCover();
+          await imageAttachmentService.directInsertToTable(
+            {
+              entityManager: hookEntityManager,
+              coverTableName: BookReleaseEntity.coverTableName,
+              images: releaseEntity.cover,
+              fields: {
+                bookReleaseId: releaseEntity.id,
+              },
+            },
+          );
+        }
       },
     );
 
@@ -195,11 +213,14 @@ export class BookReleaseService {
    * Create or update array of books releases
    *
    * @param {CreateBookReleaseDto[]} dtos
-   * @param {EntityManager} [entityManager]
+   * @param {UpsertResourceAttrs} [attrs={}]
    * @returns {Promise<BookReleaseEntity[]>}
    * @memberof BookReleaseService
    */
-  async upsertList(dtos: CreateBookReleaseDto[], entityManager?: EntityManager): Promise<BookReleaseEntity[]> {
+  async upsertList(
+    dtos: CreateBookReleaseDto[],
+    attrs: UpsertResourceAttrs = {},
+  ): Promise<BookReleaseEntity[]> {
     if (!dtos?.length)
       return [];
 
@@ -207,7 +228,10 @@ export class BookReleaseService {
     return sequential(
       dtos.map(
         (item) => () => Promise.resolve(
-          this.upsert(item, entityManager),
+          this.upsert(
+            item,
+            attrs,
+          ),
         ),
       ),
     );

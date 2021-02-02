@@ -167,7 +167,10 @@ export class BookService {
             },
           ),
         ),
-        transaction,
+        {
+          entityManager: transaction,
+          upsertResources: false,
+        },
       );
 
       return book;

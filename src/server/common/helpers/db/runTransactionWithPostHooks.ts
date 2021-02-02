@@ -1,5 +1,10 @@
 import {Connection, EntityManager} from 'typeorm';
 
+export type UpsertResourceAttrs = {
+  upsertResources?: boolean,
+  entityManager?: PostHookEntityManager,
+};
+
 type VoidPromiseFunction = () => Promise<void>;
 
 export interface PostHookEntityManager extends EntityManager {

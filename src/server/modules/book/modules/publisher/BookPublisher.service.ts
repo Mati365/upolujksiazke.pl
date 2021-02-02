@@ -8,7 +8,7 @@ import {
   forwardTransaction,
   runInPostHookIfPresent,
   upsert,
-  PostHookEntityManager,
+  UpsertResourceAttrs,
 } from '@server/common/helpers/db';
 
 import {Size} from '@shared/types';
@@ -90,14 +90,19 @@ export class BookPublisherService {
    * Inserts or updates remote entity
    *
    * @param {CreateBookPublisherDto} {logo, ...dto}
-   * @param {PostHookEntityManager} [entityManager=<any> BookPublisherEntity]
+   * @param {UpsertResourceAttrs} [attrs={}]
    * @returns {Promise<BookPublisherEntity>}
    * @memberof BookPublisherService
    */
   async upsert(
     {logo, ...dto}: CreateBookPublisherDto,
-    entityManager: PostHookEntityManager = <any> BookPublisherEntity,
+    attrs: UpsertResourceAttrs = {},
   ): Promise<BookPublisherEntity> {
+    const {
+      upsertResources = false,
+      entityManager = <any> BookPublisherEntity,
+    } = attrs;
+
     const {
       connection,
       imageAttachmentService,
@@ -118,20 +123,7 @@ export class BookPublisherService {
         transactionManager: entityManager,
       },
       async (hookEntityManager) => {
-        const shouldFetchLogo = !!logo?.originalUrl && !(await checkIfExists(
-          {
-            entityManager: this.entityManager,
-            tableName: BookPublisherEntity.coverTableName,
-            where: {
-              bookPublisherId: publisher.id,
-            },
-          },
-        ));
-
-        if (!shouldFetchLogo)
-          return;
-
-        publisher.logo = R.values(
+        const fetchLogo = async () => R.values(
           await imageAttachmentService.fetchAndCreateScaled(
             {
               destSubDir: `logo/${publisher.id}`,
@@ -142,16 +134,42 @@ export class BookPublisherService {
           ),
         );
 
-        await imageAttachmentService.directInsertToTable(
-          {
-            coverTableName: BookPublisherEntity.coverTableName,
-            images: publisher.logo,
-            entityManager: hookEntityManager,
-            fields: {
-              bookPublisherId: publisher.id,
+        if (upsertResources) {
+          publisher.logo = await fetchLogo();
+          await hookEntityManager.save(
+            new BookPublisherEntity(
+              {
+                id: publisher.id,
+                logo: publisher.logo,
+              },
+            ),
+          );
+        } else {
+          const shouldFetchLogo = !!logo?.originalUrl && !(await checkIfExists(
+            {
+              entityManager: this.entityManager,
+              tableName: BookPublisherEntity.coverTableName,
+              where: {
+                bookPublisherId: publisher.id,
+              },
             },
-          },
-        );
+          ));
+
+          if (!shouldFetchLogo)
+            return;
+
+          publisher.logo = await fetchLogo();
+          await imageAttachmentService.directInsertToTable(
+            {
+              coverTableName: BookPublisherEntity.coverTableName,
+              images: publisher.logo,
+              entityManager: hookEntityManager,
+              fields: {
+                bookPublisherId: publisher.id,
+              },
+            },
+          );
+        }
       },
     );
 

@@ -1,19 +1,15 @@
 import {Injectable} from '@nestjs/common';
 import {Connection, EntityManager} from 'typeorm';
 import sequential from 'promise-sequential';
-import * as R from 'ramda';
 
 import {Size} from '@shared/types';
 import {
   forwardTransaction,
   upsert,
-  checkIfExists,
-  runInPostHookIfPresent,
   UpsertResourceAttrs,
 } from '@server/common/helpers/db';
 
-import {ImageAttachmentService} from '@server/modules/attachment/services';
-import {ImageVersion} from '@server/modules/attachment/entity/ImageAttachment.entity';
+import {ImageAttachmentService, ImageResizeConfig} from '@server/modules/attachment/services';
 import {CreateBookReleaseDto} from './dto/CreateBookRelease.dto';
 import {CreateBookAvailabilityDto} from '../availability/dto/CreateBookAvailability.dto';
 import {BookReleaseEntity} from './BookRelease.entity';
@@ -22,7 +18,7 @@ import {BookAvailabilityService} from '../availability/BookAvailability.service'
 
 @Injectable()
 export class BookReleaseService {
-  static readonly COVER_IMAGE_SIZES: Record<ImageVersion, Size> = Object.freeze(
+  static readonly COVER_IMAGE_SIZES: ImageResizeConfig = Object.freeze(
     {
       SMALL_THUMB: new Size(78, 117),
       THUMB: new Size(147, 221),
@@ -36,7 +32,6 @@ export class BookReleaseService {
     private readonly publisherService: BookPublisherService,
     private readonly availabilityService: BookAvailabilityService,
     private readonly imageAttachmentService: ImageAttachmentService,
-    private readonly entityManager: EntityManager,
   ) {}
 
   /**
@@ -151,58 +146,21 @@ export class BookReleaseService {
       );
     }
 
-    await runInPostHookIfPresent(
+    await imageAttachmentService.upsertImage(
       {
-        transactionManager: entityManager,
-      },
-      async (hookEntityManager) => {
-        const fetchCover = async () => R.values(
-          await imageAttachmentService.fetchAndCreateScaled(
-            {
-              destSubDir: `cover/${releaseEntity.id}`,
-              sizes: BookReleaseService.COVER_IMAGE_SIZES,
-              dto: cover,
-            },
-            hookEntityManager,
-          ),
-        );
-
-        if (upsertResources) {
-          releaseEntity.cover = await fetchCover();
-          await hookEntityManager.save(
-            new BookReleaseEntity(
-              {
-                id: publisher.id,
-                cover: releaseEntity.cover,
-              },
-            ),
-          );
-        } else {
-          const shouldFetchCover = !!cover?.originalUrl && !(await checkIfExists(
-            {
-              entityManager: this.entityManager,
-              tableName: BookReleaseEntity.coverTableName,
-              where: {
-                bookReleaseId: releaseEntity.id,
-              },
-            },
-          ));
-
-          if (!shouldFetchCover)
-            return;
-
-          releaseEntity.cover = await fetchCover();
-          await imageAttachmentService.directInsertToTable(
-            {
-              entityManager: hookEntityManager,
-              coverTableName: BookReleaseEntity.coverTableName,
-              images: releaseEntity.cover,
-              fields: {
-                bookReleaseId: releaseEntity.id,
-              },
-            },
-          );
-        }
+        entityManager,
+        entity: releaseEntity,
+        resourceColName: 'cover',
+        image: cover,
+        manyToMany: {
+          tableName: BookReleaseEntity.coverTableName,
+          idEntityColName: 'bookReleaseId',
+        },
+        fetcher: {
+          destSubDir: `cover/${releaseEntity.id}`,
+          sizes: BookReleaseService.COVER_IMAGE_SIZES,
+        },
+        upsertResources,
       },
     );
 

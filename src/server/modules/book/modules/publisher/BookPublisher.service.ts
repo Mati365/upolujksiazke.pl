@@ -1,25 +1,21 @@
 import {Injectable} from '@nestjs/common';
 import {Connection, EntityManager} from 'typeorm';
-import * as R from 'ramda';
 
 import {parameterize} from '@shared/helpers/parameterize';
 import {
-  checkIfExists,
   forwardTransaction,
-  runInPostHookIfPresent,
   upsert,
   UpsertResourceAttrs,
 } from '@server/common/helpers/db';
 
 import {Size} from '@shared/types';
-import {ImageVersion} from '@server/modules/attachment/entity';
-import {ImageAttachmentService} from '@server/modules/attachment/services';
+import {ImageAttachmentService, ImageResizeConfig} from '@server/modules/attachment/services';
 import {BookPublisherEntity} from './BookPublisher.entity';
 import {CreateBookPublisherDto} from './dto/BookPublisher.dto';
 
 @Injectable()
 export class BookPublisherService {
-  static readonly LOGO_IMAGE_SIZES: Partial<Record<ImageVersion, Size>> = Object.freeze(
+  static readonly LOGO_IMAGE_SIZES: ImageResizeConfig = Object.freeze(
     {
       SMALL_THUMB: new Size(78, null),
       THUMB: new Size(147, null),
@@ -103,11 +99,7 @@ export class BookPublisherService {
       entityManager = <any> BookPublisherEntity,
     } = attrs;
 
-    const {
-      connection,
-      imageAttachmentService,
-    } = this;
-
+    const {connection, imageAttachmentService} = this;
     const publisher = await upsert(
       {
         entityManager,
@@ -118,58 +110,21 @@ export class BookPublisherService {
       },
     );
 
-    await runInPostHookIfPresent(
+    await imageAttachmentService.upsertImage(
       {
-        transactionManager: entityManager,
-      },
-      async (hookEntityManager) => {
-        const fetchLogo = async () => R.values(
-          await imageAttachmentService.fetchAndCreateScaled(
-            {
-              destSubDir: `logo/${publisher.id}`,
-              sizes: BookPublisherService.LOGO_IMAGE_SIZES,
-              dto: logo,
-            },
-            hookEntityManager,
-          ),
-        );
-
-        if (upsertResources) {
-          publisher.logo = await fetchLogo();
-          await hookEntityManager.save(
-            new BookPublisherEntity(
-              {
-                id: publisher.id,
-                logo: publisher.logo,
-              },
-            ),
-          );
-        } else {
-          const shouldFetchLogo = !!logo?.originalUrl && !(await checkIfExists(
-            {
-              entityManager: this.entityManager,
-              tableName: BookPublisherEntity.coverTableName,
-              where: {
-                bookPublisherId: publisher.id,
-              },
-            },
-          ));
-
-          if (!shouldFetchLogo)
-            return;
-
-          publisher.logo = await fetchLogo();
-          await imageAttachmentService.directInsertToTable(
-            {
-              coverTableName: BookPublisherEntity.coverTableName,
-              images: publisher.logo,
-              entityManager: hookEntityManager,
-              fields: {
-                bookPublisherId: publisher.id,
-              },
-            },
-          );
-        }
+        entityManager,
+        entity: publisher,
+        resourceColName: 'logo',
+        image: logo,
+        manyToMany: {
+          tableName: BookPublisherEntity.coverTableName,
+          idEntityColName: 'bookPublisherId',
+        },
+        fetcher: {
+          destSubDir: `logo/${publisher.id}`,
+          sizes: BookPublisherService.LOGO_IMAGE_SIZES,
+        },
+        upsertResources,
       },
     );
 

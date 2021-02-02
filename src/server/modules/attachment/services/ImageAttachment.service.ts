@@ -7,6 +7,7 @@ import * as mime from 'mime-types';
 import * as R from 'ramda';
 import mkdirp from 'mkdirp';
 
+import {checkIfExists, runInPostHookIfPresent} from '@server/common/helpers/db';
 import {safeArray, mapObjValuesToPromise} from '@shared/helpers';
 import {
   downloadFile,
@@ -36,7 +37,7 @@ import {
   CreateImageAttachmentDto,
 } from '../dto';
 
-export type ImageResizeConfig = Record<ImageVersion, Size>;
+export type ImageResizeConfig = Partial<Record<ImageVersion, Size>>;
 
 export type ImageResizedEntities = Record<ImageVersion, ImageAttachmentEntity>;
 
@@ -54,8 +55,96 @@ export class ImageAttachmentService {
   constructor(
     @Inject(ATTACHMENTS_OPTIONS) private readonly options: AttachmentServiceOptions,
     private readonly tmpDirService: TmpDirService,
-    private readonly em: EntityManager,
+    private readonly entityManager: EntityManager,
   ) {}
+
+  /**
+   * Fetches and upserts image into many to many table
+   *
+   * @param {Object}
+   * @returns
+   * @memberof ImageAttachmentService
+   */
+  async upsertImage<EntityType extends {id: any}>(
+    {
+      entityManager,
+      entity,
+      resourceColName,
+      manyToMany,
+      fetcher,
+      image,
+      upsertResources,
+    }: {
+      entityManager: EntityManager,
+      entity: EntityType,
+      resourceColName?: keyof EntityType,
+      image: CreateImageAttachmentDto,
+      manyToMany: {
+        tableName: string,
+        idEntityColName: string,
+      },
+
+      fetcher: Omit<ImageFetcherAttrs, 'dto'>,
+      upsertResources: boolean,
+    },
+  ) {
+    await runInPostHookIfPresent(
+      {
+        transactionManager: entityManager,
+      },
+      async (hookEntityManager) => {
+        const fetchResource = async () => R.values(
+          await this.fetchAndCreateScaled(
+            {
+              ...fetcher,
+              dto: image,
+            },
+            hookEntityManager,
+          ),
+        );
+
+        if (upsertResources) {
+          entity[<string> resourceColName] = await fetchResource();
+
+          await hookEntityManager.save(
+            new (entity as any).constructor(
+              {
+                id: entity.id,
+                [resourceColName]: entity[resourceColName],
+              },
+            ),
+          );
+        } else {
+          const shouldFetchCover = !!image?.originalUrl && !(await checkIfExists(
+            {
+              entityManager: this.entityManager,
+              tableName: manyToMany.tableName,
+              where: {
+                [manyToMany.idEntityColName]: entity.id,
+              },
+            },
+          ));
+
+          if (!shouldFetchCover)
+            return;
+
+          const images = await fetchResource();
+          entity[<string> resourceColName] = images;
+
+          await this.directInsertToTable(
+            {
+              entityManager: hookEntityManager,
+              coverTableName: manyToMany.tableName,
+              images,
+              fields: {
+                [manyToMany.idEntityColName]: entity.id,
+              },
+            },
+          );
+        }
+      },
+    );
+  }
 
   /**
    * Skips image attachment select in many to many relations
@@ -68,7 +157,7 @@ export class ImageAttachmentService {
       coverTableName,
       images,
       fields,
-      entityManager = this.em,
+      entityManager = this.entityManager,
     }: {
       entityManager?: EntityManager,
       images: {id: ID}[],
@@ -97,10 +186,10 @@ export class ImageAttachmentService {
    * Remove single image attachment
    *
    * @param {number[]} ids
-   * @param {EntityManager} [entityManager=this.em]
+   * @param {EntityManager} [entityManager=this.entityManager]
    * @memberof ImageAttachmentService
    */
-  async delete(ids: number[], entityManager: EntityManager = this.em) {
+  async delete(ids: number[], entityManager: EntityManager = this.entityManager) {
     const imageAttachments = await ImageAttachmentEntity.findByIds(
       ids,
       {

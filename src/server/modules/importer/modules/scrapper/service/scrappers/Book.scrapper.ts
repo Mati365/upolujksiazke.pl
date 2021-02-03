@@ -1,7 +1,7 @@
 import {Language} from '@server/constants/language';
 import {CreateBookDto} from '@server/modules/book/dto/CreateBook.dto';
 import {CreateBookAvailabilityDto} from '@server/modules/book/modules/availability/dto/CreateBookAvailability.dto';
-import {BookBindingKind, BookProtection} from '@server/modules/book/modules/release/BookRelease.entity';
+import {BookBindingKind, BookProtection, BookType} from '@server/modules/book/modules/release/BookRelease.entity';
 import {ScrapperMetadataKind} from '../../entity';
 import {
   ScrapperBasicPagination,
@@ -38,6 +38,16 @@ export const LANGUAGE_TRANSLATION_MAPPINGS = Object.freeze(
     'francuski': Language.FR,
     'ukraiński': Language.UKR,
     'włoski': Language.IT,
+    /* eslint-enable quote-props */
+  },
+);
+
+export const BOOK_TYPE_TRANSLATION_MAPPINGS = Object.freeze(
+  {
+    /* eslint-disable quote-props */
+    'audiobook': BookType.AUDIO_BOOK,
+    'ebook': BookType.EBOOK,
+    'paper': BookType.PAPER,
     /* eslint-enable quote-props */
   },
 );

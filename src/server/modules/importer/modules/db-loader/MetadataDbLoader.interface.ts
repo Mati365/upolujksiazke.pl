@@ -1,3 +1,4 @@
+import {CanBePromise} from '@shared/types';
 import {ScrapperMetadataEntity} from '../scrapper/entity';
 
 export interface MetadataDbLoader {
@@ -8,5 +9,5 @@ export interface MetadataDbLoader {
    * @returns {Promise<void>}
    * @memberof MetadataDbLoader
    */
-  extractMetadataToDb(metadata: ScrapperMetadataEntity): Promise<void>
+  extractMetadataToDb(metadata: ScrapperMetadataEntity): CanBePromise<void>
 }

@@ -6,6 +6,7 @@ import {MetadataDbLoader} from '../MetadataDbLoader.interface';
 import {
   BookDbLoader,
   BookReviewDbLoader,
+  UrlDbLoader,
 } from '../loaders';
 
 @Injectable()
@@ -16,9 +17,10 @@ export class MetadataDbLoaderService implements MetadataDbLoader {
   constructor(
     readonly bookReviewDbLoader: BookReviewDbLoader,
     readonly bookDbLoader: BookDbLoader,
+    readonly urlDbLoader: UrlDbLoader,
   ) {
     this.resourceLoaders = {
-      [ScrapperMetadataKind.URL]: null,
+      [ScrapperMetadataKind.URL]: urlDbLoader,
       [ScrapperMetadataKind.BOOK_REVIEW]: bookReviewDbLoader,
       [ScrapperMetadataKind.BOOK]: bookDbLoader,
       [ScrapperMetadataKind.BOOK_AUTHOR]: null,

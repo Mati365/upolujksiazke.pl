@@ -28,6 +28,22 @@ export type MatchRecordAttrs<T = any> = {
   kind?: ScrapperMetadataKind,
 };
 
+export interface URLPathMatcher {
+  /**
+   * Returns kind of type based on path - it is used primarly in spider
+   *
+   * @abstract
+   * @param {string} path
+   * @returns {ScrapperMetadataKind}
+   * @memberof WebsiteScrappersGroup
+   */
+  matchResourceKindByPath(path: string): ScrapperMetadataKind;
+}
+
+export function isURLPathMatcher(obj: any): obj is URLPathMatcher {
+  return !!obj && ('matchResourceKindByPath' in obj);
+}
+
 /**
  * Container of scrappers
  *

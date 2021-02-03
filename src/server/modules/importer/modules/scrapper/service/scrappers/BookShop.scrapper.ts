@@ -1,5 +1,7 @@
+import {ScrapperMetadataKind} from '../../entity/ScrapperMetadata.entity';
 import {
   ScrappersGroupInitializer,
+  URLPathMatcher,
   WebsiteInfoScrapper,
   WebsiteScrappersGroup,
 } from '../shared';
@@ -17,10 +19,12 @@ export type BookShopScrappersGroupConfig = ScrappersGroupInitializer & BookShopU
  * Object that groups matchers, scrappers and parsers
  *
  * @export
+ * @abstract
  * @class BookShopScrappersGroup
  * @extends {WebsiteScrappersGroup}
+ * @implements {URLPathMatcher}
  */
-export class BookShopScrappersGroup extends WebsiteScrappersGroup {
+export abstract class BookShopScrappersGroup extends WebsiteScrappersGroup implements URLPathMatcher {
   constructor({scrappers, ...config}: BookShopScrappersGroupConfig) {
     super(
       {
@@ -30,4 +34,9 @@ export class BookShopScrappersGroup extends WebsiteScrappersGroup {
       },
     );
   }
+
+  /**
+   * @inheritdoc
+   */
+  abstract matchResourceKindByPath(path: string): ScrapperMetadataKind;
 }

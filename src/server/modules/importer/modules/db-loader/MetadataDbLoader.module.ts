@@ -8,7 +8,11 @@ import {BookReviewerEntity} from '@server/modules/book/modules/reviewer/BookRevi
 import {BookModule} from '@server/modules/book/Book.module';
 
 import {ScrapperMetadataEntity} from '../scrapper/entity';
-import {BookDbLoader, BookReviewDbLoader} from './loaders';
+import {
+  BookDbLoader,
+  BookReviewDbLoader,
+  UrlDbLoader,
+} from './loaders';
 
 import {
   MetadataDbLoaderService,
@@ -45,6 +49,7 @@ import {ScrapperModule} from '../scrapper/Scrapper.module';
       MetadataDbLoaderConsumerProcessor,
       MetadataDbLoaderService,
       MetadataDbLoaderQueueService,
+      UrlDbLoader,
       BookDbLoader,
       BookReviewDbLoader,
     ],

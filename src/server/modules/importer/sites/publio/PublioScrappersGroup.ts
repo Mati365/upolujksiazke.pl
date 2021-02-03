@@ -1,3 +1,5 @@
+import {matchByRegex} from '@shared/helpers/matchByRegex';
+
 import {ScrapperMetadataKind} from '@scrapper/entity';
 import {
   BookShopScrappersGroup,
@@ -23,6 +25,18 @@ export class PublioScrappersGroup extends BookShopScrappersGroup {
           [ScrapperMetadataKind.BOOK_PUBLISHER]: new PublioBookPublisherMatcher(options),
         },
       },
+    );
+  }
+
+  /**
+   * @inheritdoc
+   */
+  matchResourceKindByPath(path: string): ScrapperMetadataKind {
+    return matchByRegex(
+      {
+        ',p\\d+.html$': () => ScrapperMetadataKind.BOOK,
+      },
+      path,
     );
   }
 }

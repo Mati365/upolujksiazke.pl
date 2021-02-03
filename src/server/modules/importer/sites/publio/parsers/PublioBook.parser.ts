@@ -20,14 +20,15 @@ import {CreateBookAvailabilityDto} from '@server/modules/book/modules/availabili
 import {CreateBookKindDto} from '@server/modules/book/modules/kind/dto/CreateBookKind.dto';
 import {CreateBookPrizeDto} from '@server/modules/book/modules/prize/dto/CreateBookPrize.dto';
 
-import {BookType} from '@server/modules/book/modules/release/BookRelease.entity';
 import {ScrapperMetadataKind} from '@server/modules/importer/modules/scrapper/entity';
+import {BookType} from '@server/modules/book/modules/release/BookRelease.entity';
 
 import {
+  BookScrappedPropsMap,
   BookAvailabilityParser,
   PROTECTION_TRANSLATION_MAPPINGS,
   LANGUAGE_TRANSLATION_MAPPINGS,
-  BookScrappedPropsMap,
+  BOOK_TYPE_TRANSLATION_MAPPINGS,
 } from '@scrapper/service/scrappers/Book.scrapper';
 
 import {AsyncURLParseResult} from '@server/common/helpers/fetchAsyncHTML';
@@ -124,8 +125,10 @@ export class PublioBookParser
       {
         title,
         defaultPrice: price.originalPrice,
-        type: BookType.EBOOK,
         isbn: parentIsbn,
+        type: BOOK_TYPE_TRANSLATION_MAPPINGS[
+          $('.basic-info-wrapper .info > .section').text()?.toLowerCase()
+        ] ?? BookType.EBOOK,
         lang: (
           LANGUAGE_TRANSLATION_MAPPINGS[basicProps['język publikacji']?.[0].toLowerCase()]
             ?? Language.PL

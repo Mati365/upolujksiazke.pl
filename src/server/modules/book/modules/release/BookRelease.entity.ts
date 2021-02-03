@@ -27,6 +27,7 @@ export enum BookBindingKind {
 export enum BookType {
   EBOOK = 1,
   PAPER = 2,
+  AUDIO_BOOK = 3,
 }
 
 @Entity(

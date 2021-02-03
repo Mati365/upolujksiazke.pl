@@ -1,9 +1,9 @@
 import {NestFactory} from '@nestjs/core';
 import {TaskFunction} from 'gulp';
 import minimist from 'minimist';
-import * as R from 'ramda';
 
 import {logger} from '@tasks/utils/logger';
+import {safeToString} from '@shared/helpers/safeToString';
 
 import {AppModule} from '@server/modules/App.module';
 import {ScrapperModule} from '@scrapper/Scrapper.module';
@@ -136,7 +136,7 @@ export const refreshSingleTask: TaskFunction = async () => {
       .refreshSingle(
         {
           kind: +ScrapperMetadataKind[kind],
-          remoteId: R.toString(remoteId),
+          remoteId: safeToString(remoteId),
           scrappersGroup: scrapperMod.get(ScrapperService).getScrappersGroupByWebsiteURL(website),
         },
       )

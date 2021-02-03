@@ -3,7 +3,10 @@ import {Injectable} from '@nestjs/common';
 import {classToPlain} from 'class-transformer';
 
 import {SERVER_ENV} from '@server/constants/env';
-import {extractHostname} from '@shared/helpers/urlExtract';
+import {
+  extractHostname,
+  safeToString,
+} from '@shared/helpers';
 
 // import {TmpDirService} from '@server/modules/tmp-dir/TmpDir.service';
 import {RemoteWebsiteEntity} from '@server/modules/remote/entity';
@@ -107,7 +110,7 @@ export class ScrapperService {
         kind,
         url,
         parserSource,
-        remoteId: R.toString(remoteId),
+        remoteId: safeToString(remoteId),
         websiteId: website.id,
         content: classToPlain(dto),
       },

@@ -37,7 +37,7 @@ export class MetadataDbLoaderService implements MetadataDbLoader {
     const loader = resourceLoaders[metadata.kind];
 
     if (!loader)
-      throw new Error(`Unknown entity loader(kind: ${metadata.kind})}!`);
+      throw new Error(`Unknown entity loader(kind: ${metadata.kind})!`);
 
     logger.warn(`Loading metadata entity with ID: ${chalk.bold(metadata.id)} to DB!`);
     await loader.extractMetadataToDb(metadata);

@@ -5,6 +5,7 @@ import {Injectable, Logger} from '@nestjs/common';
 import {Connection, Equal, In} from 'typeorm';
 
 import {upsert} from '@server/common/helpers/db/upsert';
+import {safeToString} from '@shared/helpers/safeToString';
 
 import {RemoteID, IdentifiedItem} from '@shared/types';
 import {RemoteWebsiteEntity} from '@server/modules/remote/entity';
@@ -52,7 +53,7 @@ export class ScrapperRefreshService {
         {
           where: {
             websiteId: Equal(website.id),
-            remoteId: In(R.pluck('remoteId', scrappedPage).map(R.toString)),
+            remoteId: In(R.pluck('remoteId', scrappedPage).map(safeToString)),
           },
         },
       ),
@@ -63,7 +64,7 @@ export class ScrapperRefreshService {
       R
         .map(
           (item) => (
-            R.includes(R.toString(item.remoteId), scrappedIds)
+            R.includes(safeToString(item.remoteId), scrappedIds)
               ? null
               : ScrapperService.scrapperResultToMetadataEntity(website, item)
           ),

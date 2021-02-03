@@ -18,7 +18,7 @@ export class BookReviewDbLoader implements MetadataDbLoader {
    */
   async extractMetadataToDb(metadata: ScrapperMetadataEntity) {
     const {bookDbLoader} = this;
-    const content = plainToClass(CreateBookReviewDto, metadata.content.dto);
+    const content = plainToClass(CreateBookReviewDto, metadata.content);
 
     await bookDbLoader.extractBookToDb(
       {

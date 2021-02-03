@@ -64,6 +64,7 @@ export class PublioBookParser
 
     return price;
   }
+
   /**
    * @inheritdoc
    */

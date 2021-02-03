@@ -5,6 +5,7 @@ import {
   AsyncScrapper,
   AsyncScrapperConfig,
   ScrapperResult,
+  WebsiteScrapperItemInfo,
 } from './AsyncScrapper';
 
 export type HTMLParserAttrs = {
@@ -21,10 +22,12 @@ export type HTMLScrapperConfig = AsyncScrapperConfig & {
  * @export
  * @abstract
  * @class HTMLScrapper
- * @extends {AsyncScrapper<T, string>}
  * @template T
+ * @template WebsiteScrapperItemInfo
  */
-export abstract class HTMLScrapper<T extends unknown[]> extends AsyncScrapper<T, string> {
+export abstract class HTMLScrapper<
+  T extends readonly WebsiteScrapperItemInfo<any>[],
+> extends AsyncScrapper<T, string> {
   private readonly homepageURL: string;
 
   constructor({homepageURL, ...config}: HTMLScrapperConfig) {

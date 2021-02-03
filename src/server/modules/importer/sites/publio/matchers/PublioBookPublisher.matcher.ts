@@ -1,6 +1,6 @@
 import {CreateBookPublisherDto} from '@server/modules/book/modules/publisher/dto/BookPublisher.dto';
 import {ScrapperMatcherResult, WebsiteScrapperMatcher} from '@scrapper/service/shared/ScrapperMatcher';
-import {BookShopScrappersGroupConfig} from '@scrapper/service/scrappers/BookShopScrappersGroup';
+import {BookShopScrappersGroupConfig} from '@scrapper/service/scrappers/BookShop.scrapper';
 import {MatchRecordAttrs} from '@scrapper/service/shared/WebsiteScrappersGroup';
 import {ScrapperMetadataKind} from '@server/modules/importer/modules/scrapper/entity';
 

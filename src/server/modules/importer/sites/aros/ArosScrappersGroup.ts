@@ -2,7 +2,7 @@ import {ScrapperMetadataKind} from '@scrapper/entity';
 import {
   BookShopScrappersGroup,
   BookShopScrappersGroupConfig,
-} from '@scrapper/service/scrappers/BookShopScrappersGroup';
+} from '@scrapper/service/scrappers/BookShop.scrapper';
 
 import {ArosBookMatcher} from './ArosBook.matcher';
 import {ArosBookParser} from './ArosBook.parser';

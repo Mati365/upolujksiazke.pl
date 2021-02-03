@@ -69,9 +69,7 @@ implements ScrapperMatchable<string> {
     );
   }
 
-  get websiteURL() {
-    return this.websiteInfoScrapper.websiteURL;
-  }
+  get websiteURL() { return this.websiteInfoScrapper.websiteURL; }
 
   /**
    * Finds record in remote webiste using provided info
@@ -102,15 +100,11 @@ export class ScrapperGroupChild {
     this.group = group;
   }
 
-  get matchers() {
-    return this.group.matchers;
-  }
+  get websiteURL() { return this.group.websiteURL; }
 
-  get scrappers() {
-    return this.group.scrappers;
-  }
+  get matchers() { return this.group.matchers; }
 
-  get parsers() {
-    return this.group.parsers;
-  }
+  get scrappers() { return this.group.scrappers; }
+
+  get parsers() { return this.group.parsers; }
 }

@@ -18,6 +18,7 @@ export class MetadataDbLoaderService implements MetadataDbLoader {
     readonly bookDbLoader: BookDbLoader,
   ) {
     this.resourceLoaders = {
+      [ScrapperMetadataKind.URL]: null,
       [ScrapperMetadataKind.BOOK_REVIEW]: bookReviewDbLoader,
       [ScrapperMetadataKind.BOOK]: bookDbLoader,
       [ScrapperMetadataKind.BOOK_AUTHOR]: null,
@@ -36,7 +37,7 @@ export class MetadataDbLoaderService implements MetadataDbLoader {
     const loader = resourceLoaders[metadata.kind];
 
     if (!loader)
-      throw new Error('Unknown entity loader!');
+      throw new Error(`Unknown entity loader(kind: ${metadata.kind})}!`);
 
     logger.warn(`Loading metadata entity with ID: ${chalk.bold(metadata.id)} to DB!`);
     await loader.extractMetadataToDb(metadata);

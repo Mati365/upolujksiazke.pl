@@ -1,9 +1,8 @@
 import {Column, Index} from 'typeorm';
-
 import {RemoteRecordEntity, RemoteRecordFields} from '@server/modules/remote/entity';
-import {WebsiteScrapperItemInfo} from '../service/shared';
 
 export enum ScrapperMetadataKind {
+  URL = 0,
   BOOK_REVIEW = 1,
   BOOK = 2,
   BOOK_AUTHOR = 3,
@@ -33,12 +32,20 @@ export class ScrapperMetadataEntity extends RemoteRecordFields {
     return (
       ScrapperMetadataEntity
         .createQueryBuilder()
-        .where('(content->\'dto\'->>\'description\')::text is null')
+        .where(
+          'kind != :kind and content is NULL',
+          {
+            kind: ScrapperMetadataKind.URL,
+          },
+        )
     );
   }
 
-  @Column('jsonb')
-  content: WebsiteScrapperItemInfo;
+  @Column('text', {nullable: true})
+  parserSource: string;
+
+  @Column('jsonb', {nullable: true})
+  content: any;
 
   @Index()
   @Column(

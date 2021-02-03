@@ -93,15 +93,23 @@ export class ScrapperService {
     item: WebsiteScrapperItemInfo,
     status: ScrapperMetadataStatus = ScrapperMetadataStatus.NEW,
   ) {
+    const {
+      kind,
+      parserSource,
+      remoteId,
+      url,
+      dto,
+    } = item;
+
     return new ScrapperMetadataEntity(
       {
         status,
-        remoteId: R.toString(item.remoteId),
+        kind,
+        url,
+        parserSource,
+        remoteId: R.toString(remoteId),
         websiteId: website.id,
-        content: {
-          ...item,
-          dto: classToPlain(item.dto),
-        },
+        content: classToPlain(dto),
       },
     );
   }

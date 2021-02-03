@@ -4,7 +4,7 @@ import {Connection} from 'typeorm';
 import {paginatedAsyncIterator} from '@server/common/helpers';
 
 import {MetadataDbLoaderQueueService} from '@server/modules/importer/modules/db-loader/services';
-import {WebsiteScrapperItemInfo} from '../shared';
+import {WebsiteScrapperItemInfo} from '../shared/AsyncScrapper';
 import {ScrapperMetadataEntity} from '../../entity';
 import {ScrapperService} from '../Scrapper.service';
 
@@ -61,23 +61,15 @@ export class ScrapperReanalyzerService {
       await connection.transaction(async (transaction) => {
         for (const item of page) {
           const scrappersGroup = scrapperService.getScrappersGroupByWebsiteURL(item.website.url);
-          const parserInfo = (
+          const scrapperInfo: WebsiteScrapperItemInfo = (
             scrappersGroup
               .scrappers[item.kind]
-              .mapSingleItemResponse((item.content as WebsiteScrapperItemInfo).parserSource)
+              .mapSingleItemResponse(item.parserSource)
           );
 
-          if (parserInfo) {
-            stats.updated++;
-            await transaction.getRepository(ScrapperMetadataEntity).update(
-              item.id,
-              new ScrapperMetadataEntity(
-                {
-                  content: parserInfo,
-                },
-              ),
-            );
-          }
+          stats.updated++;
+          item.content = scrapperInfo?.dto;
+          await transaction.save(item);
         }
       });
 

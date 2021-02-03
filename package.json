@@ -138,6 +138,7 @@
     "slugify": "^1.4.6",
     "snakecase-keys": "^3.2.1",
     "string-similarity": "^4.0.4",
+    "ts-enum-util": "^4.0.2",
     "ts-node": "^9.1.1",
     "typeorm": "^0.2.30",
     "typeorm-seeding": "^1.6.1",

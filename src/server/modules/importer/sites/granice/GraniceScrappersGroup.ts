@@ -2,7 +2,7 @@ import {ScrapperMetadataKind} from '@scrapper/entity';
 import {
   BookShopScrappersGroup,
   BookShopScrappersGroupConfig,
-} from '@scrapper/service/scrappers/BookShopScrappersGroup';
+} from '@scrapper/service/scrappers/BookShop.scrapper';
 
 import {GraniceBookMatcher} from './GraniceBook.matcher';
 import {GraniceBookParser} from './GraniceBook.parser';

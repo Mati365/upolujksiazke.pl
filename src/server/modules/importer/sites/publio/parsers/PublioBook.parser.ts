@@ -19,6 +19,7 @@ import {CreateImageAttachmentDto} from '@server/modules/attachment/dto';
 import {CreateBookAvailabilityDto} from '@server/modules/book/modules/availability/dto/CreateBookAvailability.dto';
 import {CreateBookKindDto} from '@server/modules/book/modules/kind/dto/CreateBookKind.dto';
 import {CreateBookPrizeDto} from '@server/modules/book/modules/prize/dto/CreateBookPrize.dto';
+import {CreateBookVolumeDto} from '@server/modules/book/modules/volume/dto/CreateBookVolume.dto';
 
 import {ScrapperMetadataKind} from '@server/modules/importer/modules/scrapper/entity';
 import {BookType} from '@server/modules/book/modules/release/BookRelease.entity';
@@ -100,7 +101,7 @@ export class PublioBookParser
       return null;
 
     const {$} = bookPage;
-    const title = normalizeParsedText($('h1 > .title').text());
+    const [title, volumeName] = PublioBookParser.extractTitle($);
     const basicProps = PublioBookParser.extractBookProps($);
     const [parentIsbn, ...childIsbn] = basicProps['isbn']?.[0].split(',').map(normalizeISBN);
 
@@ -190,10 +191,32 @@ export class PublioBookParser
         categories: PublioBookParser.extractCategories($, basicProps),
         prizes,
         authors,
+        ...volumeName && {
+          volume: new CreateBookVolumeDto(
+            {
+              name: volumeName,
+            },
+          ),
+        },
       },
     );
   }
   /* eslint-enable @typescript-eslint/dot-notation */
+
+  /**
+   * Extract title and volume name
+   *
+   * @static
+   * @param {cheerio.Root} $
+   * @memberof PublioBookParser
+   */
+  static extractTitle($: cheerio.Root) {
+    const title = normalizeParsedText($('h1 > .title').text());
+    if (R.contains('. Tom', title))
+      return title.match(/^(.*)\.\sTom\s(\d+)$/).splice(1, 2);
+
+    return [title, null];
+  }
 
   /**
    * Fetches publisher name from text

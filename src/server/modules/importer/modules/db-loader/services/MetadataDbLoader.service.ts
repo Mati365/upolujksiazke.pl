@@ -1,5 +1,6 @@
 import {Injectable, Logger} from '@nestjs/common';
 import chalk from 'chalk';
+import * as R from 'ramda';
 
 import {ScrapperMetadataEntity, ScrapperMetadataKind} from '../../scrapper/entity';
 import {MetadataDbLoader} from '../MetadataDbLoader.interface';
@@ -41,7 +42,9 @@ export class MetadataDbLoaderService implements MetadataDbLoader {
     if (!loader)
       throw new Error(`Unknown entity loader(kind: ${metadata.kind})!`);
 
-    logger.warn(`Loading metadata entity with ID: ${chalk.bold(metadata.id)} to DB!`);
+    if (!R.isNil(metadata.id))
+      logger.warn(`Loading metadata entity with ID: ${chalk.bold(metadata.id)} to DB!`);
+
     await loader.extractMetadataToDb(metadata);
   }
 }

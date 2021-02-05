@@ -4,6 +4,7 @@ import minimist from 'minimist';
 
 import {logger} from '@tasks/utils/logger';
 import {safeToString} from '@shared/helpers/safeToString';
+import {safeToNumber} from '@shared/helpers/safeToNumber';
 
 import {AppModule} from '@server/modules/App.module';
 import {ScrapperModule} from '@scrapper/Scrapper.module';
@@ -79,7 +80,7 @@ export const refreshLatestReviewsTask: TaskFunction = async () => {
   logger.log('Refreshing latest items...');
   await refreshLatest(
     {
-      kind: +ScrapperMetadataKind[kind],
+      kind: safeToNumber(ScrapperMetadataKind[kind]),
       maxIterations: 1,
     },
   );
@@ -99,7 +100,7 @@ export const refreshAllReviewsTask: TaskFunction = async () => {
   if (website) {
     await refreshScrapper(
       {
-        kind: +ScrapperMetadataKind[kind],
+        kind: safeToNumber(ScrapperMetadataKind[kind]),
         page: (+initialPage) || 1,
         website,
       },
@@ -107,7 +108,7 @@ export const refreshAllReviewsTask: TaskFunction = async () => {
   } else {
     await refreshLatest(
       {
-        kind: +ScrapperMetadataKind[kind],
+        kind: safeToNumber(ScrapperMetadataKind[kind]),
         maxIterations: null,
       },
     );
@@ -135,7 +136,7 @@ export const refreshSingleTask: TaskFunction = async () => {
       .get(ScrapperRefreshService)
       .refreshSingle(
         {
-          kind: +ScrapperMetadataKind[kind],
+          kind: safeToNumber(ScrapperMetadataKind[kind]),
           remoteId: safeToString(remoteId),
           scrappersGroup: scrapperMod.get(ScrapperService).getScrappersGroupByWebsiteURL(website),
         },

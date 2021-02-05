@@ -22,6 +22,15 @@ import {CreateBookReleaseDto} from './modules/release/dto/CreateBookRelease.dto'
 import {BookEntity} from './Book.entity';
 import {BookVolumeEntity} from './modules/volume/BookVolume.entity';
 
+/**
+ * @see
+ *  It is a bit stupid service! It only upserts data without additional work!
+ *  If you want to simply load book to database - with all known fields - use it
+ *  If you want to merge books, assign website by url, etc. use BookDbLoader.service
+ *
+ * @export
+ * @class BookService
+ */
 @Injectable()
 export class BookService {
   constructor(

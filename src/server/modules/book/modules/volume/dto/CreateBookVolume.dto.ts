@@ -16,4 +16,8 @@ export class CreateBookVolumeDto {
   @IsNotEmpty()
   @IsString()
   readonly name: string;
+
+  constructor(partial: Partial<CreateBookVolumeDto>) {
+    Object.assign(this, partial);
+  }
 }

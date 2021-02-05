@@ -30,4 +30,5 @@ export * from './convert';
 export * from './countLetter';
 export * from './safeJsonParse';
 export * from './safeToString';
+export * from './safeToNumber';
 export * from './matchByRegex';

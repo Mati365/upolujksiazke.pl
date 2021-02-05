@@ -1,5 +1,6 @@
 import * as R from 'ramda';
 import stringSimilarity from 'string-similarity';
+import {plainToClass} from 'class-transformer';
 import {In} from 'typeorm';
 import {
   Inject, Injectable,
@@ -36,11 +37,18 @@ export class BookDbLoader implements MetadataDbLoader {
     private readonly publisherService: BookPublisherService,
   ) {}
 
-  /* eslint-disable @typescript-eslint/no-unused-vars */
-  async extractMetadataToDb(metadata: ScrapperMetadataEntity) {
-    throw new Error('Not implemented!');
+  /**
+   * @inheritdoc
+   */
+  extractMetadataToDb(metadata: ScrapperMetadataEntity) {
+    const book = plainToClass(CreateBookDto, metadata.content);
+
+    return this.mergeAndExtractBooksToDb(
+      [
+        book,
+      ],
+    );
   }
-  /* eslint-enable @typescript-eslint/no-unused-vars */
 
   /**
    * Checks if book should be matched using matcher
@@ -57,43 +65,16 @@ export class BookDbLoader implements MetadataDbLoader {
   }
 
   /**
-   * Load book into database
+   * Merges book into one and loads to DB
    *
-   * @param {Object} attrs
+   * @param {CreateBookDto[]} books
+   * @returns
    * @memberof BookDbLoader
    */
-  async extractBookToDb(
-    {
-      book,
-    }: {
-      book: CreateBookDto,
-    },
-  ) {
-    const {
-      logger, bookService,
-      scrapperMatcherService,
-      scrapperService,
-    } = this;
+  async mergeAndExtractBooksToDb(books: CreateBookDto[]) {
+    const {scrapperService, bookService} = this;
 
-    if (!BookDbLoader.isEnoughToBeScrapped(book))
-      return null;
-
-    const matchedBooks = R.pluck(
-      'result',
-      await scrapperMatcherService.searchRemoteRecord<CreateBookDto>(
-        {
-          kind: ScrapperMetadataKind.BOOK,
-          data: book,
-        },
-      ),
-    );
-
-    if (R.isEmpty(matchedBooks)) {
-      logger.warn(`Book ${JSON.stringify(book)} not matched!`);
-      return null;
-    }
-
-    const allReleases = R.unnest(R.pluck('releases', matchedBooks));
+    const allReleases = R.unnest(R.pluck('releases', books));
     const releaseBook = (
       await BookReleaseEntity.findOne(
         {
@@ -142,11 +123,46 @@ export class BookDbLoader implements MetadataDbLoader {
       new CreateBookDto(
         {
           id: releaseBook?.id,
-          ...mergeWithoutNulls(matchedBooks),
+          ...mergeWithoutNulls(books),
           releases: await this.fixSimilarNamedReleasesPublishers(releases),
         },
       ),
     );
+  }
+
+  /**
+   * Lookups book to be present in other websites and loads to DB
+   *
+   * @param {Object} attrs
+   * @memberof BookDbLoader
+   */
+  async matchAndExtractToDb(
+    {
+      book,
+    }: {
+      book: CreateBookDto,
+    },
+  ) {
+    const {logger, scrapperMatcherService} = this;
+    if (!BookDbLoader.isEnoughToBeScrapped(book))
+      return null;
+
+    const matchedBooks = R.pluck(
+      'result',
+      await scrapperMatcherService.searchRemoteRecord<CreateBookDto>(
+        {
+          kind: ScrapperMetadataKind.BOOK,
+          data: book,
+        },
+      ),
+    );
+
+    if (R.isEmpty(matchedBooks)) {
+      logger.warn(`Book ${JSON.stringify(book)} not matched!`);
+      return null;
+    }
+
+    return this.mergeAndExtractBooksToDb(matchedBooks);
   }
 
   /**

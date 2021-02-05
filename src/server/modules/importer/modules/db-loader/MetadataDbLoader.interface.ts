@@ -6,8 +6,8 @@ export interface MetadataDbLoader {
    * Insert metadata info to DB
    *
    * @param {ScrapperMetadataEntity} metadata
-   * @returns {Promise<void>}
+   * @returns {Promise<any>}
    * @memberof MetadataDbLoader
    */
-  extractMetadataToDb(metadata: ScrapperMetadataEntity): CanBePromise<void>
+  extractMetadataToDb(metadata: ScrapperMetadataEntity): CanBePromise<any>
 }

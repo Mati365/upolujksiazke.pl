@@ -114,6 +114,9 @@ Fetchers:
 # Fetches single review by id
 gulp scrapper:refresh:single --kind BOOK_REVIEW --remoteId 123 --website https://wykop.pl
 
+# Fetches single book by url
+gulp scrapper:refresh:single --remoteId szepty-spoza-nicosci-remigiusz-mroz,p697692.html --website www.publio.pl
+
 # Fetches all reviews from scrapper
 gulp scrapper:refresh:all --kind BOOK_REVIEW --initialPage 1 --website https://wykop.pl
 

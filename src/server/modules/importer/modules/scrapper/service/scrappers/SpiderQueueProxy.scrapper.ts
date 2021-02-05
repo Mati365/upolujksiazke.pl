@@ -23,9 +23,7 @@ export type SpiderQueueScrapperInfo = WebsiteScrapperItemInfo<null>;
  * @template T
  */
 export class SpiderQueueProxyScrapper extends AsyncScrapper<SpiderQueueScrapperInfo[], string> {
-  constructor(
-    protected readonly kind: ScrapperMetadataKind,
-  ) {
+  constructor() {
     super(
       {
         pageProcessDelay: 1000,
@@ -71,7 +69,7 @@ export class SpiderQueueProxyScrapper extends AsyncScrapper<SpiderQueueScrapperI
   static createKindProxy(): Required<WebsiteScrappersKindMap> {
     return <any> R.fromPairs(
       $enum(ScrapperMetadataKind)
-        .map<[ScrapperMetadataKind, SpiderQueueProxyScrapper]>((kind) => [kind, new SpiderQueueProxyScrapper(kind)]),
+        .map<[ScrapperMetadataKind, SpiderQueueProxyScrapper]>((kind) => [kind, new SpiderQueueProxyScrapper]),
     );
   }
 }

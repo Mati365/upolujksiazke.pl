@@ -16,13 +16,13 @@ export class BookReviewDbLoader implements MetadataDbLoader {
   /**
    * @inheritdoc
    */
-  async extractMetadataToDb(metadata: ScrapperMetadataEntity) {
+  extractMetadataToDb(metadata: ScrapperMetadataEntity) {
     const {bookDbLoader} = this;
-    const content = plainToClass(CreateBookReviewDto, metadata.content);
+    const review = plainToClass(CreateBookReviewDto, metadata.content);
 
-    await bookDbLoader.extractBookToDb(
+    return bookDbLoader.matchAndExtractToDb(
       {
-        book: content.book,
+        book: review.book,
       },
     );
   }

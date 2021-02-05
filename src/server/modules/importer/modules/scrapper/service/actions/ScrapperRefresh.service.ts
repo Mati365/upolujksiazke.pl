@@ -148,8 +148,7 @@ export class ScrapperRefreshService {
       kind: ScrapperMetadataKind,
     },
   ) {
-    if (!kind)
-      throw new Error('Missing kind!');
+    kind ??= ScrapperMetadataKind.URL;
 
     const {scrappersGroups} = this.scrapperService;
     const limit = pLimit(2);
@@ -185,11 +184,10 @@ export class ScrapperRefreshService {
       kind: ScrapperMetadataKind,
     },
   ): Promise<IdentifiedItem> {
+    kind ??= ScrapperMetadataKind.URL;
+
     if (!scrappersGroup)
       throw new Error('Missing scrappers group!');
-
-    if (!kind)
-      throw new Error('Missing kind!');
 
     const item: WebsiteScrapperItemInfo = await scrappersGroup.scrappers[kind].fetchSingle(remoteId);
     if (!item)

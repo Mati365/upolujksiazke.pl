@@ -1,7 +1,6 @@
 import {
-  BaseEntity,
-  BeforeInsert, BeforeUpdate,
-  CreateDateColumn, PrimaryGeneratedColumn,
+  BaseEntity, BeforeInsert, BeforeUpdate,
+  CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn,
 } from 'typeorm';
 
 export abstract class DatedRecordEntity extends BaseEntity {
@@ -15,7 +14,7 @@ export abstract class DatedRecordEntity extends BaseEntity {
   )
   createdAt: Date;
 
-  @CreateDateColumn(
+  @UpdateDateColumn(
     {
       type: 'timestamp',
     },

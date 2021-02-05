@@ -8,14 +8,12 @@ import {
   safeToString,
 } from '@shared/helpers';
 
-// import {TmpDirService} from '@server/modules/tmp-dir/TmpDir.service';
 import {RemoteWebsiteEntity} from '@server/modules/remote/entity';
 import {WykopAPI} from '@server/modules/importer/sites/wykop/api/WykopAPI';
 import {
   GraniceScrappersGroup,
   MatrasScrappersGroup,
   GildiaScrappersGroup,
-  // EIsbnScrappersGroup,
   LiteraturaGildiaScrappersGroup,
   // WikipediaScrappersGroup,
   SkupszopScrappersGroup,
@@ -46,7 +44,6 @@ export class ScrapperService {
 
   constructor(
     private readonly websiteInfoService: WebsiteInfoScrapperService,
-    // tmpDirService: TmpDirService,
   ) {
     this.scrappersGroups = [
       new PublioScrappersGroup(PARSERS_ENV.publio),
@@ -69,15 +66,6 @@ export class ScrapperService {
         },
       ),
       // new WikipediaScrappersGroup(PARSERS_ENV.wikipedia),
-      // new EIsbnScrappersGroup(
-      //   {
-      //     ...PARSERS_ENV.eisbn,
-      //     tmp: {
-      //       ...PARSERS_ENV.eisbn.tmp,
-      //       dirService: tmpDirService,
-      //     },
-      //   },
-      // ),
     ];
   }
 
@@ -87,14 +75,14 @@ export class ScrapperService {
    * @static
    * @param {RemoteWebsiteEntity} website
    * @param {IdentifiedItem<RemoteID>} item
-   * @param {ScrapperMetadataStatus} [status=ScrapperMetadataStatus.NEW]
+   * @param {ScrapperMetadataStatus} [status=ScrapperMetadataStatus.IMPORTED]
    * @returns
    * @memberof ScrapperService
    */
   static scrapperResultToMetadataEntity(
     website: RemoteWebsiteEntity,
     item: WebsiteScrapperItemInfo,
-    status: ScrapperMetadataStatus = ScrapperMetadataStatus.NEW,
+    status: ScrapperMetadataStatus = ScrapperMetadataStatus.IMPORTED,
   ) {
     const {
       kind,

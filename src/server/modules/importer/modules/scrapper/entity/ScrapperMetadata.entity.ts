@@ -11,8 +11,7 @@ export enum ScrapperMetadataKind {
 
 export enum ScrapperMetadataStatus {
   IMPORTED = 1,
-  PROCESSING = 2,
-  NEW = 3,
+  NEW = 2,
 }
 
 /**
@@ -27,6 +26,8 @@ export enum ScrapperMetadataStatus {
     name: 'scrapper_metadata',
   },
 )
+@Index(['kind'])
+@Index(['status'])
 export class ScrapperMetadataEntity extends RemoteRecordFields {
   static get inactive() {
     return (
@@ -47,7 +48,6 @@ export class ScrapperMetadataEntity extends RemoteRecordFields {
   @Column('jsonb', {nullable: true})
   content: any;
 
-  @Index()
   @Column(
     {
       type: 'enum',
@@ -57,7 +57,6 @@ export class ScrapperMetadataEntity extends RemoteRecordFields {
   )
   kind: ScrapperMetadataKind;
 
-  @Index()
   @Column(
     {
       type: 'enum',
@@ -66,6 +65,13 @@ export class ScrapperMetadataEntity extends RemoteRecordFields {
     },
   )
   status: ScrapperMetadataStatus;
+
+  @Column(
+    {
+      type: 'timestamp',
+    },
+  )
+  processedAt: Date = new Date;
 
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(partial: Partial<ScrapperMetadataEntity>) {

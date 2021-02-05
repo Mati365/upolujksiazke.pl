@@ -32,3 +32,4 @@ export * from './safeJsonParse';
 export * from './safeToString';
 export * from './safeToNumber';
 export * from './matchByRegex';
+export * from './getArrayWithLengthLimit';

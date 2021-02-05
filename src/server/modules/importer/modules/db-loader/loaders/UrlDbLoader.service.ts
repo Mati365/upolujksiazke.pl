@@ -3,6 +3,7 @@ import chalk from 'chalk';
 import * as R from 'ramda';
 
 import {AsyncURLParseResult, parseAsyncURLIfOK} from '@server/common/helpers/fetchAsyncHTML';
+import {extractPathname} from '@shared/helpers/urlExtract';
 import {isURLPathMatcher} from '../../scrapper/service/shared';
 
 import {ScrapperMetadataEntity} from '../../scrapper/entity/ScrapperMetadata.entity';
@@ -55,7 +56,7 @@ export class UrlDbLoader implements MetadataDbLoader {
     }
 
     const kind = scrappersGroup.matchResourceKindByPath(
-      R.tail(new URL(url).pathname),
+      extractPathname(url),
     );
 
     if (R.isNil(kind)) {

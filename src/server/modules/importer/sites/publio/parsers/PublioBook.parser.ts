@@ -33,7 +33,7 @@ import {
 } from '@scrapper/service/scrappers/Book.scrapper';
 
 import {AsyncURLParseResult} from '@server/common/helpers/fetchAsyncHTML';
-import {WebsiteScrapperParser} from '@server/modules/importer/modules/scrapper/service/shared';
+import {BasicParseAttrs, WebsiteScrapperParser} from '@server/modules/importer/modules/scrapper/service/shared';
 import {PublioBookPublisherMatcher} from '../matchers/PublioBookPublisher.matcher';
 
 type PublioAPIPrice = {
@@ -96,7 +96,7 @@ export class PublioBookParser
    * @inheritdoc
    */
   /* eslint-disable @typescript-eslint/dot-notation */
-  async parse(bookPage: AsyncURLParseResult): Promise<CreateBookDto> {
+  async parse(bookPage: AsyncURLParseResult, {shallowParse}: BasicParseAttrs = {}): Promise<CreateBookDto> {
     if (!bookPage)
       return null;
 
@@ -142,7 +142,7 @@ export class PublioBookParser
           basicProps['rok pierwszej publikacji książkowej']?.[0]
             ?? basicProps['miejsce i rok wydania']?.[0].match(/(\d{4})/)?.[1]
         ),
-        publisher: await this.extractPublisher($(basicProps['wydawca']?.[1])),
+        publisher: await this.extractPublisher($(basicProps['wydawca']?.[1]), shallowParse),
         cover: new CreateImageAttachmentDto(
           {
             originalUrl: (
@@ -181,8 +181,12 @@ export class PublioBookParser
             name: basicProps['rodzaj publikacji']?.[0],
           },
         ),
-        tags: basicProps['tematy i słowa kluczowe']?.[1]?.find('.link-label').toArray().map(
-          (item) => $(item).text().match(/([^,]+)/)[1],
+        tags: (
+          basicProps['tematy i słowa kluczowe']
+            ?.[1]?.find('.link-label')
+            .toArray()
+            .map((item) => $(item).text().match(/([^,]+)/)[1])
+            .filter(Boolean)
         ),
         originalLang: LANGUAGE_TRANSLATION_MAPPINGS[
           basicProps['język oryginalny publikacji']?.[0].toLowerCase()
@@ -223,19 +227,24 @@ export class PublioBookParser
    *
    * @private
    * @param {cheerio.Cheerio} $element
+   * @param {boolean} [shallow]
    * @returns
    * @memberof PublioBookParser
    */
-  private async extractPublisher($element: cheerio.Cheerio) {
+  private async extractPublisher($element: cheerio.Cheerio, shallow?: boolean) {
     const publisherMatcher = <PublioBookPublisherMatcher> this.matchers[ScrapperMetadataKind.BOOK_PUBLISHER];
+    const dto = new CreateBookPublisherDto(
+      {
+        name: normalizeParsedText($element.text()),
+      },
+    );
+
+    if (shallow)
+      return dto;
 
     return (await publisherMatcher.searchRemoteRecord(
       {
-        data: new CreateBookPublisherDto(
-          {
-            name: normalizeParsedText($element.text()),
-          },
-        ),
+        data: dto,
       },
       {
         path: $element.find('.detail-link').attr('href'),

@@ -3,14 +3,14 @@ import gulp from 'gulp';
 
 import {
   refreshSingleTask,
-  refreshLatestReviewsTask,
-  refreshAllReviewsTask,
-  reanalyzeAllReviewsTask,
+  refreshLatestTask,
+  refreshAllTask,
+  reanalyzeAllTask,
   runSpiderTask,
 } from './scrapper';
 
 gulp.task('scrapper:refresh:single', refreshSingleTask);
-gulp.task('scrapper:refresh:latest', refreshLatestReviewsTask);
-gulp.task('scrapper:refresh:all', refreshAllReviewsTask);
-gulp.task('scrapper:reanalyze:all', reanalyzeAllReviewsTask);
+gulp.task('scrapper:refresh:latest', refreshLatestTask);
+gulp.task('scrapper:refresh:all', refreshAllTask);
+gulp.task('scrapper:reanalyze:all', reanalyzeAllTask);
 gulp.task('scrapper:spider:run', runSpiderTask);

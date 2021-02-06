@@ -14,6 +14,9 @@ export class MatrasBookMatcher extends WebsiteScrapperMatcher<CreateBookDto, Boo
     return {
       result: await this.parsers[ScrapperMetadataKind.BOOK].parse(
         await this.searchByPhrase(data),
+        {
+          shallowParse: true,
+        },
       ),
     };
   }

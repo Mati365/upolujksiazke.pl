@@ -3,6 +3,8 @@ import {Connection, EntityManager} from 'typeorm';
 import * as R from 'ramda';
 
 import {upsert} from '@server/common/helpers/db';
+import {parameterize} from '@shared/helpers/parameterize';
+
 import {BookCategoryEntity} from './BookCategory.entity';
 import {CreateBookCategoryDto} from './dto/CreateBookCategory.dto';
 
@@ -38,16 +40,19 @@ export class BookCategoryService {
       return [];
 
     const {connection} = this;
-    const uniqueDtos = R.uniq(R.unnest(dtos.map(
-      (dto) => dto.name.split(/[,/]/).map(
-        (name) => new BookCategoryEntity(
-          {
-            ...dto,
-            name: name.trim(),
-          },
+    const uniqueDtos = R.uniqBy(
+      (dto) => parameterize(dto.name),
+      R.unnest(dtos.filter(Boolean).map(
+        (dto) => dto.name.split(/[,/]/).map(
+          (name) => new BookCategoryEntity(
+            {
+              ...dto,
+              name: name.trim(),
+            },
+          ),
         ),
-      ),
-    )));
+      )),
+    );
 
     return upsert(
       {

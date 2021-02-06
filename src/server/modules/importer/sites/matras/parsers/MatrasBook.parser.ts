@@ -18,7 +18,7 @@ import {CreateBookAvailabilityDto} from '@server/modules/book/modules/availabili
 
 import {AsyncURLParseResult} from '@server/common/helpers/fetchAsyncHTML';
 import {MatrasBookAuthorMatcher} from '../matchers/MatrasBookAuthor.matcher';
-import {WebsiteScrapperParser} from '../../../modules/scrapper/service/shared';
+import {BasicParseAttrs, WebsiteScrapperParser} from '../../../modules/scrapper/service/shared';
 import {
   BINDING_TRANSLATION_MAPPINGS,
   BookAvailabilityParser,
@@ -51,7 +51,7 @@ export class MatrasBookParser
   /**
    * @inheritdoc
    */
-  async parse(bookPage: AsyncURLParseResult) {
+  async parse(bookPage: AsyncURLParseResult, {shallowParse}: BasicParseAttrs = {}) {
     if (!bookPage)
       return null;
 
@@ -62,7 +62,7 @@ export class MatrasBookParser
 
     return new CreateBookDto(
       {
-        authors: await this.extractAuthors(bookPage.$),
+        authors: await this.extractAuthors(bookPage.$, shallowParse),
         defaultTitle: release.title,
         originalTitle: normalizeParsedText(detailsText.match(/Tytuł oryginalny:\s*([^\n]+)/)?.[1]),
         originalPublishDate: normalizeParsedText(detailsText.match(/Data pierwszego wydania:\s*(\S+)/)?.[1]),
@@ -156,26 +156,31 @@ export class MatrasBookParser
    *
    * @private
    * @param {cheerio.Root} $
+   * @param {boolean} [shallow]
    * @returns
    * @memberof MatrasBookParser
    */
-  private async extractAuthors($: cheerio.Root) {
+  private async extractAuthors($: cheerio.Root, shallow?: boolean) {
     const authorMatcher = <MatrasBookAuthorMatcher> this.matchers[ScrapperMetadataKind.BOOK_AUTHOR];
     const $authorsAnchors = $('h2.authors > a[href^="/autor/"]').toArray();
 
     return Promise.all($authorsAnchors.map(
       (el) => {
         const $authorAnchor = $(el);
+        const dto = new CreateBookAuthorDto(
+          {
+            name: normalizeParsedText($authorAnchor.text()),
+          },
+        );
+
+        if (shallow)
+          return dto;
 
         return (
           authorMatcher
             .searchRemoteRecord(
               {
-                data: new CreateBookAuthorDto(
-                  {
-                    name: normalizeParsedText($authorAnchor.text()),
-                  },
-                ),
+                data: dto,
               },
               {
                 path: $authorAnchor.attr('href'),

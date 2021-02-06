@@ -3,6 +3,7 @@ import {Injectable} from '@nestjs/common';
 import {Connection, EntityManager} from 'typeorm';
 
 import {upsert} from '@server/common/helpers/db';
+import {parameterize} from '@shared/helpers/parameterize';
 
 import {TagEntity} from './Tag.entity';
 import {CreateTagDto} from './dto/CreateTag.dto';
@@ -64,7 +65,7 @@ export class TagService {
         doNothing: true,
         data: (
           R
-            .uniqBy(R.prop('name'), dtos)
+            .uniqBy(({name}) => parameterize(name), R.reject(R.isNil, dtos))
             .map((dto) => new TagEntity(dto))
         ),
       },

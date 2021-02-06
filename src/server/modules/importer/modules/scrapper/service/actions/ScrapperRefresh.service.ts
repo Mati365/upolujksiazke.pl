@@ -143,14 +143,16 @@ export class ScrapperRefreshService {
     {
       maxIterations = 1,
       kind,
+      scrappersGroups,
     }: {
       maxIterations?: number,
       kind: ScrapperMetadataKind,
+      scrappersGroups?: WebsiteScrappersGroup[],
     },
   ) {
     kind ??= ScrapperMetadataKind.URL;
+    scrappersGroups ??= this.scrapperService.scrappersGroups;
 
-    const {scrappersGroups} = this.scrapperService;
     const limit = pLimit(2);
 
     return Promise.all(

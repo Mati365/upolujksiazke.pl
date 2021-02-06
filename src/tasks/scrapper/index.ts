@@ -1,3 +1,3 @@
-export * from './refreshReviews.task';
-export * from './analyzeReviews.task';
+export * from './refresh.task';
+export * from './analyze.task';
 export * from './runSpider.task';

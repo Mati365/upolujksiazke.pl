@@ -125,6 +125,8 @@ export class BookDbLoader implements MetadataDbLoader {
           id: releaseBook?.id,
           ...mergeWithoutNulls(books),
           releases: await this.fixSimilarNamedReleasesPublishers(releases),
+          categories: R.unnest(R.pluck('categories', books)),
+          tags: R.unnest(R.pluck('tags', books)),
         },
       ),
     );

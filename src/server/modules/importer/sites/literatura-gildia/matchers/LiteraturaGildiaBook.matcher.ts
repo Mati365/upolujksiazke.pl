@@ -17,8 +17,10 @@ export class LiteraturaGildiaBookMatcher extends WebsiteScrapperMatcher<CreateBo
   async searchRemoteRecord({data}: MatchRecordAttrs<CreateBookDto>): Promise<ScrapperMatcherResult<CreateBookDto>> {
     return {
       result: await this.parsers[ScrapperMetadataKind.BOOK].parse(
-        (await this.directSearch(data))
-          || (await this.searchByFirstLetter(data)),
+        (await this.directSearch(data)) || (await this.searchByFirstLetter(data)),
+        {
+          shallowParse: true,
+        },
       ),
     };
   }

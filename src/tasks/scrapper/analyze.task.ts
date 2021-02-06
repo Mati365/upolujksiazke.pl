@@ -13,7 +13,7 @@ import {ScrapperReanalyzerService} from '@scrapper/service/actions';
  *
  * @exports
  */
-export const reanalyzeAllReviewsTask: TaskFunction = async () => {
+export const reanalyzeAllTask: TaskFunction = async () => {
   logger.log('Reanalyzing all reviews...');
 
   const app = await NestFactory.create(AppModule);

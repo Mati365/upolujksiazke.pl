@@ -16,7 +16,7 @@ import {CreateImageAttachmentDto} from '@server/modules/attachment/dto';
 import {CreateBookAvailabilityDto} from '@server/modules/book/modules/availability/dto/CreateBookAvailability.dto';
 
 import {AsyncURLParseResult} from '@server/common/helpers/fetchAsyncHTML';
-import {WebsiteScrapperParser} from '../../../modules/scrapper/service/shared';
+import {BasicParseAttrs, WebsiteScrapperParser} from '../../../modules/scrapper/service/shared';
 import {
   BINDING_TRANSLATION_MAPPINGS,
   BookAvailabilityParser,
@@ -50,7 +50,7 @@ export class LiteraturaGildiaBookParser
   /**
    * @inheritdoc
    */
-  async parse(bookPage: AsyncURLParseResult) {
+  async parse(bookPage: AsyncURLParseResult, {shallowParse}: BasicParseAttrs = {}) {
     if (!bookPage)
       return null;
 
@@ -60,8 +60,8 @@ export class LiteraturaGildiaBookParser
 
     const [author, release] = await Promise.all(
       [
-        this.extractAuthor($wideText),
-        this.extractRelease(bookPage),
+        this.extractAuthor($wideText, shallowParse),
+        this.extractRelease(bookPage, shallowParse),
       ],
     );
 
@@ -83,14 +83,15 @@ export class LiteraturaGildiaBookParser
    * Extracts info about release from book page
    *
    * @param {AsyncURLParseResult} bookPage
+   * @param {boolean} [shallow]
    * @returns
    * @memberof LiteraturaGildiaBookParser
    */
-  private async extractRelease(bookPage: AsyncURLParseResult) {
+  private async extractRelease(bookPage: AsyncURLParseResult, shallow?: boolean) {
     const {$} = bookPage;
     const $wideText = $('#yui-main .content .widetext');
 
-    const publisher = await this.extractPublisher($wideText);
+    const publisher = await this.extractPublisher($wideText, shallow);
     const text = $wideText.text();
     const $coverImage = $wideText.find('img.main-article-image');
 
@@ -122,20 +123,25 @@ export class LiteraturaGildiaBookParser
    *
    * @private
    * @param {cheerio.Cheerio} $parent
+   * @param {boolean} [shallow]
    * @returns
    * @memberof LiteraturaGildiaBookParser
    */
-  private async extractAuthor($parent: cheerio.Cheerio) {
+  private async extractAuthor($parent: cheerio.Cheerio, shallow?: boolean) {
     const authorMatcher = <LiteraturaGildiaBookAuthorMatcher> this.matchers[ScrapperMetadataKind.BOOK_AUTHOR];
     const $authorAnchor = $parent.find('> a[href^="/tworcy/"]').first();
+    const dto = new CreateBookAuthorDto(
+      {
+        name: normalizeParsedText($authorAnchor.text()),
+      },
+    );
+
+    if (shallow)
+      return dto;
 
     return (await authorMatcher.searchRemoteRecord(
       {
-        data: new CreateBookAuthorDto(
-          {
-            name: normalizeParsedText($authorAnchor.text()),
-          },
-        ),
+        data: dto,
       },
       {
         path: $authorAnchor.attr('href'),
@@ -148,20 +154,25 @@ export class LiteraturaGildiaBookParser
    *
    * @private
    * @param {cheerio.Cheerio} $parent
+   * @param {boolean} [shallow]
    * @returns
-   * @memberof LiteraturaGildiaBookMatcher
+   * @memberof LiteraturaGildiaBookParser
    */
-  private async extractPublisher($parent: cheerio.Cheerio) {
+  private async extractPublisher($parent: cheerio.Cheerio, shallow?: boolean) {
     const publisherMatcher = <LiteraturaGildiaBookPublisherMatcher> this.matchers[ScrapperMetadataKind.BOOK_PUBLISHER];
     const $publisherAnchor = $parent.find('a[href^="/wydawnictwa/"]');
+    const dto = new CreateBookPublisherDto(
+      {
+        name: normalizeParsedText($publisherAnchor.text()),
+      },
+    );
+
+    if (shallow)
+      return dto;
 
     return (await publisherMatcher.searchRemoteRecord(
       {
-        data: new CreateBookPublisherDto(
-          {
-            name: normalizeParsedText($publisherAnchor.text()),
-          },
-        ),
+        data: dto,
       },
       {
         path: $publisherAnchor.attr('href'),

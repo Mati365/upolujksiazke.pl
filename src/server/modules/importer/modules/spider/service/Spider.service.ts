@@ -1,4 +1,5 @@
 import {Logger, Injectable} from '@nestjs/common';
+import {mergeMap} from 'rxjs/operators';
 import chalk from 'chalk';
 
 import {AsyncURLParseResult} from '@server/common/helpers/fetchAsyncHTML';
@@ -8,7 +9,7 @@ import {
   ScrapperService,
 } from '@scrapper/service';
 
-import {isURLPathMatcher, WebsiteScrappersGroup} from '../../scrapper/service/shared/WebsiteScrappersGroup';
+import {WebsiteScrappersGroup, isURLPathMatcher} from '../../scrapper/service/shared/WebsiteScrappersGroup';
 import {SpiderCrawler} from '../crawlers';
 import {ScrapperMetadataQueueDriver} from '../drivers/DbQueue.driver';
 
@@ -84,10 +85,11 @@ export class SpiderService {
       },
     );
 
-    return (
+    await (
       crawler
-        .run()
-        .subscribe(this.parseScrappedData.bind(this))
+        .run$()
+        .pipe(mergeMap(() => this.parseScrappedData.bind(this)))
+        .toPromise()
     );
   }
 

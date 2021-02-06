@@ -6,8 +6,6 @@ import {ID} from '@shared/types';
 import {upsert} from '@server/common/helpers/db';
 import {extractPathname} from '@shared/helpers/urlExtract';
 
-import {ScrapperMetadataKind} from '@scrapper/entity/ScrapperMetadata.entity';
-
 import {SpiderQueueEntity} from '../entity/SpiderQueue.entity';
 import {CreateSpiderQueueDto} from '../dto/CreateSpiderQueue.dto';
 
@@ -55,7 +53,6 @@ export class SpiderQueueService {
           createdAt: 'DESC',
         },
         where: {
-          kind: ScrapperMetadataKind.URL,
           processed: false,
           websiteId,
         },
@@ -76,7 +73,6 @@ export class SpiderQueueService {
       {
         select: ['id'],
         where: {
-          kind: ScrapperMetadataKind.URL,
           remoteId: extractPathname(url),
           websiteId,
         },

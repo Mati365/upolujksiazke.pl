@@ -1,6 +1,11 @@
 import {Injectable} from '@nestjs/common';
+
+import {concatUrls} from '@shared/helpers/concatUrls';
+import {extractPathname} from '@shared/helpers/urlExtract';
+
 import {RemoteWebsiteEntity} from '@server/modules/remote/entity';
 import {CrawlerUrlQueueDriver} from '../crawlers/Crawler';
+import {CreateSpiderQueueDto} from '../dto/CreateSpiderQueue.dto';
 import {SpiderQueueService} from '../service/SpiderQueue.service';
 
 type QueueCreateAttrs = {
@@ -20,17 +25,31 @@ export class ScrapperMetadataQueueDriver {
    * @returns {CrawlerUrlQueueDriver}
    * @memberof ScrapperMetadataQueueDriver
    */
-  createQueue(attrs: QueueCreateAttrs): CrawlerUrlQueueDriver {
-    console.info(attrs);
+  createQueue({website}: QueueCreateAttrs): CrawlerUrlQueueDriver {
+    const {queueService} = this;
 
     return {
-      push(url: string): Promise<void> {
-        console.info(url);
-        throw new Error('Method not implemented.');
+      async push(url: string): Promise<void> {
+        await queueService.upsert(
+          [
+            new CreateSpiderQueueDto(
+              {
+                processed: false,
+                websiteId: website.id,
+                path: extractPathname(url),
+              },
+            ),
+          ],
+        );
       },
 
-      pop(): Promise<string> {
-        throw new Error('Method not implemented.');
+      async pop(): Promise<string> {
+        const entity = await queueService.getFirstNotProcessedEntity(website.id);
+
+        return concatUrls(
+          website.url,
+          entity?.path,
+        );
       },
     };
   }

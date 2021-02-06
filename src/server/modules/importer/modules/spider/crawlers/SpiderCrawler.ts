@@ -1,6 +1,8 @@
-import {from, merge} from 'rxjs';
+import {merge, from} from 'rxjs';
+import {mergeMap} from 'rxjs/operators';
 import * as R from 'ramda';
 
+import {asyncIteratorToObservable} from '@server/common/helpers/rx/asyncIteratorToObservable';
 import {getArrayWithLengthLimit} from '@shared/helpers/getArrayWithLengthLimit';
 import {timeout} from '@shared/helpers/async/timeout';
 
@@ -23,10 +25,14 @@ export class SpiderCrawler extends Crawler<SpiderCrawlerConfig> {
   private stackCache: string[] = null;
 
   constructor(config: SpiderCrawlerConfig) {
-    super(config);
-
-    config.delay ??= 1000;
-    config.localHistorySize ??= 1000;
+    super(
+      {
+        delay: 1000,
+        concurrentRequests: 1,
+        localHistorySize: 1000,
+        ...config,
+      },
+    );
   }
 
   /**
@@ -35,17 +41,15 @@ export class SpiderCrawler extends Crawler<SpiderCrawlerConfig> {
    * @returns
    * @memberof SpiderCrawler
    */
-  run() {
+  run$() {
     const {config: {concurrentRequests}} = this;
     const $stream = from(this.tick());
 
     return $stream.pipe(
-      () => merge(
-        ...R.times(
-          () => this.fork(),
-          concurrentRequests,
-        ),
-      ),
+      mergeMap(() => merge(...R.times(
+        () => this.fork(),
+        concurrentRequests,
+      ))),
     );
   }
 
@@ -59,7 +63,7 @@ export class SpiderCrawler extends Crawler<SpiderCrawlerConfig> {
     const {config: {delay, localHistorySize}} = this;
     const self = this;
 
-    return from(async function* generator() {
+    const iterator = async function* generator() {
       self.stackCache = getArrayWithLengthLimit<string>(localHistorySize);
 
       for (;;) {
@@ -70,17 +74,23 @@ export class SpiderCrawler extends Crawler<SpiderCrawlerConfig> {
         yield result;
         await timeout(delay);
       }
-    });
+    };
+
+    return asyncIteratorToObservable(iterator());
   }
 
   /**
-   * Do crawler logic
+   * Picks first item and processes it
    *
    * @returns {Promise<AsyncURLParseResult>}
    * @memberof SpiderCrawler
    */
-  tick(): Promise<AsyncURLParseResult> {
-    console.info('tick');
+  async tick(): Promise<AsyncURLParseResult> {
+    const {config: {queueDriver}} = this;
+    const url = await queueDriver.pop();
+
+    console.info(url);
+    await timeout(5000);
     return null;
   }
 }

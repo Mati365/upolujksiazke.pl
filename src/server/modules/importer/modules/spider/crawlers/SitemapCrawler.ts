@@ -9,7 +9,7 @@ import {Crawler} from './Crawler';
  * @extends {Crawler}
  */
 export class SitemapCrawler extends Crawler {
-  run() {
+  run$() {
     throw new Error('Method not implemented.');
     return null;
   }

@@ -1,7 +1,11 @@
 import {Module} from '@nestjs/common';
 
 import {ScrapperModule} from '@scrapper/Scrapper.module';
-import {SpiderService} from './service/Spider.service';
+import {ScrapperMetadataQueueDriver} from './drivers/DbQueue.driver';
+import {
+  SpiderService,
+  SpiderQueueService,
+} from './service';
 
 @Module(
   {
@@ -9,10 +13,13 @@ import {SpiderService} from './service/Spider.service';
       ScrapperModule,
     ],
     providers: [
+      ScrapperMetadataQueueDriver,
       SpiderService,
+      SpiderQueueService,
     ],
     exports: [
       SpiderService,
+      SpiderQueueService,
     ],
   },
 )

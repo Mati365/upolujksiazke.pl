@@ -1,12 +1,7 @@
 import {Logger, Injectable} from '@nestjs/common';
 import chalk from 'chalk';
 
-import {extractPathname} from '@shared/helpers/urlExtract';
-import {concatUrls} from '@shared/helpers/concatUrls';
-
-import {ID} from '@shared/types';
 import {AsyncURLParseResult} from '@server/common/helpers/fetchAsyncHTML';
-import {RemoteWebsiteEntity} from '@server/modules/remote/entity/RemoteWebsite.entity';
 import {InterceptMethod} from '@shared/helpers/decorators/InterceptMethod';
 import {
   WebsiteInfoScrapperService,
@@ -15,7 +10,7 @@ import {
 
 import {isURLPathMatcher, WebsiteScrappersGroup} from '../../scrapper/service/shared/WebsiteScrappersGroup';
 import {SpiderCrawler} from '../crawlers';
-import {ScrapperMetadataEntity, ScrapperMetadataKind} from '../../scrapper/entity/ScrapperMetadata.entity';
+import {ScrapperMetadataQueueDriver} from '../drivers/DbQueue.driver';
 
 /**
  * Automatic URL analyzer and spider
@@ -30,6 +25,7 @@ export class SpiderService {
   constructor(
     private readonly scrapperService: ScrapperService,
     private readonly websiteInfoService: WebsiteInfoScrapperService,
+    private readonly dbQueueDriver: ScrapperMetadataQueueDriver,
   ) {}
 
   /**
@@ -49,6 +45,9 @@ export class SpiderService {
   /**
    * Starts spider on provided website
    *
+   * @todo
+   *  Detect if page has sitemap!
+   *
    * @param {WebsiteScrappersGroup} scrappersGroup
    * @returns
    * @memberof SpiderService
@@ -67,20 +66,29 @@ export class SpiderService {
     if (!group || !isURLPathMatcher(group))
       throw new Error('Provied scrappers group is not url path matcher!');
 
-    const {websiteInfoService} = this;
-    const website = await websiteInfoService.findOrCreateWebsiteEntity(group.websiteInfoScrapper);
-    const crawler = new SpiderCrawler(
+    const {
+      websiteInfoService,
+      dbQueueDriver,
+    } = this;
+
+    const queueDriver = dbQueueDriver.createQueue(
       {
-        startPageURL: await this.getStartCrawlerURL(website),
-        shouldBeScrapped: (url) => group.matchResourceKindByPath(url) !== null,
-        cache: {
-          isAlreadyScrapped: (url) => this.isURLAlreadyCrawled(website.id, url),
-          parseScrappedData: this.parseScrappedData.bind(this),
-        },
+        website: await websiteInfoService.findOrCreateWebsiteEntity(group.websiteInfoScrapper),
       },
     );
 
-    return crawler.run();
+    const crawler = new SpiderCrawler(
+      {
+        queueDriver,
+        shouldBeScrapped: (url) => group.matchResourceKindByPath(url) !== null,
+      },
+    );
+
+    return (
+      crawler
+        .run()
+        .subscribe(this.parseScrappedData.bind(this))
+    );
   }
 
   /**
@@ -89,56 +97,7 @@ export class SpiderService {
    * @param {AsyncURLParseResult} data
    * @memberof SpiderService
    */
-  parseScrappedData(data: AsyncURLParseResult) {
-    console.info(data);
-  }
-
-  /**
-   * Get start spider address
-   *
-   * @param {RemoteWebsiteEntity} website
-   * @returns
-   * @memberof SpiderService
-   */
-  async getStartCrawlerURL(website: RemoteWebsiteEntity) {
-    const entity = await ScrapperMetadataEntity.findOne(
-      {
-        order: {
-          createdAt: 'DESC',
-        },
-        where: {
-          kind: ScrapperMetadataKind.URL,
-          websiteId: website.id,
-        },
-      },
-    );
-
-    return concatUrls(
-      website.url,
-      entity?.remoteId || '',
-    );
-  }
-
-  /**
-   * Checks if spider already checked url
-   *
-   * @param {ID} websiteId
-   * @param {string} url
-   * @returns
-   * @memberof SpiderService
-   */
-  async isURLAlreadyCrawled(websiteId: ID, url: string) {
-    const metadata = await ScrapperMetadataEntity.findOne(
-      {
-        select: ['id'],
-        where: {
-          kind: ScrapperMetadataKind.URL,
-          remoteId: extractPathname(url),
-          websiteId,
-        },
-      },
-    );
-
-    return !!metadata;
+  parseScrappedData({url}: AsyncURLParseResult) {
+    console.info(`Analyze ${url}!`);
   }
 }

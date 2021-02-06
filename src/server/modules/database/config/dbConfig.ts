@@ -7,6 +7,7 @@ import {isDevMode} from '@shared/helpers';
 import {TagEntity} from '@server/modules/tag/Tag.entity';
 
 import {ScrapperMetadataEntity} from '../../importer/modules/scrapper/entity';
+import {SpiderQueueEntity} from '../../importer/modules/spider/entity/SpiderQueue.entity';
 import {RemoteWebsiteEntity} from '../../remote/entity';
 
 import {
@@ -44,6 +45,7 @@ export const DB_ENTITIES = {
   BookPrizeEntity,
   BookSeriesEntity,
   ScrapperMetadataEntity,
+  SpiderQueueEntity,
   TagEntity,
 };
 

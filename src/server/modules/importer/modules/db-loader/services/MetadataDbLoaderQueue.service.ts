@@ -14,11 +14,16 @@ export class MetadataDbLoaderQueueService {
   /**
    * Adds array of metadata items into queue
    *
+   * @see
+   *  Do not use mergeToOneJob in scrappers due to limit issues
+   *
    * @param {ScrapperMetadataEntity[]} items
+   * @param {boolean} [mergeToOneJob]
    * @returns
-   * @memberof MetadataDbLoaderService
+   * @memberof MetadataDbLoaderQueueService
    */
-  addBulkMetadataToQueue(items: ScrapperMetadataEntity[]) {
+  addBulkMetadataToQueue(items: ScrapperMetadataEntity[], mergeToOneJob?: boolean) {
+    const {dbLoaderQueue} = this;
     const mappedItems = (
       items
         .filter(Boolean)
@@ -29,7 +34,14 @@ export class MetadataDbLoaderQueueService {
         )
     );
 
-    return this.dbLoaderQueue.add(mappedItems);
+    if (mergeToOneJob)
+      return dbLoaderQueue.add(mappedItems);
+
+    return dbLoaderQueue.addBulk(
+      mappedItems.map((item) => ({
+        data: [item],
+      })),
+    );
   }
 
   /**

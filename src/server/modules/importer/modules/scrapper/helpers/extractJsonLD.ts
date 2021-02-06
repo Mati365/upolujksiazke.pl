@@ -29,7 +29,13 @@ export class JsonLdExtractor {
     const schemas: JSON[] = (
       $('script[type="application/ld+json"]')
         .toArray()
-        .map((a) => safeJsonParse($(a).get()[0].children[0].data))
+        .map((script) => {
+          const text = $(script).get()[0].children[0].data;
+          if (!text)
+            return null;
+
+          return safeJsonParse(text.replaceAll('\n', ''));
+        })
         .filter(Boolean)
     );
 

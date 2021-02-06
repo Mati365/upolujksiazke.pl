@@ -141,7 +141,7 @@ export class BookReleaseEntity extends DatedRecordEntity {
   @JoinColumn({name: 'publisherId'})
   publisher: BookPublisherEntity;
 
-  @Column()
+  @Column({nullable: true})
   @RelationId((entity: BookReleaseEntity) => entity.publisher)
   publisherId: number;
 

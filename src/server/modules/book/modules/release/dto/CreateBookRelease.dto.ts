@@ -126,10 +126,14 @@ export class CreateBookReleaseDto {
    * @memberof CreateBookReleaseDto
    */
   mapPublisher(fn: (publisher: CreateBookPublisherDto) => CreateBookPublisherDto): CreateBookReleaseDto {
+    const {publisher} = this;
+    if (!publisher)
+      return this;
+
     return new CreateBookReleaseDto(
       {
         ...this,
-        publisher: fn(this.publisher),
+        publisher: fn(publisher),
       },
     );
   }

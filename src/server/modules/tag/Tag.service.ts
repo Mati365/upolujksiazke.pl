@@ -65,7 +65,10 @@ export class TagService {
         doNothing: true,
         data: (
           R
-            .uniqBy(({name}) => parameterize(name), R.reject(R.isNil, dtos))
+            .uniqBy(
+              ({name}) => parameterize(name),
+              R.reject((tag) => !tag?.name, dtos),
+            )
             .map((dto) => new TagEntity(dto))
         ),
       },

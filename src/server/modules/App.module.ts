@@ -23,10 +23,6 @@ import {TmpDirModule} from './tmp-dir';
       BullModule.forRoot(
         {
           redis: SERVER_ENV.redisConfig,
-          limiter: {
-            max: 5,
-            duration: 1500,
-          },
           defaultJobOptions: {
             removeOnComplete: true,
             removeOnFail: true,

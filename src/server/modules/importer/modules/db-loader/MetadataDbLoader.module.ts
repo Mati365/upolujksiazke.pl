@@ -35,6 +35,10 @@ import {ScrapperModule} from '../scrapper/Scrapper.module';
       BullModule.registerQueue(
         {
           name: SCRAPPER_METADATA_LOADER_QUEUE,
+          limiter: {
+            max: 2,
+            duration: 8000,
+          },
         },
       ),
       TypeOrmModule.forFeature(

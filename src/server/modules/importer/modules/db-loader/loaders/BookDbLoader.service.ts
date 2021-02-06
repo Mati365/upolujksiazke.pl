@@ -104,6 +104,7 @@ export class BookDbLoader implements MetadataDbLoader {
         .map((release) => new CreateBookReleaseDto(
           {
             ...release,
+            publisher: release.publisher || null,
             availability: release.availability.map(
               (availability) => new CreateBookAvailabilityDto(
                 {
@@ -197,6 +198,9 @@ export class BookDbLoader implements MetadataDbLoader {
           ),
         );
 
+        if (!release.publisher)
+          return acc;
+
         const {publisher: {parameterizedName}} = release;
         if (parameterizedName.length < minCompareLength) {
           acc[parameterizedName] ??= [];
@@ -250,6 +254,9 @@ export class BookDbLoader implements MetadataDbLoader {
       similarPublisherReleases,
     );
 
-    return R.unnest(R.values(mappedReleases));
+    return [
+      ...R.filter(R.propSatisfies(R.isNil, 'publisher'), releases),
+      ...R.unnest(R.values(mappedReleases)),
+    ];
   }
 }

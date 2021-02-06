@@ -1,3 +1,5 @@
+import {matchByRegex} from '@shared/helpers/matchByRegex';
+
 import {ScrapperMetadataKind} from '@scrapper/entity';
 import {
   BookShopScrappersGroup,
@@ -26,6 +28,11 @@ export class SkupszopScrappersGroup extends BookShopScrappersGroup {
    * @inheritdoc
    */
   matchResourceKindByPath(path: string): ScrapperMetadataKind {
-    throw new Error(`Missing resource path macher for ${path}!`);
+    return matchByRegex(
+      {
+        '-id\\d+$': () => ScrapperMetadataKind.BOOK,
+      },
+      path,
+    );
   }
 }

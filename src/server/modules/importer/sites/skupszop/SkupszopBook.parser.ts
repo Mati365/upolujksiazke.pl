@@ -57,6 +57,7 @@ export class SkupszopBookParser
       },
     } = extractJsonLD($);
 
+    const {brand: publisher} = productSchema;
     const release = new CreateBookReleaseDto(
       {
         lang: Language.PL,
@@ -68,9 +69,9 @@ export class SkupszopBookParser
         publishDate: bookSchema.copyrightYear,
         availability: (await this.parseAvailability(bookPage)).result,
         isbn: normalizeISBN(productSchema.sku),
-        publisher: new CreateBookPublisherDto(
+        publisher: publisher?.name && new CreateBookPublisherDto(
           {
-            name: productSchema.brand.name,
+            name: publisher.name,
           },
         ),
         cover: new CreateImageAttachmentDto(

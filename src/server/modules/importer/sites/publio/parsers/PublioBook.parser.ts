@@ -22,8 +22,6 @@ import {CreateBookPrizeDto} from '@server/modules/book/modules/prize/dto/CreateB
 import {CreateBookVolumeDto} from '@server/modules/book/modules/volume/dto/CreateBookVolume.dto';
 
 import {ScrapperMetadataKind} from '@server/modules/importer/modules/scrapper/entity';
-import {BookType} from '@server/modules/book/modules/release/BookRelease.entity';
-
 import {
   BookScrappedPropsMap,
   BookAvailabilityParser,
@@ -104,6 +102,12 @@ export class PublioBookParser
     const [title, volumeName] = PublioBookParser.extractTitle($);
     const basicProps = PublioBookParser.extractBookProps($);
     const [parentIsbn, ...childIsbn] = basicProps['isbn']?.[0].split(',').map(normalizeISBN);
+    const type = BOOK_TYPE_TRANSLATION_MAPPINGS[
+      $('.basic-info-wrapper .info > .section').text()?.toLowerCase()
+    ];
+
+    if (R.isNil(type))
+      return null;
 
     const {
       result: availability,
@@ -125,11 +129,9 @@ export class PublioBookParser
     const parentRelease = new CreateBookReleaseDto(
       {
         title,
+        type,
         defaultPrice: price.originalPrice,
         isbn: parentIsbn,
-        type: BOOK_TYPE_TRANSLATION_MAPPINGS[
-          $('.basic-info-wrapper .info > .section').text()?.toLowerCase()
-        ] ?? BookType.EBOOK,
         lang: (
           LANGUAGE_TRANSLATION_MAPPINGS[basicProps['język publikacji']?.[0].toLowerCase()]
             ?? Language.PL

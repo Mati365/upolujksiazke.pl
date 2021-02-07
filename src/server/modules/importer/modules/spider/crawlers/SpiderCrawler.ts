@@ -21,8 +21,9 @@ import {
 } from './Crawler';
 
 export type SpiderLinksMapperAttrs = {
-  result: AsyncURLParseResult,
+  link: CrawlerLink,
   links: CrawlerLink[],
+  parseResult: AsyncURLParseResult,
 };
 
 type SpiderCrawlerTickResult = {
@@ -143,7 +144,7 @@ export class SpiderCrawler extends Crawler<SpiderCrawlerConfig> {
     if (!queueItem)
       return null;
 
-    const collectorResult = await this.collectUrlAnchors(queueItem.url);
+    const collectorResult = await this.collectUrlAnchors(queueItem);
     if (!collectorResult)
       return null;
 
@@ -158,11 +159,11 @@ export class SpiderCrawler extends Crawler<SpiderCrawlerConfig> {
    * Fetches page and lists all anchors to be scrapped
    *
    * @private
-   * @param {string} url
+   * @param {CrawlerLink} link
    * @returns {Promise<CrawlerPageResult>}
    * @memberof SpiderCrawler
    */
-  private async collectUrlAnchors(url: string): Promise<CrawlerPageResult> {
+  private async collectUrlAnchors(link: CrawlerLink): Promise<CrawlerPageResult> {
     const {
       stackCache,
       config: {
@@ -173,9 +174,10 @@ export class SpiderCrawler extends Crawler<SpiderCrawlerConfig> {
       },
     } = this;
 
-    if (!url)
+    if (!link?.url)
       return null;
 
+    const {url} = link;
     const hostname = extractHostname(url);
     const parseResult = await parseAsyncURLIfOK(url);
     if (!parseResult) {
@@ -222,7 +224,8 @@ export class SpiderCrawler extends Crawler<SpiderCrawlerConfig> {
       followLinks = (<CrawlerLink[]> await postMapLinks(
         {
           links: followLinks,
-          result: parseResult,
+          link,
+          parseResult,
         },
       )) ?? followLinks;
     }

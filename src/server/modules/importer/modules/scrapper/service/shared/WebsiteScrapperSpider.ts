@@ -1,8 +1,17 @@
-import {CrawlerLink, SpiderCrawler, SpiderCrawlerConfig} from '../../../spider/crawlers';
+import {
+  CrawlerLink, SpiderCrawler,
+  SpiderCrawlerConfig, SpiderLinksMapperAttrs,
+} from '../../../spider/crawlers';
+
 import {ScrapperMetadataQueueDriver} from '../../../spider/drivers/DbQueue.driver';
 import {ScrapperMetadataKind} from '../../entity/ScrapperMetadata.entity';
 import {WebsiteInfoScrapperService} from '../WebsiteInfoScrapper.service';
 import {ScrapperGroupChild} from './WebsiteScrappersGroup';
+
+export enum ScrapperPriority {
+  PAGINATION = 5,
+  NEXT_PAGINATION_PAGE = 6,
+}
 
 export interface URLPathMatcher {
   /**
@@ -33,7 +42,7 @@ export type WebsiteSpiderScrapperRunConfig = {
  */
 export abstract class WebsiteScrapperSpider extends ScrapperGroupChild implements URLPathMatcher {
   public static readonly RESOURCE_PRIORITY: Record<ScrapperMetadataKind, number> = {
-    [ScrapperMetadataKind.BOOK]: 4,
+    [ScrapperMetadataKind.BOOK]: 7,
     [ScrapperMetadataKind.BOOK_REVIEW]: 3,
     [ScrapperMetadataKind.BOOK_AUTHOR]: 2,
     [ScrapperMetadataKind.BOOK_PUBLISHER]: 2,
@@ -55,6 +64,18 @@ export abstract class WebsiteScrapperSpider extends ScrapperGroupChild implement
     const kind = this.matchResourceKindByPath(path);
 
     return WebsiteScrapperSpider.RESOURCE_PRIORITY[kind] ?? 0;
+  }
+
+  /**
+   * Maps links array, it is not used here but maybe in other websites so
+   * It is used primarly for bad written websites when we need to generate some links
+   *
+   * @param {SpiderLinksMapperAttrs} {links}
+   * @returns {CrawlerLink[]}
+   * @memberof WebsiteScrapperSpider
+   */
+  postMapLinks({links}: SpiderLinksMapperAttrs): CrawlerLink[] {
+    return links;
   }
 
   /**
@@ -84,6 +105,7 @@ export abstract class WebsiteScrapperSpider extends ScrapperGroupChild implement
             website,
           },
         ),
+        postMapLinks: this.postMapLinks.bind(this),
         preMapLink: (path) => new CrawlerLink(
           path,
           this.getPathPriority(path),

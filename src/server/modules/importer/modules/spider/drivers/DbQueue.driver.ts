@@ -3,7 +3,7 @@ import {Injectable} from '@nestjs/common';
 import {concatUrls} from '@shared/helpers/concatUrls';
 
 import {RemoteWebsiteEntity} from '@server/modules/remote/entity';
-import {CrawlerUrlQueueDriver} from '../crawlers/Crawler';
+import {CrawlerLink, CrawlerUrlQueueDriver} from '../crawlers/Crawler';
 import {CreateSpiderQueueDto} from '../dto/CreateSpiderQueue.dto';
 import {SpiderQueueService} from '../service/SpiderQueue.service';
 
@@ -28,13 +28,14 @@ export class ScrapperMetadataQueueDriver {
     const {queueService} = this;
 
     return {
-      async push(paths: string[]): Promise<void> {
-        const dtos = paths.map((path) => (
+      async push(paths: CrawlerLink[]): Promise<void> {
+        const dtos = paths.map(({url, priority}) => (
           new CreateSpiderQueueDto(
             {
+              priority,
               processed: false,
+              path: url,
               websiteId: website.id,
-              path,
             },
           )
         ));
@@ -42,12 +43,15 @@ export class ScrapperMetadataQueueDriver {
         await queueService.upsert(dtos);
       },
 
-      async pop(): Promise<string> {
+      async pop(): Promise<CrawlerLink> {
         const entity = await queueService.popFirstNotProcessedEntity(website.id);
         if (!entity)
           return null;
 
-        return concatUrls(website.url, entity?.path);
+        return new CrawlerLink(
+          concatUrls(website.url, entity.path),
+          entity.priority,
+        );
       },
     };
   }

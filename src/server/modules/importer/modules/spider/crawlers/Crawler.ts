@@ -1,14 +1,21 @@
 import {Observable} from 'rxjs';
 import {AsyncURLParseResult} from '@server/common/helpers/fetchAsyncHTML';
 
+export class CrawlerLink {
+  constructor(
+    public readonly url: string,
+    public readonly priority: number,
+  ) {}
+}
+
 export interface CrawlerUrlQueueDriver {
-  push(paths: string[]): Promise<void>,
-  pop(): Promise<string>,
+  push(urls: CrawlerLink[]): Promise<void>,
+  pop(): Promise<CrawlerLink>,
 }
 
 export interface CrawlerPageResult {
   parseResult: AsyncURLParseResult,
-  followPaths: string[],
+  followLinks: CrawlerLink[],
 }
 
 export type CrawlerStartAttrs = {

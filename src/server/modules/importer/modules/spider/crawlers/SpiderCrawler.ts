@@ -5,24 +5,38 @@ import * as R from 'ramda';
 import {timeout} from '@shared/helpers/async/timeout';
 import {extractHostname, extractPathname} from '@shared/helpers/urlExtract';
 import {isAbsoluteURL} from '@shared/helpers/concatUrls';
-
 import {asyncIteratorToObservable} from '@server/common/helpers/rx/asyncIteratorToObservable';
 import {getArrayWithLengthLimit} from '@shared/helpers/getArrayWithLengthLimit';
-import {parseAsyncURLIfOK} from '@server/common/helpers/fetchAsyncHTML';
+
+import {CanBePromise} from '@shared/types';
+import {AsyncURLParseResult, parseAsyncURLIfOK} from '@server/common/helpers/fetchAsyncHTML';
 import {concatWithAnchor} from '../helpers/concatWithAnchor';
 
 import {
   Crawler,
   CrawlerConfig,
+  CrawlerLink,
   CrawlerPageResult,
   CrawlerStartAttrs,
 } from './Crawler';
 
-type SpiderCrawlerConfig = CrawlerConfig & {
+export type SpiderLinksMapperAttrs = {
+  result: AsyncURLParseResult,
+  links: CrawlerLink[],
+};
+
+type SpiderCrawlerTickResult = {
+  queueItem: CrawlerLink,
+  collectorResult: CrawlerPageResult,
+};
+
+export type SpiderCrawlerConfig = CrawlerConfig & {
+  preMapLink?(url: string): CrawlerLink,
+  postMapLinks?(attrs: SpiderLinksMapperAttrs): (CanBePromise<CrawlerLink[]> | void);
   localHistorySize?: number,
   shouldBe: {
     collected?(url: string): boolean,
-    analyzed?(url: string): boolean,
+    analyzed?(tickResult: SpiderCrawlerTickResult): boolean,
   },
 };
 
@@ -42,6 +56,7 @@ export class SpiderCrawler extends Crawler<SpiderCrawlerConfig> {
         delay: 5000,
         concurrentRequests: 1,
         localHistorySize: 5000,
+        preMapLink: (link: string) => new CrawlerLink(link, 0),
         shouldBe: {
           collected: R.T,
           analyzed: R.T,
@@ -91,15 +106,19 @@ export class SpiderCrawler extends Crawler<SpiderCrawlerConfig> {
 
     const iterator = async function* generator() {
       for (;;) {
-        const result = await self.tick();
-        if (!result)
+        const tickResult = await self.tick();
+        if (!tickResult)
           break;
 
-        const {parseResult} = result;
-        if (parseResult && shouldBe.analyzed(parseResult.url))
-          yield result;
+        const {
+          collectorResult,
+        } = tickResult;
 
-        await timeout(delay);
+        if (shouldBe.analyzed(tickResult))
+          yield collectorResult;
+
+        if (delay)
+          await timeout(delay);
       }
     };
 
@@ -110,26 +129,29 @@ export class SpiderCrawler extends Crawler<SpiderCrawlerConfig> {
    * Picks first item and processes it
    *
    * @param {CrawlerStartAttrs} [attrs]
-   * @returns {Promise<CrawlerPageResult>}
+   * @returns
    * @memberof SpiderCrawler
    */
-  async tick(attrs?: CrawlerStartAttrs): Promise<CrawlerPageResult> {
+  async tick(attrs?: CrawlerStartAttrs) {
     const {
       config: {
         queueDriver,
       },
     } = this;
 
-    const url = (await queueDriver.pop()) ?? attrs?.defaultUrl;
-    if (!url)
+    const queueItem = (await queueDriver.pop()) ?? (attrs && new CrawlerLink(attrs.defaultUrl, 0));
+    if (!queueItem)
       return null;
 
-    const result = await this.collectUrlAnchors(url);
-    if (!result)
+    const collectorResult = await this.collectUrlAnchors(queueItem.url);
+    if (!collectorResult)
       return null;
 
-    await queueDriver.push(result.followPaths);
-    return result;
+    await queueDriver.push(collectorResult.followLinks);
+    return {
+      queueItem,
+      collectorResult,
+    };
   }
 
   /**
@@ -144,6 +166,8 @@ export class SpiderCrawler extends Crawler<SpiderCrawlerConfig> {
     const {
       stackCache,
       config: {
+        preMapLink,
+        postMapLinks,
         storeOnlyPaths,
         shouldBe,
       },
@@ -157,12 +181,13 @@ export class SpiderCrawler extends Crawler<SpiderCrawlerConfig> {
     if (!parseResult) {
       return {
         parseResult: null,
-        followPaths: [],
+        followLinks: [],
       };
     }
 
     const {$} = parseResult;
-    const followPaths: string[] = R.compose(
+    let followLinks: CrawlerLink[] = R.compose(
+      R.map(preMapLink),
       R.uniq,
       R.filter(Boolean) as any,
       R.map(
@@ -193,10 +218,22 @@ export class SpiderCrawler extends Crawler<SpiderCrawlerConfig> {
       $('a').toArray(),
     );
 
-    stackCache.push(...followPaths);
+    if (postMapLinks) {
+      followLinks = (<CrawlerLink[]> await postMapLinks(
+        {
+          links: followLinks,
+          result: parseResult,
+        },
+      )) ?? followLinks;
+    }
+
+    stackCache.push(
+      ...R.pluck('url', followLinks),
+    );
+
     return {
       parseResult,
-      followPaths,
+      followLinks,
     };
   }
 }

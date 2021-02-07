@@ -5,6 +5,7 @@ import {PartialRecord} from '@shared/types';
 import {ScrapperMetadataKind} from '../../entity/ScrapperMetadata.entity';
 import {AsyncScrapper} from './AsyncScrapper';
 import {WebsiteInfoScrapper} from './WebsiteInfoScrapper';
+import {WebsiteScrapperSpider} from './WebsiteScrapperSpider';
 import {ScrapperParser} from './ScrapperParser';
 import {
   ScrapperMatchable,
@@ -18,6 +19,7 @@ export type WebsiteParsersKindMap = PartialRecord<ScrapperMetadataKind, Scrapper
 
 export type ScrappersGroupInitializer<W extends WebsiteInfoScrapper = WebsiteInfoScrapper> = {
   websiteInfoScrapper?: W,
+  spider?: WebsiteScrapperSpider,
   scrappers?: WebsiteScrappersKindMap,
   matchers?: WebsiteScrappersMatchersKindMap,
   parsers?: WebsiteParsersKindMap,
@@ -27,22 +29,6 @@ export type MatchRecordAttrs<T = any> = {
   data: T,
   kind?: ScrapperMetadataKind,
 };
-
-export interface URLPathMatcher {
-  /**
-   * Returns kind of type based on path - it is used primarly in spider
-   *
-   * @abstract
-   * @param {string} path
-   * @returns {ScrapperMetadataKind}
-   * @memberof WebsiteScrappersGroup
-   */
-  matchResourceKindByPath(path: string): ScrapperMetadataKind;
-}
-
-export function isURLPathMatcher(obj: any): obj is URLPathMatcher {
-  return !!obj && ('matchResourceKindByPath' in obj);
-}
 
 /**
  * Container of scrappers
@@ -58,10 +44,12 @@ implements ScrapperMatchable<string> {
   public readonly scrappers: WebsiteScrappersKindMap;
   public readonly matchers: WebsiteScrappersMatchersKindMap;
   public readonly parsers: WebsiteParsersKindMap;
+  public readonly spider: WebsiteScrapperSpider;
 
   constructor(
     {
       websiteInfoScrapper,
+      spider,
       scrappers = {},
       matchers = {},
       parsers = {},
@@ -71,13 +59,15 @@ implements ScrapperMatchable<string> {
     this.scrappers = scrappers;
     this.matchers = matchers;
     this.parsers = parsers;
+    this.spider = spider;
 
     R.forEach(
       (scrapper) => {
-        if (scrapper.setParentGroup)
+        if (scrapper?.setParentGroup)
           scrapper.setParentGroup(this);
       },
       [
+        spider,
         ...R.values(scrappers),
         ...R.values(matchers),
         ...R.values(parsers),

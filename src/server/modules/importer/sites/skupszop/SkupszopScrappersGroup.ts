@@ -1,11 +1,10 @@
-import {matchByRegex} from '@shared/helpers/matchByRegex';
-
 import {ScrapperMetadataKind} from '@scrapper/entity';
 import {
   BookShopScrappersGroup,
   BookShopScrappersGroupConfig,
 } from '@scrapper/service/scrappers/BookShop.scrapper';
 
+import {SkupszopSpider} from './Skupszop.spider';
 import {SkupszopBookMatcher} from './SkupszopBook.matcher';
 import {SkupszopBookParser} from './SkupszopBook.parser';
 
@@ -14,6 +13,7 @@ export class SkupszopScrappersGroup extends BookShopScrappersGroup {
     super(
       {
         ...options,
+        spider: new SkupszopSpider,
         matchers: {
           [ScrapperMetadataKind.BOOK]: new SkupszopBookMatcher(options),
         },
@@ -21,18 +21,6 @@ export class SkupszopScrappersGroup extends BookShopScrappersGroup {
           [ScrapperMetadataKind.BOOK]: new SkupszopBookParser(options),
         },
       },
-    );
-  }
-
-  /**
-   * @inheritdoc
-   */
-  matchResourceKindByPath(path: string): ScrapperMetadataKind {
-    return matchByRegex(
-      {
-        '-id\\d+$': () => ScrapperMetadataKind.BOOK,
-      },
-      path,
     );
   }
 }

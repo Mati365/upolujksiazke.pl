@@ -9,8 +9,8 @@ import {
   ScrapperService,
 } from '@scrapper/service';
 
-import {WebsiteScrappersGroup, isURLPathMatcher} from '../../scrapper/service/shared/WebsiteScrappersGroup';
-import {CrawlerPageResult, SpiderCrawler} from '../crawlers';
+import {WebsiteScrappersGroup} from '../../scrapper/service/shared/WebsiteScrappersGroup';
+import {CrawlerPageResult} from '../crawlers';
 import {ScrapperMetadataQueueDriver} from '../drivers/DbQueue.driver';
 
 /**
@@ -64,36 +64,23 @@ export class SpiderService {
     },
   )
   async runForScrappersGroup(group: WebsiteScrappersGroup) {
-    if (!group || !isURLPathMatcher(group))
-      throw new Error('Provied scrappers group is not url path matcher!');
+    if (!group?.spider)
+      throw new Error('Provied scrappers group does not contain spider!');
 
     const {
       websiteInfoService,
       dbQueueDriver,
     } = this;
 
-    const website = await websiteInfoService.findOrCreateWebsiteEntity(group.websiteInfoScrapper);
-    const crawler = new SpiderCrawler(
+    const observable = await group.spider.run$(
       {
-        storeOnlyPaths: true,
-        shouldBe: {
-          analyzed: (url) => group.matchResourceKindByPath(url) !== null,
-        },
-        queueDriver: dbQueueDriver.createIndexedQueue(
-          {
-            website,
-          },
-        ),
+        websiteInfoService,
+        dbQueueDriver,
       },
     );
 
     await (
-      crawler
-        .run$(
-          {
-            defaultUrl: website.url,
-          },
-        )
+      observable
         .pipe(mergeMap((data) => from(this.parseScrappedData(data) || [])))
         .toPromise()
     );
@@ -105,8 +92,8 @@ export class SpiderService {
    * @param {CrawlerPageResult} data
    * @memberof SpiderService
    */
-  parseScrappedData({followPaths}: CrawlerPageResult) {
-    console.info(followPaths);
+  parseScrappedData({followLinks}: CrawlerPageResult) {
+    console.info(followLinks);
     return null;
   }
 }

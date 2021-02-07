@@ -57,8 +57,8 @@ export class SpiderQueueService {
         .where('sortedItem.processed = :processed and sortedItem.websiteId = :websiteId')
         .orderBy(
           {
-            createdAt: 'DESC',
             priority: 'DESC',
+            createdAt: 'DESC',
           },
         )
         .from(SpiderQueueEntity, 'sortedItem')

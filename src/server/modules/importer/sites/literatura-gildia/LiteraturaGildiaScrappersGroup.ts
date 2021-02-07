@@ -29,11 +29,4 @@ export class LiteraturaGildiaScrappersGroup extends BookShopScrappersGroup {
       },
     );
   }
-
-  /**
-   * @inheritdoc
-   */
-  matchResourceKindByPath(path: string): ScrapperMetadataKind {
-    throw new Error(`Missing resource path macher for ${path}!`);
-  }
 }

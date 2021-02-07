@@ -4,7 +4,6 @@ import * as R from 'ramda';
 
 import {AsyncURLParseResult, parseAsyncURLIfOK} from '@server/common/helpers/fetchAsyncHTML';
 import {extractPathname} from '@shared/helpers/urlExtract';
-import {isURLPathMatcher} from '../../scrapper/service/shared';
 
 import {ScrapperMetadataEntity} from '../../scrapper/entity/ScrapperMetadata.entity';
 import {ScrapperService} from '../../scrapper/service/Scrapper.service';
@@ -50,12 +49,12 @@ export class UrlDbLoader implements MetadataDbLoader {
     } = this;
 
     const scrappersGroup = scrapperService.getScrappersGroupByWebsiteURL(url);
-    if (!scrappersGroup || !isURLPathMatcher(scrappersGroup)) {
-      logger.warn(`Cannot find ${chalk.bold(url)} scrapper!`);
+    if (!scrappersGroup?.spider) {
+      logger.warn(`Scrapper ${chalk.bold(url)} must contain spider!`);
       return null;
     }
 
-    const kind = scrappersGroup.matchResourceKindByPath(
+    const kind = scrappersGroup.spider.matchResourceKindByPath(
       extractPathname(url),
     );
 

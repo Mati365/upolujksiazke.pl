@@ -106,6 +106,10 @@ export class CreateBookReleaseDto {
   readonly weight: number;
 
   @IsOptional()
+  @IsNumber()
+  readonly recordingLength: number;
+
+  @IsOptional()
   @IsEnum(BookProtection)
   readonly protection: BookProtection;
 

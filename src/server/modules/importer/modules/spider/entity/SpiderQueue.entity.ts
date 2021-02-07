@@ -12,7 +12,7 @@ import {RemoteWebsiteEntity} from '@server/modules/remote/entity/RemoteWebsite.e
   },
 )
 @Index(['processed', 'website'])
-@Unique(['website', 'path'])
+@Unique('spider_queue_unique_website_path', ['website', 'path'])
 export class SpiderQueueEntity extends DatedRecordEntity {
   @Column('text')
   path: string;
@@ -27,6 +27,9 @@ export class SpiderQueueEntity extends DatedRecordEntity {
 
   @Column('boolean', {default: false})
   processed: boolean;
+
+  @Column('int', {default: 0})
+  priority: number;
 
   constructor(partial: Partial<SpiderQueueEntity>) {
     super();

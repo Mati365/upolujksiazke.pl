@@ -45,7 +45,7 @@ export const LANGUAGE_TRANSLATION_MAPPINGS = Object.freeze(
 export const BOOK_TYPE_TRANSLATION_MAPPINGS = Object.freeze(
   {
     /* eslint-disable quote-props */
-    'audiobook': BookType.AUDIO_BOOK,
+    'audiobook': BookType.AUDIOBOOK,
     'ebook': BookType.EBOOK,
     'paper': BookType.PAPER,
     /* eslint-enable quote-props */

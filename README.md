@@ -135,6 +135,12 @@ Analyzers:
 gulp scrapper:reanalyze:all
 ```
 
+Spiders:
+
+```bash
+ gulp scrapper:spider:run
+```
+
 ### Importers
 
 #### Flow

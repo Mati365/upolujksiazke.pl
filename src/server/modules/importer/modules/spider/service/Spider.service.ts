@@ -1,8 +1,8 @@
 import {Logger, Injectable} from '@nestjs/common';
 import {mergeMap} from 'rxjs/operators';
+import {from} from 'rxjs';
 import chalk from 'chalk';
 
-import {AsyncURLParseResult} from '@server/common/helpers/fetchAsyncHTML';
 import {InterceptMethod} from '@shared/helpers/decorators/InterceptMethod';
 import {
   WebsiteInfoScrapperService,
@@ -10,7 +10,7 @@ import {
 } from '@scrapper/service';
 
 import {WebsiteScrappersGroup, isURLPathMatcher} from '../../scrapper/service/shared/WebsiteScrappersGroup';
-import {SpiderCrawler} from '../crawlers';
+import {CrawlerPageResult, SpiderCrawler} from '../crawlers';
 import {ScrapperMetadataQueueDriver} from '../drivers/DbQueue.driver';
 
 /**
@@ -72,23 +72,29 @@ export class SpiderService {
       dbQueueDriver,
     } = this;
 
-    const queueDriver = dbQueueDriver.createQueue(
-      {
-        website: await websiteInfoService.findOrCreateWebsiteEntity(group.websiteInfoScrapper),
-      },
-    );
-
+    const website = await websiteInfoService.findOrCreateWebsiteEntity(group.websiteInfoScrapper);
     const crawler = new SpiderCrawler(
       {
-        queueDriver,
-        shouldBeScrapped: (url) => group.matchResourceKindByPath(url) !== null,
+        storeOnlyPaths: true,
+        shouldBe: {
+          analyzed: (url) => group.matchResourceKindByPath(url) !== null,
+        },
+        queueDriver: dbQueueDriver.createIndexedQueue(
+          {
+            website,
+          },
+        ),
       },
     );
 
     await (
       crawler
-        .run$()
-        .pipe(mergeMap(() => this.parseScrappedData.bind(this)))
+        .run$(
+          {
+            defaultUrl: website.url,
+          },
+        )
+        .pipe(mergeMap((data) => from(this.parseScrappedData(data) || [])))
         .toPromise()
     );
   }
@@ -96,10 +102,11 @@ export class SpiderService {
   /**
    * Analyze fetched data
    *
-   * @param {AsyncURLParseResult} data
+   * @param {CrawlerPageResult} data
    * @memberof SpiderService
    */
-  parseScrappedData({url}: AsyncURLParseResult) {
-    console.info(`Analyze ${url}!`);
+  parseScrappedData({followPaths}: CrawlerPageResult) {
+    console.info(followPaths);
+    return null;
   }
 }

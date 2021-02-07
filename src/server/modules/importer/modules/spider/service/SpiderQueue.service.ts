@@ -33,7 +33,7 @@ export class SpiderQueueService {
         entityManager,
         connection,
         Entity: SpiderQueueEntity,
-        primaryKey: 'path',
+        constraint: 'spider_queue_unique_website_path',
         data: dtos.map((dto) => new SpiderQueueEntity(dto)),
       },
     );
@@ -42,22 +42,55 @@ export class SpiderQueueService {
   /**
    * Get start spider address
    *
+   * @see {@link https://github.com/typeorm/typeorm/pull/7282}
+   *
    * @param {ID} websiteId
+   * @param {FindOneOptions<SpiderQueueEntity>} [options]
    * @returns
    * @memberof SpiderQueueService
    */
-  async getFirstNotProcessedEntity(websiteId: ID) {
-    return SpiderQueueEntity.findOne(
-      {
-        order: {
-          createdAt: 'DESC',
-        },
-        where: {
-          processed: false,
-          websiteId,
-        },
-      },
+  async popFirstNotProcessedEntity(websiteId: ID) {
+    const qb = SpiderQueueEntity.createQueryBuilder();
+    const subQuery = (
+      qb
+        .subQuery()
+        .where('sortedItem.processed = :processed and sortedItem.websiteId = :websiteId')
+        .orderBy(
+          {
+            createdAt: 'DESC',
+            priority: 'DESC',
+          },
+        )
+        .from(SpiderQueueEntity, 'sortedItem')
+        .select('id')
+        .limit(1)
+        .getQuery()
     );
+
+    const result = await (
+      qb
+        .update(SpiderQueueEntity)
+        .set(
+          {
+            processed: true,
+          },
+        )
+        .where(`id = ${subQuery}`)
+        .setParameters(
+          {
+            processed: false,
+            websiteId,
+          },
+        )
+        .returning('*')
+        .execute()
+    );
+
+    const rawItem = result?.raw?.[0];
+    if (!rawItem)
+      return null;
+
+    return new SpiderQueueEntity(rawItem);
   }
 
   /**

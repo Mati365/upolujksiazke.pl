@@ -1,7 +1,6 @@
 import {Injectable} from '@nestjs/common';
 
 import {concatUrls} from '@shared/helpers/concatUrls';
-import {extractPathname} from '@shared/helpers/urlExtract';
 
 import {RemoteWebsiteEntity} from '@server/modules/remote/entity';
 import {CrawlerUrlQueueDriver} from '../crawlers/Crawler';
@@ -25,31 +24,30 @@ export class ScrapperMetadataQueueDriver {
    * @returns {CrawlerUrlQueueDriver}
    * @memberof ScrapperMetadataQueueDriver
    */
-  createQueue({website}: QueueCreateAttrs): CrawlerUrlQueueDriver {
+  createIndexedQueue({website}: QueueCreateAttrs): CrawlerUrlQueueDriver {
     const {queueService} = this;
 
     return {
-      async push(url: string): Promise<void> {
-        await queueService.upsert(
-          [
-            new CreateSpiderQueueDto(
-              {
-                processed: false,
-                websiteId: website.id,
-                path: extractPathname(url),
-              },
-            ),
-          ],
-        );
+      async push(paths: string[]): Promise<void> {
+        const dtos = paths.map((path) => (
+          new CreateSpiderQueueDto(
+            {
+              processed: false,
+              websiteId: website.id,
+              path,
+            },
+          )
+        ));
+
+        await queueService.upsert(dtos);
       },
 
       async pop(): Promise<string> {
-        const entity = await queueService.getFirstNotProcessedEntity(website.id);
+        const entity = await queueService.popFirstNotProcessedEntity(website.id);
+        if (!entity)
+          return null;
 
-        return concatUrls(
-          website.url,
-          entity?.path,
-        );
+        return concatUrls(website.url, entity?.path);
       },
     };
   }

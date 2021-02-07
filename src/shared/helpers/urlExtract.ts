@@ -16,3 +16,10 @@ export function extractPathname(url: string) {
 
   return R.tail(new URL(url).pathname);
 }
+
+export function extractOrigin(url: string) {
+  if (!url)
+    return null;
+
+  return new URL(url).origin;
+}

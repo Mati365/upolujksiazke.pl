@@ -27,7 +27,7 @@ export enum BookBindingKind {
 export enum BookType {
   EBOOK = 1,
   PAPER = 2,
-  AUDIO_BOOK = 3,
+  AUDIOBOOK = 3,
 }
 
 @Entity(
@@ -68,6 +68,9 @@ export class BookReleaseEntity extends DatedRecordEntity {
 
   @Column('float', {nullable: true})
   weight: number;
+
+  @Column('int', {nullable: true})
+  recordingLength: number;
 
   @Column(
     'decimal',

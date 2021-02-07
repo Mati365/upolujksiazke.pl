@@ -138,6 +138,7 @@ export class PublioBookParser
         totalPages: +basicProps['format']?.[0]?.match(/w wersji papierowej (\d+) stron/)?.[1] || null,
         protection: PROTECTION_TRANSLATION_MAPPINGS[basicProps['zabezpieczenie']?.[0].toLowerCase()],
         translator: PublioBookParser.extractTitlesRow($, $(basicProps['tłumacz']?.[1])),
+        recordingLength: PublioBookParser.extractRecordingLength(basicProps['czas nagrania']?.[0]),
         publishDate: (
           basicProps['rok pierwszej publikacji książkowej']?.[0]
             ?? basicProps['miejsce i rok wydania']?.[0].match(/(\d{4})/)?.[1]
@@ -206,6 +207,34 @@ export class PublioBookParser
     );
   }
   /* eslint-enable @typescript-eslint/dot-notation */
+
+  /**
+   * Converts audiobook length to number
+   *
+   * @example
+   *  1:2:1 => 3721
+   *
+   * @static
+   * @param {string} length
+   * @returns {number}
+   * @memberof PublioBookParser
+   */
+  static extractRecordingLength(length: string): number {
+    if (!length)
+      return null;
+
+    return (
+      length
+        .split(':')
+        .map((num) => Number.parseInt(num, 10))
+        .reduce(
+          (acc, val, index, array) => (
+            acc + (val * (60 ** (array.length - index - 1)))
+          ),
+          0,
+        )
+    );
+  }
 
   /**
    * Extract title and volume name

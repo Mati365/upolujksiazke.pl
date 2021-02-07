@@ -16,6 +16,10 @@ export class CreateSpiderQueueDto {
   @IsBoolean()
   readonly processed: boolean;
 
+  @IsDefined()
+  @IsNumber()
+  readonly priority: number;
+
   constructor(partial: Partial<CreateSpiderQueueDto>) {
     Object.assign(this, partial);
   }

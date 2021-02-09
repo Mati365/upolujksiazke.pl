@@ -8,7 +8,7 @@ import {
 
 import {
   CrawlerLink,
-  SpiderLinksMapperAttrs,
+  CrawlerLinksMapperAttrs,
 } from '@server/modules/importer/modules/spider/crawlers';
 
 export class PublioSpider extends WebsiteScrapperSpider {
@@ -64,7 +64,7 @@ export class PublioSpider extends WebsiteScrapperSpider {
    *
    * @inheritdoc
    */
-  postMapLinks({link, links, parseResult}: SpiderLinksMapperAttrs): CrawlerLink[] {
+  postMapLinks({link, links, parseResult}: CrawlerLinksMapperAttrs): CrawlerLink[] {
     if (!link.priority)
       return null;
 

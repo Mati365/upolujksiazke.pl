@@ -50,7 +50,7 @@ export type ImageFetcherAttrs = {
 
 @Injectable()
 export class ImageAttachmentService {
-  private logger = new Logger(ImageAttachmentService.name);
+  private readonly logger = new Logger(ImageAttachmentService.name);
 
   constructor(
     @Inject(ATTACHMENTS_OPTIONS) private readonly options: AttachmentServiceOptions,
@@ -237,7 +237,7 @@ export class ImageAttachmentService {
    * @memberof ImageAttachmentService
    */
   @EnterTmpFolderScope(
-    function tmpFolderConfig() {
+    function tmpFolderConfig(this: ImageAttachmentService) {
       return {
         dirService: this.tmpDirService,
         attrs: {

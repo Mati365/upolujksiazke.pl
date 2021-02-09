@@ -4,6 +4,7 @@ import {from} from 'rxjs';
 import chalk from 'chalk';
 
 import {InterceptMethod} from '@shared/helpers/decorators/InterceptMethod';
+import {TmpDirService} from '@server/modules/tmp-dir/TmpDir.service';
 import {
   WebsiteInfoScrapperService,
   ScrapperService,
@@ -26,6 +27,7 @@ export class SpiderService {
   constructor(
     private readonly scrapperService: ScrapperService,
     private readonly websiteInfoService: WebsiteInfoScrapperService,
+    private readonly tmpDirService: TmpDirService,
     private readonly dbQueueDriver: ScrapperMetadataQueueDriver,
   ) {}
 
@@ -69,11 +71,13 @@ export class SpiderService {
 
     const {
       websiteInfoService,
+      tmpDirService,
       dbQueueDriver,
     } = this;
 
     const observable = await group.spider.run$(
       {
+        tmpDirService,
         websiteInfoService,
         dbQueueDriver,
       },

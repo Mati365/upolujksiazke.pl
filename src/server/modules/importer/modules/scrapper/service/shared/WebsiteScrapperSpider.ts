@@ -1,6 +1,7 @@
+import {TmpDirService} from '@server/modules/tmp-dir/TmpDir.service';
 import {
-  CrawlerLink, SpiderCrawler,
-  SpiderCrawlerConfig, SpiderLinksMapperAttrs,
+  CrawlerConfig, CrawlerLink, SpiderCrawler,
+  SitemapCrawler, CrawlerLinksMapperAttrs, Crawler,
 } from '../../../spider/crawlers';
 
 import {ScrapperMetadataQueueDriver} from '../../../spider/drivers/DbQueue.driver';
@@ -26,9 +27,10 @@ export interface URLPathMatcher {
 }
 
 export type WebsiteSpiderScrapperRunConfig = {
-  crawlerConfig?: Partial<SpiderCrawlerConfig>,
   websiteInfoService: WebsiteInfoScrapperService,
+  tmpDirService: TmpDirService,
   dbQueueDriver: ScrapperMetadataQueueDriver,
+  crawlerConfig?: Partial<CrawlerConfig>,
 };
 
 /**
@@ -70,11 +72,11 @@ export abstract class WebsiteScrapperSpider extends ScrapperGroupChild implement
    * Maps links array, it is not used here but maybe in other websites so
    * It is used primarly for bad written websites when we need to generate some links
    *
-   * @param {SpiderLinksMapperAttrs} {links}
+   * @param {CrawlerLinksMapperAttrs} {links}
    * @returns {CrawlerLink[]}
    * @memberof WebsiteScrapperSpider
    */
-  postMapLinks({links}: SpiderLinksMapperAttrs): CrawlerLink[] {
+  postMapLinks({links}: CrawlerLinksMapperAttrs): CrawlerLink[] {
     return links;
   }
 
@@ -87,37 +89,50 @@ export abstract class WebsiteScrapperSpider extends ScrapperGroupChild implement
    */
   async run$(
     {
-      crawlerConfig,
+      tmpDirService,
       websiteInfoService,
+      crawlerConfig,
       dbQueueDriver,
     }: WebsiteSpiderScrapperRunConfig,
   ) {
     const {group} = this;
-    const website = await websiteInfoService.findOrCreateWebsiteEntity(group.websiteInfoScrapper);
-    const crawler = new SpiderCrawler(
+    const queueDriver = dbQueueDriver.createWebsiteIndexedQueue(
       {
-        storeOnlyPaths: true,
-        shouldBe: {
-          analyzed: ({queueItem}) => queueItem.priority > 0,
-        },
-        queueDriver: dbQueueDriver.createIndexedQueue(
-          {
-            website,
-          },
-        ),
-        postMapLinks: this.postMapLinks.bind(this),
-        preMapLink: (path) => new CrawlerLink(
-          path,
-          this.getPathPriority(path),
-        ),
-        ...crawlerConfig,
+        website: await websiteInfoService.findOrCreateWebsiteEntity(group.websiteInfoScrapper),
       },
     );
 
-    return crawler.run$(
+    const sharedConfig: CrawlerConfig = {
+      queueDriver,
+      storeOnlyPaths: true,
+      shouldBe: {
+        analyzed: ({queueItem}) => queueItem.priority > 0,
+      },
+      postMapLinks: this.postMapLinks.bind(this),
+      preMapLink: (path) => new CrawlerLink(
+        path,
+        this.getPathPriority(path),
+      ),
+      ...crawlerConfig,
+    };
+
+    let crawler: Crawler = await SitemapCrawler.createIfSitemapPresent(
+      queueDriver.website.url,
       {
-        defaultUrl: website.url,
+        tmpDirService,
+        ...sharedConfig,
       },
     );
+
+    if (!crawler) {
+      crawler = new SpiderCrawler(
+        {
+          ...sharedConfig,
+          defaultUrl: queueDriver.website.url,
+        },
+      );
+    }
+
+    return crawler.run$();
   }
 }

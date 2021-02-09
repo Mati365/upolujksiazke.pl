@@ -8,8 +8,7 @@ import {isAbsoluteURL} from '@shared/helpers/concatUrls';
 import {asyncIteratorToObservable} from '@server/common/helpers/rx/asyncIteratorToObservable';
 import {getArrayWithLengthLimit} from '@shared/helpers/getArrayWithLengthLimit';
 
-import {CanBePromise} from '@shared/types';
-import {AsyncURLParseResult, parseAsyncURLIfOK} from '@server/common/helpers/fetchAsyncHTML';
+import {parseAsyncURLIfOK} from '@server/common/helpers/fetchAsyncHTML';
 import {concatWithAnchor} from '../helpers/concatWithAnchor';
 
 import {
@@ -17,28 +16,11 @@ import {
   CrawlerConfig,
   CrawlerLink,
   CrawlerPageResult,
-  CrawlerStartAttrs,
 } from './Crawler';
 
-export type SpiderLinksMapperAttrs = {
-  link: CrawlerLink,
-  links: CrawlerLink[],
-  parseResult: AsyncURLParseResult,
-};
-
-type SpiderCrawlerTickResult = {
-  queueItem: CrawlerLink,
-  collectorResult: CrawlerPageResult,
-};
-
 export type SpiderCrawlerConfig = CrawlerConfig & {
-  preMapLink?(url: string): CrawlerLink,
-  postMapLinks?(attrs: SpiderLinksMapperAttrs): (CanBePromise<CrawlerLink[]> | void);
   localHistorySize?: number,
-  shouldBe: {
-    collected?(url: string): boolean,
-    analyzed?(tickResult: SpiderCrawlerTickResult): boolean,
-  },
+  defaultUrl: string,
 };
 
 /**
@@ -71,7 +53,7 @@ export class SpiderCrawler extends Crawler<SpiderCrawlerConfig> {
   /**
    * @inheritdoc
    */
-  run$(attrs: CrawlerStartAttrs) {
+  run$() {
     const {
       config: {
         concurrentRequests,
@@ -81,7 +63,7 @@ export class SpiderCrawler extends Crawler<SpiderCrawlerConfig> {
 
     this.stackCache = getArrayWithLengthLimit<string>(localHistorySize);
 
-    const $stream = from(this.tick(attrs));
+    const $stream = from(this.tick());
     return $stream.pipe(
       mergeMap(() => merge(...R.times(
         () => this.fork(),
@@ -129,18 +111,18 @@ export class SpiderCrawler extends Crawler<SpiderCrawlerConfig> {
   /**
    * Picks first item and processes it
    *
-   * @param {CrawlerStartAttrs} [attrs]
    * @returns
    * @memberof SpiderCrawler
    */
-  async tick(attrs?: CrawlerStartAttrs) {
+  async tick() {
     const {
       config: {
+        defaultUrl,
         queueDriver,
       },
     } = this;
 
-    const queueItem = (await queueDriver.pop()) ?? (attrs && new CrawlerLink(attrs.defaultUrl, 0));
+    const queueItem = (await queueDriver.pop()) ?? new CrawlerLink(defaultUrl, 0);
     if (!queueItem)
       return null;
 

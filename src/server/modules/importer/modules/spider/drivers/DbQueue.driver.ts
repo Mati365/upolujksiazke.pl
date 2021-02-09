@@ -11,6 +11,10 @@ type QueueCreateAttrs = {
   website: RemoteWebsiteEntity,
 };
 
+export interface WebsiteQueueDriver extends CrawlerUrlQueueDriver {
+  website: RemoteWebsiteEntity;
+}
+
 @Injectable()
 export class ScrapperMetadataQueueDriver {
   constructor(
@@ -21,13 +25,15 @@ export class ScrapperMetadataQueueDriver {
    * Creates object that implements crawler queue interface
    *
    * @param {QueueCreateAttrs} attrs
-   * @returns {CrawlerUrlQueueDriver}
+   * @returns {WebsiteQueueDriver}
    * @memberof ScrapperMetadataQueueDriver
    */
-  createIndexedQueue({website}: QueueCreateAttrs): CrawlerUrlQueueDriver {
+  createWebsiteIndexedQueue({website}: QueueCreateAttrs): WebsiteQueueDriver {
     const {queueService} = this;
 
     return {
+      website,
+
       async push(paths: CrawlerLink[]): Promise<void> {
         const dtos = paths.map(({url, priority}) => (
           new CreateSpiderQueueDto(

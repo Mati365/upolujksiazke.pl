@@ -64,7 +64,7 @@ export class PublioSpider extends WebsiteScrapperSpider {
    *
    * @inheritdoc
    */
-  postMapLinks({link, links, parseResult}: CrawlerLinksMapperAttrs): CrawlerLink[] {
+  extractFollowLinks({link, links, parseResult}: CrawlerLinksMapperAttrs): CrawlerLink[] {
     if (!link.priority)
       return null;
 

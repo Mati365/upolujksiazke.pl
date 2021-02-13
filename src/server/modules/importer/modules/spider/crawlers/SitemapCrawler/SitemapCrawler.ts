@@ -1,17 +1,27 @@
 import {Logger} from '@nestjs/common';
 import chalk from 'chalk';
 import * as R from 'ramda';
+import {of} from 'rxjs';
+import {
+  map, mergeMap, delay,
+  concatMap, bufferCount, mergeAll,
+} from 'rxjs/operators';
 
 import {concatUrls} from '@shared/helpers/concatUrls';
+import {parseAsyncURLIfOK} from '@server/common/helpers/fetchAsyncHTML';
 
 import {TmpDirService} from '@server/modules/tmp-dir/TmpDir.service';
-import {EnterTmpFolderScope} from '@server/modules/tmp-dir';
+import {EnterTmpFolderScope, TmpFolderScopeAttrs} from '@server/modules/tmp-dir';
 import {
   Crawler,
   CrawlerConfig,
+  CrawlerPageResult,
 } from '../Crawler';
 
+import {fetchAndExtractSitemap} from './utils/fetchAndExtractSitemap';
+
 export type SitemapCrawlerConfig = CrawlerConfig & {
+  sitemapFetcherConcurrency?: number,
   sitemaps: string[],
   tmpDirService: TmpDirService,
 };
@@ -27,6 +37,16 @@ export type SitemapCrawlerConfig = CrawlerConfig & {
 export class SitemapCrawler extends Crawler<SitemapCrawlerConfig> {
   static readonly logger = new Logger(SitemapCrawler.name);
 
+  constructor(config: SitemapCrawlerConfig) {
+    super(
+      {
+        concurrency: 3,
+        sitemapFetcherConcurrency: 5,
+        ...config,
+      },
+    );
+  }
+
   /**
    * @inheritdoc
    */
@@ -35,17 +55,66 @@ export class SitemapCrawler extends Crawler<SitemapCrawlerConfig> {
       return {
         dirService: this.config.tmpDirService,
         attrs: {
-          deleteOnExit: true,
+          deleteOnExit: false,
         },
       };
     },
   )
-  async run$() {
-    const {config: {sitemaps}} = this;
+  async run$({tmpFolderPath}: TmpFolderScopeAttrs) {
+    const {
+      config: {
+        queueDriver,
+        concurrency,
+        sitemapFetcherConcurrency,
+        sitemaps,
+        delay: delayTime,
+        preMapLink,
+      },
+    } = this;
 
-    console.info(sitemaps);
-    throw new Error('Method not implemented.');
-    return null;
+    const $stream = await fetchAndExtractSitemap(
+      {
+        url: sitemaps[0],
+        concurrency: sitemapFetcherConcurrency,
+        outputPath: tmpFolderPath,
+      },
+    );
+
+    /**
+     * @see
+     *  Generates overflow! xml-parser must wait!
+     */
+    return (
+      $stream
+        .pipe(
+          map(
+            (item) => {
+              const mapped = preMapLink(item);
+              mapped.processed = true;
+              return mapped;
+            },
+          ),
+          bufferCount(30),
+          mergeMap(
+            // todo: add support for storeOnlyPaths
+            (links) => queueDriver.push(links).then(() => links),
+          ),
+          mergeAll(),
+          mergeMap(
+            ({url}) => (
+              of(parseAsyncURLIfOK(url))
+                .pipe(delay(delayTime))
+            ),
+            concurrency,
+          ),
+          concatMap((x) => x),
+          map(
+            (parseResult): CrawlerPageResult => ({
+              parseResult,
+            }),
+          ),
+        )
+    );
   }
 
   /**

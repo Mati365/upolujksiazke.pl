@@ -47,7 +47,6 @@ import {TmpDirModule} from './tmp-dir';
       TmpDirModule.register(
         {
           rootPath: `tmp/bookmeter-instance-${getClusterAppInstance()}`,
-          preserveContentOnExit: true,
         },
       ),
       FrontModule,

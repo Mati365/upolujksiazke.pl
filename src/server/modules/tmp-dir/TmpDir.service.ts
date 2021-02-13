@@ -1,6 +1,8 @@
 import path from 'path';
 import mkdirp from 'mkdirp';
+import {Observable} from 'rxjs';
 import {Inject, Injectable} from '@nestjs/common';
+
 import {
   removeAndCreateDirAsync,
   removeAndCreateDirSync,
@@ -18,7 +20,16 @@ export type TmpDirServiceOptions = {
   childUuidFn?: () => string,
 };
 
-export type TmpDirScopeExecutor<T = any> = (attrs: {tmpFolderPath: string}) => CanBePromise<T>;
+export type TmpDirObservable<T extends Observable<any>> = T & {
+  deleteTmpScope(): Promise<void>,
+};
+
+export type TmpFolderScopeAttrs = {
+  tmpFolderPath: string,
+  deleteScope(): Promise<void>,
+};
+
+export type TmpDirScopeExecutor<T = any> = (attrs: TmpFolderScopeAttrs) => CanBePromise<T>;
 
 export type TmpDirScopeEnterAttrs<DeleteOnExit = boolean> = {
   withUUID?: boolean,
@@ -26,6 +37,24 @@ export type TmpDirScopeEnterAttrs<DeleteOnExit = boolean> = {
   deleteOnExit: DeleteOnExit,
 };
 
+/**
+ * Checks if returned subscriber has deleteScope
+ *
+ * @export
+ * @template T
+ * @param {T} obj
+ * @returns {obj is TmpDirObservable<T>}
+ */
+export function isTmpScopeObservable<T extends Observable<any>>(obj: T): obj is TmpDirObservable<T> {
+  return !!obj && 'deleteTmpScope' in obj;
+}
+
+/**
+ * Service that creates Tmp folder for async functions
+ *
+ * @export
+ * @class TmpDirService
+ */
 @Injectable()
 export class TmpDirService {
   constructor(
@@ -100,12 +129,16 @@ export class TmpDirService {
     const result = fn(
       {
         tmpFolderPath: fullPath,
+        deleteScope,
       },
     );
 
     if (deleteOnExit) {
-      await result;
-      await deleteScope();
+      const promiseResult = await result;
+      if (promiseResult && promiseResult instanceof Observable)
+        (promiseResult as TmpDirObservable<any>).deleteScope = deleteScope;
+      else
+        await deleteScope();
     }
 
     return result;

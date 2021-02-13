@@ -7,10 +7,11 @@ import {extractHostname, extractPathname} from '@shared/helpers/urlExtract';
 import {isAbsoluteURL} from '@shared/helpers/concatUrls';
 import {asyncIteratorToObservable} from '@server/common/helpers/rx/asyncIteratorToObservable';
 import {getArrayWithLengthLimit} from '@shared/helpers/getArrayWithLengthLimit';
+import {AsyncURLParseResult, parseAsyncURLIfOK} from '@server/common/helpers/fetchAsyncHTML';
 
-import {parseAsyncURLIfOK} from '@server/common/helpers/fetchAsyncHTML';
+import {CanBePromise} from '@shared/types';
+
 import {concatWithAnchor} from '../helpers/concatWithAnchor';
-
 import {
   Crawler,
   CrawlerConfig,
@@ -18,9 +19,16 @@ import {
   CrawlerPageResult,
 } from './Crawler';
 
+export type CrawlerLinksMapperAttrs = {
+  link: CrawlerLink,
+  links: CrawlerLink[],
+  parseResult?: AsyncURLParseResult,
+};
+
 export type SpiderCrawlerConfig = CrawlerConfig & {
   localHistorySize?: number,
   defaultUrl: string,
+  extractFollowLinks?(attrs: CrawlerLinksMapperAttrs): (CanBePromise<CrawlerLink[]> | void);
 };
 
 /**
@@ -36,10 +44,9 @@ export class SpiderCrawler extends Crawler<SpiderCrawlerConfig> {
   constructor({shouldBe, ...config}: SpiderCrawlerConfig) {
     super(
       {
+        concurrency: 3,
         delay: 5000,
-        concurrentRequests: 1,
         localHistorySize: 5000,
-        preMapLink: (link: string) => new CrawlerLink(link, 0),
         shouldBe: {
           collected: R.T,
           analyzed: R.T,
@@ -56,7 +63,7 @@ export class SpiderCrawler extends Crawler<SpiderCrawlerConfig> {
   run$() {
     const {
       config: {
-        concurrentRequests,
+        concurrency,
         localHistorySize,
       },
     } = this;
@@ -67,7 +74,7 @@ export class SpiderCrawler extends Crawler<SpiderCrawlerConfig> {
     return $stream.pipe(
       mergeMap(() => merge(...R.times(
         () => this.fork(),
-        concurrentRequests,
+        concurrency,
       ))),
     );
   }
@@ -150,7 +157,7 @@ export class SpiderCrawler extends Crawler<SpiderCrawlerConfig> {
       stackCache,
       config: {
         preMapLink,
-        postMapLinks,
+        extractFollowLinks,
         storeOnlyPaths,
         shouldBe,
       },
@@ -202,8 +209,8 @@ export class SpiderCrawler extends Crawler<SpiderCrawlerConfig> {
       $('a').toArray(),
     );
 
-    if (postMapLinks) {
-      followLinks = (<CrawlerLink[]> await postMapLinks(
+    if (extractFollowLinks) {
+      followLinks = (<CrawlerLink[]> await extractFollowLinks(
         {
           links: followLinks,
           link,

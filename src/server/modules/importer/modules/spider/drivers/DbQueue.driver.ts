@@ -35,11 +35,11 @@ export class ScrapperMetadataQueueDriver {
       website,
 
       async push(paths: CrawlerLink[]): Promise<void> {
-        const dtos = paths.map(({url, priority}) => (
+        const dtos = paths.map(({url, processed, priority}) => (
           new CreateSpiderQueueDto(
             {
               priority,
-              processed: false,
+              processed,
               path: url,
               websiteId: website.id,
             },

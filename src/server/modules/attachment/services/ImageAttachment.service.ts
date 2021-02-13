@@ -1,6 +1,5 @@
 import {Inject, Injectable, Logger} from '@nestjs/common';
 import {EntityManager} from 'typeorm';
-import chalk from 'chalk';
 import {convert, resize} from 'easyimage';
 import * as path from 'path';
 import * as mime from 'mime-types';
@@ -15,7 +14,6 @@ import {
 } from '@server/common/helpers';
 
 import {CanBeArray, ID, Size} from '@shared/types';
-import {InterceptMethod} from '@shared/helpers/decorators/InterceptMethod';
 import {
   EnterTmpFolderScope,
   TmpDirService,
@@ -246,21 +244,6 @@ export class ImageAttachmentService {
       };
     },
   )
-  @InterceptMethod(
-    function loggerWrapper(
-      this: ImageAttachmentService,
-      {dto}: ImageFetcherAttrs,
-      _: EntityManager,
-      {
-        tmpFolderPath,
-      }: TmpFolderScopeAttrs,
-    ) {
-      const {logger} = this;
-
-      if (dto.originalUrl)
-        logger.log(`Fetching ${chalk.bold(dto.originalUrl)} to ${chalk.bold(tmpFolderPath)} tmp folder!`);
-    },
-  )
   async fetchAndCreateScaled(
     {
       extension = 'webp',
@@ -287,7 +270,7 @@ export class ImageAttachmentService {
     const resultFile = await downloadFile(
       {
         url: originalUrl,
-        outputPath: path.join(tmpFolderPath, `source${path.extname(originalUrl)}`),
+        outputFile: path.join(tmpFolderPath, `source${path.extname(originalUrl)}`),
         headerValidatorFn: ({size: {kilobytes}, type}) => (
           kilobytes < 2_000 && isImageMimeType(type)
         ),
@@ -299,7 +282,7 @@ export class ImageAttachmentService {
 
     const convertResult = await convert(
       {
-        src: resultFile.outputPath,
+        src: resultFile.outputFile,
         dst: path.join(tmpFolderPath, `dest.${extension}`),
       },
     );

@@ -4,7 +4,7 @@ import {from} from 'rxjs';
 import chalk from 'chalk';
 
 import {InterceptMethod} from '@shared/helpers/decorators/InterceptMethod';
-import {TmpDirService} from '@server/modules/tmp-dir/TmpDir.service';
+import {isTmpScopeObservable, TmpDirService} from '@server/modules/tmp-dir/TmpDir.service';
 import {
   WebsiteInfoScrapperService,
   ScrapperService,
@@ -88,6 +88,9 @@ export class SpiderService {
         .pipe(mergeMap((data) => from(this.parseScrappedData(data) || [])))
         .toPromise()
     );
+
+    if (isTmpScopeObservable(observable))
+      await observable.deleteTmpScope();
   }
 
   /**

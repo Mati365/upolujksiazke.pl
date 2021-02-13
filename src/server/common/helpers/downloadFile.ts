@@ -1,6 +1,8 @@
 import * as fs from 'fs';
 import * as util from 'util';
+import chalk from 'chalk';
 import {pipeline} from 'stream';
+import {Logger} from '@nestjs/common';
 
 import {convertBytesToKilobytes} from '@shared/helpers/convert';
 
@@ -17,7 +19,7 @@ export type RemoteFileStats = {
 export type FileDownloaderAttrs = {
   timeout?: number,
   url: string,
-  outputPath: string,
+  outputFile: string,
   headerValidatorFn?(stats: RemoteFileStats): boolean,
 };
 
@@ -58,7 +60,7 @@ export async function downloadFile(
   {
     timeout = 4000,
     url,
-    outputPath,
+    outputFile,
     headerValidatorFn,
   }: FileDownloaderAttrs,
 ) {
@@ -67,14 +69,16 @@ export async function downloadFile(
       return undefined;
   }
 
+  const logger = new Logger('downloadFile');
   const controller = new AbortController;
   const timeoutTimer = setTimeout(
-    () => {
-      controller.abort();
-    },
+    () => controller.abort(),
     timeout,
   );
 
+  logger.warn(`Fetching file from ${chalk.bold(url)} to ${chalk.bold(outputFile)}!`);
+
+  const startDate = Date.now();
   const res = await fetch(
     url,
     {
@@ -82,16 +86,20 @@ export async function downloadFile(
     },
   );
 
-  if (!res.ok)
+  if (!res.ok) {
+    clearTimeout(timeoutTimer);
     throw new Error(`unexpected response ${res.statusText}`);
+  }
 
   await streamPipeline(
     res.body as any,
-    fs.createWriteStream(outputPath),
+    fs.createWriteStream(outputFile),
   );
 
+  logger.log(`File from ${chalk.bold(url)} fetched in ${((Date.now() - startDate) / 1000).toFixed(2)}s!`);
   clearTimeout(timeoutTimer);
+
   return {
-    outputPath,
+    outputFile,
   };
 }

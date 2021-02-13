@@ -4,10 +4,6 @@ import {
   TmpDirService,
 } from '../TmpDir.service';
 
-export type TmpFolderScopeAttrs = {
-  tmpFolderPath: string,
-};
-
 type EnterTmpFolderScopeConfig = {
   dirService: TmpDirService,
   attrs: TmpDirScopeEnterAttrs<any>,
@@ -32,12 +28,7 @@ export function EnterTmpFolderScope(configFn: () => EnterTmpFolderScopeConfig) {
 
       return dirService.enterScope(
         attrs,
-        ({tmpFolderPath}) => wrappedFn(
-          ...args,
-          {
-            tmpFolderPath,
-          } as TmpFolderScopeAttrs,
-        ),
+        (scopeAttrs) => wrappedFn(...args, scopeAttrs),
       );
     };
   };

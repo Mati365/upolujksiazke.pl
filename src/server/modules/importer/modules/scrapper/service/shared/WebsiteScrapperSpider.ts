@@ -76,7 +76,7 @@ export abstract class WebsiteScrapperSpider extends ScrapperGroupChild implement
    * @returns {CrawlerLink[]}
    * @memberof WebsiteScrapperSpider
    */
-  postMapLinks({links}: CrawlerLinksMapperAttrs): CrawlerLink[] {
+  extractFollowLinks({links}: CrawlerLinksMapperAttrs): CrawlerLink[] {
     return links;
   }
 
@@ -104,11 +104,11 @@ export abstract class WebsiteScrapperSpider extends ScrapperGroupChild implement
 
     const sharedConfig: CrawlerConfig = {
       queueDriver,
+      delay: 5000,
       storeOnlyPaths: true,
       shouldBe: {
         analyzed: ({queueItem}) => queueItem.priority > 0,
       },
-      postMapLinks: this.postMapLinks.bind(this),
       preMapLink: (path) => new CrawlerLink(
         path,
         this.getPathPriority(path),
@@ -127,8 +127,9 @@ export abstract class WebsiteScrapperSpider extends ScrapperGroupChild implement
     if (!crawler) {
       crawler = new SpiderCrawler(
         {
-          ...sharedConfig,
           defaultUrl: queueDriver.website.url,
+          extractFollowLinks: this.extractFollowLinks.bind(this),
+          ...sharedConfig,
         },
       );
     }

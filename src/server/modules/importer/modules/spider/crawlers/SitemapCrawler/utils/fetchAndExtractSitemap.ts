@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import {mergeMap} from 'rxjs/operators';
+import {concatMap} from 'rxjs/operators';
 import {Observable} from 'rxjs';
 import XmlStream from 'xml-stream';
 
@@ -15,7 +15,8 @@ export async function fetchAndExtractSitemap(attrs: SitemapFilesStreamAttrs) {
   const stream$ = await getSitemapFilesStream(attrs);
 
   return stream$.pipe(
-    mergeMap((filepath) => new Observable<string>((subscriber) => {
+    // do not use mergeMap here
+    concatMap((filepath) => new Observable<string>((subscriber) => {
       const stream = fs.createReadStream(filepath);
       const xml = new XmlStream(stream);
 
@@ -26,7 +27,7 @@ export async function fetchAndExtractSitemap(attrs: SitemapFilesStreamAttrs) {
         subscriber.next(item.$text);
       });
 
-      xml.on('finish', () => {
+      xml.on('end', () => {
         subscriber.complete();
       });
 

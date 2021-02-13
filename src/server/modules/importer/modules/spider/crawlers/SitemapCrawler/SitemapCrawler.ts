@@ -1,21 +1,18 @@
 import {Logger} from '@nestjs/common';
 import chalk from 'chalk';
 import * as R from 'ramda';
-import {of} from 'rxjs';
-import {
-  map, mergeMap, delay,
-  concatMap, bufferCount, mergeAll,
-} from 'rxjs/operators';
+import {map, mergeMap, bufferCount} from 'rxjs/operators';
 
 import {concatUrls} from '@shared/helpers/concatUrls';
+import {extractPathname} from '@shared/helpers/urlExtract';
 import {parseAsyncURLIfOK} from '@server/common/helpers/fetchAsyncHTML';
 
 import {TmpDirService} from '@server/modules/tmp-dir/TmpDir.service';
 import {EnterTmpFolderScope, TmpFolderScopeAttrs} from '@server/modules/tmp-dir';
 import {
   Crawler,
+  CrawlerTickResult,
   CrawlerConfig,
-  CrawlerPageResult,
 } from '../Crawler';
 
 import {fetchAndExtractSitemap} from './utils/fetchAndExtractSitemap';
@@ -50,6 +47,39 @@ export class SitemapCrawler extends Crawler<SitemapCrawlerConfig> {
   /**
    * @inheritdoc
    */
+  async run$() {
+    await this.extractLinksQueueToDB();
+    return super.run$();
+  }
+
+  /**
+   * @inheritdoc
+   */
+  async tick(): Promise<CrawlerTickResult> {
+    const {
+      config: {
+        queueDriver,
+      },
+    } = this;
+
+    const queueItem = await queueDriver.pop();
+    if (!queueItem)
+      return null;
+
+    return {
+      queueItem,
+      collectorResult: {
+        parseResult: await parseAsyncURLIfOK(queueItem.url),
+      },
+    };
+  }
+
+  /**
+   * Fetches sitemap and put them into DB
+   *
+   * @param {TmpFolderScopeAttrs} [{tmpFolderPath}=null]
+   * @memberof SitemapCrawler
+   */
   @EnterTmpFolderScope(
     function tmpFolderConfig(this: SitemapCrawler) {
       return {
@@ -60,60 +90,49 @@ export class SitemapCrawler extends Crawler<SitemapCrawlerConfig> {
       };
     },
   )
-  async run$({tmpFolderPath}: TmpFolderScopeAttrs) {
+  private async extractLinksQueueToDB({tmpFolderPath}: TmpFolderScopeAttrs = null) {
     const {
       config: {
         queueDriver,
-        concurrency,
+        storeOnlyPaths,
         sitemapFetcherConcurrency,
         sitemaps,
-        delay: delayTime,
         preMapLink,
       },
     } = this;
 
     const $stream = await fetchAndExtractSitemap(
       {
-        url: sitemaps[0],
+        url: sitemaps[0], // todo: add support for multiple sitemaps
         concurrency: sitemapFetcherConcurrency,
         outputPath: tmpFolderPath,
       },
     );
 
-    /**
-     * @see
-     *  Generates overflow! xml-parser must wait!
-     */
-    return (
+    // load into database
+    await (
       $stream
         .pipe(
           map(
             (item) => {
               const mapped = preMapLink(item);
-              mapped.processed = true;
+              if (storeOnlyPaths)
+                mapped.url = extractPathname(mapped.url);
+
               return mapped;
             },
           ),
-          bufferCount(30),
+          bufferCount(50),
           mergeMap(
-            // todo: add support for storeOnlyPaths
-            (links) => queueDriver.push(links).then(() => links),
-          ),
-          mergeAll(),
-          mergeMap(
-            ({url}) => (
-              of(parseAsyncURLIfOK(url))
-                .pipe(delay(delayTime))
+            (links) => (
+              queueDriver
+                .push(R.uniqBy(R.prop('url'), links))
+                .then(() => links)
             ),
-            concurrency,
-          ),
-          concatMap((x) => x),
-          map(
-            (parseResult): CrawlerPageResult => ({
-              parseResult,
-            }),
+            5,
           ),
         )
+        .toPromise()
     );
   }
 

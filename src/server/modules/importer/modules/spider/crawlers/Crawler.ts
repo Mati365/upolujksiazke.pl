@@ -1,6 +1,10 @@
-import {Observable} from 'rxjs';
+import {from, merge} from 'rxjs';
+import {mergeMap} from 'rxjs/operators';
+import * as R from 'ramda';
 
-import {CanBePromise} from '@shared/types';
+import {asyncIteratorToObservable} from '@server/common/helpers/rx/asyncIteratorToObservable';
+import {timeout} from '@shared/helpers';
+
 import {AsyncURLParseResult} from '@server/common/helpers/fetchAsyncHTML';
 
 export class CrawlerLink {
@@ -38,20 +42,84 @@ export type CrawlerConfig = {
   },
 };
 
-export abstract class Crawler<
-  T extends CrawlerConfig = CrawlerConfig,
-  A = {},
-> {
+export abstract class Crawler<T extends CrawlerConfig = CrawlerConfig> {
   static readonly DEFAULT_CONFIG: Partial<CrawlerConfig> = {
     concurrency: 1,
     preMapLink: (link: string) => new CrawlerLink(link, 0),
   };
 
-  constructor(
-    protected readonly config: T,
-  ) {
-    Object.assign(config, Crawler.DEFAULT_CONFIG);
+  protected readonly config: T;
+
+  constructor(config: T) {
+    this.config = {
+      ...Crawler.DEFAULT_CONFIG,
+      ...config,
+    };
   }
 
-  abstract run$(attrs?: A): CanBePromise<Observable<CrawlerPageResult>>;
+  /**
+   * Runs crawler, parallel pops link from stack and processes it
+   *
+   * @returns
+   * @memberof Crawler
+   */
+  async run$() {
+    const {
+      config: {
+        concurrency,
+      },
+    } = this;
+
+    const $stream = from(this.tick());
+    return $stream.pipe(
+      mergeMap(
+        () => merge(...R.times(
+          () => this.fork(),
+          concurrency,
+        )),
+      ),
+    );
+  }
+
+  /**
+   * Run new crawler stream
+   *
+   * @returns
+   * @memberof SpiderCrawler
+   */
+  fork() {
+    const self = this;
+    const {
+      config: {
+        delay,
+        shouldBe,
+      },
+    } = this;
+
+    const iterator = async function* generator() {
+      for (;;) {
+        const tickResult = await self.tick();
+        if (!tickResult)
+          break;
+
+        const {collectorResult} = tickResult;
+        if (shouldBe.analyzed(tickResult))
+          yield collectorResult;
+
+        if (delay)
+          await timeout(delay);
+      }
+    };
+
+    return asyncIteratorToObservable(iterator());
+  }
+
+  /**
+   * Pops link from stack
+   *
+   * @abstract
+   * @returns {Promise<CrawlerTickResult>}
+   * @memberof Crawler
+   */
+  abstract tick(): Promise<CrawlerTickResult>;
 }

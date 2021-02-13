@@ -1,11 +1,7 @@
-import {merge, from} from 'rxjs';
-import {mergeMap} from 'rxjs/operators';
 import * as R from 'ramda';
 
-import {timeout} from '@shared/helpers/async/timeout';
 import {extractHostname, extractPathname} from '@shared/helpers/urlExtract';
 import {isAbsoluteURL} from '@shared/helpers/concatUrls';
-import {asyncIteratorToObservable} from '@server/common/helpers/rx/asyncIteratorToObservable';
 import {getArrayWithLengthLimit} from '@shared/helpers/getArrayWithLengthLimit';
 import {AsyncURLParseResult, parseAsyncURLIfOK} from '@server/common/helpers/fetchAsyncHTML';
 
@@ -17,6 +13,7 @@ import {
   CrawlerConfig,
   CrawlerLink,
   CrawlerPageResult,
+  CrawlerTickResult,
 } from './Crawler';
 
 export type CrawlerLinksMapperAttrs = {
@@ -63,65 +60,18 @@ export class SpiderCrawler extends Crawler<SpiderCrawlerConfig> {
   run$() {
     const {
       config: {
-        concurrency,
         localHistorySize,
       },
     } = this;
 
     this.stackCache = getArrayWithLengthLimit<string>(localHistorySize);
-
-    const $stream = from(this.tick());
-    return $stream.pipe(
-      mergeMap(() => merge(...R.times(
-        () => this.fork(),
-        concurrency,
-      ))),
-    );
+    return super.run$();
   }
 
   /**
-   * Run new crawler stream
-   *
-   * @returns
-   * @memberof SpiderCrawler
+   * @inheritdoc
    */
-  fork() {
-    const self = this;
-    const {
-      config: {
-        delay,
-        shouldBe,
-      },
-    } = this;
-
-    const iterator = async function* generator() {
-      for (;;) {
-        const tickResult = await self.tick();
-        if (!tickResult)
-          break;
-
-        const {
-          collectorResult,
-        } = tickResult;
-
-        if (shouldBe.analyzed(tickResult))
-          yield collectorResult;
-
-        if (delay)
-          await timeout(delay);
-      }
-    };
-
-    return asyncIteratorToObservable(iterator());
-  }
-
-  /**
-   * Picks first item and processes it
-   *
-   * @returns
-   * @memberof SpiderCrawler
-   */
-  async tick() {
+  async tick(): Promise<CrawlerTickResult> {
     const {
       config: {
         defaultUrl,

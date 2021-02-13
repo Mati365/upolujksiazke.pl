@@ -99,8 +99,8 @@ export class SpiderService {
    * @param {CrawlerPageResult} data
    * @memberof SpiderService
    */
-  parseScrappedData({followLinks}: CrawlerPageResult) {
-    console.info(followLinks);
+  parseScrappedData({parseResult}: CrawlerPageResult) {
+    console.info(parseResult.url);
     return null;
   }
 }

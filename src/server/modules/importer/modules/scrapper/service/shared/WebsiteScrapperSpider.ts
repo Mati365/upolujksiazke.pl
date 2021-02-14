@@ -104,7 +104,7 @@ export abstract class WebsiteScrapperSpider extends ScrapperGroupChild implement
 
     const sharedConfig: CrawlerConfig = {
       queueDriver,
-      delay: 5000,
+      delay: 8000,
       storeOnlyPaths: true,
       shouldBe: {
         analyzed: ({queueItem}) => queueItem.priority > 0,

@@ -5,20 +5,20 @@ import * as R from 'ramda';
 import {ScrapperMetadataEntity, ScrapperMetadataKind} from '../../scrapper/entity';
 import {MetadataDbLoader} from '../MetadataDbLoader.interface';
 import {
-  BookDbLoader,
-  BookReviewDbLoader,
-  UrlDbLoader,
+  BookDbLoaderService,
+  BookReviewDbLoaderService,
+  UrlDbLoaderService,
 } from '../loaders';
 
 @Injectable()
 export class MetadataDbLoaderService implements MetadataDbLoader {
   private readonly logger = new Logger(MetadataDbLoaderService.name);
-  private readonly resourceLoaders: Record<ScrapperMetadataKind, MetadataDbLoader>;
+  public readonly resourceLoaders: Record<ScrapperMetadataKind, MetadataDbLoader>;
 
   constructor(
-    readonly bookReviewDbLoader: BookReviewDbLoader,
-    readonly bookDbLoader: BookDbLoader,
-    readonly urlDbLoader: UrlDbLoader,
+    readonly bookReviewDbLoader: BookReviewDbLoaderService,
+    readonly bookDbLoader: BookDbLoaderService,
+    readonly urlDbLoader: UrlDbLoaderService,
   ) {
     this.resourceLoaders = {
       [ScrapperMetadataKind.URL]: urlDbLoader,

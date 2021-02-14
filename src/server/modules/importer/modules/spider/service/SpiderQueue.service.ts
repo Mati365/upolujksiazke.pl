@@ -1,5 +1,6 @@
 import {Injectable} from '@nestjs/common';
 import {Connection, EntityManager} from 'typeorm';
+import * as R from 'ramda';
 
 import {ID} from '@shared/types';
 
@@ -33,6 +34,7 @@ export class SpiderQueueService {
         entityManager,
         connection,
         Entity: SpiderQueueEntity,
+        doNothing: true,
         constraint: 'spider_queue_unique_website_path',
         data: dtos.map((dto) => new SpiderQueueEntity(dto)),
       },
@@ -51,7 +53,7 @@ export class SpiderQueueService {
    */
   async popFirstNotProcessedEntity(websiteId: ID) {
     const qb = SpiderQueueEntity.createQueryBuilder();
-    const subQuery = (
+    const subQuery = `${R.init(
       qb
         .subQuery()
         .where('sortedItem.processed = :processed and sortedItem.websiteId = :websiteId')
@@ -64,8 +66,8 @@ export class SpiderQueueService {
         .from(SpiderQueueEntity, 'sortedItem')
         .select('id')
         .limit(1)
-        .getQuery()
-    );
+        .getQuery(),
+    )} FOR UPDATE SKIP LOCKED)`;
 
     const result = await (
       qb

@@ -26,8 +26,8 @@ import {ScrapperMatcherService} from '../../scrapper/service/actions';
 import {ScrapperService} from '../../scrapper/service/Scrapper.service';
 
 @Injectable()
-export class BookDbLoader implements MetadataDbLoader {
-  private readonly logger = new Logger(BookDbLoader.name);
+export class BookDbLoaderService implements MetadataDbLoader {
+  private readonly logger = new Logger(BookDbLoaderService.name);
 
   constructor(
     @Inject(forwardRef(() => BookService))
@@ -41,7 +41,13 @@ export class BookDbLoader implements MetadataDbLoader {
    * @inheritdoc
    */
   extractMetadataToDb(metadata: ScrapperMetadataEntity) {
+    const {logger} = this;
     const book = plainToClass(CreateBookDto, metadata.content);
+
+    if (!book) {
+      logger.error('Book not matched!');
+      return null;
+    }
 
     return this.mergeAndExtractBooksToDb(
       [
@@ -56,7 +62,7 @@ export class BookDbLoader implements MetadataDbLoader {
    * @static
    * @param {CreateBookDto} book
    * @returns
-   * @memberof BookDbLoader
+   * @memberof BookDbLoaderService
    */
   static isEnoughToBeScrapped(book: CreateBookDto) {
     return (
@@ -69,7 +75,7 @@ export class BookDbLoader implements MetadataDbLoader {
    *
    * @param {CreateBookDto[]} books
    * @returns
-   * @memberof BookDbLoader
+   * @memberof BookDbLoaderService
    */
   async mergeAndExtractBooksToDb(books: CreateBookDto[]) {
     const {scrapperService, bookService} = this;
@@ -137,7 +143,7 @@ export class BookDbLoader implements MetadataDbLoader {
    * Lookups book to be present in other websites and loads to DB
    *
    * @param {Object} attrs
-   * @memberof BookDbLoader
+   * @memberof BookDbLoaderService
    */
   async matchAndExtractToDb(
     {
@@ -147,7 +153,7 @@ export class BookDbLoader implements MetadataDbLoader {
     },
   ) {
     const {logger, scrapperMatcherService} = this;
-    if (!BookDbLoader.isEnoughToBeScrapped(book))
+    if (!BookDbLoaderService.isEnoughToBeScrapped(book))
       return null;
 
     const matchedBooks = R.pluck(
@@ -179,7 +185,7 @@ export class BookDbLoader implements MetadataDbLoader {
    * @param {number} [similarity=0.7]
    * @param {number} [minCompareLength=6]
    * @returns
-   * @memberof BookDbLoader
+   * @memberof BookDbLoaderService
    */
   private async fixSimilarNamedReleasesPublishers(
     releases: CreateBookReleaseDto[],

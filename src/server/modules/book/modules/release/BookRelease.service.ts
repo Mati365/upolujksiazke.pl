@@ -117,18 +117,20 @@ export class BookReleaseService {
       },
     );
 
-    await availabilityService.upsertList(
-      availability.map(
-        (item) => new CreateBookAvailabilityDto(
-          {
-            ...item,
-            bookId: releaseEntity.bookId,
-            releaseId: releaseEntity.id,
-          },
+    if (availability?.length) {
+      await availabilityService.upsertList(
+        availability.map(
+          (item) => new CreateBookAvailabilityDto(
+            {
+              ...item,
+              bookId: releaseEntity.bookId,
+              releaseId: releaseEntity.id,
+            },
+          ),
         ),
-      ),
-      entityManager,
-    );
+        entityManager,
+      );
+    }
 
     if (childReleases) {
       await this.upsertList(

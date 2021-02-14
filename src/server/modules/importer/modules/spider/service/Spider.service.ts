@@ -4,15 +4,15 @@ import {from} from 'rxjs';
 import chalk from 'chalk';
 
 import {InterceptMethod} from '@shared/helpers/decorators/InterceptMethod';
-import {isTmpScopeObservable, TmpDirService} from '@server/modules/tmp-dir/TmpDir.service';
+import {TmpDirService} from '@server/modules/tmp-dir/TmpDir.service';
 import {
   WebsiteInfoScrapperService,
   ScrapperService,
 } from '@scrapper/service';
 
 import {WebsiteScrappersGroup} from '../../scrapper/service/shared/WebsiteScrappersGroup';
-import {CrawlerPageResult} from '../crawlers';
 import {ScrapperMetadataQueueDriver} from '../drivers/DbQueue.driver';
+import {UrlDbLoaderService} from '../../db-loader/loaders';
 
 /**
  * Automatic URL analyzer and spider
@@ -28,6 +28,7 @@ export class SpiderService {
     private readonly scrapperService: ScrapperService,
     private readonly websiteInfoService: WebsiteInfoScrapperService,
     private readonly tmpDirService: TmpDirService,
+    private readonly urlDbLoaderService: UrlDbLoaderService,
     private readonly dbQueueDriver: ScrapperMetadataQueueDriver,
   ) {}
 
@@ -71,6 +72,7 @@ export class SpiderService {
 
     const {
       websiteInfoService,
+      urlDbLoaderService,
       tmpDirService,
       dbQueueDriver,
     } = this;
@@ -85,22 +87,12 @@ export class SpiderService {
 
     await (
       observable
-        .pipe(mergeMap((data) => from(this.parseScrappedData(data) || [])))
+        .pipe(
+          mergeMap(({parseResult}) => from(
+            urlDbLoaderService.extractFetchedPageToDb(group, parseResult) || [],
+          )),
+        )
         .toPromise()
     );
-
-    if (isTmpScopeObservable(observable))
-      await observable.deleteTmpScope();
-  }
-
-  /**
-   * Analyze fetched data
-   *
-   * @param {CrawlerPageResult} data
-   * @memberof SpiderService
-   */
-  parseScrappedData({parseResult}: CrawlerPageResult) {
-    console.info(parseResult.url);
-    return null;
   }
 }

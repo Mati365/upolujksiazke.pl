@@ -1,19 +1,17 @@
-import {Inject, Injectable, Logger, forwardRef} from '@nestjs/common';
+import {Inject, Injectable, forwardRef} from '@nestjs/common';
 import chalk from 'chalk';
 import * as R from 'ramda';
 
 import {AsyncURLParseResult, parseAsyncURLIfOK} from '@server/common/helpers/fetchAsyncHTML';
-import {extractPathname} from '@shared/helpers/urlExtract';
 
+import {WebsiteScrappersGroup} from '../../scrapper/service/shared';
 import {ScrapperMetadataEntity} from '../../scrapper/entity/ScrapperMetadata.entity';
 import {ScrapperService} from '../../scrapper/service/Scrapper.service';
 import {MetadataDbLoader} from '../MetadataDbLoader.interface';
 import {MetadataDbLoaderService} from '../services/MetadataDbLoader.service';
 
 @Injectable()
-export class UrlDbLoader implements MetadataDbLoader {
-  private readonly logger = new Logger(UrlDbLoader.name);
-
+export class UrlDbLoaderService implements MetadataDbLoader {
   constructor(
     @Inject(forwardRef(() => MetadataDbLoaderService))
     private readonly metadataDbLoaderService: MetadataDbLoaderService,
@@ -24,11 +22,9 @@ export class UrlDbLoader implements MetadataDbLoader {
    * @inheritdoc
    */
   async extractMetadataToDb({url}: ScrapperMetadataEntity) {
-    const dto = await this.getURLResourceDTO(
+    await this.extractParseResultToDb(
       await parseAsyncURLIfOK(url),
     );
-
-    return this.metadataDbLoaderService.extractMetadataToDb(dto);
   }
 
   /**
@@ -36,44 +32,51 @@ export class UrlDbLoader implements MetadataDbLoader {
    *
    * @param {AsyncURLParseResult} result
    * @returns
-   * @memberof UrlDbLoader
+   * @memberof UrlDbLoaderService
    */
-  async getURLResourceDTO(page: AsyncURLParseResult) {
+  async extractParseResultToDb(page: AsyncURLParseResult) {
     if (!page)
-      return null;
+      return;
 
     const {url} = page;
-    const {
-      logger,
-      scrapperService,
-    } = this;
+    const {scrapperService} = this;
 
     const scrappersGroup = scrapperService.getScrappersGroupByWebsiteURL(url);
-    if (!scrappersGroup?.spider) {
-      logger.warn(`Scrapper ${chalk.bold(url)} must contain spider!`);
-      return null;
-    }
+    if (!scrappersGroup?.spider)
+      throw new Error(`Scrapper ${chalk.bold(url)} must contain spider!`);
 
-    const kind = scrappersGroup.spider.matchResourceKindByPath(
-      extractPathname(url),
-    );
+    await this.extractFetchedPageToDb(scrappersGroup, page);
+  }
 
-    if (R.isNil(kind)) {
-      logger.warn(`Unknown kind of resource on ${chalk.bold(url)}!`);
-      return null;
-    }
+  /**
+   * Loads fetched page (not parsed) to database
+   *
+   * @param {WebsiteScrappersGroup} group
+   * @param {AsyncURLParseResult} parseResult
+   * @memberof MetadataDbLoaderService
+   */
+  async extractFetchedPageToDb(group: WebsiteScrappersGroup, parseResult: AsyncURLParseResult) {
+    const {metadataDbLoaderService} = this;
+    const kind = group.spider.matchResourceKindByPath(parseResult.url);
 
-    logger.log(`Found ${chalk.bold(url)} (kind: ${chalk.bold(kind)}) matcher! Trying to load!`);
+    if (R.isNil(kind))
+      throw new Error(`Unknown link ${parseResult.url} kind!`);
 
-    return new ScrapperMetadataEntity(
-      {
-        kind,
-        content: await (
-          scrappersGroup
-            .parsers[kind]
-            .parse(page)
-        ),
-      },
+    const loader = metadataDbLoaderService.resourceLoaders[kind];
+    if (!loader)
+      throw new Error(`Unknown link ${parseResult.url} loader!`);
+
+    await loader.extractMetadataToDb(
+      new ScrapperMetadataEntity(
+        {
+          kind,
+          content: await (
+            group
+              .parsers[kind]
+              .parse(parseResult)
+          ),
+        },
+      ),
     );
   }
 }

@@ -9,9 +9,9 @@ import {BookModule} from '@server/modules/book/Book.module';
 
 import {ScrapperMetadataEntity} from '../scrapper/entity';
 import {
-  BookDbLoader,
-  BookReviewDbLoader,
-  UrlDbLoader,
+  BookDbLoaderService,
+  BookReviewDbLoaderService,
+  UrlDbLoaderService,
 } from './loaders';
 
 import {
@@ -53,11 +53,15 @@ import {ScrapperModule} from '../scrapper/Scrapper.module';
       MetadataDbLoaderConsumerProcessor,
       MetadataDbLoaderService,
       MetadataDbLoaderQueueService,
-      UrlDbLoader,
-      BookDbLoader,
-      BookReviewDbLoader,
+      UrlDbLoaderService,
+      BookDbLoaderService,
+      BookReviewDbLoaderService,
     ],
     exports: [
+      UrlDbLoaderService,
+      BookDbLoaderService,
+      BookReviewDbLoaderService,
+      MetadataDbLoaderService,
       MetadataDbLoaderQueueService,
     ],
   },

@@ -12,9 +12,13 @@ import {RemoteWebsiteEntity} from '@server/modules/remote/entity';
 import {MetadataDbLoaderQueueService} from '@server/modules/importer/modules/db-loader/services';
 
 import {WebsiteInfoScrapperService} from '../WebsiteInfoScrapper.service';
-import {ScrapperBasicPagination, WebsiteScrapperItemInfo, WebsiteScrappersGroup} from '../shared';
 import {ScrapperService} from '../Scrapper.service';
 import {ScrapperMetadataEntity, ScrapperMetadataKind} from '../../entity';
+import {
+  ScrapperBasicPagination,
+  WebsiteScrapperItemInfo,
+  WebsiteScrappersGroup,
+} from '../shared';
 
 @Injectable()
 export class ScrapperRefreshService {
@@ -170,6 +174,9 @@ export class ScrapperRefreshService {
 
   /**
    * Loads single
+   *
+   * @todo
+   *  Do not bloat scrapper metadata with urls!
    *
    * @param {Object} params
    * @returns {Promise<boolean>}

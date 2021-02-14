@@ -99,9 +99,6 @@ export class PublioBookParser
       return null;
 
     const {$} = bookPage;
-    const [title, volumeName] = PublioBookParser.extractTitle($);
-    const basicProps = PublioBookParser.extractBookProps($);
-    const [parentIsbn, ...childIsbn] = basicProps['isbn']?.[0].split(',').map(normalizeISBN);
     const type = BOOK_TYPE_TRANSLATION_MAPPINGS[
       $('.basic-info-wrapper .info > .section').text()?.toLowerCase()
     ];
@@ -109,6 +106,9 @@ export class PublioBookParser
     if (R.isNil(type))
       return null;
 
+    const [title, volumeName] = PublioBookParser.extractTitle($);
+    const basicProps = PublioBookParser.extractBookProps($);
+    const [parentIsbn, ...childIsbn] = basicProps['isbn']?.[0].split(',').map(normalizeISBN);
     const {
       result: availability,
       meta: {
@@ -293,9 +293,13 @@ export class PublioBookParser
    * @memberof PublioBookParser
    */
   static extractCategories($: cheerio.Root, props: BookScrappedPropsMap) {
+    const propVal = props['publikacja z kategorii'];
+    if (!propVal)
+      return [];
+
     const names = R.uniq(
       R.unnest(
-        $(props['publikacja z kategorii'][1])
+        $(propVal[1])
           .find('a')
           .toArray()
           .map((item) => $(item).text().split(',')),

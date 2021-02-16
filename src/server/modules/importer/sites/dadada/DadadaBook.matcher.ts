@@ -3,7 +3,7 @@ import {fuzzyFindBookAnchor} from '@scrapper/helpers';
 import {CreateBookDto} from '@server/modules/book/dto/CreateBook.dto';
 import {ScrapperMatcherResult, WebsiteScrapperMatcher} from '@scrapper/service/shared/ScrapperMatcher';
 import {MatchRecordAttrs} from '@scrapper/service/shared/WebsiteScrappersGroup';
-import {BookShopScrappersGroupConfig} from '@scrapper/service/scrappers/BookShop.scrapper';
+import {BookShopScrappersGroupConfig} from '@importer/kinds/scrappers/BookShop.scrapper';
 import {ScrapperMetadataKind} from '../../modules/scrapper/entity';
 
 export class DadadaBookMatcher extends WebsiteScrapperMatcher<CreateBookDto, BookShopScrappersGroupConfig> {

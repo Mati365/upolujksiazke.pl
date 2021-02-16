@@ -1,4 +1,4 @@
-import {BookShopUrlsConfig} from '@scrapper/service/scrappers/BookShop.scrapper';
+import {BookShopUrlsConfig} from '@importer/kinds/scrappers/BookShop.scrapper';
 import {WykopAPIAuthParams} from '@sites/wykop/api/WykopAPI';
 
 /* eslint-disable import/no-default-export */

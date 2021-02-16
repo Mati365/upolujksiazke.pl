@@ -7,13 +7,13 @@ import {BookCategoryEntity} from '@server/modules/book/modules/category/BookCate
 import {BookReviewerEntity} from '@server/modules/book/modules/reviewer/BookReviewer.entity';
 import {BookModule} from '@server/modules/book/Book.module';
 
-import {ScrapperMetadataEntity} from '../scrapper/entity';
 import {
   BookDbLoaderService,
   BookReviewDbLoaderService,
   UrlDbLoaderService,
-} from './loaders';
+} from '@importer/kinds/db-loaders';
 
+import {ScrapperMetadataEntity} from '../scrapper/entity';
 import {
   MetadataDbLoaderService,
   MetadataDbLoaderQueueService,

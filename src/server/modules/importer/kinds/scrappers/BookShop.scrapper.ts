@@ -2,7 +2,7 @@ import {
   ScrappersGroupInitializer,
   WebsiteInfoScrapper,
   WebsiteScrappersGroup,
-} from '../shared';
+} from '@scrapper/service/shared';
 
 import {SpiderQueueProxyScrapper} from './SpiderQueueProxy.scrapper';
 

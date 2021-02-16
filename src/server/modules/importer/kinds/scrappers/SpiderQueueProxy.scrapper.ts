@@ -3,13 +3,13 @@ import * as R from 'ramda';
 
 import {concatUrls} from '@shared/helpers/concatUrls';
 
-import {ScrapperMetadataKind} from '../../entity/ScrapperMetadata.entity';
+import {ScrapperMetadataKind} from '@scrapper/entity/ScrapperMetadata.entity';
 import {
   AsyncScrapper,
   ScrapperResult,
   WebsiteScrapperItemInfo,
   WebsiteScrappersKindMap,
-} from '../shared';
+} from '@scrapper/service/shared';
 
 export type SpiderQueueScrapperInfo = WebsiteScrapperItemInfo<null>;
 

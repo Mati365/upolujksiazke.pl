@@ -28,7 +28,7 @@ import {
   PROTECTION_TRANSLATION_MAPPINGS,
   LANGUAGE_TRANSLATION_MAPPINGS,
   BOOK_TYPE_TRANSLATION_MAPPINGS,
-} from '@scrapper/service/scrappers/Book.scrapper';
+} from '@importer/kinds/scrappers/Book.scrapper';
 
 import {AsyncURLParseResult} from '@server/common/helpers/fetchAsyncHTML';
 import {BasicParseAttrs, WebsiteScrapperParser} from '@server/modules/importer/modules/scrapper/service/shared';

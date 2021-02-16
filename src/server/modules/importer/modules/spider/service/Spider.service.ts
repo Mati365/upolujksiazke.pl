@@ -10,9 +10,9 @@ import {
   ScrapperService,
 } from '@scrapper/service';
 
+import {UrlDbLoaderService} from '@importer/kinds/db-loaders';
 import {WebsiteScrappersGroup} from '../../scrapper/service/shared/WebsiteScrappersGroup';
 import {ScrapperMetadataQueueDriver} from '../drivers/DbQueue.driver';
-import {UrlDbLoaderService} from '../../db-loader/loaders';
 
 /**
  * Automatic URL analyzer and spider

@@ -17,12 +17,13 @@ import {CreateImageAttachmentDto} from '@server/modules/attachment/dto';
 import {CreateBookAvailabilityDto} from '@server/modules/book/modules/availability/dto/CreateBookAvailability.dto';
 
 import {AsyncURLParseResult} from '@server/common/helpers/fetchAsyncHTML';
-import {MatrasBookAuthorMatcher} from '../matchers/MatrasBookAuthor.matcher';
-import {BasicParseAttrs, WebsiteScrapperParser} from '../../../modules/scrapper/service/shared';
 import {
   BINDING_TRANSLATION_MAPPINGS,
   BookAvailabilityParser,
-} from '../../../modules/scrapper/service/scrappers/Book.scrapper';
+} from '@importer/kinds/scrappers/Book.scrapper';
+
+import {MatrasBookAuthorMatcher} from '../matchers/MatrasBookAuthor.matcher';
+import {BasicParseAttrs, WebsiteScrapperParser} from '../../../modules/scrapper/service/shared';
 
 export class MatrasBookParser
   extends WebsiteScrapperParser<CreateBookDto>

@@ -29,6 +29,15 @@
       "@scrapper": ["./src/server/modules/importer/modules/scrapper"],
       "@scrapper/*": ["./src/server/modules/importer/modules/scrapper/*"],
 
+      "@spider": ["./src/server/modules/importer/modules/spider"],
+      "@spider/*": ["./src/server/modules/importer/modules/spider/*"],
+
+      "@db-loader": ["./src/server/modules/importer/modules/db-loader"],
+      "@db-loader/*": ["./src/server/modules/importer/modules/db-loader/*"],
+
+      "@importer": ["./src/server/modules/importer"],
+      "@importer/*": ["./src/server/modules/importer/*"],
+
       "@sites": ["./src/server/modules/importer/sites"],
       "@sites/*": ["./src/server/modules/importer/sites/*"]
     }

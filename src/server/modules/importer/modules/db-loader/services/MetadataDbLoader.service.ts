@@ -2,13 +2,14 @@ import {Injectable, Logger} from '@nestjs/common';
 import chalk from 'chalk';
 import * as R from 'ramda';
 
-import {ScrapperMetadataEntity, ScrapperMetadataKind} from '../../scrapper/entity';
-import {MetadataDbLoader} from '../MetadataDbLoader.interface';
 import {
   BookDbLoaderService,
   BookReviewDbLoaderService,
   UrlDbLoaderService,
-} from '../loaders';
+} from '@importer/kinds/db-loaders';
+
+import {ScrapperMetadataEntity, ScrapperMetadataKind} from '../../scrapper/entity';
+import {MetadataDbLoader} from '../MetadataDbLoader.interface';
 
 @Injectable()
 export class MetadataDbLoaderService implements MetadataDbLoader {

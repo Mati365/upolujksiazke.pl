@@ -2,12 +2,12 @@ import {Language} from '@server/constants/language';
 import {CreateBookDto} from '@server/modules/book/dto/CreateBook.dto';
 import {CreateBookAvailabilityDto} from '@server/modules/book/modules/availability/dto/CreateBookAvailability.dto';
 import {BookBindingKind, BookProtection, BookType} from '@server/modules/book/modules/release/BookRelease.entity';
-import {ScrapperMetadataKind} from '../../entity';
+import {ScrapperMetadataKind} from '@scrapper/entity';
 import {
   ScrapperBasicPagination,
   ScrapperResult,
   WebsiteScrapperItemInfo,
-} from '../shared';
+} from '@scrapper/service/shared';
 
 export const BINDING_TRANSLATION_MAPPINGS = Object.freeze(
   {

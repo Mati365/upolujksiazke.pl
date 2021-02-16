@@ -14,8 +14,8 @@ import {CreateBookAvailabilityDto} from '@server/modules/book/modules/availabili
 import {CreateBookCategoryDto} from '@server/modules/book/modules/category/dto/CreateBookCategory.dto';
 
 import {AsyncURLParseResult} from '@server/common/helpers/fetchAsyncHTML';
+import {BookAvailabilityParser} from '@importer/kinds/scrappers/Book.scrapper';
 import {WebsiteScrapperParser} from '../../modules/scrapper/service/shared';
-import {BookAvailabilityParser} from '../../modules/scrapper/service/scrappers/Book.scrapper';
 
 export class GraniceBookParser
   extends WebsiteScrapperParser<CreateBookDto>

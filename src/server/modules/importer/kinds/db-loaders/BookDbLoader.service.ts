@@ -19,11 +19,11 @@ import {CreateBookPublisherDto} from '@server/modules/book/modules/publisher/dto
 import {CreateBookReleaseDto} from '@server/modules/book/modules/release/dto/CreateBookRelease.dto';
 import {CreateBookAvailabilityDto} from '@server/modules/book/modules/availability/dto/CreateBookAvailability.dto';
 import {BookReleaseEntity} from '@server/modules/book/modules/release/BookRelease.entity';
-import {ScrapperMetadataEntity, ScrapperMetadataKind} from '../../scrapper/entity';
+import {ScrapperMetadataEntity, ScrapperMetadataKind} from '@scrapper/entity';
 
-import {MetadataDbLoader} from '../MetadataDbLoader.interface';
-import {ScrapperMatcherService} from '../../scrapper/service/actions';
-import {ScrapperService} from '../../scrapper/service/Scrapper.service';
+import {MetadataDbLoader} from '@db-loader/MetadataDbLoader.interface';
+import {ScrapperMatcherService} from '@scrapper/service/actions';
+import {ScrapperService} from '@scrapper/service/Scrapper.service';
 
 @Injectable()
 export class BookDbLoaderService implements MetadataDbLoader {

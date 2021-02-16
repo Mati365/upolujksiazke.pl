@@ -13,13 +13,14 @@ import {CreateBookPublisherDto} from '@server/modules/book/modules/publisher/dto
 import {CreateImageAttachmentDto} from '@server/modules/attachment/dto';
 import {CreateBookAvailabilityDto} from '@server/modules/book/modules/availability/dto/CreateBookAvailability.dto';
 
-import {AsyncURLParseResult} from '@server/common/helpers/fetchAsyncHTML';
-import {WebsiteScrapperParser} from '../../modules/scrapper/service/shared';
-import {BonitoBookParser} from '../bonito/BonitoBook.parser';
 import {
   BINDING_TRANSLATION_MAPPINGS,
   BookAvailabilityParser,
-} from '../../modules/scrapper/service/scrappers/Book.scrapper';
+} from '@importer/kinds/scrappers/Book.scrapper';
+
+import {AsyncURLParseResult} from '@server/common/helpers/fetchAsyncHTML';
+import {WebsiteScrapperParser} from '../../modules/scrapper/service/shared';
+import {BonitoBookParser} from '../bonito/BonitoBook.parser';
 
 export class ArosBookParser
   extends WebsiteScrapperParser<CreateBookDto>

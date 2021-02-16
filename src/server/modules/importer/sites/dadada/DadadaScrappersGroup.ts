@@ -2,7 +2,7 @@ import {ScrapperMetadataKind} from '@scrapper/entity';
 import {
   BookShopScrappersGroup,
   BookShopScrappersGroupConfig,
-} from '@scrapper/service/scrappers/BookShop.scrapper';
+} from '@importer/kinds/scrappers/BookShop.scrapper';
 
 import {DadadaBookMatcher} from './DadadaBook.matcher';
 import {DadadaBookParser} from './DadadaBook.parser';

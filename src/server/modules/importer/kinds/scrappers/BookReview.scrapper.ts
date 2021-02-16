@@ -1,10 +1,10 @@
 import {CreateBookReviewDto} from '@server/modules/book/modules/review/dto/CreateBookReview.dto';
-import {ScrapperMetadataKind} from '../../entity';
+import {ScrapperMetadataKind} from '@scrapper/entity';
 import {
   ScrapperBasicPagination,
   ScrapperResult,
   WebsiteScrapperItemInfo,
-} from '../shared';
+} from '@scrapper/service/shared';
 
 export type BookReviewScrapperInfo = WebsiteScrapperItemInfo<CreateBookReviewDto> & {
   kind: ScrapperMetadataKind.BOOK_REVIEW,

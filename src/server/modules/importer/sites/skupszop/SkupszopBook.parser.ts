@@ -13,9 +13,9 @@ import {CreateImageAttachmentDto} from '@server/modules/attachment/dto';
 import {CreateBookAuthorDto} from '@server/modules/book/modules/author/dto/CreateBookAuthor.dto';
 import {CreateBookCategoryDto} from '@server/modules/book/modules/category/dto/CreateBookCategory.dto';
 
+import {BookAvailabilityParser} from '@importer/kinds/scrappers/Book.scrapper';
 import {AsyncURLParseResult} from '@server/common/helpers/fetchAsyncHTML';
 import {WebsiteScrapperParser} from '../../modules/scrapper/service/shared';
-import {BookAvailabilityParser} from '../../modules/scrapper/service/scrappers/Book.scrapper';
 import {extractJsonLD} from '../../modules/scrapper/helpers';
 
 export class SkupszopBookParser

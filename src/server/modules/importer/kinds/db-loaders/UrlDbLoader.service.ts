@@ -4,11 +4,11 @@ import * as R from 'ramda';
 
 import {AsyncURLParseResult, parseAsyncURLIfOK} from '@server/common/helpers/fetchAsyncHTML';
 
-import {WebsiteScrappersGroup} from '../../scrapper/service/shared';
-import {ScrapperMetadataEntity} from '../../scrapper/entity/ScrapperMetadata.entity';
-import {ScrapperService} from '../../scrapper/service/Scrapper.service';
-import {MetadataDbLoader} from '../MetadataDbLoader.interface';
-import {MetadataDbLoaderService} from '../services/MetadataDbLoader.service';
+import {WebsiteScrappersGroup} from '@scrapper/service/shared';
+import {ScrapperMetadataEntity} from '@scrapper/entity/ScrapperMetadata.entity';
+import {ScrapperService} from '@scrapper/service/Scrapper.service';
+import {MetadataDbLoader} from '@db-loader/MetadataDbLoader.interface';
+import {MetadataDbLoaderService} from '@db-loader/services/MetadataDbLoader.service';
 
 @Injectable()
 export class UrlDbLoaderService implements MetadataDbLoader {

@@ -2,7 +2,7 @@ import {ScrapperMetadataKind} from '@scrapper/entity';
 import {
   BookShopScrappersGroup,
   BookShopScrappersGroupConfig,
-} from '@scrapper/service/scrappers/BookShop.scrapper';
+} from '@importer/kinds/scrappers/BookShop.scrapper';
 
 import {PublioBookMatcher} from './matchers/PublioBook.matcher';
 import {PublioBookPublisherMatcher} from './matchers/PublioBookPublisher.matcher';

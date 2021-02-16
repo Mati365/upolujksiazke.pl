@@ -2,9 +2,9 @@ import {Injectable} from '@nestjs/common';
 import {plainToClass} from 'class-transformer';
 
 import {CreateBookReviewDto} from '@server/modules/book/modules/review/dto/CreateBookReview.dto';
-import {ScrapperMetadataEntity} from '../../scrapper/entity';
+import {ScrapperMetadataEntity} from '@scrapper/entity';
 
-import {MetadataDbLoader} from '../MetadataDbLoader.interface';
+import {MetadataDbLoader} from '@db-loader/MetadataDbLoader.interface';
 import {BookDbLoaderService} from './BookDbLoader.service';
 
 @Injectable()

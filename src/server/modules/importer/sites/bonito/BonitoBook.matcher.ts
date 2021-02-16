@@ -5,7 +5,7 @@ import {CreateBookDto} from '@server/modules/book/dto/CreateBook.dto';
 
 import {MatchRecordAttrs} from '@scrapper/service/shared/WebsiteScrappersGroup';
 import {WebsiteScrapperMatcher, ScrapperMatcherResult} from '@scrapper/service/shared/ScrapperMatcher';
-import {BookShopScrappersGroupConfig} from '@scrapper/service/scrappers/BookShop.scrapper';
+import {BookShopScrappersGroupConfig} from '@importer/kinds/scrappers/BookShop.scrapper';
 import {ScrapperMetadataKind} from '../../modules/scrapper/entity';
 
 /**

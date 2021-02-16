@@ -20,7 +20,7 @@ import {CreateBookReleaseDto} from '@server/modules/book/modules/release/dto/Cre
 import {
   BookReviewScrapperInfo,
   BookReviewProcessResult,
-} from '@scrapper/service/scrappers/BookReview.scrapper';
+} from '@importer/kinds/scrappers/BookReview.scrapper';
 
 import {
   WykopAPI,

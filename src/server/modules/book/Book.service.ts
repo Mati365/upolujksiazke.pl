@@ -205,7 +205,7 @@ export class BookService {
         );
       }
 
-      await releaseService.upsertList(
+      book.releases = await releaseService.upsertList(
         dto.releases.map(
           (release) => new CreateBookReleaseDto(
             {

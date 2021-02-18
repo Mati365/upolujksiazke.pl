@@ -89,13 +89,13 @@ export class GraniceBookParser
         ),
         publisher: new CreateBookPublisherDto(
           {
-            name: normalizeParsedText($details.find('[itemprop="publisher"] > a').text()),
+            name: normalizeParsedText($details.find('[itemprop="publisher"]').text()),
           },
         ),
         cover: new CreateImageAttachmentDto(
           {
             originalUrl: normalizeURL(
-              $details.find('[itemprop="image"]').attr('src'),
+              $('[itemtype="http://schema.org/Book"] .coverbig').find('[itemprop="image"]').attr('src'),
             ),
           },
         ),

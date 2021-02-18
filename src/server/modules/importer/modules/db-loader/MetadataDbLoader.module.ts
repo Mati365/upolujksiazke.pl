@@ -36,7 +36,7 @@ import {ScrapperModule} from '../scrapper/Scrapper.module';
         {
           name: SCRAPPER_METADATA_LOADER_QUEUE,
           limiter: {
-            max: 2,
+            max: 1,
             duration: 8000,
           },
         },

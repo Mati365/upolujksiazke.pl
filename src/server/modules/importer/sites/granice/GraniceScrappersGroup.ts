@@ -6,12 +6,14 @@ import {
 
 import {GraniceBookMatcher} from './GraniceBook.matcher';
 import {GraniceBookParser} from './GraniceBook.parser';
+import {GraniceSpider} from './GraniceBook.spider';
 
 export class GraniceScrappersGroup extends BookShopScrappersGroup {
   constructor(options: BookShopScrappersGroupConfig) {
     super(
       {
         ...options,
+        spider: new GraniceSpider,
         matchers: {
           [ScrapperMetadataKind.BOOK]: new GraniceBookMatcher(options),
         },

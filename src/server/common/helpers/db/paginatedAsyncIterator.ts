@@ -1,3 +1,5 @@
+import {asyncIteratorToObservable} from '../rx/asyncIteratorToObservable';
+
 type PaginatedAsyncIterator<T> = {
   offset?: number,
   limit: number,
@@ -41,4 +43,18 @@ export async function* paginatedAsyncIterator<T>(
     if (increment)
       offset += limit;
   }
+}
+
+/**
+ * Returns RX observable instead iterator
+ *
+ * @export
+ * @template T
+ * @param {PaginatedAsyncIterator<T>} attrs
+ * @returns
+ */
+export function paginatedAsyncObservable<T>(attrs: PaginatedAsyncIterator<T>) {
+  return asyncIteratorToObservable(
+    paginatedAsyncIterator<T>(attrs),
+  );
 }

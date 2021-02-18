@@ -2,13 +2,13 @@ import {Injectable} from '@nestjs/common';
 import {Connection, EntityManager} from 'typeorm';
 import pMap from 'p-map';
 
-import {Size} from '@shared/types';
 import {
   forwardTransaction,
   upsert,
   UpsertResourceAttrs,
 } from '@server/common/helpers/db';
 
+import {Size} from '@shared/types';
 import {ImageAttachmentService, ImageResizeConfig} from '@server/modules/attachment/services';
 import {CreateBookReleaseDto} from './dto/CreateBookRelease.dto';
 import {CreateBookAvailabilityDto} from '../availability/dto/CreateBookAvailability.dto';

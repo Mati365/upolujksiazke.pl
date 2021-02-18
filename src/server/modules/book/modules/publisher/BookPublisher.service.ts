@@ -36,7 +36,7 @@ export class BookPublisherService {
    * @returns
    * @memberof BookPublisherService
    */
-  createQueryWithSimilarNames(name: string, similarity: number = 2) {
+  createSimilarNamedQuery(name: string, similarity: number = 2) {
     return (
       BookPublisherEntity
         .createQueryBuilder()
@@ -51,7 +51,7 @@ export class BookPublisherService {
   }
 
   /**
-   * Remove single book publisher
+   * Remove multiple book publishers
    *
    * @param {number[]} ids
    * @param {EntityManager} [entityManager]

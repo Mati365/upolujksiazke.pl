@@ -1,4 +1,4 @@
-import {Type} from 'class-transformer';
+import {Type, Transform} from 'class-transformer';
 import {
   IsDate, IsDefined, IsNumber,
   IsOptional, IsString, ValidateNested,
@@ -19,10 +19,11 @@ export class CreateBookReviewDto extends CreateRemoteRecordDto {
   @IsNumber()
   readonly reviewerId: number;
 
-  @IsDefined()
+  @IsOptional()
   @IsNumber()
   readonly rating: number;
 
+  @Transform(({value}) => new Date(value), {toClassOnly: true})
   @IsOptional()
   @IsDate()
   readonly publishDate: Date;
@@ -37,7 +38,7 @@ export class CreateBookReviewDto extends CreateRemoteRecordDto {
   readonly stats: VotingStatsEmbeddable;
 
   @Type(() => CreateBookDto)
-  @IsDefined()
+  @IsOptional()
   @ValidateNested()
   readonly book: CreateBookDto;
 
@@ -45,8 +46,16 @@ export class CreateBookReviewDto extends CreateRemoteRecordDto {
   @IsNumber()
   readonly bookId: number;
 
+  @IsOptional()
+  @IsNumber()
+  readonly releaseId: number;
+
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(partial: Partial<CreateBookReviewDto>) {
     super(partial);
+  }
+
+  getReleaseISBN() {
+    return this.book?.releases?.[0]?.isbn;
   }
 }

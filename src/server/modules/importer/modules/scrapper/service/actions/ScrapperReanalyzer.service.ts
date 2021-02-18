@@ -1,12 +1,13 @@
 import {Injectable} from '@nestjs/common';
 import {Connection} from 'typeorm';
 
-import {paginatedAsyncIterator} from '@server/common/helpers';
+import {paginatedAsyncIterator} from '@server/common/helpers/db';
 
 import {MetadataDbLoaderQueueService} from '@server/modules/importer/modules/db-loader/services';
 import {WebsiteScrapperItemInfo} from '../shared/AsyncScrapper';
 import {ScrapperMetadataEntity} from '../../entity';
 import {ScrapperService} from '../Scrapper.service';
+import {ScrapperMetadataService} from '../ScrapperMetadata.service';
 
 export type ScrapperAnalyzerStats = {
   updated: number,
@@ -21,6 +22,7 @@ export class ScrapperReanalyzerService {
     private readonly connection: Connection,
     private readonly scrapperService: ScrapperService,
     private readonly dbLoaderQueueService: MetadataDbLoaderQueueService,
+    private readonly scrapperMetadataService: ScrapperMetadataService,
   ) {}
 
   /**
@@ -32,8 +34,9 @@ export class ScrapperReanalyzerService {
    */
   async reanalyze(): Promise<ScrapperAnalyzerStats> {
     const {
-      scrapperService,
       connection,
+      scrapperService,
+      scrapperMetadataService,
       dbLoaderQueueService,
       analyzerRecordsPageSize,
     } = this;
@@ -77,13 +80,7 @@ export class ScrapperReanalyzerService {
       await dbLoaderQueueService.addBulkMetadataToQueue(page);
     }
 
-    stats.removed = await (async () => {
-      const count = await ScrapperMetadataEntity.inactive.getCount();
-      await ScrapperMetadataEntity.inactive.delete().execute();
-
-      return count;
-    })();
-
+    stats.removed = await scrapperMetadataService.deleteAndCountDeleted();
     return stats;
   }
 }

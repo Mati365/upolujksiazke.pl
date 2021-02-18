@@ -1,6 +1,6 @@
 import {
   Column, ManyToMany, JoinTable,
-  OneToMany, Unique, Index,
+  OneToMany, Index,
 } from 'typeorm';
 
 import {Gender} from '@shared/types';
@@ -15,7 +15,6 @@ import {BookReviewEntity} from '../review/BookReview.entity';
     name: 'book_reviewer',
   },
 )
-@Unique('book_reviewer_unique_website_name', ['name', 'website'])
 @Index(['website'])
 export class BookReviewerEntity extends RemoteRecordFields {
   static avatarTableName = 'book_reviewer_avatar_attachments';

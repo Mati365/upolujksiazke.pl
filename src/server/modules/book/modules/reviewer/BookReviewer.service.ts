@@ -26,6 +26,43 @@ export class BookReviewerService {
   ) {}
 
   /**
+   * Remove multiple book reviewers
+   *
+   * @param {number[]} ids
+   * @param {EntityManager} [entityManager]
+   * @memberof BookReviewerService
+   */
+  async delete(ids: number[], entityManager?: EntityManager) {
+    const {
+      connection,
+      imageAttachmentService,
+    } = this;
+
+    const entities = await BookReviewerEntity.findByIds(
+      ids,
+      {
+        select: ['id'],
+        loadRelationIds: {
+          relations: ['avatar'],
+        },
+      },
+    );
+
+    await forwardTransaction(
+      {
+        connection,
+        entityManager,
+      },
+      async (transaction) => {
+        for await (const entity of entities)
+          await imageAttachmentService.delete(entity.avatar as any[], transaction);
+
+        await transaction.remove(entities);
+      },
+    );
+  }
+
+  /**
    * Creates or updates book reviewer
    *
    * @param {CreateBookReviewerDto} dto
@@ -49,8 +86,13 @@ export class BookReviewerService {
           connection,
           entityManager: transaction,
           Entity: BookReviewerEntity,
-          primaryKey: 'remoteId',
-          data: new BookReviewerEntity(dto),
+          constraint: 'book_reviewer_unique_remote',
+          data: new BookReviewerEntity(
+            {
+              ...dto,
+              remoteId: dto.remoteId ?? dto.name,
+            },
+          ),
         },
       );
 

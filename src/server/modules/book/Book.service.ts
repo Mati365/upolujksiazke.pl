@@ -2,6 +2,7 @@ import {Injectable} from '@nestjs/common';
 import {Connection, EntityManager, In} from 'typeorm';
 import * as R from 'ramda';
 
+import {parameterize} from '@shared/helpers/parameterize';
 import {
   forwardTransaction,
   runTransactionWithPostHooks,
@@ -21,6 +22,7 @@ import {CreateBookDto} from './dto/CreateBook.dto';
 import {CreateBookReleaseDto} from './modules/release/dto/CreateBookRelease.dto';
 import {BookEntity} from './Book.entity';
 import {BookVolumeEntity} from './modules/volume/BookVolume.entity';
+import {BookReviewEntity} from './modules/review/BookReview.entity';
 
 /**
  * @see
@@ -41,9 +43,31 @@ export class BookService {
     private readonly categoryService: BookCategoryService,
     private readonly volumeService: BookVolumeService,
     private readonly seriesService: BookSeriesService,
-    private readonly prizeServices: BookPrizeService,
+    private readonly prizeService: BookPrizeService,
     private readonly kindService: BookKindService,
   ) {}
+
+  /**
+   * Finds book with similar title
+   *
+   * @param {string} title
+   * @param {number} [similarity=2]
+   * @returns
+   * @memberof BookService
+   */
+  createSimilarNamedQuery(title: string, similarity: number = 2) {
+    return (
+      BookEntity
+        .createQueryBuilder('book')
+        .where(
+          'levenshtein("parameterizedTitle", :title) <= :similarity',
+          {
+            title: parameterize(title),
+            similarity,
+          },
+        )
+    );
+  }
 
   /**
    * Remove single book release
@@ -68,7 +92,13 @@ export class BookService {
       },
     );
 
-    await forwardTransaction({connection, entityManager}, async (transaction) => {
+    const executor = async (transaction: EntityManager) => {
+      await BookReviewEntity.delete(
+        {
+          bookId: In(ids),
+        },
+      );
+
       for await (const entity of entities)
         await releaseService.delete(entity.releases as any[], transaction);
 
@@ -93,7 +123,15 @@ export class BookService {
           ...entities,
         ],
       );
-    });
+    };
+
+    await forwardTransaction(
+      {
+        connection,
+        entityManager,
+      },
+      executor,
+    );
   }
 
   /**
@@ -111,7 +149,7 @@ export class BookService {
         tagService, authorService,
         volumeService, releaseService,
         categoryService, seriesService,
-        prizeServices, kindService,
+        prizeService, kindService,
       } = this;
 
       const [
@@ -127,7 +165,7 @@ export class BookService {
           dto.kind && (await kindService.upsert([dto.kind], transaction))[0],
           dto.volume && await volumeService.upsert(dto.volume, transaction),
           dto.series && await seriesService.upsert(dto.series, transaction),
-          dto.prizes && await prizeServices.upsert(dto.prizes, transaction),
+          dto.prizes && await prizeService.upsert(dto.prizes, transaction),
           await authorService.upsert(dto.authors, transaction),
           await tagService.upsert(dto.tags, transaction),
           await categoryService.upsert(dto.categories, transaction),

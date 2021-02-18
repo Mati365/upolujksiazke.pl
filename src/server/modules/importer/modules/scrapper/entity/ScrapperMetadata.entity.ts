@@ -29,19 +29,6 @@ export enum ScrapperMetadataStatus {
 @Index(['kind'])
 @Index(['status'])
 export class ScrapperMetadataEntity extends RemoteRecordFields {
-  static get inactive() {
-    return (
-      ScrapperMetadataEntity
-        .createQueryBuilder()
-        .where(
-          'kind != :kind and content is NULL',
-          {
-            kind: ScrapperMetadataKind.URL,
-          },
-        )
-    );
-  }
-
   @Column('text', {nullable: true})
   parserSource: string;
 

@@ -16,7 +16,7 @@ import {BookReleaseEntity} from '../release/BookRelease.entity';
   },
 )
 @Index(['book'])
-@Unique('book_review_unique_reviewer_review', ['book', 'release', 'reviewer'])
+@Unique('book_review_unique_reviewer_review', ['book', 'reviewer'])
 export class BookReviewEntity extends RemoteRecordFields {
   @Column('timestamp')
   publishDate: Date;
@@ -36,7 +36,12 @@ export class BookReviewEntity extends RemoteRecordFields {
   rating: number;
 
   @ManyToOne(() => BookEntity, (book) => book.reviews)
+  @JoinColumn({name: 'bookId'})
   book: BookEntity;
+
+  @Column()
+  @RelationId((entity: BookReviewEntity) => entity.book)
+  bookId: number;
 
   @Column(() => VotingStatsEmbeddable)
   stats: VotingStatsEmbeddable;
@@ -45,7 +50,7 @@ export class BookReviewEntity extends RemoteRecordFields {
   @JoinColumn({name: 'releaseId'})
   release: BookReleaseEntity;
 
-  @Column()
+  @Column({nullable: true})
   @RelationId((entity: BookReviewEntity) => entity.release)
   releaseId: number;
 

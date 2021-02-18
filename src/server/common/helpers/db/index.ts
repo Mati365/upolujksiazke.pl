@@ -4,3 +4,4 @@ export * from './pagination';
 export * from './forwardTransaction';
 export * from './checkIfExists';
 export * from './runTransactionWithPostHooks';
+export * from './paginatedAsyncIterator';

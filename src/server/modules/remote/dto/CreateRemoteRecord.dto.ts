@@ -1,8 +1,11 @@
+import {Transform} from 'class-transformer';
 import {
   IsBoolean,
   IsDefined, IsNumber,
   IsOptional, IsString, IsUrl,
 } from 'class-validator';
+
+import {safeToString} from '@shared/helpers';
 
 export class CreateRemoteRecordDto {
   @IsOptional()
@@ -10,6 +13,7 @@ export class CreateRemoteRecordDto {
   readonly id: number;
 
   @IsDefined()
+  @Transform(({value}) => safeToString(value), {toClassOnly: true})
   @IsString()
   readonly remoteId: string;
 

@@ -1,12 +1,8 @@
 import * as R from 'ramda';
 import {Injectable} from '@nestjs/common';
-import {classToPlain} from 'class-transformer';
 
 import {SERVER_ENV} from '@server/constants/env';
-import {
-  extractHostname,
-  safeToString,
-} from '@shared/helpers';
+import {extractHostname} from '@shared/helpers';
 
 import {RemoteWebsiteEntity} from '@server/modules/remote/entity';
 import {WykopAPI} from '@server/modules/importer/sites/wykop/api/WykopAPI';
@@ -24,16 +20,7 @@ import {
   WykopScrappersGroup,
 } from '@server/modules/importer/sites';
 
-import {
-  ScrapperMetadataEntity,
-  ScrapperMetadataStatus,
-} from '../entity';
-
-import {
-  WebsiteScrapperItemInfo,
-  WebsiteScrappersGroup,
-} from './shared';
-
+import {WebsiteScrappersGroup} from './shared';
 import {WebsiteInfoScrapperService} from './WebsiteInfoScrapper.service';
 
 const {parsers: PARSERS_ENV} = SERVER_ENV;
@@ -67,42 +54,6 @@ export class ScrapperService {
       ),
       // new WikipediaScrappersGroup(PARSERS_ENV.wikipedia),
     ];
-  }
-
-  /**
-   * Wraps scrapper result into entity
-   *
-   * @static
-   * @param {RemoteWebsiteEntity} website
-   * @param {IdentifiedItem<RemoteID>} item
-   * @param {ScrapperMetadataStatus} [status=ScrapperMetadataStatus.IMPORTED]
-   * @returns
-   * @memberof ScrapperService
-   */
-  static scrapperResultToMetadataEntity(
-    website: RemoteWebsiteEntity,
-    item: WebsiteScrapperItemInfo,
-    status: ScrapperMetadataStatus = ScrapperMetadataStatus.IMPORTED,
-  ) {
-    const {
-      kind,
-      parserSource,
-      remoteId,
-      url,
-      dto,
-    } = item;
-
-    return new ScrapperMetadataEntity(
-      {
-        status,
-        kind,
-        url,
-        parserSource,
-        remoteId: safeToString(remoteId),
-        websiteId: website.id,
-        content: classToPlain(dto),
-      },
-    );
   }
 
   /**

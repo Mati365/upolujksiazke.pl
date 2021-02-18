@@ -12,6 +12,7 @@ import {RemoteWebsiteEntity} from '@server/modules/remote/entity';
 import {MetadataDbLoaderQueueService} from '@server/modules/importer/modules/db-loader/services';
 
 import {WebsiteInfoScrapperService} from '../WebsiteInfoScrapper.service';
+import {ScrapperMetadataService} from '../ScrapperMetadata.service';
 import {ScrapperService} from '../Scrapper.service';
 import {ScrapperMetadataEntity, ScrapperMetadataKind} from '../../entity';
 import {
@@ -70,7 +71,7 @@ export class ScrapperRefreshService {
           (item) => (
             R.includes(safeToString(item.remoteId), scrappedIds)
               ? null
-              : ScrapperService.scrapperResultToMetadataEntity(website, item)
+              : ScrapperMetadataService.scrapperResultToMetadataEntity(website, item)
           ),
           scrappedPage,
         )
@@ -209,7 +210,7 @@ export class ScrapperRefreshService {
     } = this;
 
     const website = await websiteInfoScrapperService.findOrCreateWebsiteEntity(scrappersGroup.websiteInfoScrapper);
-    const newEntity = ScrapperService.scrapperResultToMetadataEntity(website, item);
+    const newEntity = ScrapperMetadataService.scrapperResultToMetadataEntity(website, item);
     const updatedEntity = await upsert(
       {
         connection,

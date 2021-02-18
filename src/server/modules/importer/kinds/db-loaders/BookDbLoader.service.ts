@@ -142,18 +142,15 @@ export class BookDbLoaderService implements MetadataDbLoader {
   /**
    * Lookups book to be present in other websites and loads to DB
    *
-   * @param {Object} attrs
+   * @param {CreateBookDto} book
    * @memberof BookDbLoaderService
    */
-  async searchAndExtractToDb(
-    {
-      book,
-    }: {
-      book: CreateBookDto,
-      allowCacheLookup?: boolean,
-    },
-  ) {
-    const {logger, scrapperMatcherService} = this;
+  async searchAndExtractToDb(book: CreateBookDto) {
+    const {
+      logger,
+      scrapperMatcherService,
+    } = this;
+
     if (!BookDbLoaderService.isEnoughToBeScrapped(book))
       return null;
 
@@ -235,7 +232,7 @@ export class BookDbLoaderService implements MetadataDbLoader {
       R.mapObjIndexed(
         (groupedReleases) => (
           publisherService
-            .createQueryWithSimilarNames(groupedReleases[0].publisher.name)
+            .createSimilarNamedQuery(groupedReleases[0].publisher.name)
             .limit(1)
             .select('name')
             .execute()

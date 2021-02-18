@@ -10,6 +10,7 @@ import {
   WebsiteInfoScrapperService,
   ScrapperCronService,
   ScrapperService,
+  ScrapperMetadataService,
 } from './service';
 
 import {
@@ -34,6 +35,7 @@ import {
       WebsiteInfoScrapperService,
       ScrapperService,
       ScrapperCronService,
+      ScrapperMetadataService,
       ScrapperRefreshService,
       ScrapperReanalyzerService,
       ScrapperMatcherService,
@@ -41,6 +43,7 @@ import {
     exports: [
       WebsiteInfoScrapperService,
       ScrapperService,
+      ScrapperMetadataService,
       ScrapperRefreshService,
       ScrapperReanalyzerService,
       ScrapperMatcherService,

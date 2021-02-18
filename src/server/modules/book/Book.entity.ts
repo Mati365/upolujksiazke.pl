@@ -68,7 +68,13 @@ export class BookEntity extends DatedRecordEntity {
   reviews: BookReviewEntity[];
 
   @JoinTable()
-  @ManyToMany(() => BookReviewerEntity, (reviewer) => reviewer.books)
+  @ManyToMany(
+    () => BookReviewerEntity,
+    (reviewer) => reviewer.books,
+    {
+      cascade: ['insert', 'update'],
+    },
+  )
   reviewers: BookReviewerEntity[];
 
   @Transform(R.map(R.prop('name')) as any)

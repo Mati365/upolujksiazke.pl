@@ -1,5 +1,4 @@
 import * as R from 'ramda';
-
 import {format} from '@shared/helpers/format';
 
 export type LangHydrate = {

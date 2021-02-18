@@ -25,7 +25,6 @@ export class CreateBookReviewerDto extends CreateRemoteRecordDto {
 
   @ValidateNested()
   @Type(() => CreateImageAttachmentDto)
-  @ValidateNested()
   readonly avatar: CreateImageAttachmentDto;
 
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor

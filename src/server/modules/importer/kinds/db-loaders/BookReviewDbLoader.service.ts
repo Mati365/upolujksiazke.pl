@@ -1,7 +1,6 @@
 import {Injectable, Logger} from '@nestjs/common';
 import {SelectQueryBuilder} from 'typeorm';
 import {plainToClass} from 'class-transformer';
-// import {validate} from 'class-validator';
 import * as R from 'ramda';
 
 import {CreateBookReviewDto} from '@server/modules/book/modules/review/dto/CreateBookReview.dto';
@@ -31,16 +30,6 @@ export class BookReviewDbLoaderService implements MetadataDbLoader {
     if (!review)
       return;
 
-    // const validatorErrors = await validate(
-    //   new CreateBookReviewDto(R.omit(['book'], review)),
-    // );
-
-    // if (validatorErrors.length) {
-    //   console.info(validatorErrors);
-    //   logger.warn('Unable to load review due to missing fields!');
-    // }
-
-    console.info(metadata);
     await this.bookReviewService.upsert([review]);
   }
 

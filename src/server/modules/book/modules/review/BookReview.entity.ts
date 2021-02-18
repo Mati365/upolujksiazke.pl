@@ -1,6 +1,6 @@
 import {
   Column, ManyToOne,
-  JoinColumn, RelationId, Index, Unique,
+  JoinColumn, RelationId, Index,
 } from 'typeorm';
 
 import {RemoteRecordEntity, RemoteRecordFields} from '@server/modules/remote/entity/RemoteRecord.entity';
@@ -16,7 +16,6 @@ import {BookReleaseEntity} from '../release/BookRelease.entity';
   },
 )
 @Index(['book'])
-@Unique('book_review_unique_reviewer_review', ['book', 'reviewer'])
 export class BookReviewEntity extends RemoteRecordFields {
   @Column('timestamp')
   publishDate: Date;

@@ -987,11 +987,6 @@
   resolved "https://registry.yarnpkg.com/@types/prettier/-/prettier-2.1.6.tgz#f4b1efa784e8db479cdb8b14403e2144b1e9ff03"
   integrity sha512-6gOkRe7OIioWAXfnO/2lFiv+SJichKVSys1mSsgyrYHSEjk8Ctv4tSR/Odvnu+HWlH2C8j53dahU03XmQdd5fA==
 
-"@types/promise-sequential@^1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@types/promise-sequential/-/promise-sequential-1.1.0.tgz#8e82b00ba3acf80f6e21071989d09974201174b8"
-  integrity sha512-Bx4Wu3OKCssrDdTHZZ+2Gr6ciHH82VGI1Jg1ujTpprPuM+qJ7Z1vRawAYMVFALBl99nhJ3VQt1rmuRiVVF3nfg==
-
 "@types/prop-types@*":
   version "15.7.3"
   resolved "https://registry.yarnpkg.com/@types/prop-types/-/prop-types-15.7.3.tgz#2ab0d5da2e5815f94b0b9d4b95d1e5f243ab2ca7"
@@ -7364,11 +7359,6 @@ promise-inflight@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/promise-inflight/-/promise-inflight-1.0.1.tgz#98472870bf228132fcbdd868129bad12c3c029e3"
   integrity sha1-mEcocL8igTL8vdhoEputEsPAKeM=
-
-promise-sequential@^1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/promise-sequential/-/promise-sequential-1.1.1.tgz#f79e8950ef86e7a7a85bf320452643592f6d2fb2"
-  integrity sha1-956JUO+G56eoW/MgRSZDWS9tL7I=
 
 promise.prototype.finally@^3.1.2:
   version "3.1.2"

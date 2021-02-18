@@ -1,6 +1,6 @@
 import {
   Column, ManyToOne,
-  JoinColumn, RelationId, Index,
+  JoinColumn, RelationId, Index, Unique,
 } from 'typeorm';
 
 import {RemoteRecordEntity, RemoteRecordFields} from '@server/modules/remote/entity/RemoteRecord.entity';
@@ -16,12 +16,18 @@ import {BookReleaseEntity} from '../release/BookRelease.entity';
   },
 )
 @Index(['book'])
+@Unique('book_review_unique_reviewer_review', ['book', 'release', 'reviewer'])
 export class BookReviewEntity extends RemoteRecordFields {
   @Column('timestamp')
   publishDate: Date;
 
   @ManyToOne(() => BookReviewerEntity, (entity) => entity.reviews)
+  @JoinColumn({name: 'reviewerId'})
   reviewer: BookReviewerEntity;
+
+  @Column()
+  @RelationId((entity: BookReviewEntity) => entity.reviewer)
+  reviewerId: number;
 
   @Column('text')
   description: string;

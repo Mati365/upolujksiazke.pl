@@ -78,9 +78,9 @@ export async function upsert<T, E extends T | T[], K extends keyof T>(
   );
 
   if (result.identifiers) {
-    safeArray(data).forEach((source) => {
+    safeArray(data).forEach((source, index) => {
       if ('id' in source)
-        (source as any).id = result.identifiers[0].id;
+        (source as any).id = result.identifiers[index].id;
     });
   }
 

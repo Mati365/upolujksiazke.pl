@@ -1,4 +1,5 @@
 export * from './isRootClusterAppInstance';
+export * from './isCmdAppInstance';
 export * from './loadFsJSON';
 export * from './paginatedAsyncIterator';
 export * from './dirUtils';

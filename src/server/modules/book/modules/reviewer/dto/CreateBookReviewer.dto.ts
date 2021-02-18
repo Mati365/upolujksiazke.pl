@@ -6,7 +6,7 @@ import {
 } from 'class-validator';
 
 import {Gender} from '@shared/types';
-import {CreateAttachmentDto} from '@server/modules/attachment/dto';
+import {CreateImageAttachmentDto} from '@server/modules/attachment/dto';
 import {CreateRemoteRecordDto} from '@server/modules/remote/dto/CreateRemoteRecord.dto';
 
 export class CreateBookReviewerDto extends CreateRemoteRecordDto {
@@ -24,9 +24,9 @@ export class CreateBookReviewerDto extends CreateRemoteRecordDto {
   readonly gender: Gender;
 
   @ValidateNested()
-  @Type(() => CreateAttachmentDto)
+  @Type(() => CreateImageAttachmentDto)
   @ValidateNested()
-  readonly avatar: CreateAttachmentDto;
+  readonly avatar: CreateImageAttachmentDto;
 
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(partial: Partial<CreateBookReviewerDto>) {

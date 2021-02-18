@@ -1,4 +1,4 @@
-import {Injectable} from '@nestjs/common';
+import {Injectable, Logger} from '@nestjs/common';
 import {plainToClass} from 'class-transformer';
 
 import {CreateBookReviewDto} from '@server/modules/book/modules/review/dto/CreateBookReview.dto';
@@ -9,24 +9,33 @@ import {BookDbLoaderService} from './BookDbLoader.service';
 
 @Injectable()
 export class BookReviewDbLoaderService implements MetadataDbLoader {
+  private readonly logger = new Logger(BookReviewDbLoaderService.name);
+
   constructor(
     private readonly bookDbLoader: BookDbLoaderService,
   ) {}
 
   /**
    * @todo
-   *  Change it! Remove matchAndExtractToDb!
+   *  Change it! Remove searchAndExtractToDb!
    *
    * @inheritdoc
    */
-  extractMetadataToDb(metadata: ScrapperMetadataEntity) {
-    const {bookDbLoader} = this;
-    const review = plainToClass(CreateBookReviewDto, metadata.content);
+  async extractMetadataToDb(metadata: ScrapperMetadataEntity) {
+    const {bookDbLoader, logger} = this;
 
-    return bookDbLoader.matchAndExtractToDb(
+    const review = plainToClass(CreateBookReviewDto, metadata.content);
+    const book = await bookDbLoader.searchAndExtractToDb(
       {
         book: review.book,
       },
     );
+
+    if (!book) {
+      logger.warn(`Unable to match review book with title "${review.book.title}"!`);
+      return;
+    }
+
+    console.info(book);
   }
 }

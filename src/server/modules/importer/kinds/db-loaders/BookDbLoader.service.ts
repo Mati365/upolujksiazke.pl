@@ -145,11 +145,12 @@ export class BookDbLoaderService implements MetadataDbLoader {
    * @param {Object} attrs
    * @memberof BookDbLoaderService
    */
-  async matchAndExtractToDb(
+  async searchAndExtractToDb(
     {
       book,
     }: {
       book: CreateBookDto,
+      allowCacheLookup?: boolean,
     },
   ) {
     const {logger, scrapperMatcherService} = this;

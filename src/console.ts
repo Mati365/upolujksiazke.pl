@@ -1,4 +1,5 @@
 import * as path from 'path';
+import * as R from 'ramda';
 import {NestFactory} from '@nestjs/core';
 import Logger from 'purdy';
 import awaitOutside from 'await-outside';
@@ -28,6 +29,7 @@ const LOGGER_OPTIONS = {
   Object.assign(
     server.context,
     {
+      R,
       app: context,
       ...AppModules,
       ...DB_ENTITIES,

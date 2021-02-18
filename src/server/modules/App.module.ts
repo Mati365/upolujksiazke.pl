@@ -6,6 +6,7 @@ import {SERVER_ENV} from '@server/constants/env';
 
 import {
   getClusterAppInstance,
+  isCmdAppInstance,
   isRootClusterAppInstance,
 } from '../common/helpers';
 
@@ -20,14 +21,20 @@ import {TmpDirModule} from './tmp-dir';
   {
     imports: [
       DatabaseModule,
-      BullModule.forRoot(
-        {
-          redis: SERVER_ENV.redisConfig,
-          defaultJobOptions: {
-            removeOnComplete: true,
-            removeOnFail: true,
-          },
-        },
+      ...(
+        isCmdAppInstance()
+          ? []
+          : [
+            BullModule.forRoot(
+              {
+                redis: SERVER_ENV.redisConfig,
+                defaultJobOptions: {
+                  removeOnComplete: true,
+                  removeOnFail: true,
+                },
+              },
+            ),
+          ]
       ),
       ...(
         isRootClusterAppInstance()

@@ -25,7 +25,6 @@ export class BookPublisherService {
 
   constructor(
     private readonly connection: Connection,
-    private readonly entityManager: EntityManager,
     private readonly imageAttachmentService: ImageAttachmentService,
   ) {}
 
@@ -74,12 +73,18 @@ export class BookPublisherService {
       },
     );
 
-    await forwardTransaction({connection, entityManager}, async (transaction) => {
-      for await (const entity of entities)
-        await imageAttachmentService.delete(entity.logo as any[], transaction);
+    await forwardTransaction(
+      {
+        connection,
+        entityManager,
+      },
+      async (transaction) => {
+        for await (const entity of entities)
+          await imageAttachmentService.delete(entity.logo as any[], transaction);
 
-      await transaction.remove(entities);
-    });
+        await transaction.remove(entities);
+      },
+    );
   }
 
   /**
@@ -96,38 +101,48 @@ export class BookPublisherService {
   ): Promise<BookPublisherEntity> {
     const {
       upsertResources = false,
-      entityManager = <any> BookPublisherEntity,
+      entityManager,
     } = attrs;
 
     const {connection, imageAttachmentService} = this;
-    const publisher = await upsert(
+    const executor = async (transaction: EntityManager) => {
+      const publisher = await upsert(
+        {
+          connection,
+          entityManager: transaction,
+          Entity: BookPublisherEntity,
+          primaryKey: 'parameterizedName',
+          data: new BookPublisherEntity(dto),
+        },
+      );
+
+      await imageAttachmentService.upsertImage(
+        {
+          entityManager: transaction,
+          entity: publisher,
+          resourceColName: 'logo',
+          image: logo,
+          manyToMany: {
+            tableName: BookPublisherEntity.coverTableName,
+            idEntityColName: 'bookPublisherId',
+          },
+          fetcher: {
+            destSubDir: `logo/${publisher.id}`,
+            sizes: BookPublisherService.LOGO_IMAGE_SIZES,
+          },
+          upsertResources,
+        },
+      );
+
+      return publisher;
+    };
+
+    return forwardTransaction(
       {
-        entityManager,
         connection,
-        Entity: BookPublisherEntity,
-        primaryKey: 'parameterizedName',
-        data: new BookPublisherEntity(dto),
-      },
-    );
-
-    await imageAttachmentService.upsertImage(
-      {
         entityManager,
-        entity: publisher,
-        resourceColName: 'logo',
-        image: logo,
-        manyToMany: {
-          tableName: BookPublisherEntity.coverTableName,
-          idEntityColName: 'bookPublisherId',
-        },
-        fetcher: {
-          destSubDir: `logo/${publisher.id}`,
-          sizes: BookPublisherService.LOGO_IMAGE_SIZES,
-        },
-        upsertResources,
       },
+      executor,
     );
-
-    return publisher;
   }
 }

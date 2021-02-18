@@ -1,6 +1,6 @@
 import {Injectable} from '@nestjs/common';
 import {Connection, EntityManager} from 'typeorm';
-import sequential from 'promise-sequential';
+import pMap from 'p-map';
 
 import {Size} from '@shared/types';
 import {
@@ -85,88 +85,95 @@ export class BookReleaseService {
     attrs: UpsertResourceAttrs = {},
   ): Promise<BookReleaseEntity> {
     const {
-      upsertResources = false,
-      entityManager = <any> BookReleaseEntity,
-    } = attrs;
-
-    const {
       connection,
       publisherService,
       availabilityService,
       imageAttachmentService,
     } = this;
 
-    const upsertParams = {
-      entityManager,
-      connection,
-      Entity: BookReleaseEntity,
-      data: new BookReleaseEntity(
+    const executor = async (transaction: EntityManager) => {
+      const transactionAttrs: UpsertResourceAttrs = {
+        ...attrs,
+        entityManager: transaction,
+      };
+
+      const releaseEntity = await upsert(
         {
-          ...dto,
-          publisherId: publisherId ?? (
-            await (publisher && publisherService.upsert(publisher, attrs))
-          )?.id,
+          connection,
+          primaryKey: 'isbn',
+          entityManager: transaction,
+          Entity: BookReleaseEntity,
+          data: new BookReleaseEntity(
+            {
+              ...dto,
+              publisherId: publisherId ?? (await (publisher && publisherService.upsert(
+                publisher,
+                transactionAttrs,
+              )))?.id,
+            },
+          ),
         },
-      ),
+      );
+
+      if (availability?.length) {
+        await availabilityService.upsertList(
+          availability.map(
+            (item) => new CreateBookAvailabilityDto(
+              {
+                ...item,
+                bookId: releaseEntity.bookId,
+                releaseId: releaseEntity.id,
+              },
+            ),
+          ),
+          transaction,
+        );
+      }
+
+      if (childReleases) {
+        await this.upsertList(
+          childReleases.map(
+            (childDto) => new CreateBookReleaseDto(
+              {
+                ...childDto,
+                bookId: releaseEntity.bookId,
+                publisherId: releaseEntity.publisherId,
+                parentReleaseId: releaseEntity.id,
+              },
+            ),
+          ),
+          transactionAttrs,
+        );
+      }
+
+      await imageAttachmentService.upsertImage(
+        {
+          upsertResources: transactionAttrs.upsertResources,
+          entityManager: transaction,
+          entity: releaseEntity,
+          resourceColName: 'cover',
+          image: cover,
+          manyToMany: {
+            tableName: BookReleaseEntity.coverTableName,
+            idEntityColName: 'bookReleaseId',
+          },
+          fetcher: {
+            destSubDir: `cover/${releaseEntity.id}`,
+            sizes: BookReleaseService.COVER_IMAGE_SIZES,
+          },
+        },
+      );
+
+      return releaseEntity;
     };
 
-    const releaseEntity = await upsert(
+    return forwardTransaction(
       {
-        ...upsertParams,
-        primaryKey: 'isbn',
+        connection,
+        entityManager: attrs.entityManager,
       },
+      executor,
     );
-
-    if (availability?.length) {
-      await availabilityService.upsertList(
-        availability.map(
-          (item) => new CreateBookAvailabilityDto(
-            {
-              ...item,
-              bookId: releaseEntity.bookId,
-              releaseId: releaseEntity.id,
-            },
-          ),
-        ),
-        entityManager,
-      );
-    }
-
-    if (childReleases) {
-      await this.upsertList(
-        childReleases.map(
-          (childDto) => new CreateBookReleaseDto(
-            {
-              ...childDto,
-              bookId: releaseEntity.bookId,
-              publisherId: releaseEntity.publisherId,
-              parentReleaseId: releaseEntity.id,
-            },
-          ),
-        ),
-        attrs,
-      );
-    }
-
-    await imageAttachmentService.upsertImage(
-      {
-        entityManager,
-        entity: releaseEntity,
-        resourceColName: 'cover',
-        image: cover,
-        manyToMany: {
-          tableName: BookReleaseEntity.coverTableName,
-          idEntityColName: 'bookReleaseId',
-        },
-        fetcher: {
-          destSubDir: `cover/${releaseEntity.id}`,
-          sizes: BookReleaseService.COVER_IMAGE_SIZES,
-        },
-        upsertResources,
-      },
-    );
-
-    return releaseEntity;
   }
 
   /**
@@ -185,14 +192,23 @@ export class BookReleaseService {
       return [];
 
     // do not use Promise.all! It breaks typeorm!
-    return sequential(
-      dtos.map(
-        (item) => () => Promise.resolve(
-          this.upsert(
-            item,
-            attrs,
-          ),
+    return forwardTransaction(
+      {
+        connection: this.connection,
+        entityManager: attrs.entityManager,
+      },
+      (transaction) => pMap(
+        dtos,
+        (item) => this.upsert(
+          item,
+          {
+            ...attrs,
+            entityManager: transaction,
+          },
         ),
+        {
+          concurrency: 1,
+        },
       ),
     );
   }

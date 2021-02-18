@@ -1,8 +1,11 @@
 import {Injectable} from '@nestjs/common';
 import {Connection, EntityManager} from 'typeorm';
-import sequential from 'promise-sequential';
+import pMap from 'p-map';
 
-import {upsert} from '@server/common/helpers/db';
+import {
+  forwardTransaction,
+  upsert,
+} from '@server/common/helpers/db';
 
 import {BookAvailabilityEntity} from './BookAvailability.entity';
 import {CreateBookAvailabilityDto} from './dto/CreateBookAvailability.dto';
@@ -86,11 +89,17 @@ export class BookAvailabilityService {
       return [];
 
     // do not use Promise.all! It breaks typeorm!
-    return sequential(
-      dtos.map(
-        (item) => () => Promise.resolve(
-          this.upsert(item, entityManager),
-        ),
+    return forwardTransaction(
+      {
+        connection: this.connection,
+        entityManager,
+      },
+      () => pMap(
+        dtos,
+        (item) => this.upsert(item, entityManager),
+        {
+          concurrency: 1,
+        },
       ),
     );
   }

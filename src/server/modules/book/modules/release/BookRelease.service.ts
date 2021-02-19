@@ -8,7 +8,7 @@ import {
   UpsertResourceAttrs,
 } from '@server/common/helpers/db';
 
-import {Size} from '@shared/types';
+import {ImageResizeSize} from '@shared/types';
 import {ImageAttachmentService, ImageResizeConfig} from '@server/modules/attachment/services';
 import {CreateBookReleaseDto} from './dto/CreateBookRelease.dto';
 import {CreateBookAvailabilityDto} from '../availability/dto/CreateBookAvailability.dto';
@@ -18,12 +18,12 @@ import {BookAvailabilityService} from '../availability/BookAvailability.service'
 
 @Injectable()
 export class BookReleaseService {
-  static readonly COVER_IMAGE_SIZES: ImageResizeConfig = Object.freeze(
+  static readonly COVER_IMAGE_SIZES = Object.freeze<ImageResizeConfig>(
     {
-      SMALL_THUMB: new Size(78, 117),
-      THUMB: new Size(147, 221),
-      PREVIEW: new Size(220, 330),
-      BIG: new Size(320, 484),
+      SMALL_THUMB: new ImageResizeSize(78, 117),
+      THUMB: new ImageResizeSize(147, 221),
+      PREVIEW: new ImageResizeSize(220, 330),
+      BIG: new ImageResizeSize(320, 484),
     },
   );
 

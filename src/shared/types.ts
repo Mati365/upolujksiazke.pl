@@ -86,3 +86,10 @@ export class Size {
     public h: number,
   ) {}
 }
+
+export class ImageResizeSize {
+  constructor(
+    public w: number | '',
+    public h: number | '',
+  ) {}
+}

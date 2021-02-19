@@ -8,15 +8,17 @@ import {
 } from '@server/common/helpers/db';
 
 import {ImageResizeSize} from '@shared/types';
-import {ImageAttachmentService} from '@server/modules/attachment/services';
-import {BookReviewerEntity} from './BookReviewer.entity';
-import {CreateBookReviewerDto} from './dto/CreateBookReviewer.dto';
+import {ImageAttachmentService, ImageResizeConfig} from '@server/modules/attachment/services';
+import {RemoteWebsiteEntity} from '../entity/RemoteWebsite.entity';
+import {CreateRemoteWebsiteDto} from '../dto/CreateRemoteWebsite.dto';
 
 @Injectable()
-export class BookReviewerService {
-  static readonly BOOK_REVIEWER_AVATAR_SIZES = Object.freeze(
+export class RemoteWebsiteService {
+  static readonly LOGO_IMAGE_SIZES = Object.freeze<ImageResizeConfig>(
     {
-      SMALL_THUMB: new ImageResizeSize(64, ''),
+      SMALL_THUMB: new ImageResizeSize('', 16),
+      THUMB: new ImageResizeSize('', 24),
+      PREVIEW: new ImageResizeSize('', 32),
     },
   );
 
@@ -26,11 +28,11 @@ export class BookReviewerService {
   ) {}
 
   /**
-   * Remove multiple book reviewers
+   * Delete array of websites
    *
    * @param {number[]} ids
    * @param {EntityManager} [entityManager]
-   * @memberof BookReviewerService
+   * @memberof RemoteWebsiteService
    */
   async delete(ids: number[], entityManager?: EntityManager) {
     const {
@@ -38,12 +40,12 @@ export class BookReviewerService {
       imageAttachmentService,
     } = this;
 
-    const entities = await BookReviewerEntity.findByIds(
+    const entities = await RemoteWebsiteEntity.findByIds(
       ids,
       {
         select: ['id'],
         loadRelationIds: {
-          relations: ['avatar'],
+          relations: ['logo'],
         },
       },
     );
@@ -55,7 +57,7 @@ export class BookReviewerService {
       },
       async (transaction) => {
         for await (const entity of entities)
-          await imageAttachmentService.delete(entity.avatar as any[], transaction);
+          await imageAttachmentService.delete(entity.logo as any[], transaction);
 
         await transaction.remove(entities);
       },
@@ -63,17 +65,17 @@ export class BookReviewerService {
   }
 
   /**
-   * Creates or updates book reviewer
+   * Create or updates websites
    *
-   * @param {CreateBookReviewerDto} dto
+   * @param {CreateRemoteWebsiteDto} {logo, ...dto}
    * @param {UpsertResourceAttrs} [attrs={}]
-   * @returns {Promise<BookReviewerEntity>}
-   * @memberof BookReviewerService
+   * @returns {Promise<RemoteWebsiteEntity>}
+   * @memberof RemoteWebsiteService
    */
   async upsert(
-    {avatar, ...dto}: CreateBookReviewerDto,
+    {logo, ...dto}: CreateRemoteWebsiteDto,
     attrs: UpsertResourceAttrs = {},
-  ): Promise<BookReviewerEntity> {
+  ): Promise<RemoteWebsiteEntity> {
     const {
       upsertResources = false,
       entityManager,
@@ -81,42 +83,37 @@ export class BookReviewerService {
 
     const {connection, imageAttachmentService} = this;
     const executor = async (transaction: EntityManager) => {
-      const reviewer = await upsert(
+      const website = await upsert(
         {
           connection,
+          primaryKey: 'url',
           entityManager: transaction,
-          Entity: BookReviewerEntity,
-          constraint: 'book_reviewer_unique_remote',
-          data: new BookReviewerEntity(
-            {
-              ...dto,
-              remoteId: dto.remoteId ?? dto.name,
-            },
-          ),
+          Entity: RemoteWebsiteEntity,
+          data: new RemoteWebsiteEntity(dto),
         },
       );
 
-      if (avatar) {
+      if (logo?.originalUrl) {
         await imageAttachmentService.upsertImage(
           {
             entityManager: transaction,
-            entity: reviewer,
-            resourceColName: 'avatar',
-            image: avatar,
+            entity: website,
+            resourceColName: 'logo',
+            image: logo,
             manyToMany: {
-              tableName: BookReviewerEntity.avatarTableName,
-              idEntityColName: 'bookReviewerId',
+              tableName: RemoteWebsiteEntity.logoTableName,
+              idEntityColName: 'scrapperWebsiteId',
             },
             fetcher: {
-              destSubDir: `avatar/${reviewer.id}`,
-              sizes: BookReviewerService.BOOK_REVIEWER_AVATAR_SIZES,
+              destSubDir: `favicon/${website.id}`,
+              sizes: RemoteWebsiteService.LOGO_IMAGE_SIZES,
             },
             upsertResources,
           },
         );
       }
 
-      return reviewer;
+      return website;
     };
 
     return forwardTransaction(

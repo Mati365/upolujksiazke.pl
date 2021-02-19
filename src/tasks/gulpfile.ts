@@ -1,16 +1,15 @@
 import 'isomorphic-fetch';
 import gulp from 'gulp';
 
-import {
-  refreshSingleTask,
-  refreshLatestTask,
-  refreshAllTask,
-  reanalyzeAllTask,
-  runSpiderTask,
-} from './scrapper';
+import * as Website from './entity/website';
+import * as Scrapper from './scrapper';
 
-gulp.task('scrapper:refresh:single', refreshSingleTask);
-gulp.task('scrapper:refresh:latest', refreshLatestTask);
-gulp.task('scrapper:refresh:all', refreshAllTask);
-gulp.task('scrapper:reanalyze:all', reanalyzeAllTask);
-gulp.task('scrapper:spider:run', runSpiderTask);
+// entities
+gulp.task('entity:website:fetch-missing-logos', Website.fetchMissingLogosTask);
+
+// scrapper
+gulp.task('scrapper:refresh:single', Scrapper.refreshSingleTask);
+gulp.task('scrapper:refresh:latest', Scrapper.refreshLatestTask);
+gulp.task('scrapper:refresh:all', Scrapper.refreshAllTask);
+gulp.task('scrapper:reanalyze:all', Scrapper.reanalyzeAllTask);
+gulp.task('scrapper:spider:run', Scrapper.runSpiderTask);

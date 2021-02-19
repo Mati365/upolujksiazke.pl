@@ -11,6 +11,7 @@ import {
 } from '../common/helpers';
 
 import {DatabaseModule} from './database/Database.module';
+import {RemoteModule} from './remote/Remote.module';
 import {FrontModule} from './front';
 import {ManifestModule} from './manifest';
 import {AttachmentModule} from './attachment';
@@ -56,6 +57,7 @@ import {TmpDirModule} from './tmp-dir';
           rootPath: `tmp/bookmeter-instance-${getClusterAppInstance()}`,
         },
       ),
+      RemoteModule,
       FrontModule,
       ImporterModule,
     ],

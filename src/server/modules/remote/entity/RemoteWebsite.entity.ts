@@ -1,10 +1,11 @@
 import * as R from 'ramda';
 import {
   BeforeInsert, BeforeUpdate,
-  Column, Entity,
+  Column, Entity, JoinTable, ManyToMany,
 } from 'typeorm';
 
 import {DatedRecordEntity} from '@server/modules/database/DatedRecord.entity';
+import {ImageAttachmentEntity} from '@server/modules/attachment/entity/ImageAttachment.entity';
 
 @Entity(
   {
@@ -12,6 +13,8 @@ import {DatedRecordEntity} from '@server/modules/database/DatedRecord.entity';
   },
 )
 export class RemoteWebsiteEntity extends DatedRecordEntity {
+  static logoTableName = 'scrapper_website_logo_attachments';
+
   @Column('citext', {unique: true})
   url: string;
 
@@ -21,8 +24,19 @@ export class RemoteWebsiteEntity extends DatedRecordEntity {
   @Column('text', {nullable: true})
   title: string;
 
-  @Column('text', {nullable: true})
-  faviconUrl: string;
+  @ManyToMany(
+    () => ImageAttachmentEntity,
+    {
+      cascade: true,
+      onDelete: 'CASCADE',
+    },
+  )
+  @JoinTable(
+    {
+      name: RemoteWebsiteEntity.logoTableName,
+    },
+  )
+  logo: ImageAttachmentEntity[];
 
   constructor(partial: Partial<RemoteWebsiteEntity>) {
     super();
@@ -32,15 +46,12 @@ export class RemoteWebsiteEntity extends DatedRecordEntity {
   @BeforeInsert()
   @BeforeUpdate()
   transformFields() {
-    const {description, title, faviconUrl} = this;
+    const {description, title} = this;
 
     if (!R.trim(description || ''))
       this.description = null;
 
     if (!R.trim(title || ''))
       this.title = null;
-
-    if (!R.trim(faviconUrl || ''))
-      this.faviconUrl = null;
   }
 }

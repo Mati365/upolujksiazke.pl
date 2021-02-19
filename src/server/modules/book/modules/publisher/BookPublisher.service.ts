@@ -8,18 +8,18 @@ import {
   UpsertResourceAttrs,
 } from '@server/common/helpers/db';
 
-import {Size} from '@shared/types';
+import {ImageResizeSize} from '@shared/types';
 import {ImageAttachmentService, ImageResizeConfig} from '@server/modules/attachment/services';
 import {BookPublisherEntity} from './BookPublisher.entity';
 import {CreateBookPublisherDto} from './dto/BookPublisher.dto';
 
 @Injectable()
 export class BookPublisherService {
-  static readonly LOGO_IMAGE_SIZES: ImageResizeConfig = Object.freeze(
+  static readonly LOGO_IMAGE_SIZES = Object.freeze<ImageResizeConfig>(
     {
-      SMALL_THUMB: new Size(78, null),
-      THUMB: new Size(147, null),
-      PREVIEW: new Size(220, null),
+      SMALL_THUMB: new ImageResizeSize(78, ''),
+      THUMB: new ImageResizeSize(147, ''),
+      PREVIEW: new ImageResizeSize(220, ''),
     },
   );
 

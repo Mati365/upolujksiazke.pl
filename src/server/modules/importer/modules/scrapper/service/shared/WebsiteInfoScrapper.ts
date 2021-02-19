@@ -1,7 +1,8 @@
 import {parseAsyncURL} from '@server/common/helpers/fetchAsyncHTML';
-import {concatUrls} from '@shared/helpers/concatUrls';
+import {concatWithAnchor} from '@spider/helpers/concatWithAnchor';
 
-import {RemoteWebsiteEntity} from '@server/modules/remote/entity';
+import {CreateRemoteWebsiteDto} from '@server/modules/remote/dto/CreateRemoteWebsite.dto';
+import {CreateImageAttachmentDto} from '@server/modules/attachment/dto/CreateImageAttachment.dto';
 
 /**
  * Basic async scrapper that loads meta info from website
@@ -14,28 +15,41 @@ export class WebsiteInfoScrapper {
     public readonly websiteURL: string,
   ) {}
 
-  async fetchWebsiteEntity(): Promise<RemoteWebsiteEntity> {
-    return WebsiteInfoScrapper.getWebsiteEntityFromURL(this.websiteURL);
+  /**
+   * Fetches current website
+   *
+   * @returns {Promise<CreateRemoteWebsiteDto>}
+   * @memberof WebsiteInfoScrapper
+   */
+  async fetchWebsiteDTO(): Promise<CreateRemoteWebsiteDto> {
+    return WebsiteInfoScrapper.getWebsiteDtoFromURL(this.websiteURL);
   }
 
   /**
-   * Fetches websites and parsers its meta tags
+   * Fetches website and creates dto
    *
    * @static
    * @param {string} url
-   * @returns
+   * @returns {CreateRemoteWebsiteDto}
    * @memberof WebsiteInfoScrapper
    */
-  static async getWebsiteEntityFromURL(url: string) {
+  static async getWebsiteDtoFromURL(url: string) {
     const {$} = await parseAsyncURL(url);
-    const faviconUrl = $('[rel="shortcut icon"], [rel="icon"]').attr('href');
+    let faviconUrl = $('[rel="shortcut icon"], [rel="icon"]').attr('href');
 
-    return new RemoteWebsiteEntity(
+    if (!faviconUrl)
+      faviconUrl = $('meta[property="og:image"]').attr('content');
+
+    return new CreateRemoteWebsiteDto(
       {
         url,
         title: $('title').text(),
         description: $('meta[name="description"]').attr('content'),
-        faviconUrl: faviconUrl && concatUrls(url, faviconUrl),
+        logo: faviconUrl && new CreateImageAttachmentDto(
+          {
+            originalUrl: concatWithAnchor(url, faviconUrl),
+          },
+        ),
       },
     );
   }

@@ -14,6 +14,9 @@ export function concatUrls(a: string, b: string): string {
   if (!b || b === '/')
     return a;
 
+  if (b.startsWith('//'))
+    b = `https:${b}`;
+
   if (!a || isAbsoluteURL(b))
     return b;
 

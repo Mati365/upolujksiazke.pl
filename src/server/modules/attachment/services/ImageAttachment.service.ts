@@ -1,10 +1,11 @@
 import {Inject, Injectable, Logger} from '@nestjs/common';
 import {EntityManager} from 'typeorm';
 import {convert, resize} from 'easyimage';
+import chalk from 'chalk';
+import mkdirp from 'mkdirp';
 import * as path from 'path';
 import * as mime from 'mime-types';
 import * as R from 'ramda';
-import mkdirp from 'mkdirp';
 
 import {checkIfExists, runInPostHookIfPresent} from '@server/common/helpers/db';
 import {safeArray, mapObjValuesToPromise} from '@shared/helpers';
@@ -13,7 +14,7 @@ import {
   isImageMimeType,
 } from '@server/common/helpers';
 
-import {CanBeArray, ID, Size} from '@shared/types';
+import {CanBeArray, ID, ImageResizeSize} from '@shared/types';
 import {
   EnterTmpFolderScope,
   TmpDirService,
@@ -35,7 +36,7 @@ import {
   CreateImageAttachmentDto,
 } from '../dto';
 
-export type ImageResizeConfig = Partial<Record<ImageVersion, Size>>;
+export type ImageResizeConfig = Partial<Record<ImageVersion, ImageResizeSize>>;
 
 export type ImageResizedEntities = Record<ImageVersion, ImageAttachmentEntity>;
 
@@ -257,6 +258,7 @@ export class ImageAttachmentService {
     }: TmpFolderScopeAttrs = null,
   ): Promise<ImageResizedEntities> {
     const {
+      logger,
       options: {
         dest,
         fileNameGenerator,
@@ -277,12 +279,14 @@ export class ImageAttachmentService {
       },
     );
 
-    if (!resultFile)
-      throw new Error('Fetched file is not present!');
+    if (!resultFile) {
+      logger.warn(`File ${chalk.bold(originalUrl)} is not present!`);
+      return null;
+    }
 
     const convertResult = await convert(
       {
-        src: resultFile.outputFile,
+        src: `${resultFile.outputFile}[0]`, // fixes crashes on some weird .ico
         dst: path.join(tmpFolderPath, `dest.${extension}`),
       },
     );

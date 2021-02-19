@@ -234,4 +234,23 @@ export class ScrapperRefreshService {
     await dbLoaderQueueService.addMetadataToQueue(updatedEntity);
     return updatedEntity;
   }
+
+  /**
+   * Refreshes all websites
+   *
+   * @memberof ScrapperRefreshService
+   */
+  async refreshWebsites() {
+    const {
+      websiteInfoScrapperService,
+      scrapperService,
+    } = this;
+
+    return websiteInfoScrapperService.findOrCreateWebsitesEntities(
+      R
+        .pluck('websiteInfoScrapper', scrapperService.scrappersGroups)
+        .filter(Boolean),
+      true,
+    );
+  }
 }

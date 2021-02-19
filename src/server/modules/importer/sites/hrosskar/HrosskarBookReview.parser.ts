@@ -18,11 +18,7 @@ export class HrosskarBookReviewParser extends WebsiteScrapperParser<CreateBookRe
     const bookInfo = $(blogPost).find('div').text();
     const header = $(blogPost).find('h3.post-title[itemprop=\'name\']').text();
 
-    const [title, author] = R.map(R.trim, R.splitAt(
-      header.lastIndexOf('-'),
-      header,
-    ));
-
+    const [title, author] = R.map(R.trim, header.split(' - '));
     const isbn = normalizeISBN(bookInfo.match(/ISBN:\s*([\w-]+)/)?.[1]);
     const book = new CreateBookDto(
       {

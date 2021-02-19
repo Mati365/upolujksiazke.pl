@@ -76,6 +76,7 @@ export class GraniceBookParser
       ),
     );
 
+    const publisher = normalizeParsedText($details.find('[itemprop="publisher"]').text());
     const release = new CreateBookReleaseDto(
       {
         title,
@@ -87,9 +88,9 @@ export class GraniceBookParser
         isbn: normalizeISBN(
           $details.find('isbn[itemprop="isbn"]').text(),
         ),
-        publisher: new CreateBookPublisherDto(
+        publisher: publisher && new CreateBookPublisherDto(
           {
-            name: normalizeParsedText($details.find('[itemprop="publisher"]').text()),
+            name: publisher,
           },
         ),
         cover: new CreateImageAttachmentDto(

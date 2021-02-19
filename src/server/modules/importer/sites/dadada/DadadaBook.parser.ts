@@ -41,7 +41,7 @@ export class DadadaBookParser
               price: normalizePrice($('.productPromo .productFinalPrice').text())?.price,
               prevPrice: normalizePrice($('.productPromo .productBasePrice').text())?.price,
               avgRating: Number.parseFloat($('[data-rateit-value]').attr('rateitValue')) * 2 || null,
-              totalRatings: +$('.reviewCount[onclick]').text()?.match(/\(\d+\)/)[1] || null,
+              totalRatings: +$('.reviewCount[onclick]').text()?.match(/\(\d+\)/)?.[1] || null,
               showOnlyAsQuote: true,
               remoteId,
               url,
@@ -64,7 +64,7 @@ export class DadadaBookParser
     const basicProps = DadadaBookParser.extractBookProps($);
 
     const title = normalizeParsedText($('h1.productName').text());
-    const authors = $(basicProps['autor'][1]).find('a').toArray().map(
+    const authors = basicProps['autor'] && $(basicProps['autor'][1]).find('a').toArray().map(
       (author) => new CreateBookAuthorDto(
         {
           name: normalizeParsedText($(author).text()),
@@ -124,26 +124,26 @@ export class DadadaBookParser
    * @memberof DadadaBookParser
    */
   static extractBookProps($: cheerio.Root): Record<string, [string, cheerio.Cheerio]> {
-    const rows = (
-      $('.productDataDetails > .productDataItem')
-        .toArray()
-    );
+    const rows = $('.productDataDetails > .productDataItem').toArray();
 
     return R.fromPairs(
-      rows.map(
+      R.reject(R.isNil, rows.map(
         (row) => {
           const $row = $(row);
           const $value = $row.children().eq(0);
+          const key = normalizeParsedText($row.text()).match(/^([^:]+)/)?.[1]?.toLowerCase();
+          if (!key)
+            return null;
 
           return [
-            normalizeParsedText($row.text()).match(/^([^:]+)/)[1]?.toLowerCase(),
+            key,
             [
               normalizeParsedText($value.text()),
               $value,
             ],
           ];
         },
-      ),
+      )),
     );
   }
 }

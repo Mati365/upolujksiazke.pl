@@ -1,4 +1,5 @@
 import {ScrapperMetadataKind} from '@scrapper/entity';
+import {SimpleWebsiteScrapperSpider} from '@scrapper/service/shared';
 import {
   BookShopScrappersGroup,
   BookShopScrappersGroupConfig,
@@ -12,6 +13,11 @@ export class DadadaScrappersGroup extends BookShopScrappersGroup {
     super(
       {
         ...options,
+        spider: SimpleWebsiteScrapperSpider.createForRegexMap(
+          [
+            [/,p\d+$/, () => ScrapperMetadataKind.BOOK],
+          ],
+        ),
         matchers: {
           [ScrapperMetadataKind.BOOK]: new DadadaBookMatcher(options),
         },

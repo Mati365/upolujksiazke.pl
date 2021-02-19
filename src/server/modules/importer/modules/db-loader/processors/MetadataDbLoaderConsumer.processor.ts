@@ -2,7 +2,7 @@ import {Logger} from '@nestjs/common';
 import {Processor, Process, OnQueueActive, OnQueueCompleted} from '@nestjs/bull';
 import {In} from 'typeorm';
 import {Job, Queue} from 'bull';
-import pLimit from 'p-limit';
+import pMap from 'p-map';
 import * as R from 'ramda';
 
 import {ScrapperMetadataEntity} from '../../scrapper/entity';
@@ -61,13 +61,13 @@ export class MetadataDbLoaderConsumerProcessor {
       },
     );
 
-    const limit = pLimit(5);
-
     try {
-      await Promise.all(
-        metadataItems.map(
-          (item) => limit(() => metadataDbLoaderService.extractMetadataToDb(item)),
-        ),
+      await pMap(
+        metadataItems,
+        (item) => metadataDbLoaderService.extractMetadataToDb(item),
+        {
+          concurrency: 5,
+        },
       );
     } catch (e) {
       console.error(e);

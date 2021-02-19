@@ -1,6 +1,6 @@
 import * as R from 'ramda';
 import chalk from 'chalk';
-import pLimit from 'p-limit';
+import pMap from 'p-map';
 import {Injectable, Logger} from '@nestjs/common';
 import {Connection, Equal, In} from 'typeorm';
 
@@ -158,21 +158,29 @@ export class ScrapperRefreshService {
       scrappersGroups?: WebsiteScrappersGroup[],
     },
   ) {
+    const {logger, scrapperService} = this;
+
     kind ??= ScrapperMetadataKind.URL;
-    scrappersGroups ??= this.scrapperService.scrappersGroups;
+    scrappersGroups ??= scrapperService.scrappersGroups;
 
-    const limit = pLimit(2);
-
-    return Promise.all(
-      scrappersGroups.map(
-        (scrappersGroup) => limit(() => this.execScrapper(
-          {
-            maxIterations,
-            scrappersGroup,
-            kind,
-          },
-        )),
-      ),
+    await pMap(
+      scrappersGroups,
+      async (scrappersGroup) => {
+        try {
+          await this.execScrapper(
+            {
+              maxIterations,
+              scrappersGroup,
+              kind,
+            },
+          );
+        } catch (e) {
+          logger.error(e);
+        }
+      },
+      {
+        concurrency: 2,
+      },
     );
   }
 

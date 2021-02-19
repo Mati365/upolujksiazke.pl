@@ -1,6 +1,6 @@
 import {Injectable} from '@nestjs/common';
 import {In} from 'typeorm';
-import pLimit from 'p-limit';
+import pMap from 'p-map';
 import * as R from 'ramda';
 
 import {RemoteWebsiteEntity} from '@server/modules/remote/entity';
@@ -42,11 +42,12 @@ export class WebsiteInfoScrapperService {
     if (R.isEmpty(missingWebsites))
       return cachedWebsites;
 
-    const limit = pLimit(5);
-    const newEntities = await Promise.all(
-      missingWebsites.map(
-        (scrapper) => limit(() => scrapper.fetchWebsiteEntity()),
-      ),
+    const newEntities = await pMap(
+      missingWebsites,
+      (scrapper) => scrapper.fetchWebsiteEntity(),
+      {
+        concurrency: 5,
+      },
     );
 
     await RemoteWebsiteEntity.save(newEntities);

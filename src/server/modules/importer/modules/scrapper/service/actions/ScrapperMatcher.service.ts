@@ -1,5 +1,5 @@
 import {Injectable} from '@nestjs/common';
-import pLimit from 'p-limit';
+import pMap from 'p-map';
 
 import {ScrapperService} from '../Scrapper.service';
 import {ScrapperMatcherResult} from '../shared/ScrapperMatcher';
@@ -21,11 +21,12 @@ export class ScrapperMatcherService {
    */
   async searchRemoteRecord<R>(attrs: MatchRecordAttrs): Promise<ScrapperMatcherResult<R>[]> {
     const {scrappersGroups} = this.scrapperService;
-    const limit = pLimit(4);
-    const items = await Promise.all(
-      scrappersGroups.map(
-        (scrapper) => limit(() => scrapper.searchRemoteRecord(attrs)),
-      ),
+    const items = await pMap(
+      scrappersGroups,
+      (scrapper) => scrapper.searchRemoteRecord(attrs),
+      {
+        concurrency: 5,
+      },
     );
 
     return items.filter((item) => !!item?.result);

@@ -121,7 +121,6 @@
     "mkdirp": "^1.0.4",
     "modern-normalize": "^1.0.0",
     "multer": "^1.4.2",
-    "p-limit": "^3.1.0",
     "p-map": "^4.0.0",
     "pg": "^8.5.1",
     "pretty-repl": "^2.4.0",

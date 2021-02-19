@@ -12,11 +12,11 @@ export class ScrapperCronService {
   ) {}
 
   @Cron(CronExpression.EVERY_5_MINUTES)
-  fetchLatestReviews() {
+  async fetchLatestReviews() {
     if (isDevMode())
       return;
 
-    this.scrapperRefreshService.refreshLatest(
+    await this.scrapperRefreshService.refreshLatest(
       {
         kind: ScrapperMetadataKind.BOOK_REVIEW,
         maxIterations: 1,

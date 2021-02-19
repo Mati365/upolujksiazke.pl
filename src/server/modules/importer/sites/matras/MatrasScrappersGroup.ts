@@ -19,8 +19,8 @@ export class MatrasScrappersGroup extends BookShopScrappersGroup {
           [ScrapperMetadataKind.BOOK_AUTHOR]: new MatrasBookAuthorMatcher(options),
         },
         parsers: {
-          [ScrapperMetadataKind.BOOK]: new MatrasBookParser(options),
-          [ScrapperMetadataKind.BOOK_AUTHOR]: new MatrasBookAuthorParser(options),
+          [ScrapperMetadataKind.BOOK]: new MatrasBookParser,
+          [ScrapperMetadataKind.BOOK_AUTHOR]: new MatrasBookAuthorParser,
         },
       },
     );

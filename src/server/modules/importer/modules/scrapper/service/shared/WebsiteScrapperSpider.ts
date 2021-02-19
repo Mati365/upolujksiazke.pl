@@ -1,10 +1,12 @@
+import {matchByRegex, RegExpMatchArray} from '@shared/helpers';
+
 import {TmpDirService} from '@server/modules/tmp-dir/TmpDir.service';
 import {
   CrawlerConfig, CrawlerLink, SpiderCrawler,
   SitemapCrawler, CrawlerLinksMapperAttrs, Crawler,
-} from '../../../spider/crawlers';
+} from '@spider/crawlers';
 
-import {ScrapperMetadataQueueDriver} from '../../../spider/drivers/DbQueue.driver';
+import {ScrapperMetadataQueueDriver} from '@spider/drivers/DbQueue.driver';
 import {ScrapperMetadataKind} from '../../entity/ScrapperMetadata.entity';
 import {WebsiteInfoScrapperService} from '../WebsiteInfoScrapper.service';
 import {ScrapperGroupChild} from './WebsiteScrappersGroup';
@@ -135,5 +137,39 @@ export abstract class WebsiteScrapperSpider extends ScrapperGroupChild implement
     }
 
     return crawler.run$();
+  }
+}
+
+/**
+ * Simple spider that only maps URLs
+ *
+ * @export
+ * @class SimpleWebsiteScrapperSpider
+ * @extends {WebsiteScrapperSpider}
+ */
+export class SimpleWebsiteScrapperSpider extends WebsiteScrapperSpider {
+  constructor(
+    private readonly regexMap: RegExpMatchArray<number>,
+  ) {
+    super();
+  }
+
+  /**
+   * @inheritdoc
+   */
+  matchResourceKindByPath(path: string): ScrapperMetadataKind {
+    return matchByRegex(this.regexMap, path);
+  }
+
+  /**
+   * Creates new instance of spider
+   *
+   * @static
+   * @param {RegExpMatchArray<number>} regexMap
+   * @returns
+   * @memberof SimpleWebsiteScrapperSpider
+   */
+  static createForRegexMap(regexMap: RegExpMatchArray<number>) {
+    return new SimpleWebsiteScrapperSpider(regexMap);
   }
 }

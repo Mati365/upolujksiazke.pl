@@ -1,17 +1,17 @@
 import {matchByRegex, RegExpMatchArray} from '@shared/helpers/matchByRegex';
 
-import {ScrapperMetadataKind} from '@server/modules/importer/modules/scrapper/entity/ScrapperMetadata.entity';
+import {ScrapperMetadataKind} from '@scrapper/entity/ScrapperMetadata.entity';
 import {
   ScrapperPriority,
-  WebsiteScrapperSpider,
-} from '@server/modules/importer/modules/scrapper/service/shared/WebsiteScrapperSpider';
+  SimpleWebsiteScrapperSpider,
+} from '@scrapper/service/shared/WebsiteScrapperSpider';
 
 import {
   CrawlerLink,
   CrawlerLinksMapperAttrs,
-} from '@server/modules/importer/modules/spider/crawlers';
+} from '@importer/modules/spider/crawlers';
 
-export class PublioSpider extends WebsiteScrapperSpider {
+export class PublioSpider extends SimpleWebsiteScrapperSpider {
   public static readonly URL_REGEX = Object.freeze(
     {
       book: /,p\d+.html$/,
@@ -31,11 +31,13 @@ export class PublioSpider extends WebsiteScrapperSpider {
     ],
   );
 
-  public static readonly URL_KIND_MATCHER_REGEXS: Readonly<RegExpMatchArray<number>> = Object.freeze(
-    [
-      [PublioSpider.URL_REGEX.book, () => ScrapperMetadataKind.BOOK],
-    ],
-  );
+  constructor() {
+    super(
+      [
+        [PublioSpider.URL_REGEX.book, () => ScrapperMetadataKind.BOOK],
+      ],
+    );
+  }
 
   /**
    * @inheritdoc
@@ -47,16 +49,6 @@ export class PublioSpider extends WebsiteScrapperSpider {
     );
 
     return priority ?? super.getPathPriority(path);
-  }
-
-  /**
-   * @inheritdoc
-   */
-  matchResourceKindByPath(path: string): ScrapperMetadataKind {
-    return matchByRegex(
-      PublioSpider.URL_KIND_MATCHER_REGEXS,
-      path,
-    );
   }
 
   /**

@@ -6,19 +6,23 @@ import {
 
 import {GraniceBookMatcher} from './GraniceBook.matcher';
 import {GraniceBookParser} from './GraniceBook.parser';
-import {GraniceSpider} from './GraniceBook.spider';
+import {SimpleWebsiteScrapperSpider} from '../../modules/scrapper/service/shared';
 
 export class GraniceScrappersGroup extends BookShopScrappersGroup {
   constructor(options: BookShopScrappersGroupConfig) {
     super(
       {
         ...options,
-        spider: new GraniceSpider,
+        spider: SimpleWebsiteScrapperSpider.createForRegexMap(
+          [
+            [/ksiazka\/\S+\/\d+$/, () => ScrapperMetadataKind.BOOK],
+          ],
+        ),
         matchers: {
           [ScrapperMetadataKind.BOOK]: new GraniceBookMatcher(options),
         },
         parsers: {
-          [ScrapperMetadataKind.BOOK]: new GraniceBookParser(options),
+          [ScrapperMetadataKind.BOOK]: new GraniceBookParser,
         },
       },
     );

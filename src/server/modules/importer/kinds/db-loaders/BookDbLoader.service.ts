@@ -116,9 +116,7 @@ export class BookDbLoaderService implements MetadataDbLoader {
                 {
                   ...availability,
                   bookId: releaseBook?.id,
-                  websiteId: websites[
-                    scrapperService.getScrappersGroupByWebsiteURL(availability.url).websiteURL
-                  ].id,
+                  websiteId: websites[availability.url].id,
                 },
               ),
             ),

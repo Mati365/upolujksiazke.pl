@@ -16,7 +16,7 @@ export class BonitoScrappersGroup extends BookShopScrappersGroup {
           [ScrapperMetadataKind.BOOK]: new BonitoBookMatcher(options),
         },
         parsers: {
-          [ScrapperMetadataKind.BOOK]: new BonitoBookParser(options),
+          [ScrapperMetadataKind.BOOK]: new BonitoBookParser,
         },
       },
     );

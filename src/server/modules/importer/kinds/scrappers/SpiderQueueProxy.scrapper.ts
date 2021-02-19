@@ -3,6 +3,7 @@ import * as R from 'ramda';
 
 import {concatUrls} from '@shared/helpers/concatUrls';
 
+import {CanBePromise} from '@shared/types';
 import {ScrapperMetadataKind} from '@scrapper/entity/ScrapperMetadata.entity';
 import {
   AsyncScrapper,
@@ -55,7 +56,8 @@ export class SpiderQueueProxyScrapper extends AsyncScrapper<SpiderQueueScrapperI
   /**
    * @inheritdoc
    */
-  protected processPage(): ScrapperResult<SpiderQueueScrapperInfo[], string> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  protected processPage(page: string): CanBePromise<ScrapperResult<SpiderQueueScrapperInfo[], string>> {
     throw new Error('Method not implemented.');
   }
 

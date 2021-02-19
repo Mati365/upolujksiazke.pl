@@ -6,7 +6,7 @@ import {CreateBookPublisherDto} from '@server/modules/book/modules/publisher/dto
 import {CreateImageAttachmentDto} from '@server/modules/attachment/dto/CreateImageAttachment.dto';
 
 import {AsyncURLParseResult} from '@server/common/helpers/fetchAsyncHTML';
-import {WebsiteScrapperParser} from '@server/modules/importer/modules/scrapper/service/shared';
+import {WebsiteScrapperParser} from '@scrapper/service/shared';
 
 export class PublioPublisherParser extends WebsiteScrapperParser<CreateBookPublisherDto> {
   /**
@@ -16,7 +16,7 @@ export class PublioPublisherParser extends WebsiteScrapperParser<CreateBookPubli
     if (!page)
       return null;
 
-    const {config} = this;
+    const {websiteURL} = this;
     const {$} = page;
     const logoUrl = (
       $
@@ -31,7 +31,7 @@ export class PublioPublisherParser extends WebsiteScrapperParser<CreateBookPubli
         logo: logoUrl && new CreateImageAttachmentDto(
           {
             originalUrl: concatUrls(
-              config.homepageURL,
+              websiteURL,
               normalizeURL(decodeEscapedUnicode(logoUrl)),
             ),
           },

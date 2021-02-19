@@ -16,7 +16,7 @@ export class GildiaScrappersGroup extends BookShopScrappersGroup {
           [ScrapperMetadataKind.BOOK]: new GildiaBookMatcher(options),
         },
         parsers: {
-          [ScrapperMetadataKind.BOOK]: new GildiaBookParser(options),
+          [ScrapperMetadataKind.BOOK]: new GildiaBookParser,
         },
       },
     );

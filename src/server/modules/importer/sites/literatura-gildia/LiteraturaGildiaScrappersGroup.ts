@@ -22,9 +22,9 @@ export class LiteraturaGildiaScrappersGroup extends BookShopScrappersGroup {
           [ScrapperMetadataKind.BOOK_PUBLISHER]: new LiteraturaGildiaBookPublisherMatcher(options),
         },
         parsers: {
-          [ScrapperMetadataKind.BOOK]: new LiteraturaGildiaBookParser(options),
-          [ScrapperMetadataKind.BOOK_AUTHOR]: new LiteraturaGildiaBookAuthorParser(options),
-          [ScrapperMetadataKind.BOOK_PUBLISHER]: new LiteraturaGildiaBookPublisherParser(options),
+          [ScrapperMetadataKind.BOOK]: new LiteraturaGildiaBookParser,
+          [ScrapperMetadataKind.BOOK_AUTHOR]: new LiteraturaGildiaBookAuthorParser,
+          [ScrapperMetadataKind.BOOK_PUBLISHER]: new LiteraturaGildiaBookPublisherParser,
         },
       },
     );

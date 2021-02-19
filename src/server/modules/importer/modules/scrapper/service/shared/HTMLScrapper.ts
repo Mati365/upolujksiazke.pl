@@ -28,14 +28,6 @@ export type HTMLScrapperConfig = AsyncScrapperConfig & {
 export abstract class HTMLScrapper<
   T extends readonly WebsiteScrapperItemInfo<any>[],
 > extends AsyncScrapper<T, string> {
-  private readonly homepageURL: string;
-
-  constructor({homepageURL, ...config}: HTMLScrapperConfig) {
-    super(config);
-
-    this.homepageURL = homepageURL;
-  }
-
   /**
    * Fetches HTML, parses it and returns iterator
    *
@@ -44,10 +36,10 @@ export abstract class HTMLScrapper<
    * @returns
    * @memberof HTMLScrapper
    */
-  protected async process(url: string) {
+  protected async processPage(url: string) {
     const html = await this.fetchHTML(
       concatUrls(
-        this.homepageURL,
+        this.websiteURL,
         url,
       ),
     );

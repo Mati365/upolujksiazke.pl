@@ -3,7 +3,7 @@ import {TaskFunction} from 'gulp';
 
 import {AppModule} from '@server/modules/App.module';
 import {ScrapperModule} from '@scrapper/Scrapper.module';
-import {SpiderService} from '@server/modules/importer/modules/spider/service/Spider.service';
+import {SpiderService} from '@importer/modules/spider/service/Spider.service';
 
 /**
  * Loads single item

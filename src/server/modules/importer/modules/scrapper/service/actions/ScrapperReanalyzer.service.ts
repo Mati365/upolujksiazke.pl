@@ -3,7 +3,7 @@ import {Connection} from 'typeorm';
 
 import {paginatedAsyncIterator} from '@server/common/helpers/db';
 
-import {MetadataDbLoaderQueueService} from '@server/modules/importer/modules/db-loader/services';
+import {MetadataDbLoaderQueueService} from '@importer/modules/db-loader/services';
 import {WebsiteScrapperItemInfo} from '../shared/AsyncScrapper';
 import {ScrapperMetadataEntity} from '../../entity';
 import {ScrapperService} from '../Scrapper.service';

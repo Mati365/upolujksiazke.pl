@@ -44,6 +44,7 @@ export type AppEnv = Partial<{
       dadada: BookShopUrlsConfig,
       aros: BookShopUrlsConfig,
       publio: BookShopUrlsConfig,
+      hrosskar: BookShopUrlsConfig,
       wykop: {
         homepageURL: string,
         authConfig: WykopAPIAuthParams,
@@ -149,6 +150,9 @@ export const GLOBAL_CONFIG: Record<string, AppEnv> = {
         granice: {
           homepageURL: 'https://www.granice.pl/',
           searchURL: 'https://www.granice.pl/wyszukaj/',
+        },
+        hrosskar: {
+          homepageURL: 'https://hrosskar.blogspot.com',
         },
         literaturaGildia: {
           homepageURL: 'https://www.literatura.gildia.pl/',

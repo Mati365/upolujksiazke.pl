@@ -16,7 +16,7 @@ export class DadadaScrappersGroup extends BookShopScrappersGroup {
           [ScrapperMetadataKind.BOOK]: new DadadaBookMatcher(options),
         },
         parsers: {
-          [ScrapperMetadataKind.BOOK]: new DadadaBookParser(options),
+          [ScrapperMetadataKind.BOOK]: new DadadaBookParser,
         },
       },
     );

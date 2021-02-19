@@ -16,7 +16,7 @@ export class ArosScrappersGroup extends BookShopScrappersGroup {
           [ScrapperMetadataKind.BOOK]: new ArosBookMatcher(options),
         },
         parsers: {
-          [ScrapperMetadataKind.BOOK]: new ArosBookParser(options),
+          [ScrapperMetadataKind.BOOK]: new ArosBookParser,
         },
       },
     );

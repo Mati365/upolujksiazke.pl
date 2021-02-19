@@ -8,7 +8,6 @@ import {
 
 import {collectAsyncIterator, timeout} from '@shared/helpers';
 import {Scrapper} from './Scrapper';
-import {WebsiteScrappersGroup} from './WebsiteScrappersGroup';
 import {ScrapperMetadataKind} from '../../entity';
 
 export type WebsiteScrapperItemInfo<T = any> = {
@@ -16,7 +15,7 @@ export type WebsiteScrapperItemInfo<T = any> = {
   parserSource: string,
   kind: ScrapperMetadataKind,
   dto?: T,
-  url: string,
+  url?: string,
 };
 
 export type ScrapperResult<T, P> = {
@@ -62,7 +61,6 @@ export abstract class AsyncScrapper<
     Result extends readonly WebsiteScrapperItemInfo<any>[],
     Page = ScrapperBasicPagination> extends Scrapper<Result, Page> {
   private pageProcessDelay: number;
-  protected group: WebsiteScrappersGroup;
 
   constructor(
     {

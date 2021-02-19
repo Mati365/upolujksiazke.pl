@@ -6,7 +6,7 @@ import {
 } from '@server/common/helpers';
 
 import {Language} from '@server/constants/language';
-import {ScrapperMetadataKind} from '@server/modules/importer/modules/scrapper/entity';
+import {ScrapperMetadataKind} from '@scrapper/entity';
 
 import {CreateBookAuthorDto} from '@server/modules/book/modules/author/dto/CreateBookAuthor.dto';
 import {CreateBookDto} from '@server/modules/book/dto/CreateBook.dto';

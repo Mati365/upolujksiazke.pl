@@ -1,7 +1,7 @@
 import {normalizeParsedText} from '@server/common/helpers';
 
 import {AsyncURLParseResult} from '@server/common/helpers/fetchAsyncHTML';
-import {WebsiteScrapperParser} from '@server/modules/importer/modules/scrapper/service/shared';
+import {WebsiteScrapperParser} from '@scrapper/service/shared';
 import {CreateBookAuthorDto} from '@server/modules/book/modules/author/dto/CreateBookAuthor.dto';
 
 export class MatrasBookAuthorParser extends WebsiteScrapperParser<CreateBookAuthorDto> {

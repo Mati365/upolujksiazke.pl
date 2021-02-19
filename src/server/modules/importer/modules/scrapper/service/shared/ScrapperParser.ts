@@ -2,10 +2,6 @@ import {CanBePromise} from '@shared/types';
 import {AsyncURLParseResult} from '@server/common/helpers/fetchAsyncHTML';
 import {ScrapperGroupChild} from './WebsiteScrappersGroup';
 
-export type BaseWebsiteScrapperConfig = {
-  homepageURL?: string,
-};
-
 export type BasicParseAttrs<T = {}> = T & {
   shallowParse?: boolean,
 };
@@ -30,15 +26,6 @@ export abstract class ScrapperParser<Input, Output, Attr> extends ScrapperGroupC
  * @class WebsiteScrapperParser
  * @extends {ScrapperParser<AsyncURLParseResult, Output, Attr>}
  */
-export abstract class WebsiteScrapperParser<
-  Output,
-  ConfigType extends BaseWebsiteScrapperConfig = BaseWebsiteScrapperConfig,
-  Attr = {},
->
+export abstract class WebsiteScrapperParser<Output, Attr = {}>
   extends ScrapperParser<AsyncURLParseResult, Output, Attr> {
-  constructor(
-    protected config: ConfigType,
-  ) {
-    super();
-  }
 }

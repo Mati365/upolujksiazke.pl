@@ -161,12 +161,12 @@ export class WykopBookReviewScrapper extends AsyncScrapper<BookReviewScrapperInf
       remoteId,
       kind: ScrapperMetadataKind.BOOK_REVIEW,
       parserSource: JSON.stringify(post),
-      url: `https://www.wykop.pl/wpis/${remoteId}`,
       dto: new CreateBookReviewDto(
         {
           description,
           book,
           remoteId,
+          url: `https://www.wykop.pl/wpis/${remoteId}`,
           rating: properties.score,
           publishDate: new Date(post.date),
           stats: new VotingStatsEmbeddable(

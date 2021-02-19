@@ -4,7 +4,7 @@ import {normalizeParsedText} from '@server/common/helpers';
 
 import {CreateBookPublisherDto} from '@server/modules/book/modules/publisher/dto/BookPublisher.dto';
 import {AsyncURLParseResult} from '@server/common/helpers/fetchAsyncHTML';
-import {WebsiteScrapperParser} from '@server/modules/importer/modules/scrapper/service/shared';
+import {WebsiteScrapperParser} from '@scrapper/service/shared';
 
 export class LiteraturaGildiaBookPublisherParser extends WebsiteScrapperParser<CreateBookPublisherDto> {
   /**

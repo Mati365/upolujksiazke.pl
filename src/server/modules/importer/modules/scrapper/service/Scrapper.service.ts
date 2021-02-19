@@ -5,7 +5,7 @@ import {SERVER_ENV} from '@server/constants/env';
 import {extractHostname} from '@shared/helpers';
 
 import {RemoteWebsiteEntity} from '@server/modules/remote/entity';
-import {WykopAPI} from '@server/modules/importer/sites/wykop/api/WykopAPI';
+import {WykopAPI} from '@importer/sites/wykop/api/WykopAPI';
 import {
   GraniceScrappersGroup,
   MatrasScrappersGroup,
@@ -18,7 +18,8 @@ import {
   ArosScrappersGroup,
   PublioScrappersGroup,
   WykopScrappersGroup,
-} from '@server/modules/importer/sites';
+  HrosskarScrappersGroup,
+} from '@importer/sites';
 
 import {WebsiteScrappersGroup} from './shared';
 import {WebsiteInfoScrapperService} from './WebsiteInfoScrapper.service';
@@ -42,6 +43,7 @@ export class ScrapperService {
       new MatrasScrappersGroup(PARSERS_ENV.matras), // sucky DB
       new DadadaScrappersGroup(PARSERS_ENV.dadada),
       new ArosScrappersGroup(PARSERS_ENV.aros),
+      new HrosskarScrappersGroup(PARSERS_ENV.hrosskar),
       new WykopScrappersGroup(
         {
           homepageURL: PARSERS_ENV.wykop.homepageURL,
@@ -87,12 +89,26 @@ export class ScrapperService {
       ),
     );
 
-    return entities.reduce(
-      (acc, entity) => {
-        acc[entity.url] = entity;
+    return urls.reduce(
+      (acc, url) => {
+        acc[url] = entities.find((website) => url.startsWith(website.url));
         return acc;
       },
       {},
     );
+  }
+
+  /**
+   * Create single website instance for given url
+   *
+   * @param {string} url
+   * @returns
+   * @memberof ScrapperService
+   */
+  async findOrCreateWebsiteByUrl(url: string) {
+    if (!url)
+      return null;
+
+    return (await this.findOrCreateWebsitesByUrls([url]))?.[url];
   }
 }

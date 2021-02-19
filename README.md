@@ -48,6 +48,7 @@ OpenSource book reviews aggregator, something like Metacritic / Digg for books. 
 - [x] Dadada.pl
 - [x] Aros.pl
 - [x] Publio.pl
+- [ ] Hrosskar.blogspot.com
 - [ ] Madbooks.pl
 - [ ] ibuk.pl
 - [ ] LitRes.pl
@@ -70,6 +71,7 @@ OpenSource book reviews aggregator, something like Metacritic / Digg for books. 
 - [ ] wbibliotece.pl
 - [ ] Cyfroteka.pl
 - [ ] Amazon.com
+- [ ] Nieprzeczytane.pl
 
 🌍 World
 
@@ -112,16 +114,17 @@ Fetchers:
 
 ```bash
 # Fetches single review by id
-gulp scrapper:refresh:single --kind BOOK_REVIEW --remoteId 123 --website https://wykop.pl
+gulp scrapper:refresh:single --kind BOOK_REVIEW --remoteId 123 --website wykop.pl
 
 # Fetches single book by url
 gulp scrapper:refresh:single --remoteId szepty-spoza-nicosci-remigiusz-mroz,p697692.html --website www.publio.pl
 
 # Fetches all reviews from scrapper
-gulp scrapper:refresh:all --kind BOOK_REVIEW --initialPage 1 --website https://wykop.pl
+gulp scrapper:refresh:all --kind BOOK_REVIEW --initialPage 1 --website wykop.pl
 
 # Refreshes only first remote reviews page using all scrappers
 gulp scrapper:refresh:latest --kind BOOK_REVIEW
+gulp scrapper:refresh:latest --kind BOOK_REVIEW --website wykop.pl
 
 # Fetches all reviews pages from websites using all scrappers
 gulp scrapper:refresh:all --kind BOOK_REVIEW

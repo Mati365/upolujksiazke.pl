@@ -1,4 +1,4 @@
-import {Inject, Injectable, forwardRef} from '@nestjs/common';
+import {Inject, Injectable, Logger, forwardRef} from '@nestjs/common';
 import chalk from 'chalk';
 import * as R from 'ramda';
 
@@ -12,6 +12,8 @@ import {MetadataDbLoaderService} from '@db-loader/services/MetadataDbLoader.serv
 
 @Injectable()
 export class UrlDbLoaderService implements MetadataDbLoader {
+  private readonly logger = new Logger(UrlDbLoaderService.name);
+
   constructor(
     @Inject(forwardRef(() => MetadataDbLoaderService))
     private readonly metadataDbLoaderService: MetadataDbLoaderService,
@@ -56,25 +58,32 @@ export class UrlDbLoaderService implements MetadataDbLoader {
    * @memberof MetadataDbLoaderService
    */
   async extractFetchedPageToDb(group: WebsiteScrappersGroup, parseResult: AsyncURLParseResult) {
-    const {metadataDbLoaderService} = this;
-    const kind = group.spider.matchResourceKindByPath(parseResult.url);
+    const {metadataDbLoaderService, logger} = this;
+    const {url} = parseResult;
+    const kind = group.spider.matchResourceKindByPath(url);
 
     if (R.isNil(kind))
-      throw new Error(`Unknown link ${parseResult.url} kind!`);
+      throw new Error(`Unknown link ${url} kind!`);
 
     const loader = metadataDbLoaderService.resourceLoaders[kind];
     if (!loader)
-      throw new Error(`Unknown link ${parseResult.url} loader!`);
+      throw new Error(`Unknown link ${url} loader!`);
+
+    const parser = group.parsers[kind];
+    if (!parser)
+      throw new Error(`Unknown link ${url} parser!`);
+
+    const content = await parser.parse(parseResult);
+    if (!content) {
+      logger.warn(`Missing ${chalk.bold(url)} parser content result!`);
+      return;
+    }
 
     await loader.extractMetadataToDb(
       new ScrapperMetadataEntity(
         {
           kind,
-          content: await (
-            group
-              .parsers[kind]
-              .parse(parseResult)
-          ),
+          content,
         },
       ),
     );

@@ -9,7 +9,7 @@ import {safeToString} from '@shared/helpers/safeToString';
 
 import {RemoteID, IdentifiedItem} from '@shared/types';
 import {RemoteWebsiteEntity} from '@server/modules/remote/entity';
-import {MetadataDbLoaderQueueService} from '@server/modules/importer/modules/db-loader/services';
+import {MetadataDbLoaderQueueService} from '@importer/modules/db-loader/services';
 
 import {WebsiteInfoScrapperService} from '../WebsiteInfoScrapper.service';
 import {ScrapperMetadataService} from '../ScrapperMetadata.service';
@@ -104,6 +104,9 @@ export class ScrapperRefreshService {
       kind: ScrapperMetadataKind,
     },
   ) {
+    if (!scrappersGroup)
+      throw new Error('Unknown scrappersGroup provided to scrapper executor!');
+
     const {logger, websiteInfoScrapperService} = this;
     const website = await websiteInfoScrapperService.findOrCreateWebsiteEntity(scrappersGroup.websiteInfoScrapper);
 

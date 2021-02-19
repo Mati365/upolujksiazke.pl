@@ -16,13 +16,13 @@ export class PublioScrappersGroup extends BookShopScrappersGroup {
       {
         ...options,
         spider: new PublioSpider,
-        parsers: {
-          [ScrapperMetadataKind.BOOK]: new PublioBookParser(options),
-          [ScrapperMetadataKind.BOOK_PUBLISHER]: new PublioPublisherParser(options),
-        },
         matchers: {
           [ScrapperMetadataKind.BOOK]: new PublioBookMatcher(options),
           [ScrapperMetadataKind.BOOK_PUBLISHER]: new PublioBookPublisherMatcher(options),
+        },
+        parsers: {
+          [ScrapperMetadataKind.BOOK]: new PublioBookParser,
+          [ScrapperMetadataKind.BOOK_PUBLISHER]: new PublioPublisherParser,
         },
       },
     );

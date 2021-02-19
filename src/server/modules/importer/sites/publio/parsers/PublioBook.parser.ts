@@ -21,7 +21,7 @@ import {CreateBookKindDto} from '@server/modules/book/modules/kind/dto/CreateBoo
 import {CreateBookPrizeDto} from '@server/modules/book/modules/prize/dto/CreateBookPrize.dto';
 import {CreateBookVolumeDto} from '@server/modules/book/modules/volume/dto/CreateBookVolume.dto';
 
-import {ScrapperMetadataKind} from '@server/modules/importer/modules/scrapper/entity';
+import {ScrapperMetadataKind} from '@scrapper/entity';
 import {
   BookScrappedPropsMap,
   BookAvailabilityParser,
@@ -31,7 +31,7 @@ import {
 } from '@importer/kinds/scrappers/Book.scrapper';
 
 import {AsyncURLParseResult} from '@server/common/helpers/fetchAsyncHTML';
-import {BasicParseAttrs, WebsiteScrapperParser} from '@server/modules/importer/modules/scrapper/service/shared';
+import {BasicParseAttrs, WebsiteScrapperParser} from '@scrapper/service/shared';
 import {PublioBookPublisherMatcher} from '../matchers/PublioBookPublisher.matcher';
 
 type PublioAPIPrice = {
@@ -51,11 +51,10 @@ export class PublioBookParser
    * @memberof PublioBookParser
    */
   private async searchPriceByID(id: ID): Promise<PublioAPIPrice> {
-    const {config} = this;
     const {price} = (
       await fetch(
         concatUrls(
-          config.homepageURL,
+          this.websiteURL,
           `rest/v3/catalog/product/${id}/purchase-options`,
         ),
       )

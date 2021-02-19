@@ -1,5 +1,5 @@
 import path from 'path';
-import {concatUrls} from '@shared/helpers/concatUrls';
+import {concatUrls, isAbsoluteURL} from '@shared/helpers/concatUrls';
 
 function dropPathLastSegment(pathname: string) {
   const lastSlashIndex = pathname.lastIndexOf('/');
@@ -17,8 +17,10 @@ function dropPathLastSegment(pathname: string) {
  * @param {string} relative
  */
 export function concatWithAnchor(root: string, relative: string) {
-  const rootURL = new URL(root);
+  if (isAbsoluteURL(relative))
+    return relative;
 
+  const rootURL = new URL(root);
   if (relative[0] === '/')
     return concatUrls(rootURL.origin, relative);
 

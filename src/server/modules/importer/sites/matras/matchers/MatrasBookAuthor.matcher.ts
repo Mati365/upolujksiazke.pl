@@ -7,7 +7,7 @@ import {CreateBookAuthorDto} from '@server/modules/book/modules/author/dto/Creat
 import {WebsiteScrapperMatcher, ScrapperMatcherResult} from '@scrapper/service/shared/ScrapperMatcher';
 import {MatchRecordAttrs} from '@scrapper/service/shared/WebsiteScrappersGroup';
 import {BookShopScrappersGroupConfig} from '@importer/kinds/scrappers/BookShop.scrapper';
-import {ScrapperMetadataKind} from '@server/modules/importer/modules/scrapper/entity';
+import {ScrapperMetadataKind} from '@scrapper/entity';
 
 export class MatrasBookAuthorMatcher extends WebsiteScrapperMatcher<CreateBookAuthorDto, BookShopScrappersGroupConfig> {
   /**

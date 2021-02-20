@@ -34,7 +34,7 @@ export class JsonLdExtractor {
           if (!text)
             return null;
 
-          return safeJsonParse(text.replaceAll('\n', ''));
+          return safeJsonParse(text.replace(/[\n\t]/g, ''));
         })
         .filter(Boolean)
     );

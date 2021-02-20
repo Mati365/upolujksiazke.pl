@@ -67,19 +67,20 @@ export class MetadataDbLoaderConsumerProcessor {
       },
     );
 
-    try {
-      await pMap(
-        metadataItems,
-        (item) => metadataDbLoaderService.extractMetadataToDb(item),
-        {
-          concurrency: 5,
-        },
-      );
-    } catch (e) {
-      console.error(e);
-      sentryService.instance.captureException(e);
-      throw e;
-    }
+    await pMap(
+      metadataItems,
+      async (item) => {
+        try {
+          await metadataDbLoaderService.extractMetadataToDb(item);
+        } catch (e) {
+          console.error(e);
+          sentryService.instance.captureException(e);
+        }
+      },
+      {
+        concurrency: 5,
+      },
+    );
   }
 
   /**

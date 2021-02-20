@@ -4,7 +4,7 @@ type PromiseMapperFn<R = any> = (val: any, key: string) => Promise<R>;
 
 const valuesToPromisesList = (mapperFn: PromiseMapperFn) => R.compose(
   R.map(
-    ([key, val]) => {
+    ([key, val]: [string, any]) => {
       let promise = mapperFn(val, key);
       if (!R.is(Promise, promise))
         promise = Promise.resolve(val || null);
@@ -40,7 +40,7 @@ const nonNullPairsToObj = R.compose(
  */
 export function mapObjValuesToPromise<R>(
   mapperFn: PromiseMapperFn<R>,
-  obj: object,
+  obj: any,
 ): Promise<Record<string, R>> {
   const promises = valuesToPromisesList(mapperFn)(obj);
 

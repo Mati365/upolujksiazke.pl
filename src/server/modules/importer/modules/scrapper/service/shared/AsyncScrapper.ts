@@ -19,6 +19,7 @@ export type WebsiteScrapperItemInfo<T = any> = {
 };
 
 export type ScrapperResult<T, P> = {
+  ignore?: boolean,
   result: T,
   ptr: {
     nextPage: P,
@@ -131,7 +132,7 @@ export abstract class AsyncScrapper<
             };
           }
 
-          if (pageProcessDelay && maxIterations !== 1)
+          if (pageProcessDelay && currentIterations !== maxIterations)
             await timeout(pageProcessDelay);
 
           const processedPage = await this.processPage(initialPage);
@@ -141,13 +142,13 @@ export abstract class AsyncScrapper<
             };
           }
 
-          const {result, ptr} = processedPage;
+          const {result, ptr, ignore} = processedPage;
           initialPage = ptr.nextPage ?? null;
           if (!Number.isNaN(currentIterations))
             currentIterations--;
 
           return {
-            done: !result?.length,
+            done: !ignore && !result?.length,
             value: result,
           };
         },

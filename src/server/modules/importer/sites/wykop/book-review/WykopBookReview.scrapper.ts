@@ -249,6 +249,7 @@ export class WykopBookReviewScrapper extends AsyncScrapper<BookReviewScrapperInf
     }
 
     return {
+      ignore: result?.ignore,
       result: (
         result
           .data

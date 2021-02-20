@@ -14,7 +14,7 @@ import {CreateBookReviewerDto} from '@server/modules/book/modules/reviewer/dto/C
 export class HrosskarBookReviewParser extends WebsiteScrapperParser<CreateBookReviewDto> {
   parse({$, url}: AsyncURLParseResult): CreateBookReviewDto {
     const blogPost = $('[itemprop="blogPost"]');
-    const description = $(blogPost).find('p').text();
+    const description = $(blogPost).text();
     const bookInfo = $(blogPost).find('div').text();
     const header = $(blogPost).find('h3.post-title[itemprop=\'name\']').text();
 

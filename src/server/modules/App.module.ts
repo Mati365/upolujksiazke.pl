@@ -3,6 +3,7 @@ import {ScheduleModule} from '@nestjs/schedule';
 import {BullModule} from '@nestjs/bull';
 
 import {SERVER_ENV} from '@server/constants/env';
+import {isDevMode} from '@shared/helpers';
 
 import {
   getClusterAppInstance,
@@ -43,7 +44,11 @@ import {SentryModule} from './sentry';
           ? [ScheduleModule.forRoot()]
           : []
       ),
-      SentryModule.forRoot(SERVER_ENV.sentry),
+      SentryModule.forRoot(
+        isDevMode()
+          ? {}
+          : SERVER_ENV.sentry,
+      ),
       AttachmentModule.forRoot(
         {
           dest: SERVER_ENV.cdn.localPath,

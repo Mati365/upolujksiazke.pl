@@ -1,4 +1,5 @@
 import * as Sentry from '@sentry/node';
+import {RewriteFrames} from '@sentry/integrations';
 import {
   Client as SentryClient,
   Options as SentryOptions,
@@ -38,6 +39,7 @@ export class SentryService implements OnModuleDestroy {
             }),
           }),
           new Sentry.Integrations.OnUnhandledRejection({mode: 'warn'}),
+          new RewriteFrames,
           ...(options.integrations || []),
         ],
       },

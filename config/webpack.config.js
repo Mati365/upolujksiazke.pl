@@ -6,11 +6,26 @@ const NodemonPlugin = require('nodemon-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
+const SentryPlugin = require('@sentry/webpack-plugin');
+
+/* eslint-disable import/no-default-export */
+require('dotenv').config(
+  {
+    path: '../env',
+  },
+);
+
+const {
+  NODE_ENV,
+  SENTRY_ORG,
+  SENTRY_PROJECT,
+  SENTRY_AUTH_TOKEN,
+} = process.env;
 
 const resolveSource = (_path) => path.resolve(__dirname, '../src/', _path);
 
 const createConfig = ({
-  mode = process.env.NODE_ENV || 'development',
+  mode = NODE_ENV || 'development',
   rules = [],
   entry,
   target = 'web',
@@ -20,6 +35,7 @@ const createConfig = ({
   override,
 }) => {
   const devMode = mode === 'development';
+  const outputPath = path.resolve(__dirname, '../dist/');
 
   return {
     watch: devMode,
@@ -27,6 +43,7 @@ const createConfig = ({
     target,
     entry,
     externals,
+    devtool: devMode ? 'eval' : 'source-map',
     node: {
       __dirname: false,
       __filename: false,
@@ -75,7 +92,7 @@ const createConfig = ({
     },
     output: {
       filename: distPath,
-      path: path.resolve(__dirname, '../dist/'),
+      path: outputPath,
       publicPath: '/',
     },
     plugins: [
@@ -84,14 +101,27 @@ const createConfig = ({
           mode,
         },
       ),
-      ...!devMode ? [] : [
-        new ESLintPlugin(
-          {
-            emitError: true,
-            cache: true,
-          },
-        ),
-      ],
+      ...(
+        !devMode
+          ? [
+            new SentryPlugin(
+              {
+                authToken: SENTRY_AUTH_TOKEN,
+                org: SENTRY_ORG,
+                project: SENTRY_PROJECT,
+                include: outputPath,
+              },
+            ),
+          ]
+          : [
+            new ESLintPlugin(
+              {
+                emitError: true,
+                cache: true,
+              },
+            ),
+          ]
+      ),
       new webpack.optimize.LimitChunkCountPlugin(
         {
           maxChunks: 5,

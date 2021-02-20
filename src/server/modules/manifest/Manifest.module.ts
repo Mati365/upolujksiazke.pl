@@ -8,7 +8,7 @@ import {
 @Global()
 @Module({})
 export class ManifestModule {
-  static register(options: ManifestServiceOptions): DynamicModule {
+  static forRoot(options: ManifestServiceOptions): DynamicModule {
     return {
       module: ManifestModule,
       providers: [

@@ -15,7 +15,7 @@ export class SkupszopScrappersGroup extends BookShopScrappersGroup {
         ...options,
         spider: SimpleWebsiteScrapperSpider.createForRegexMap(
           [
-            [/-id\\d+$/, () => ScrapperMetadataKind.BOOK],
+            [/-id\d+$/, () => ScrapperMetadataKind.BOOK],
           ],
         ),
         matchers: {

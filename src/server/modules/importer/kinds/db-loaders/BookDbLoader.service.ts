@@ -1,5 +1,7 @@
 import * as R from 'ramda';
 import stringSimilarity from 'string-similarity';
+import pMap from 'p-map';
+import {validate} from 'class-validator';
 import {plainToClass} from 'class-transformer';
 import {In} from 'typeorm';
 import {
@@ -104,13 +106,17 @@ export class BookDbLoaderService implements MetadataDbLoader {
       ),
     );
 
-    const releases = (
-      allReleases
-        .filter(({isbn}) => !!isbn)
-        .map((release) => new CreateBookReleaseDto(
+    const releases = await pMap(
+      allReleases.filter(({isbn}) => !!isbn),
+      async (release) => {
+        let publisher = release.publisher || null;
+        if (publisher && (await validate(publisher)).length > 0)
+          publisher = null;
+
+        return new CreateBookReleaseDto(
           {
             ...release,
-            publisher: release.publisher || null,
+            publisher,
             availability: release.availability.map(
               (availability) => new CreateBookAvailabilityDto(
                 {
@@ -121,7 +127,11 @@ export class BookDbLoaderService implements MetadataDbLoader {
               ),
             ),
           },
-        ))
+        );
+      },
+      {
+        concurrency: 4,
+      },
     );
 
     return bookService.upsert(

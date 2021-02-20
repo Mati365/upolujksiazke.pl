@@ -1,3 +1,6 @@
+import {Options as SentryOptions} from '@sentry/types';
+import {LogLevel} from '@sentry/types/dist/loglevel';
+
 import {BookShopUrlsConfig} from '@importer/kinds/scrappers/BookShop.scrapper';
 import {WykopAPIAuthParams} from '@sites/wykop/api/WykopAPI';
 
@@ -34,6 +37,7 @@ export type AppEnv = Partial<{
       publicUrl: string,
       localPath: string,
     },
+    sentry: Omit<SentryOptions, 'integrations'>,
     parsers: {
       literaturaGildia: BookShopUrlsConfig,
       gildia: BookShopUrlsConfig,
@@ -81,11 +85,13 @@ const {
   DB_USER,
   DB_PASS,
   DB_PORT,
+  APP_ENV = 'development',
   APP_INSTANCES = 1,
   APP_PORT = 3000,
   APP_LISTEN_ADDRESS = 'localhost',
   HTTPS_KEY_PATH,
   HTTPS_CERT_PATH,
+  SENTRY_DSN,
   REDIS_PORT = '6379',
   REDIS_HOST = 'localhost',
   REDIS_PREFIX = 'bookmeter-queue',
@@ -127,6 +133,12 @@ export const GLOBAL_CONFIG: Record<string, AppEnv> = {
       cdn: {
         publicUrl: CDN_PUBLIC_URL,
         localPath: CDN_LOCAL_PATH,
+      },
+      sentry: {
+        dsn: SENTRY_DSN,
+        environment: APP_ENV,
+        logLevel: LogLevel.Debug,
+        tracesSampleRate: 1.0,
       },
       parsers: {
         wykop: {

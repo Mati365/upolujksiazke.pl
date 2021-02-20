@@ -11,6 +11,7 @@ import {RemoteID, IdentifiedItem} from '@shared/types';
 import {RemoteWebsiteEntity} from '@server/modules/remote/entity';
 import {MetadataDbLoaderQueueService} from '@importer/modules/db-loader/services';
 
+import {SentryService} from '@server/modules/sentry/Sentry.service';
 import {WebsiteInfoScrapperService} from '../WebsiteInfoScrapper.service';
 import {ScrapperMetadataService} from '../ScrapperMetadata.service';
 import {ScrapperService} from '../Scrapper.service';
@@ -30,6 +31,7 @@ export class ScrapperRefreshService {
     private readonly websiteInfoScrapperService: WebsiteInfoScrapperService,
     private readonly dbLoaderQueueService: MetadataDbLoaderQueueService,
     private readonly scrapperService: ScrapperService,
+    private readonly sentryService: SentryService,
   ) {}
 
   /**
@@ -158,7 +160,11 @@ export class ScrapperRefreshService {
       scrappersGroups?: WebsiteScrappersGroup[],
     },
   ) {
-    const {logger, scrapperService} = this;
+    const {
+      sentryService,
+      logger,
+      scrapperService,
+    } = this;
 
     kind ??= ScrapperMetadataKind.URL;
     scrappersGroups ??= scrapperService.scrappersGroups;
@@ -176,6 +182,7 @@ export class ScrapperRefreshService {
           );
         } catch (e) {
           logger.error(e);
+          sentryService.instance.captureException(e);
         }
       },
       {

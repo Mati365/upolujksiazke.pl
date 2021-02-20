@@ -16,7 +16,7 @@ export const DEFAULT_TMP_DIR_OPTIONS: Readonly<Partial<TmpDirServiceOptions>> = 
 @Global()
 @Module({})
 export class TmpDirModule {
-  static register(options: TmpDirServiceOptions): DynamicModule {
+  static forRoot(options: TmpDirServiceOptions): DynamicModule {
     return {
       module: TmpDirModule,
       providers: [

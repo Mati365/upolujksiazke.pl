@@ -24,7 +24,7 @@ export * from './decorators/FilesForm.decorator';
 @Global()
 @Module({})
 export class AttachmentModule {
-  static register(options: AttachmentServiceOptions): DynamicModule {
+  static forRoot(options: AttachmentServiceOptions): DynamicModule {
     options.fileNameGenerator ??= genUniqueFilename;
 
     const multerModule = MulterModule.register(

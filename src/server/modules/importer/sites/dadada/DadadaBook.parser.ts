@@ -62,6 +62,8 @@ export class DadadaBookParser
 
     const {$} = bookPage;
     const basicProps = DadadaBookParser.extractBookProps($);
+    if (!basicProps['isbn'])
+      return null;
 
     const title = normalizeParsedText($('h1.productName').text());
     const authors = basicProps['autor'] && $(basicProps['autor'][1]).find('a').toArray().map(

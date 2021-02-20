@@ -17,6 +17,7 @@ import {ManifestModule} from './manifest';
 import {AttachmentModule} from './attachment';
 import {ImporterModule} from './importer';
 import {TmpDirModule} from './tmp-dir';
+import {SentryModule} from './sentry';
 
 @Module(
   {
@@ -42,17 +43,18 @@ import {TmpDirModule} from './tmp-dir';
           ? [ScheduleModule.forRoot()]
           : []
       ),
-      AttachmentModule.register(
+      SentryModule.forRoot(SERVER_ENV.sentry),
+      AttachmentModule.forRoot(
         {
           dest: SERVER_ENV.cdn.localPath,
         },
       ),
-      ManifestModule.register(
+      ManifestModule.forRoot(
         {
           file: 'public/files-manifest.json',
         },
       ),
-      TmpDirModule.register(
+      TmpDirModule.forRoot(
         {
           rootPath: `tmp/bookmeter-instance-${getClusterAppInstance()}`,
         },

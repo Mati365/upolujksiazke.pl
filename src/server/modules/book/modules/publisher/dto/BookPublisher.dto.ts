@@ -14,7 +14,7 @@ export class CreateBookPublisherDto {
   @IsString()
   readonly name: string;
 
-  @IsDefined()
+  @IsOptional()
   @IsString()
   readonly parameterizedName: string;
 
@@ -34,8 +34,8 @@ export class CreateBookPublisherDto {
   @IsEmail()
   readonly email: string;
 
-  @ValidateNested()
   @IsOptional()
+  @ValidateNested()
   readonly logo: CreateImageAttachmentDto;
 
   constructor(partial: Partial<CreateBookPublisherDto>) {

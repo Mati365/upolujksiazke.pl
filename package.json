@@ -95,6 +95,9 @@
     "@nestjs/schedule": "^0.4.1",
     "@nestjs/serve-static": "^2.1.4",
     "@nestjs/typeorm": "^7.1.5",
+    "@sentry/node": "^6.2.0",
+    "@sentry/tracing": "^6.2.0",
+    "add": "^2.0.6",
     "await-outside": "^3.0.0",
     "bull": "^3.20.0",
     "cache-manager": "^3.4.0",
@@ -143,6 +146,7 @@
     "typeorm-seeding": "^1.6.1",
     "uuid": "^8.3.2",
     "wikijs": "^6.0.1",
-    "xml-stream": "^0.4.5"
+    "xml-stream": "^0.4.5",
+    "yarn": "^1.22.10"
   }
 }

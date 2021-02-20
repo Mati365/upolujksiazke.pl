@@ -31,7 +31,7 @@ export class MatrasBookMatcher extends WebsiteScrapperMatcher<CreateBookDto, Boo
   private async searchByPhrase({title, authors}: CreateBookDto) {
     const $ = (await this.fetchPageBySearch(
       {
-        szukaj: `${title} ${authors[0].name}`,
+        szukaj: `${title} ${authors[0].name || ''}`.trim(),
       },
     ))?.$;
 

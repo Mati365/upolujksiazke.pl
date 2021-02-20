@@ -28,7 +28,7 @@ export class GraniceBookMatcher extends WebsiteScrapperMatcher<CreateBookDto, Bo
    */
   private async searchByPhrase({authors, title}: CreateBookDto) {
     const $ = (await this.fetchPageBySearch(
-      `?search=${escapeIso88592(`${title} ${authors[0].name}`)}`,
+      `?search=${escapeIso88592(`${title} ${authors[0].name || ''}`.trim())}`,
     ))?.$;
 
     if (!$)

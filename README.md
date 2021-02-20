@@ -48,7 +48,7 @@ OpenSource book reviews aggregator, something like Metacritic / Digg for books. 
 - [x] Dadada.pl
 - [x] Aros.pl
 - [x] Publio.pl
-- [ ] Hrosskar.blogspot.com
+- [x] Hrosskar.blogspot.com
 - [ ] Madbooks.pl
 - [ ] ibuk.pl
 - [ ] LitRes.pl

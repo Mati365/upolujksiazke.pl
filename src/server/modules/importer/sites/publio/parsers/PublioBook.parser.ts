@@ -167,7 +167,7 @@ export class PublioBookParser
 
     const authors = (
       PublioBookParser
-        .extractTitlesRow($, $(basicProps['autor'][1]))
+        .extractTitlesRow($, $(basicProps['autor']?.[1]))
         .map((name) => new CreateBookAuthorDto(
           {
             name,

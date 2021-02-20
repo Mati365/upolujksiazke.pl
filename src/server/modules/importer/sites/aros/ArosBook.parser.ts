@@ -61,7 +61,7 @@ export class ArosBookParser
       return null;
 
     const title = $('h1').text();
-    const authors = basicProps['autor'].split(',').map(
+    const authors = basicProps['autor']?.split(',').map(
       (name) => new CreateBookAuthorDto(
         {
           name: normalizeParsedText(name),

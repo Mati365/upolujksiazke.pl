@@ -1,5 +1,6 @@
 import {Injectable, Logger} from '@nestjs/common';
 import pMap from 'p-map';
+import chalk from 'chalk';
 
 import {SentryService} from '@server/modules/sentry/Sentry.service';
 import {ScrapperService} from '../Scrapper.service';
@@ -37,7 +38,7 @@ export class ScrapperMatcherService {
         try {
           return await scrapper.searchRemoteRecord(attrs);
         } catch (e) {
-          logger.error(e);
+          logger.error(`Scrapper ${chalk.bold(scrapper.websiteURL)}: ${e}`);
           sentryService.instance.captureException(e);
           return null;
         }

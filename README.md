@@ -136,6 +136,9 @@ Analyzers:
 # Iterates over all records and reparses them, dangerous!!
 # it removes records that are not classified as reviews after analyze
 gulp scrapper:reanalyze:all
+
+# Parses again single record
+gulp scrapper:reanalyze:single --remoteId szepty-spoza-nicosci-remigiusz-mroz,p697692.html --website www.publio.pl
 ```
 
 Spiders:

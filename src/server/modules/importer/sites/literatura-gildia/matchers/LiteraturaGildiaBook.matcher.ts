@@ -34,8 +34,12 @@ export class LiteraturaGildiaBookMatcher extends WebsiteScrapperMatcher<CreateBo
    * @memberof LiteraturaGildiaBookMatcher
    */
   private directSearch({authors, title}: CreateBookDto) {
+    const author = authors[0].name;
+    if (!author || !title)
+      return null;
+
     return this.fetchPageByPath(
-      `tworcy/${underscoreParameterize(authors[0].name)}/${underscoreParameterize(title)}`,
+      `tworcy/${underscoreParameterize(author)}/${underscoreParameterize(title)}`,
     );
   }
 

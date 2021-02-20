@@ -57,6 +57,8 @@ export class ArosBookParser
 
     const {$} = bookPage;
     const basicProps = BonitoBookParser.extractBookProps($);
+    if (!basicProps['oprawa'])
+      return null;
 
     const title = $('h1').text();
     const authors = basicProps['autor'].split(',').map(

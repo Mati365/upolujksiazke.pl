@@ -42,7 +42,6 @@ export class DadadaBookParser
               prevPrice: normalizePrice($('.productPromo .productBasePrice').text())?.price,
               avgRating: Number.parseFloat($('[data-rateit-value]').attr('rateitValue')) * 2 || null,
               totalRatings: +$('.reviewCount[onclick]').text()?.match(/\(\d+\)/)?.[1] || null,
-              showOnlyAsQuote: true,
               remoteId,
               url,
             },

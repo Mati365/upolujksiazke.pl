@@ -68,7 +68,6 @@ export class PublioBookParser
       result: [
         new CreateBookAvailabilityDto(
           {
-            showOnlyAsQuote: true,
             price: price.currentPrice,
             remoteId,
             url,
@@ -252,7 +251,6 @@ export class PublioBookParser
             {
               url,
               remoteId: parameterize(`${id}-${authorName}-${creationTime}`),
-              showOnlyAsQuote: true,
               description: content,
               publishDate: new Date(creationTime),
               reviewer: new CreateBookReviewerDto(

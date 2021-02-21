@@ -36,7 +36,6 @@ export class BonitoBookParser
         result: [
           new CreateBookAvailabilityDto(
             {
-              showOnlyAsQuote: false,
               remoteId: url.match(/k-([^-]*)-/)[1],
               price: normalizePrice($('[itemprop="offerDetails"] [itemprop="price"]').attr('content'))?.price,
               url,

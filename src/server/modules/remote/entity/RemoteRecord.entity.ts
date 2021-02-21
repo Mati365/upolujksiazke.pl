@@ -7,8 +7,8 @@ import {DatedRecordEntity} from '@server/modules/database/DatedRecord.entity';
 import {RemoteWebsiteEntity} from './RemoteWebsite.entity';
 
 export abstract class RemoteRecordFields extends DatedRecordEntity {
-  @Column('boolean', {default: false})
-  showOnlyAsQuote: boolean;
+  @Column('boolean', {default: true})
+  showOnlyAsQuote: boolean = true;
 
   @Column('text', {nullable: true})
   url: string;

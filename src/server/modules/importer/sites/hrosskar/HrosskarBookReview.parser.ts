@@ -46,7 +46,6 @@ export class HrosskarBookReviewParser extends WebsiteScrapperParser<CreateBookRe
       {
         book,
         url,
-        showOnlyAsQuote: true,
         description: R.trim(
           description.substr(0, description.lastIndexOf('Ocena:')),
         ),

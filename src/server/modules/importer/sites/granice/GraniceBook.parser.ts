@@ -31,7 +31,6 @@ export class GraniceBookParser
         result: [
           new CreateBookAvailabilityDto(
             {
-              showOnlyAsQuote: true,
               remoteId,
               url,
             },

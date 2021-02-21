@@ -37,7 +37,6 @@ export class MatrasBookParser
         result: [
           new CreateBookAvailabilityDto(
             {
-              showOnlyAsQuote: false,
               remoteId: $('.buy[data-id]').data('id'),
               prevPrice: normalizePrice($('.lastPrice').text())?.price,
               price: $('[data-price-current]').data('priceCurrent'),

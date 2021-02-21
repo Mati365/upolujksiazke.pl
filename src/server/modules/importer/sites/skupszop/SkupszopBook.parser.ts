@@ -30,7 +30,6 @@ export class SkupszopBookParser
         result: [
           new CreateBookAvailabilityDto(
             {
-              showOnlyAsQuote: false,
               remoteId: $('body > div.wrapper.product.microdata > div.product-container').data('id'),
               price: normalizePrice($('.condition-box-head-text > .price').text())?.price,
               url,

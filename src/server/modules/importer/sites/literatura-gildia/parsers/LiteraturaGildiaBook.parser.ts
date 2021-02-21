@@ -37,7 +37,6 @@ export class LiteraturaGildiaBookParser
         result: [
           new CreateBookAvailabilityDto(
             {
-              showOnlyAsQuote: false,
               remoteId: url.split('/').slice(-2).join('/'),
               url,
             },

@@ -40,7 +40,6 @@ export class GildiaBookParser
           new CreateBookAvailabilityDto(
             {
               url,
-              showOnlyAsQuote: false,
               remoteId: $('.product-page-description [data-add-product]').data('addProduct'),
               totalRatings: null,
               avgRating: (

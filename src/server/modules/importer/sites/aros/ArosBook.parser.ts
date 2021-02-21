@@ -38,7 +38,6 @@ export class ArosBookParser
               price: normalizePrice($('[itemprop="offerDetails"] [itemprop="price"]').attr('content'))?.price,
               avgRating: (Number.parseFloat($('[itemprop="ratingValue"]').text()) / 6) * 10 || null,
               totalRatings: Number.parseInt($('[itemprop="ratingCount"]').text(), 10) || null,
-              showOnlyAsQuote: false,
               url,
             },
           ),

@@ -84,7 +84,7 @@ export async function parseAsyncURLIfOK(url: string, noRetry?: boolean) {
 
     if (!noRetry && status === HTTPCode.BAD_GATEWAY) {
       await timeout(500);
-      return parseAsyncURLIfOK(url, false);
+      return parseAsyncURLIfOK(url, true);
     }
 
     return null;

@@ -38,6 +38,9 @@ export class BonitoBookMatcher extends WebsiteScrapperMatcher<CreateBookDto, Boo
    */
   private async searchByPhrase({title, authors}: CreateBookDto) {
     const $ = (await this.fetchPageByPath(`szukaj/${escapeIso88592(title)}/0,0,1/0`))?.$;
+    if (!$)
+      return null;
+
     const matchedAnchor = fuzzyFindBookAnchor(
       {
         $: $('table[style="background-color: #FFFFFF; border-width: 0px; width: 100%; height: 50px;"]'),

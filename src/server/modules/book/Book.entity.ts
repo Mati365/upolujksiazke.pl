@@ -127,7 +127,7 @@ export class BookEntity extends DatedRecordEntity {
     Object.assign(this, partial);
   }
 
-  static genSlug({title, authors}: CreateBookDto) {
-    return parameterize(`${title}-${R.sortBy(R.prop('name'), authors)[0]?.name || 'unknown'}`);
+  static genSlug({defaultTitle, title, authors}: CreateBookDto) {
+    return parameterize(`${defaultTitle ?? title}-${R.sortBy(R.prop('name'), authors)[0]?.name || 'unknown'}`);
   }
 }

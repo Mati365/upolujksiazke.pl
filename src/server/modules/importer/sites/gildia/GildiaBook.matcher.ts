@@ -1,5 +1,3 @@
-import * as R from 'ramda';
-
 import {fuzzyFindBookAnchor} from '@scrapper/helpers/fuzzyFindBookAnchor';
 
 import {CreateBookDto} from '@server/modules/book/dto/CreateBook.dto';

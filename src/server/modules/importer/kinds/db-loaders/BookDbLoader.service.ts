@@ -145,6 +145,9 @@ export class BookDbLoaderService implements MetadataDbLoader {
       },
     );
 
+    if (R.isEmpty(releases))
+      return null;
+
     return bookService.upsert(
       new CreateBookDto(
         {

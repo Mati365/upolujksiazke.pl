@@ -49,6 +49,7 @@ OpenSource book reviews aggregator, something like Metacritic / Digg for books. 
 - [x] Aros.pl
 - [x] Publio.pl
 - [x] Hrosskar.blogspot.com
+- [ ] promocjeksiazkowe.pl
 - [ ] Madbooks.pl
 - [ ] ibuk.pl
 - [ ] LitRes.pl

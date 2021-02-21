@@ -257,7 +257,7 @@ export class PublioBookParser
               publishDate: new Date(creationTime),
               reviewer: new CreateBookReviewerDto(
                 {
-                  name: authorName,
+                  name: authorName || 'Anonimowy',
                 },
               ),
             },

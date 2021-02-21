@@ -64,7 +64,7 @@ export class HrosskarBookReviewParser extends WebsiteScrapperParser<CreateBookRe
         ),
         reviewer: new CreateBookReviewerDto(
           {
-            name: $(blogPost).find('[itemprop="author"] [itemprop="name"]').text(),
+            name: $(blogPost).find('[itemprop="author"] [itemprop="name"]').text() || 'hrosskar',
           },
         ),
       },

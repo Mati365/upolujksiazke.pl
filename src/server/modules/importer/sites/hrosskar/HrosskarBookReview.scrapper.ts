@@ -26,7 +26,7 @@ export class HrosskarBookReviewScrapper extends SpiderQueueProxyScrapper {
     const result: SpiderQueueScrapperInfo[] = (
       $('body .content .content-outer .post[itemtype="http://schema.org/BlogPosting"]')
         .toArray()
-        .map((item) => {
+        .map((item: cheerio.Element) => {
           const url = concatWithAnchor(
             this.websiteURL,
             $(item).find('h3[itemprop="name"] > a').attr('href'),

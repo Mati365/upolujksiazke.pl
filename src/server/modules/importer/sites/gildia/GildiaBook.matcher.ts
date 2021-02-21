@@ -48,7 +48,7 @@ export class GildiaBookMatcher extends WebsiteScrapperMatcher<CreateBookDto, Boo
           const $title = $(anchor).find('> .author-and-title');
 
           return {
-            title: <any> R.init($title.find('.title .pjax').text()),
+            title: $title.find('.title .pjax').text(),
             author: $title.find('.author .pjax').text(),
           };
         },

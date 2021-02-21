@@ -56,10 +56,14 @@ export class MatrasBookParser
     if (!bookPage)
       return null;
 
+    const releaseResult = await this.extractRelease(bookPage);
+    if (!releaseResult)
+      return null;
+
     const {
       detailsText,
       release,
-    } = await this.extractRelease(bookPage);
+    } = releaseResult;
 
     return new CreateBookDto(
       {
@@ -84,13 +88,16 @@ export class MatrasBookParser
   private async extractRelease(bookPage: AsyncURLParseResult) {
     const {$} = bookPage;
     const detailsText = $('#con-notes > div.colsInfo').text();
+    const title = $('h1').text();
+    if (!title)
+      return null;
 
     return {
       detailsText,
       release: new CreateBookReleaseDto(
         {
           lang: Language.PL,
-          title: normalizeParsedTitle($('h1').text()),
+          title: normalizeParsedTitle(title),
           description: normalizeParsedText($('#con-notes > .text:first-child').text()),
           isbn: normalizeISBN(detailsText.match(/ISBN:\s*([\w-]+)/)?.[1]),
           totalPages: (+detailsText.match(/Liczba stron:\s*(\d+)/)?.[1]) || null,

@@ -52,6 +52,7 @@ OpenSource book reviews aggregator, something like Metacritic / Digg for books. 
 - [ ] Madbooks.pl
 - [ ] ibuk.pl
 - [ ] LitRes.pl
+- [ ] audible.com
 - [ ] Gandalf.com.pl
 - [ ] tantis.pl
 - [ ] Woblink.com

@@ -117,7 +117,7 @@ export const refreshAllTask: TaskFunction = async () => {
     await refreshScrapper(
       {
         kind: safeToNumber(ScrapperMetadataKind[kind]),
-        page: (+initialPage) || 1,
+        page: initialPage,
         website,
       },
     );

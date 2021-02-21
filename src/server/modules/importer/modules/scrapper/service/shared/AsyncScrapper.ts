@@ -18,16 +18,12 @@ export type WebsiteScrapperItemInfo<T = any> = {
   url?: string,
 };
 
-export type ScrapperResult<T, P> = {
+export type ScrapperResult<T, P = any> = {
   ignore?: boolean,
   result: T,
   ptr: {
     nextPage: P,
   },
-};
-
-export type ScrapperBasicPagination = {
-  page: number,
 };
 
 export type AsyncScrapperConfig = {
@@ -60,7 +56,8 @@ export function isValidScrappingResult<T>(result: T) {
  */
 export abstract class AsyncScrapper<
     Result extends readonly WebsiteScrapperItemInfo<any>[],
-    Page = ScrapperBasicPagination> extends Scrapper<Result, Page> {
+    Page = number,
+> extends Scrapper<Result, Page> {
   private pageProcessDelay: number;
 
   constructor(

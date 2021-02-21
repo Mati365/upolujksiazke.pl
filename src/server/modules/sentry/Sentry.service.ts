@@ -1,4 +1,5 @@
 import * as Sentry from '@sentry/node';
+import * as R from 'ramda';
 import {RewriteFrames} from '@sentry/integrations';
 import {
   Client as SentryClient,
@@ -20,10 +21,12 @@ export class SentryService implements OnModuleDestroy {
   private readonly logger = new Logger(SentryService.name);
 
   constructor(
-    @Inject(SENTRY_OPTIONS) readonly options: SentryServiceOptions,
+    @Inject(SENTRY_OPTIONS) private readonly options: SentryServiceOptions,
   ) {
-    const {logger} = this;
+    if (this.disabled)
+      return null;
 
+    const {logger} = this;
     Sentry.init(
       {
         ...options,
@@ -47,7 +50,12 @@ export class SentryService implements OnModuleDestroy {
   }
 
   async onModuleDestroy() {
-    await this.instance.close(1000);
+    if (!this.disabled)
+      await this.instance.close(1000);
+  }
+
+  get disabled() {
+    return R.isEmpty(this.options);
   }
 
   get instance() {

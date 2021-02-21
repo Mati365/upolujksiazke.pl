@@ -6,7 +6,7 @@ import {normalizeURL} from '@server/common/helpers';
 
 import {Gender, RemoteID} from '@shared/types';
 import {ScrapperMetadataKind} from '@scrapper/entity';
-import {AsyncScrapper, ScrapperBasicPagination} from '@scrapper/service/shared';
+import {AsyncScrapper} from '@scrapper/service/shared';
 
 import {CreateBookReviewDto} from '@server/modules/book/modules/review/dto/CreateBookReview.dto';
 import {CreateBookReviewerDto} from '@server/modules/book/modules/reviewer/dto/CreateBookReviewer.dto';
@@ -213,13 +213,13 @@ export class WykopBookReviewScrapper extends AsyncScrapper<BookReviewScrapperInf
    * Loads array of reviews
    *
    * @protected
-   * @param {ScrapperBasicPagination} pagination
+   * @param {number|string} pagination
    * @returns {Promise<BookReviewProcessResult>}
    * @memberof WykopScrapper
    */
-  protected async processPage(pagination: ScrapperBasicPagination): Promise<BookReviewProcessResult> {
+  protected async processPage(pagination: number|string): Promise<BookReviewProcessResult> {
     const {logger, api} = this;
-    const page = pagination?.page ?? 1;
+    const page = +pagination || 1;
     let result: WykopAPIResponse & {ignore?: boolean} = null;
 
     try {
@@ -262,9 +262,7 @@ export class WykopBookReviewScrapper extends AsyncScrapper<BookReviewScrapperInf
           result
               && result.pagination.next
               && (result.data?.length > 0 || result.ignore)
-            ? {
-              page: page + 1,
-            }
+            ? page + 1
             : null
         ),
       },

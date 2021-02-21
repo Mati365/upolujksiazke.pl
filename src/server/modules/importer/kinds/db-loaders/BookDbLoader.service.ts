@@ -104,7 +104,7 @@ export class BookDbLoaderService implements MetadataDbLoader {
         [
           ...R.unnest(R.pluck('availability', allReleases)),
           ...R.unnest(R.pluck('reviews', allReleases)),
-        ],
+        ].filter(Boolean),
       ),
     );
 

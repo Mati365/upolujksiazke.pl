@@ -17,7 +17,6 @@ import {ScrapperMetadataService} from '../ScrapperMetadata.service';
 import {ScrapperService} from '../Scrapper.service';
 import {ScrapperMetadataEntity, ScrapperMetadataKind} from '../../entity';
 import {
-  ScrapperBasicPagination,
   WebsiteScrapperItemInfo,
   WebsiteScrappersGroup,
 } from '../shared';
@@ -102,7 +101,7 @@ export class ScrapperRefreshService {
     }: {
       scrappersGroup: WebsiteScrappersGroup,
       maxIterations?: number,
-      initialPage?: ScrapperBasicPagination | string,
+      initialPage?: any,
       kind: ScrapperMetadataKind,
     },
   ) {
@@ -113,12 +112,7 @@ export class ScrapperRefreshService {
     const website = await websiteInfoScrapperService.findOrCreateWebsiteEntity(scrappersGroup.websiteInfoScrapper);
 
     // insert metadata
-    let pageCounter = (
-      typeof initialPage === 'string'
-        ? null
-        : initialPage?.page
-    ) ?? 0;
-
+    let pageCounter = +initialPage || 0;
     const iterator = scrappersGroup.scrappers[kind]?.iterator(
       {
         maxIterations,

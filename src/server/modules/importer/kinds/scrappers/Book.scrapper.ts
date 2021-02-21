@@ -4,7 +4,6 @@ import {CreateBookAvailabilityDto} from '@server/modules/book/modules/availabili
 import {BookBindingKind, BookProtection, BookType} from '@server/modules/book/modules/release/BookRelease.entity';
 import {ScrapperMetadataKind} from '@scrapper/entity';
 import {
-  ScrapperBasicPagination,
   ScrapperResult,
   WebsiteScrapperItemInfo,
 } from '@scrapper/service/shared';
@@ -58,7 +57,7 @@ export type BookScrapperInfo = WebsiteScrapperItemInfo<CreateBookDto> & {
   kind: ScrapperMetadataKind.BOOK,
 };
 
-export type BookProcessResult = ScrapperResult<BookScrapperInfo[], ScrapperBasicPagination>;
+export type BookProcessResult = ScrapperResult<BookScrapperInfo[]>;
 
 export interface BookAvailabilityParser<DataType = any, Metadata = never> {
   parseAvailability(data: DataType): Promise<{meta?: Metadata, result: CreateBookAvailabilityDto[]}>,

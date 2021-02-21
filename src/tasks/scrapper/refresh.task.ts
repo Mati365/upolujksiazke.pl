@@ -57,7 +57,7 @@ async function refreshScrapper(
     website,
     kind,
   }: {
-    page: number,
+    page: any,
     website: string,
     kind: ScrapperMetadataKind,
   },
@@ -74,9 +74,7 @@ async function refreshScrapper(
           kind,
           scrappersGroup: scrapperMod.get(ScrapperService).getScrappersGroupByWebsiteURL(website),
           maxIterations: null,
-          initialPage: {
-            page,
-          },
+          initialPage: page,
         },
       )
   );

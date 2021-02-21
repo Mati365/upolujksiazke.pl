@@ -12,6 +12,7 @@ import {
 import {mapObjValuesToPromise} from '@shared/helpers/async/mapObjValuesToPromise';
 import {mergeWithoutNulls} from '@shared/helpers/mergeWithoutNulls';
 import {parameterize} from '@shared/helpers/parameterize';
+import {pickLongestArrayItem} from '@shared/helpers';
 
 import {BookService} from '@server/modules/book/Book.service';
 import {BookPublisherService} from '@server/modules/book/modules/publisher/BookPublisher.service';
@@ -148,10 +149,21 @@ export class BookDbLoaderService implements MetadataDbLoader {
       new CreateBookDto(
         {
           id: releaseBook?.id,
-          ...mergeWithoutNulls(books),
+          ...mergeWithoutNulls(books, (key, a, b) => {
+            switch (key) {
+              case 'series':
+              case 'prizes':
+              case 'categories':
+              case 'tags':
+                return [...(a || []), ...(b || [])];
+
+              default:
+                return a ?? b;
+            }
+          }),
+
           releases: await this.fixSimilarNamedReleasesPublishers(releases),
-          categories: R.unnest(R.pluck('categories', books)),
-          tags: R.unnest(R.pluck('tags', books)),
+          authors: pickLongestArrayItem(R.pluck('authors', books)),
         },
       ),
     );

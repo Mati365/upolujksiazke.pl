@@ -20,6 +20,7 @@ import {CreateBookDto} from '@server/modules/book';
 import {CreateBookPublisherDto} from '@server/modules/book/modules/publisher/dto/BookPublisher.dto';
 import {CreateBookReleaseDto} from '@server/modules/book/modules/release/dto/CreateBookRelease.dto';
 import {CreateBookAvailabilityDto} from '@server/modules/book/modules/availability/dto/CreateBookAvailability.dto';
+import {CreateBookReviewDto} from '@server/modules/book/modules/review/dto/CreateBookReview.dto';
 import {BookReleaseEntity} from '@server/modules/book/modules/release/BookRelease.entity';
 import {ScrapperMetadataEntity, ScrapperMetadataKind} from '@scrapper/entity';
 
@@ -83,26 +84,27 @@ export class BookDbLoaderService implements MetadataDbLoader {
     const {scrapperService, bookService} = this;
 
     const allReleases = R.unnest(R.pluck('releases', books));
-    const releaseBook = (
-      await BookReleaseEntity.findOne(
-        {
-          select: ['bookId'],
-          where: [
-            {
-              title: In(R.pluck('title', allReleases)),
-            },
-            {
-              isbn: In(R.pluck('isbn', allReleases)),
-            },
-          ],
-        },
-      )
+    const releaseBook = await BookReleaseEntity.findOne(
+      {
+        select: ['bookId'],
+        where: [
+          {
+            title: In(R.pluck('title', allReleases)),
+          },
+          {
+            isbn: In(R.pluck('isbn', allReleases)),
+          },
+        ],
+      },
     );
 
     const websites = await scrapperService.findOrCreateWebsitesByUrls(
       R.pluck(
         'url',
-        R.unnest(R.pluck('availability', allReleases)),
+        [
+          ...R.unnest(R.pluck('availability', allReleases)),
+          ...R.unnest(R.pluck('reviews', allReleases)),
+        ],
       ),
     );
 
@@ -117,7 +119,15 @@ export class BookDbLoaderService implements MetadataDbLoader {
           {
             ...release,
             publisher,
-            availability: release.availability.map(
+            reviews: release.reviews?.map(
+              (review) => new CreateBookReviewDto(
+                {
+                  ...review,
+                  websiteId: websites[review.url].id,
+                },
+              ),
+            ),
+            availability: release.availability?.map(
               (availability) => new CreateBookAvailabilityDto(
                 {
                   ...availability,

@@ -9,6 +9,7 @@ import {Language} from '@server/constants/language';
 import {CreateImageAttachmentDto} from '@server/modules/attachment/dto';
 import {CreateBookAvailabilityDto} from '../../availability/dto/CreateBookAvailability.dto';
 import {CreateBookPublisherDto} from '../../publisher/dto/BookPublisher.dto';
+import {CreateBookReviewDto} from '../../review/dto/CreateBookReview.dto';
 import {BookBindingKind, BookProtection, BookType} from '../BookRelease.entity';
 
 /**
@@ -117,6 +118,11 @@ export class CreateBookReleaseDto {
   @ValidateNested()
   @Type(() => CreateBookAvailabilityDto)
   readonly availability: CreateBookAvailabilityDto[];
+
+  @IsDefined()
+  @ValidateNested()
+  @Type(() => CreateBookReviewDto)
+  readonly reviews: CreateBookReviewDto[];
 
   constructor(partial: Partial<CreateBookReleaseDto>) {
     Object.assign(this, partial);

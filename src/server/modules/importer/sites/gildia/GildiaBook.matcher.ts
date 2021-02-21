@@ -1,3 +1,5 @@
+import * as R from 'ramda';
+
 import {fuzzyFindBookAnchor} from '@scrapper/helpers/fuzzyFindBookAnchor';
 
 import {CreateBookDto} from '@server/modules/book/dto/CreateBook.dto';
@@ -32,6 +34,9 @@ export class GildiaBookMatcher extends WebsiteScrapperMatcher<CreateBookDto, Boo
       },
     ))?.$;
 
+    if (!$)
+      return null;
+
     const matchedAnchor = fuzzyFindBookAnchor(
       {
         $: $('.products-row > .product-row'),
@@ -43,7 +48,7 @@ export class GildiaBookMatcher extends WebsiteScrapperMatcher<CreateBookDto, Boo
           const $title = $(anchor).find('> .author-and-title');
 
           return {
-            title: $title.find('.title .pjax').text(),
+            title: <any> R.init($title.find('.title .pjax').text()),
             author: $title.find('.author .pjax').text(),
           };
         },

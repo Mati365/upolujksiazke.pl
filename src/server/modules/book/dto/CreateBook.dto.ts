@@ -25,7 +25,7 @@ export class CreateBookDto {
 
   @IsOptional()
   @IsString()
-  readonly parameterizedTitle: string;
+  readonly parameterizedSlug: string;
 
   @IsEnum(Language)
   @IsOptional()

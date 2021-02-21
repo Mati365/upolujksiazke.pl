@@ -32,6 +32,9 @@ export class SkupszopBookMatcher extends WebsiteScrapperMatcher<CreateBookDto, B
       },
     ))?.$;
 
+    if (!$)
+      return null;
+
     const matchedAnchor = fuzzyFindBookAnchor(
       {
         $: $('.product-content-list > .product-content-list-ul > li.product-grid-item'),

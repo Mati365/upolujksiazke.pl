@@ -35,6 +35,9 @@ export class MatrasBookMatcher extends WebsiteScrapperMatcher<CreateBookDto, Boo
       },
     ))?.$;
 
+    if (!$)
+      return null;
+
     const matchedAnchor = fuzzyFindBookAnchor(
       {
         $: $('.mainContainer .booksBox .booksContainer .book'),

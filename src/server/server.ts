@@ -67,10 +67,6 @@ async function forkApp(
   app.enableCors();
   await app.init();
 
-  http
-    .createServer(server)
-    .listen(port);
-
   if (ssl.cert) {
     https
       .createServer(
@@ -83,6 +79,10 @@ async function forkApp(
       .listen(port + 1);
 
     console.info(`🚀 API server is running at https://${address}:${port + 1}!`);
+  } else {
+    http
+      .createServer(server)
+      .listen(port);
   }
 
   console.info(`🚀 API server is running at http://${address}:${port}!`);

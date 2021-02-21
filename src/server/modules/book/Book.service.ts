@@ -60,7 +60,7 @@ export class BookService {
       BookEntity
         .createQueryBuilder('book')
         .where(
-          'levenshtein("parameterizedTitle", :title) <= :similarity',
+          'levenshtein("parameterizedSlug", :title) <= :similarity',
           {
             title: parameterize(title),
             similarity,
@@ -178,10 +178,11 @@ export class BookService {
           {
             connection,
             entityManager: transaction,
-            primaryKey: 'parameterizedTitle',
+            primaryKey: 'parameterizedSlug',
             Entity: BookEntity,
             data: new BookEntity(
               {
+                parameterizedSlug: BookEntity.genSlug(dto),
                 defaultTitle: dto.defaultTitle,
                 originalTitle: dto.originalTitle,
                 originalLang: dto.originalLang,

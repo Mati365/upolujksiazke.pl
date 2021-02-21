@@ -1,6 +1,7 @@
 import * as R from 'ramda';
 
 import {concatUrls} from '@shared/helpers/concatUrls';
+import {parameterize} from '@shared/helpers/parameterize';
 import {
   normalizeISBN,
   normalizeParsedText,
@@ -21,6 +22,8 @@ import {CreateBookKindDto} from '@server/modules/book/modules/kind/dto/CreateBoo
 import {CreateBookPrizeDto} from '@server/modules/book/modules/prize/dto/CreateBookPrize.dto';
 import {CreateBookVolumeDto} from '@server/modules/book/modules/volume/dto/CreateBookVolume.dto';
 import {CreateBookSeriesDto} from '@server/modules/book/modules/series/dto/CreateBookSeries.dto';
+import {CreateBookReviewDto} from '@server/modules/book/modules/review/dto/CreateBookReview.dto';
+import {CreateBookReviewerDto} from '@server/modules/book/modules/reviewer';
 
 import {ScrapperMetadataKind} from '@scrapper/entity';
 import {
@@ -40,38 +43,23 @@ type PublioAPIPrice = {
   originalPrice: number,
 };
 
+type PublioAPIComment = {
+  authorName: string,
+  content: string,
+  creationTime: string,
+  hiddenByCustomer: boolean,
+  hiddenByOperator: boolean,
+};
+
 export class PublioBookParser
   extends WebsiteScrapperParser<CreateBookDto>
   implements BookAvailabilityParser<AsyncURLParseResult, {price: PublioAPIPrice}> {
   /**
-   * Reads price from API
-   *
-   * @private
-   * @param {ID} id
-   * @returns {Promise<PublioAPIPrice>}
-   * @memberof PublioBookParser
-   */
-  private async searchPriceByID(id: ID): Promise<PublioAPIPrice> {
-    const {price} = (
-      await fetch(
-        concatUrls(
-          this.websiteURL,
-          `rest/v3/catalog/product/${id}/purchase-options`,
-        ),
-      )
-        .then((r) => r.json())
-    );
-
-    return price;
-  }
-
-  /**
    * @inheritdoc
    */
   async parseAvailability({url}: AsyncURLParseResult) {
-    const price = await this.searchPriceByID(
-      PublioBookParser.extractBookIdFromURL(url),
-    );
+    const remoteId = PublioBookParser.extractBookIdFromURL(url);
+    const price = await this.searchPriceByID(remoteId);
 
     return {
       meta: {
@@ -81,8 +69,8 @@ export class PublioBookParser
         new CreateBookAvailabilityDto(
           {
             showOnlyAsQuote: true,
-            remoteId: PublioBookParser.extractBookIdFromURL(url),
             price: price.currentPrice,
+            remoteId,
             url,
           },
         ),
@@ -98,7 +86,7 @@ export class PublioBookParser
     if (!bookPage)
       return null;
 
-    const {$} = bookPage;
+    const {$, url} = bookPage;
     const type = BOOK_TYPE_TRANSLATION_MAPPINGS[
       $('.basic-info-wrapper .info > .section').text()?.toLowerCase()
     ];
@@ -106,9 +94,12 @@ export class PublioBookParser
     if (R.isNil(type))
       return null;
 
-    const [title, volumeName] = PublioBookParser.extractTitle($);
     const basicProps = PublioBookParser.extractBookProps($);
-    const [parentIsbn, ...childIsbn] = basicProps['isbn']?.[0].split(',').map(normalizeISBN);
+    if (!basicProps['isbn'])
+      return null;
+
+    const [title, volumeName] = PublioBookParser.extractTitle($);
+    const [parentIsbn, ...childIsbn] = basicProps['isbn'][0].split(',').map(normalizeISBN);
     const {
       result: availability,
       meta: {
@@ -141,6 +132,7 @@ export class PublioBookParser
         protection: PROTECTION_TRANSLATION_MAPPINGS[basicProps['zabezpieczenie']?.[0].toLowerCase()],
         translator: PublioBookParser.extractTitlesRow($, $(basicProps['tłumacz']?.[1])),
         recordingLength: PublioBookParser.extractRecordingLength(basicProps['czas nagrania']?.[0]),
+        reviews: await this.extractReviews(availability[0].remoteId, url),
         publishDate: (
           basicProps['rok pierwszej publikacji książkowej']?.[0]
             ?? basicProps['miejsce i rok wydania']?.[0].match(/(\d{4})/)?.[1]
@@ -212,6 +204,100 @@ export class PublioBookParser
   /* eslint-enable @typescript-eslint/dot-notation */
 
   /**
+   * Reads price from API
+   *
+   * @private
+   * @param {ID} id
+   * @returns {Promise<PublioAPIPrice>}
+   * @memberof PublioBookParser
+   */
+  private async searchPriceByID(id: ID): Promise<PublioAPIPrice> {
+    const {price} = await fetch(
+      concatUrls(this.websiteURL, `rest/v3/catalog/product/${id}/purchase-options`),
+    )
+      .then((r) => r.json());
+
+    return price;
+  }
+
+  /**
+   * Extract all comments
+   *
+   * @private
+   * @param {ID} id
+   * @param {String} url
+   * @returns {Promise<CreateBookReviewDto[]>}
+   * @memberof PublioBookParser
+   */
+  private async extractReviews(id: ID, url: string): Promise<CreateBookReviewDto[]> {
+    const result = await fetch(
+      concatUrls(this.websiteURL, `rest/v3/catalog/product/${id}/comments?start=0&maxCount=20`),
+    )
+      .then((r) => r.json());
+
+    return (
+      result
+        ?.comments
+        ?.map((comment: PublioAPIComment) => {
+          const {
+            hiddenByCustomer, hiddenByOperator,
+            authorName, creationTime,
+            content,
+          } = comment;
+
+          if (hiddenByCustomer || hiddenByOperator)
+            return null;
+
+          return new CreateBookReviewDto(
+            {
+              url,
+              remoteId: parameterize(`${id}-${authorName}-${creationTime}`),
+              showOnlyAsQuote: true,
+              description: content,
+              publishDate: new Date(creationTime),
+              reviewer: new CreateBookReviewerDto(
+                {
+                  name: authorName,
+                },
+              ),
+            },
+          );
+        })
+        .filter(Boolean)
+    );
+  }
+
+  /**
+   * Fetches publisher name from text
+   *
+   * @private
+   * @param {cheerio.Cheerio} $element
+   * @param {boolean} [shallow]
+   * @returns
+   * @memberof PublioBookParser
+   */
+  private async extractPublisher($element: cheerio.Cheerio, shallow?: boolean) {
+    const publisherMatcher = <PublioBookPublisherMatcher> this.matchers[ScrapperMetadataKind.BOOK_PUBLISHER];
+    const dto = new CreateBookPublisherDto(
+      {
+        name: normalizeParsedText($element.text()),
+      },
+    );
+
+    if (shallow)
+      return dto;
+
+    return (await publisherMatcher.searchRemoteRecord(
+      {
+        data: dto,
+      },
+      {
+        path: $element.find('.detail-link').attr('href'),
+      },
+    )).result;
+  }
+
+  /**
    * Converts audiobook length to number
    *
    * @example
@@ -252,36 +338,6 @@ export class PublioBookParser
       return title.match(/^(.*)\.\sTom\s(\d+)$/).splice(1, 2);
 
     return [title, null];
-  }
-
-  /**
-   * Fetches publisher name from text
-   *
-   * @private
-   * @param {cheerio.Cheerio} $element
-   * @param {boolean} [shallow]
-   * @returns
-   * @memberof PublioBookParser
-   */
-  private async extractPublisher($element: cheerio.Cheerio, shallow?: boolean) {
-    const publisherMatcher = <PublioBookPublisherMatcher> this.matchers[ScrapperMetadataKind.BOOK_PUBLISHER];
-    const dto = new CreateBookPublisherDto(
-      {
-        name: normalizeParsedText($element.text()),
-      },
-    );
-
-    if (shallow)
-      return dto;
-
-    return (await publisherMatcher.searchRemoteRecord(
-      {
-        data: dto,
-      },
-      {
-        path: $element.find('.detail-link').attr('href'),
-      },
-    )).result;
   }
 
   /**

@@ -4,7 +4,6 @@ import {
   Entity, Column,
   ManyToMany, OneToMany, JoinTable,
   JoinColumn, ManyToOne, RelationId,
-  BeforeInsert, BeforeUpdate,
 } from 'typeorm';
 
 import {parameterize} from '@shared/helpers/parameterize';
@@ -21,6 +20,7 @@ import {BookAvailabilityEntity} from './modules/availability/BookAvailability.en
 import {BookSeriesEntity} from './modules/series/BookSeries.entity';
 import {BookPrizeEntity} from './modules/prize/BookPrize.entity';
 import {BookKindEntity} from './modules/kind/BookKind.entity';
+import {CreateBookDto} from './dto/CreateBook.dto';
 
 @Entity(
   {
@@ -28,8 +28,8 @@ import {BookKindEntity} from './modules/kind/BookKind.entity';
   },
 )
 export class BookEntity extends DatedRecordEntity {
-  @Column('citext', {unique: true})
-  parameterizedTitle: string;
+  @Column('citext', {unique: true, nullable: true})
+  parameterizedSlug: string;
 
   @Column('citext')
   defaultTitle: string;
@@ -43,7 +43,7 @@ export class BookEntity extends DatedRecordEntity {
   )
   originalLang: Language;
 
-  @Column('citext', {unique: true, nullable: true})
+  @Column('citext', {nullable: true})
   originalTitle: string;
 
   @Column('text', {nullable: true})
@@ -127,12 +127,7 @@ export class BookEntity extends DatedRecordEntity {
     Object.assign(this, partial);
   }
 
-  @BeforeInsert()
-  @BeforeUpdate()
-  transformFields() {
-    const {parameterizedTitle, defaultTitle} = this;
-    if (!parameterizedTitle && defaultTitle) {
-      this.parameterizedTitle = parameterize(defaultTitle);
-    }
+  static genSlug({title, authors}: CreateBookDto) {
+    return parameterize(`${title}-${R.sortBy(R.prop('name'), authors)[0].name}`);
   }
 }

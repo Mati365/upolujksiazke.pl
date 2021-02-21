@@ -12,9 +12,11 @@ import {ImageResizeSize} from '@shared/types';
 import {ImageAttachmentService, ImageResizeConfig} from '@server/modules/attachment/services';
 import {CreateBookReleaseDto} from './dto/CreateBookRelease.dto';
 import {CreateBookAvailabilityDto} from '../availability/dto/CreateBookAvailability.dto';
+import {CreateBookReviewDto} from '../review/dto/CreateBookReview.dto';
 import {BookReleaseEntity} from './BookRelease.entity';
 import {BookPublisherService} from '../publisher/BookPublisher.service';
 import {BookAvailabilityService} from '../availability/BookAvailability.service';
+import {BookReviewService} from '../review/BookReview.service';
 
 @Injectable()
 export class BookReleaseService {
@@ -31,6 +33,7 @@ export class BookReleaseService {
     private readonly connection: Connection,
     private readonly publisherService: BookPublisherService,
     private readonly availabilityService: BookAvailabilityService,
+    private readonly reviewsService: BookReviewService,
     private readonly imageAttachmentService: ImageAttachmentService,
   ) {}
 
@@ -78,6 +81,7 @@ export class BookReleaseService {
       cover,
       childReleases,
       publisher, publisherId,
+      reviews,
       availability,
       ...dto
     }: CreateBookReleaseDto,
@@ -89,6 +93,7 @@ export class BookReleaseService {
       publisherService,
       availabilityService,
       imageAttachmentService,
+      reviewsService,
     } = this;
 
     const executor = async (transaction: EntityManager) => {
@@ -115,6 +120,19 @@ export class BookReleaseService {
         },
       );
 
+      if (reviews?.length) {
+        await reviewsService.upsert(
+          reviews.map((review) => new CreateBookReviewDto(
+            {
+              ...review,
+              bookId: releaseEntity.bookId,
+              releaseId: releaseEntity.id,
+            },
+          )),
+          transactionAttrs,
+        );
+      }
+
       if (availability?.length) {
         await availabilityService.upsertList(
           availability.map(
@@ -130,7 +148,7 @@ export class BookReleaseService {
         );
       }
 
-      if (childReleases) {
+      if (childReleases?.length) {
         await this.upsertList(
           childReleases.map(
             (childDto) => new CreateBookReleaseDto(

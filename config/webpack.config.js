@@ -34,7 +34,7 @@ const createConfig = ({
   plugins = () => [],
   override,
 }) => {
-  const devMode = mode === 'development';
+  const devMode = mode !== 'production';
   const outputPath = path.resolve(__dirname, '../dist/');
 
   return {

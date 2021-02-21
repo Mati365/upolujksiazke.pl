@@ -166,6 +166,7 @@ export class WykopBookReviewScrapper extends AsyncScrapper<BookReviewScrapperInf
           description,
           book,
           remoteId,
+          showOnlyAsQuote: true,
           url: `https://www.wykop.pl/wpis/${remoteId}`,
           rating: properties.score,
           publishDate: new Date(post.date),

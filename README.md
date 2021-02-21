@@ -32,7 +32,8 @@ OpenSource book reviews aggregator, something like Metacritic / Digg for books. 
 - [ ] Emoji reactions
 - [ ] Add comment after publishing entry on wykop.pl with links to shops, add comment to verify matched book
 - [ ] Add current user library link to wykop comment
-- [ ] Add website spiders (as separate module that appends content to redis)
+- [x] Add website spiders (as separate module that appends content to redis)
+- [ ] Fb top offers bot post publish
 
 ## Available websites
 

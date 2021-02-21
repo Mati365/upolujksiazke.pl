@@ -13,7 +13,7 @@ export class CreateBookSeriesDto {
   @IsString()
   readonly name: string;
 
-  @IsOptional()
-  @IsNumber()
-  readonly publisherId: number;
+  constructor(partial: Partial<CreateBookSeriesDto>) {
+    Object.assign(this, partial);
+  }
 }

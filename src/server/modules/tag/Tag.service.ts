@@ -62,7 +62,6 @@ export class TagService {
         connection,
         Entity: TagEntity,
         primaryKey: 'name',
-        doNothing: true,
         data: (
           R
             .uniqBy(

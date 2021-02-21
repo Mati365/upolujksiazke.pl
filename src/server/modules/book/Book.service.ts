@@ -188,11 +188,6 @@ export class BookService {
                 originalPublishDate: dto.originalPublishDate,
                 ...dto.kindId ? {kindId: dto.kindId} : {kind},
                 ...dto.volumeId ? {volumeId: dto.volumeId} : {volume},
-                series,
-                prizes,
-                authors,
-                tags,
-                categories,
               },
             ),
           },
@@ -204,6 +199,22 @@ export class BookService {
           },
         );
       }
+
+      Object.assign(
+        book,
+        await transaction.save(
+          new BookEntity(
+            {
+              id: book.id,
+              series,
+              prizes,
+              authors,
+              tags,
+              categories,
+            },
+          ),
+        ),
+      );
 
       book.releases = await releaseService.upsertList(
         dto.releases.map(

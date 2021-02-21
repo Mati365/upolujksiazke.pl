@@ -20,6 +20,7 @@ import {CreateBookAvailabilityDto} from '@server/modules/book/modules/availabili
 import {CreateBookKindDto} from '@server/modules/book/modules/kind/dto/CreateBookKind.dto';
 import {CreateBookPrizeDto} from '@server/modules/book/modules/prize/dto/CreateBookPrize.dto';
 import {CreateBookVolumeDto} from '@server/modules/book/modules/volume/dto/CreateBookVolume.dto';
+import {CreateBookSeriesDto} from '@server/modules/book/modules/series/dto/CreateBookSeries.dto';
 
 import {ScrapperMetadataKind} from '@scrapper/entity';
 import {
@@ -195,6 +196,7 @@ export class PublioBookParser
         ],
         releases: [parentRelease],
         categories: PublioBookParser.extractCategories($, basicProps),
+        series: PublioBookParser.extractSeries(basicProps['seria']?.[0]),
         prizes,
         authors,
         ...volumeName && {
@@ -280,6 +282,31 @@ export class PublioBookParser
         path: $element.find('.detail-link').attr('href'),
       },
     )).result;
+  }
+
+  /**
+   * Convert book series item
+   *
+   * @static
+   * @param {string} title
+   * @returns
+   * @memberof PublioBookParser
+   */
+  static extractSeries(title: string) {
+    if (!title)
+      return null;
+
+    return (
+      title
+        .split(',')
+        .map((str) => str.match(/„([^„”]+)”/)?.[1]?.trim())
+        .filter(Boolean)
+        .map((name) => new CreateBookSeriesDto(
+          {
+            name,
+          },
+        ))
+    );
   }
 
   /**

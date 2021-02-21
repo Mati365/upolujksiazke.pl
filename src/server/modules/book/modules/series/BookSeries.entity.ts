@@ -1,10 +1,11 @@
 import {
-  Entity, Column, ManyToOne,
-  JoinColumn, RelationId,
+  Entity, Column,
+  BeforeInsert, BeforeUpdate,
 } from 'typeorm';
 
+import {parameterize} from '@shared/helpers/parameterize';
+
 import {DatedRecordEntity} from '../../../database/DatedRecord.entity';
-import {BookPublisherEntity} from '../publisher/BookPublisher.entity';
 import {BookReleaseEntity} from '../release/BookRelease.entity';
 
 @Entity(
@@ -13,26 +14,22 @@ import {BookReleaseEntity} from '../release/BookRelease.entity';
   },
 )
 export class BookSeriesEntity extends DatedRecordEntity {
-  @Column('citext', {unique: true})
+  @Column('citext')
   name: string;
 
-  @ManyToOne(
-    () => BookPublisherEntity,
-    (entity) => entity.series,
-    {
-      nullable: true,
-      onDelete: 'CASCADE',
-    },
-  )
-  @JoinColumn({name: 'publisherId'})
-  publisher: BookPublisherEntity;
-
-  @Column()
-  @RelationId((entity: BookReleaseEntity) => entity.publisher)
-  publisherId: number;
+  @Column('text', {unique: true})
+  parameterizedName: string;
 
   constructor(partial: Partial<BookReleaseEntity>) {
     super();
     Object.assign(this, partial);
+  }
+
+  @BeforeInsert()
+  @BeforeUpdate()
+  transformFields() {
+    const {parameterizedName, name} = this;
+    if (!parameterizedName && name)
+      this.parameterizedName = parameterize(name);
   }
 }

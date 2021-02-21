@@ -36,6 +36,7 @@
     no-use-before-define: "off"
     '@typescript-eslint/no-use-before-define': ["error"]
     '@typescript-eslint/lines-between-class-members': 0
+    '@typescript-eslint/object-curly-spacing': ["error", "never"]
 
     quotes: ["error", "single"]
     import/no-default-export: 2
@@ -61,7 +62,6 @@
     jsx-a11y/click-events-have-key-events: 0
     jsx-a11y/mouse-events-have-key-events: 0
     object-curly-spacing: ["error", "never"]
-    @typescript-eslint/object-curly-spacing: ["error", "never"]
     function-paren-newline: 0
     object-curly-newline: 0
     one-var: 0

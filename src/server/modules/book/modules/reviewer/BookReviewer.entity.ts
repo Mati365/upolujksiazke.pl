@@ -7,7 +7,6 @@ import {Gender} from '@shared/types';
 import {ImageAttachmentEntity} from '@server/modules/attachment/entity';
 import {RemoteRecordEntity, RemoteRecordFields} from '@server/modules/remote/entity';
 
-import {BookEntity} from '../../Book.entity';
 import {BookReviewEntity} from '../review/BookReview.entity';
 
 @RemoteRecordEntity(
@@ -30,9 +29,6 @@ export class BookReviewerEntity extends RemoteRecordFields {
     },
   )
   gender?: Gender;
-
-  @ManyToMany(() => BookEntity, (book) => book.reviewers)
-  books: BookEntity[];
 
   @OneToMany(() => BookReviewEntity, (entity) => entity.reviewer)
   reviews: BookReviewEntity[];

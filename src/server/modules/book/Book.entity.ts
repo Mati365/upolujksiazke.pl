@@ -15,7 +15,6 @@ import {TagEntity} from '../tag/Tag.entity';
 import {BookAuthorEntity} from './modules/author/BookAuthor.entity';
 import {BookCategoryEntity} from './modules/category/BookCategory.entity';
 import {BookReviewEntity} from './modules/review/BookReview.entity';
-import {BookReviewerEntity} from './modules/reviewer/BookReviewer.entity';
 import {BookReleaseEntity} from './modules/release/BookRelease.entity';
 import {BookVolumeEntity} from './modules/volume/BookVolume.entity';
 import {BookAvailabilityEntity} from './modules/availability/BookAvailability.entity';
@@ -59,7 +58,7 @@ export class BookEntity extends DatedRecordEntity {
     () => BookCategoryEntity,
     (categoryEntity) => categoryEntity.books,
     {
-      cascade: ['insert', 'update'],
+      cascade: true,
     },
   )
   categories: BookCategoryEntity[];
@@ -67,22 +66,12 @@ export class BookEntity extends DatedRecordEntity {
   @OneToMany(() => BookReviewEntity, (review) => review.book)
   reviews: BookReviewEntity[];
 
-  @JoinTable()
-  @ManyToMany(
-    () => BookReviewerEntity,
-    (reviewer) => reviewer.books,
-    {
-      cascade: ['insert', 'update'],
-    },
-  )
-  reviewers: BookReviewerEntity[];
-
   @Transform(R.map(R.prop('name')) as any)
   @JoinTable()
   @ManyToMany(
     () => TagEntity,
     {
-      cascade: ['insert', 'update'],
+      cascade: true,
     },
   )
   tags: TagEntity[];
@@ -91,7 +80,7 @@ export class BookEntity extends DatedRecordEntity {
     () => BookReleaseEntity,
     (entity) => entity.book,
     {
-      cascade: ['remove', 'insert', 'update'],
+      cascade: true,
     },
   )
   releases: BookReleaseEntity[];
@@ -108,11 +97,21 @@ export class BookEntity extends DatedRecordEntity {
   volumeId: number;
 
   @JoinTable()
-  @ManyToMany(() => BookSeriesEntity)
+  @ManyToMany(
+    () => BookSeriesEntity,
+    {
+      cascade: true,
+    },
+  )
   series: BookSeriesEntity[];
 
   @JoinTable()
-  @ManyToMany(() => BookPrizeEntity, {cascade: ['insert']})
+  @ManyToMany(
+    () => BookPrizeEntity,
+    {
+      cascade: true,
+    },
+  )
   prizes: BookPrizeEntity[];
 
   @ManyToOne(() => BookKindEntity, {onDelete: 'CASCADE'})

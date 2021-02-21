@@ -9,7 +9,6 @@ import {parameterize} from '@shared/helpers/parameterize';
 import {ImageAttachmentEntity} from '@server/modules/attachment/entity';
 import {DatedRecordEntity} from '../../../database/DatedRecord.entity';
 import {BookReleaseEntity} from '../release/BookRelease.entity';
-import {BookSeriesEntity} from '../series/BookSeries.entity';
 
 @Entity(
   {
@@ -36,9 +35,6 @@ export class BookPublisherEntity extends DatedRecordEntity {
 
   @OneToMany(() => BookReleaseEntity, (entity) => entity.publisher)
   releases: BookReleaseEntity[];
-
-  @OneToMany(() => BookSeriesEntity, (entity) => entity.publisher)
-  series: BookSeriesEntity[];
 
   @ManyToMany(
     () => ImageAttachmentEntity,

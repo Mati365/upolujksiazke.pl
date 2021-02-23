@@ -28,7 +28,7 @@ rclone lsl $REMOTE_NAME:$REMOTE_BACKUP_DIR |
   sort -r -k2,3 |
   awk -v history=$BACKUP_HISTORY 'NR > history { print $4 }' |
   while read line; do
-    rclone delete -v $REMOTE_NAME:$REMOTE_BACKUP_DIR/$line
+    rclone delete -v --mega-hard-delete $REMOTE_NAME:$REMOTE_BACKUP_DIR/$line
   done
 
 rm -Rf $WORKING_DIR

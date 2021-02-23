@@ -17,7 +17,7 @@ echo "Creating backup in $WORKING_DIR directory..."
 
 # Pack backup
 tar -cf cdn.tar -C $CDN_LOCAL_PATH/ .
-PGPASSFILE=$PROJECT_DIR/.pgpass pg_dump -c $DB_NAME > db.dump
+PGPASSFILE=$PROJECT_DIR/.pgpass pg_dump -U $DB_USER -h $DB_HOST -c $DB_NAME > db.dump
 tar -czf $BACKUP_FILENAME cdn.tar db.dump
 
 # Send new backup to remote

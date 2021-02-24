@@ -34,6 +34,7 @@ OpenSource book reviews aggregator, something like Metacritic / Digg for books. 
 - [ ] Add current user library link to wykop comment
 - [x] Add website spiders (as separate module that appends content to redis)
 - [ ] Fb top offers bot post publish
+- [ ] product basket, compare multiple books prices in table and summarize per shop basket price
 
 ## Available websites
 

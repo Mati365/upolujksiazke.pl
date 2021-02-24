@@ -49,7 +49,7 @@ export type AppEnv = Partial<{
       aros: BookShopUrlsConfig,
       publio: BookShopUrlsConfig,
       hrosskar: BookShopUrlsConfig,
-      wbibliotece: BookShopUrlsConfig,
+      madbooks: BookShopUrlsConfig,
       wykop: {
         homepageURL: string,
         authConfig: WykopAPIAuthParams,
@@ -179,9 +179,9 @@ export const GLOBAL_CONFIG: Record<string, AppEnv> = {
           homepageURL: 'https://www.matras.pl',
           searchURL: 'https://www.matras.pl/wyszukiwanie',
         },
-        wbibliotece: {
-          homepageURL: 'https://w.bibliotece.pl',
-          searchURL: 'https://w.bibliotece.pl/search/',
+        madbooks: {
+          homepageURL: 'https://madbooks.pl/',
+          searchURL: 'https://madbooks.pl/s',
         },
         bonito: {
           homepageURL: 'https://bonito.pl',

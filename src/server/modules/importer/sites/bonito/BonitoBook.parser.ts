@@ -19,6 +19,7 @@ import {CreateBookAvailabilityDto} from '@server/modules/book/modules/availabili
 import {
   BINDING_TRANSLATION_MAPPINGS,
   BookAvailabilityParser,
+  matchBookTypeByTitle,
 } from '@importer/kinds/scrappers/Book.scrapper';
 
 import {AsyncURLParseResult} from '@server/common/helpers/fetchAsyncHTML';
@@ -61,6 +62,7 @@ export class BonitoBookParser
     const release = new CreateBookReleaseDto(
       {
         title,
+        type: matchBookTypeByTitle(title),
         lang: Language.PL,
         format: basicProps['format'],
         defaultPrice: normalizePrice(basicProps['cena rynkowa'])?.price,

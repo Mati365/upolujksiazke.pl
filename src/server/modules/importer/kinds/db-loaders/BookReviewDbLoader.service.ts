@@ -1,14 +1,12 @@
 import {Injectable, Logger} from '@nestjs/common';
-import {SelectQueryBuilder} from 'typeorm';
 import {plainToClass} from 'class-transformer';
 import * as R from 'ramda';
 
 import {CreateBookReviewDto} from '@server/modules/book/modules/review/dto/CreateBookReview.dto';
 import {ScrapperMetadataEntity} from '@scrapper/entity/ScrapperMetadata.entity';
-import {BookEntity} from '@server/modules/book/Book.entity';
 
 import {MetadataDbLoader} from '@db-loader/MetadataDbLoader.interface';
-import {BookService} from '@server/modules/book/Book.service';
+import {FuzzyBookSearchService} from '@server/modules/book/FuzzyBookSearch.service';
 import {BookReviewService} from '@server/modules/book/modules/review/BookReview.service';
 import {BookDbLoaderService} from './BookDbLoader.service';
 import {ScrapperService} from '../../modules/scrapper/service';
@@ -20,7 +18,7 @@ export class BookReviewDbLoaderService implements MetadataDbLoader {
   constructor(
     private readonly scrapperService: ScrapperService,
     private readonly bookDbLoader: BookDbLoaderService,
-    private readonly bookService: BookService,
+    private readonly fuzzyBookSearchService: FuzzyBookSearchService,
     private readonly bookReviewService: BookReviewService,
   ) {}
 
@@ -51,13 +49,14 @@ export class BookReviewDbLoaderService implements MetadataDbLoader {
    */
   async parseAndAssignBook(metadata: ScrapperMetadataEntity) {
     const {
+      fuzzyBookSearchService,
       scrapperService,
       bookDbLoader,
       logger,
     } = this;
 
     let review = plainToClass(CreateBookReviewDto, metadata.content);
-    let book = await this.findAlreadyCachedReviewBook(review);
+    let book = await fuzzyBookSearchService.findAlreadyCachedReviewBook(review);
 
     if (!book)
       book = await bookDbLoader.searchAndExtractToDb(review.book);
@@ -89,41 +88,6 @@ export class BookReviewDbLoaderService implements MetadataDbLoader {
             ?? (await scrapperService.findOrCreateWebsiteByUrl(review.url))?.id
         ),
       },
-    );
-  }
-
-  /**
-   * Looks for book in database and tries to match it to review
-   *
-   * @param {CreateBookReviewDto} {book, bookId, releaseId}
-   * @returns
-   * @memberof BookReviewDbLoaderService
-   */
-  findAlreadyCachedReviewBook({book, bookId, releaseId}: CreateBookReviewDto) {
-    const {bookService} = this;
-    let query: SelectQueryBuilder<BookEntity> = null;
-
-    if (R.isNil(releaseId) || !R.isNil(bookId)) {
-      const id = bookId ?? book?.id;
-
-      query = (
-        R.isNil(id)
-          ? bookService.createSimilarNamedQuery(book.title)
-          : BookEntity.createQueryBuilder('book').where({id})
-      );
-    } else {
-      query = (
-        BookEntity
-          .createQueryBuilder('book')
-          .where('release.id = :id', {id: releaseId})
-      );
-    }
-
-    return (
-      query
-        .innerJoinAndSelect('book.releases', 'release')
-        .select(['release.id', 'release.isbn', 'book.id'])
-        .getOne()
     );
   }
 }

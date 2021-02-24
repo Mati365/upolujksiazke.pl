@@ -14,7 +14,7 @@ import {CreateBookAvailabilityDto} from '@server/modules/book/modules/availabili
 import {CreateBookCategoryDto} from '@server/modules/book/modules/category/dto/CreateBookCategory.dto';
 
 import {AsyncURLParseResult} from '@server/common/helpers/fetchAsyncHTML';
-import {BookAvailabilityParser} from '@importer/kinds/scrappers/Book.scrapper';
+import {BookAvailabilityParser, matchBookTypeByTitle} from '@importer/kinds/scrappers/Book.scrapper';
 import {WebsiteScrapperParser} from '../../modules/scrapper/service/shared';
 
 export class GraniceBookParser
@@ -79,6 +79,7 @@ export class GraniceBookParser
     const release = new CreateBookReleaseDto(
       {
         title,
+        type: matchBookTypeByTitle(title),
         lang: Language.PL,
         description: normalizeParsedText($content.find('> .desc > p:not(:empty):not(.tags)').text()),
         totalPages: +$details.find('span[itemprop="numberOfPages"]').text() || null,

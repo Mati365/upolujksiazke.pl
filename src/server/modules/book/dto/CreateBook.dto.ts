@@ -1,8 +1,11 @@
+import * as R from 'ramda';
 import {Type} from 'class-transformer';
 import {
   ArrayMaxSize, IsArray, IsDefined, IsEnum, IsNumber,
   IsOptional, IsString, ValidateNested,
 } from 'class-validator';
+
+import {parameterize} from '@shared/helpers/parameterize';
 
 import {Language} from '@server/constants/language';
 import {IsTagCorrect} from '@server/modules/tag/validators/IsTagCorrect';
@@ -101,5 +104,13 @@ export class CreateBookDto {
 
   get isbn() {
     return this.releases[0].isbn;
+  }
+
+  genSlug(author?: string) {
+    const {defaultTitle, title, authors} = this;
+
+    return parameterize(
+      `${defaultTitle ?? title}-${author || R.sortBy(R.prop('name'), authors)[0]?.name || 'unknown'}`,
+    );
   }
 }

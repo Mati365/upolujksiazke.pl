@@ -1,3 +1,5 @@
+import {matchByRegex, RegExpMatchArray} from '@shared/helpers';
+
 import {Language} from '@server/constants/language';
 import {CreateBookDto} from '@server/modules/book/dto/CreateBook.dto';
 import {CreateBookAvailabilityDto} from '@server/modules/book/modules/availability/dto/CreateBookAvailability.dto';
@@ -50,6 +52,17 @@ export const BOOK_TYPE_TRANSLATION_MAPPINGS = Object.freeze(
     /* eslint-enable quote-props */
   },
 );
+
+export const BOOK_TYPE_TITLE_REGEXS: Readonly<RegExpMatchArray<BookType>> = Object.freeze(
+  [
+    [/ebook/i, () => BookType.EBOOK],
+    [/audiobook/i, () => BookType.AUDIOBOOK],
+  ],
+);
+
+export function matchBookTypeByTitle(title: string) {
+  return matchByRegex(BOOK_TYPE_TITLE_REGEXS, title) ?? BookType.PAPER;
+}
 
 export type BookScrappedPropsMap = Record<string, [string, cheerio.Cheerio]>;
 

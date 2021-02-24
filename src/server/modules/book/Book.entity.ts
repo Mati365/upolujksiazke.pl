@@ -6,8 +6,6 @@ import {
   JoinColumn, ManyToOne, RelationId,
 } from 'typeorm';
 
-import {parameterize} from '@shared/helpers/parameterize';
-
 import {Language} from '@server/constants/language';
 import {DatedRecordEntity} from '../database/DatedRecord.entity';
 import {TagEntity} from '../tag/Tag.entity';
@@ -20,7 +18,6 @@ import {BookAvailabilityEntity} from './modules/availability/BookAvailability.en
 import {BookSeriesEntity} from './modules/series/BookSeries.entity';
 import {BookPrizeEntity} from './modules/prize/BookPrize.entity';
 import {BookKindEntity} from './modules/kind/BookKind.entity';
-import {CreateBookDto} from './dto/CreateBook.dto';
 
 @Entity(
   {
@@ -125,9 +122,5 @@ export class BookEntity extends DatedRecordEntity {
   constructor(partial: Partial<BookEntity>) {
     super();
     Object.assign(this, partial);
-  }
-
-  static genSlug({defaultTitle, title, authors}: CreateBookDto) {
-    return parameterize(`${defaultTitle ?? title}-${R.sortBy(R.prop('name'), authors)[0]?.name || 'unknown'}`);
   }
 }

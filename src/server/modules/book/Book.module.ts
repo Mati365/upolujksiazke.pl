@@ -15,6 +15,7 @@ import {BookSeriesModule} from './modules/series';
 import {BookEntity} from './Book.entity';
 import {BookService} from './Book.service';
 import {TagModule} from '../tag';
+import {FuzzyBookSearchService} from './FuzzyBookSearch.service';
 
 @Module(
   {
@@ -35,11 +36,13 @@ import {TagModule} from '../tag';
     ],
     providers: [
       BookService,
+      FuzzyBookSearchService,
     ],
     exports: [
+      BookService,
+      FuzzyBookSearchService,
       BookAvailabilityModule,
       BookPublisherModule,
-      BookService,
       BookReleaseModule,
       BookAuthorModule,
       BookReviewerModule,

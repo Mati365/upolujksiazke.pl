@@ -2,7 +2,6 @@ import * as R from 'ramda';
 
 import {
   normalizeISBN,
-  normalizeURL,
   normalizeParsedText,
   normalizePrice,
 } from '@server/common/helpers';
@@ -18,13 +17,15 @@ import {CreateBookAvailabilityDto} from '@server/modules/book/modules/availabili
 
 import {
   BINDING_TRANSLATION_MAPPINGS,
+  LANGUAGE_TRANSLATION_MAPPINGS,
   BookAvailabilityParser,
+  matchBookTypeByTitle,
 } from '@importer/kinds/scrappers/Book.scrapper';
 
 import {AsyncURLParseResult} from '@server/common/helpers/fetchAsyncHTML';
 import {WebsiteScrapperParser} from '../../modules/scrapper/service/shared';
 
-export class WbiblioteceBookParser
+export class MadBooksBookParser
   extends WebsiteScrapperParser<CreateBookDto>
   implements BookAvailabilityParser<AsyncURLParseResult> {
   /**
@@ -36,8 +37,8 @@ export class WbiblioteceBookParser
         result: [
           new CreateBookAvailabilityDto(
             {
-              remoteId: url.match(/k-([^-]*)-/)[1],
-              price: normalizePrice($('[itemprop="offerDetails"] [itemprop="price"]').attr('content'))?.price,
+              remoteId: $('#UserCartShowForm').data('productId'),
+              price: normalizePrice($('.product-price [itemprop="price"]').attr('content'))?.price,
               url,
             },
           ),
@@ -55,32 +56,39 @@ export class WbiblioteceBookParser
       return null;
 
     const {$} = bookPage;
-    const basicProps = WbiblioteceBookParser.extractBookProps($);
-    const title = $('h1 > span[itemprop="name"]').text();
+    const basicProps = MadBooksBookParser.extractBookProps($);
+    const isbn = normalizeISBN(basicProps['isbn'] || basicProps['ean']);
 
+    if (!isbn)
+      return null;
+
+    const title = normalizeParsedText($('h1 > [itemprop="name"]').text());
     const release = new CreateBookReleaseDto(
       {
         title,
-        lang: Language.PL,
+        isbn,
+        type: matchBookTypeByTitle(title),
+        lang: LANGUAGE_TRANSLATION_MAPPINGS[basicProps['język']] ?? Language.PL,
         format: basicProps['format'],
-        defaultPrice: normalizePrice(basicProps['cena rynkowa'])?.price,
-        description: normalizeParsedText($('span[itemprop="productDetails"] [itemprop="description"]').text()),
-        totalPages: +basicProps['liczba stron'] || null,
+        defaultPrice: normalizePrice(basicProps['cena katalogowa'])?.price,
+        description: normalizeParsedText($('#opis [itemprop="description"]').text()),
+        totalPages: +basicProps['ilość stron'] || null,
         publishDate: basicProps['rok wydania'],
-        isbn: normalizeISBN(basicProps['numer isbn']),
+        edition: basicProps['wydanie'],
         weight: Number.parseInt(basicProps['waga'], 10) || null,
         availability: (await this.parseAvailability(bookPage)).result,
         binding: BINDING_TRANSLATION_MAPPINGS[
           normalizeParsedText(basicProps['oprawa'])?.toLowerCase()
         ],
+        translator: basicProps['tłumacze']?.split(',').map(normalizeParsedText).filter(Boolean),
         publisher: new CreateBookPublisherDto(
           {
-            name: basicProps['wydawnictwo'],
+            name: basicProps['wydawca'],
           },
         ),
         cover: new CreateImageAttachmentDto(
           {
-            originalUrl: WbiblioteceBookParser.normalizeImageURL($('a[title="Powiększ..."] img').attr('src')),
+            originalUrl: $('#ProductGallery img[itemprop="image"]').attr('src'),
           },
         ),
       },
@@ -89,66 +97,30 @@ export class WbiblioteceBookParser
     return new CreateBookDto(
       {
         defaultTitle: title,
-        authors: $('span[itemprop="productDetails"] h2 a[href^="/autor/"]').toArray().map((author) => (
+        originalPublishDate: basicProps['data premiery'],
+        authors: (basicProps['autor'] || '').split(',').map((name) => (
           new CreateBookAuthorDto(
             {
-              name: $(author).text(),
+              name: R.reverse(name.split(' ')).join(' '),
             },
           )
         )),
         releases: [release],
-        categories: (
-          $('[itemprop="productDetails"] [itemprop="category"] > a:not(:first-child)').toArray().map(
-            (item) => new CreateBookCategoryDto(
-              {
-                name: $(item).text(),
-              },
-            ),
-          )
-        ),
+        categories: [
+          new CreateBookCategoryDto(
+            {
+              name: $('ul.breadcrumb > li:nth-child(3) a').text(),
+            },
+          ),
+        ],
       },
     );
   }
   /* eslint-enable @typescript-eslint/dot-notation */
 
-  /**
-   * Picks full version of image
-   *
-   * @see
-   *  Used in ArosBooks!
-   *
-   * @static
-   * @param {string} url
-   * @returns
-   * @memberof BonitoBookMatcher
-   */
-  static normalizeImageURL(url: string) {
-    if (!url)
-      return null;
-
-    return (
-      normalizeURL(
-        url
-          .replace('cache/', 'zdjecia/')
-          .replace('_200.', '.'),
-      )
-    );
-  }
-
-  /**
-   * Extract info about book from table
-   *
-   * @see
-   *  Used in ArosBooks!
-   *
-   * @static
-   * @param {cheerio.Root} $
-   * @returns
-   * @memberof BonitoBookMatcher
-   */
   static extractBookProps($: cheerio.Root) {
     const rows = (
-      $('span[itemprop="offerDetails"] > table > tbody > tr')
+      $('#dane-techniczne table.product-specification-table > tbody > tr, .product-attributes > tbody > tr')
         .toArray()
         .filter((row) => $(row).children().length === 2)
     );

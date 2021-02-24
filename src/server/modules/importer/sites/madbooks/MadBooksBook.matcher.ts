@@ -9,11 +9,11 @@ import {ScrapperMetadataKind} from '../../modules/scrapper/entity';
 
 /**
  * @export
- * @class WbiblioteceBookMatcher
+ * @class MadBooksBookMatcher
  * @extends {WebsiteScrapperMatcher<CreateBookDto, BookShopScrappersGroupConfig>}
  * @implements {BookAvailabilityScrapperMatcher<AsyncURLParseResult>}
  */
-export class WbiblioteceBookMatcher extends WebsiteScrapperMatcher<CreateBookDto, BookShopScrappersGroupConfig> {
+export class MadBooksBookMatcher extends WebsiteScrapperMatcher<CreateBookDto, BookShopScrappersGroupConfig> {
   /**
    * @inheritdoc
    */
@@ -30,12 +30,14 @@ export class WbiblioteceBookMatcher extends WebsiteScrapperMatcher<CreateBookDto
    *
    * @private
    * @param {CreateBookDto} scrapperInfo
-   * @memberof WbiblioteceBookMatcher
+   * @memberof MadBooksBookMatcher
    */
   private async searchByPhrase({title, authors}: CreateBookDto) {
     const $ = (await this.fetchPageBySearch(
       {
         q: title,
+        red: 0,
+        ias: '1,9,8,7',
       },
     ))?.$;
 
@@ -44,20 +46,20 @@ export class WbiblioteceBookMatcher extends WebsiteScrapperMatcher<CreateBookDto
 
     const matchedAnchor = fuzzyFindBookAnchor(
       {
-        $: $('#results > .meta-result[itemprop="itemListElement"]'),
+        $: $('ul.product-list.gallery > li > .product-box'),
         book: {
           title,
           author: authors[0].name,
         },
         anchorSelector: (anchor) => ({
-          title: $(anchor).find('[itemprop="name"]').attr('content'),
-          author: $(anchor).find('a[href^="/autor/"]').text(),
+          title: $(anchor).find('.product-name > h2').text(),
+          author: $(anchor).find('.product-attributes > .product-producer').text().split(',') || [],
         }),
       },
     );
 
     return matchedAnchor && this.fetchPageByPath(
-      $(matchedAnchor).find('a[href^="/k-"]').attr('href'),
+      $(matchedAnchor).find('[data-type="product-url"]').attr('href'),
     );
   }
 }

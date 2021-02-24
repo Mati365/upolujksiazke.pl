@@ -16,6 +16,7 @@ import {CreateBookAvailabilityDto} from '@server/modules/book/modules/availabili
 import {
   BINDING_TRANSLATION_MAPPINGS,
   BookAvailabilityParser,
+  matchBookTypeByTitle,
 } from '@importer/kinds/scrappers/Book.scrapper';
 
 import {AsyncURLParseResult} from '@server/common/helpers/fetchAsyncHTML';
@@ -71,6 +72,7 @@ export class ArosBookParser
     const release = new CreateBookReleaseDto(
       {
         title,
+        type: matchBookTypeByTitle(title),
         lang: Language.PL,
         description: normalizeParsedText($('[itemprop="description"]').text()),
         totalPages: +basicProps['liczba stron'] || null,

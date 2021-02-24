@@ -11,7 +11,6 @@ import {
   MatrasScrappersGroup,
   GildiaScrappersGroup,
   LiteraturaGildiaScrappersGroup,
-  // WikipediaScrappersGroup,
   SkupszopScrappersGroup,
   BonitoScrappersGroup,
   DadadaScrappersGroup,
@@ -19,7 +18,7 @@ import {
   PublioScrappersGroup,
   WykopScrappersGroup,
   HrosskarScrappersGroup,
-  // WbiblioteceScrappersGroup,
+  MadBooksScrappersGroup,
 } from '@importer/sites';
 
 import {WebsiteScrappersGroup} from './shared';
@@ -44,7 +43,7 @@ export class ScrapperService {
       new MatrasScrappersGroup(PARSERS_ENV.matras), // sucky DB
       new DadadaScrappersGroup(PARSERS_ENV.dadada),
       new ArosScrappersGroup(PARSERS_ENV.aros),
-      // new WbiblioteceScrappersGroup(PARSERS_ENV.wbibliotece),
+      new MadBooksScrappersGroup(PARSERS_ENV.madbooks),
       new HrosskarScrappersGroup(PARSERS_ENV.hrosskar),
       new WykopScrappersGroup(
         {

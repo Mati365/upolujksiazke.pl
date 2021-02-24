@@ -3,7 +3,6 @@ import stringSimilarity from 'string-similarity';
 import pMap from 'p-map';
 import {validate} from 'class-validator';
 import {plainToClass} from 'class-transformer';
-import {In} from 'typeorm';
 import {
   Inject, Injectable,
   Logger, forwardRef,
@@ -17,12 +16,11 @@ import {pickLongestArrayItem} from '@shared/helpers';
 import {BookService} from '@server/modules/book/Book.service';
 import {BookPublisherService} from '@server/modules/book/modules/publisher/BookPublisher.service';
 
-import {CreateBookDto} from '@server/modules/book';
+import {CreateBookDto, FuzzyBookSearchService} from '@server/modules/book';
 import {CreateBookPublisherDto} from '@server/modules/book/modules/publisher/dto/BookPublisher.dto';
 import {CreateBookReleaseDto} from '@server/modules/book/modules/release/dto/CreateBookRelease.dto';
 import {CreateBookAvailabilityDto} from '@server/modules/book/modules/availability/dto/CreateBookAvailability.dto';
 import {CreateBookReviewDto} from '@server/modules/book/modules/review/dto/CreateBookReview.dto';
-import {BookReleaseEntity} from '@server/modules/book/modules/release/BookRelease.entity';
 import {ScrapperMetadataEntity, ScrapperMetadataKind} from '@scrapper/entity';
 
 import {MetadataDbLoader} from '@db-loader/MetadataDbLoader.interface';
@@ -36,6 +34,8 @@ export class BookDbLoaderService implements MetadataDbLoader {
   constructor(
     @Inject(forwardRef(() => BookService))
     private readonly bookService: BookService,
+    @Inject(forwardRef(() => FuzzyBookSearchService))
+    private readonly fuzzyBookSearchService: FuzzyBookSearchService,
     private readonly scrapperMatcherService: ScrapperMatcherService,
     private readonly scrapperService: ScrapperService,
     private readonly publisherService: BookPublisherService,
@@ -82,22 +82,16 @@ export class BookDbLoaderService implements MetadataDbLoader {
    * @memberof BookDbLoaderService
    */
   async mergeAndExtractBooksToDb(books: CreateBookDto[]) {
-    const {scrapperService, bookService} = this;
+    const {
+      scrapperService,
+      fuzzyBookSearchService,
+      bookService,
+    } = this;
 
-    const allReleases = R.unnest(R.pluck('releases', books));
-    const releaseBook = await BookReleaseEntity.findOne(
-      {
-        select: ['bookId'],
-        where: [
-          {
-            title: In(R.pluck('title', allReleases)),
-          },
-          {
-            isbn: In(R.pluck('isbn', allReleases)),
-          },
-        ],
-      },
-    );
+    const {
+      allReleases,
+      book: cachedBook,
+    } = await fuzzyBookSearchService.findAlreadyCachedSimilarToBooks(books);
 
     const websites = await scrapperService.findOrCreateWebsitesByUrls(
       R.pluck(
@@ -132,7 +126,6 @@ export class BookDbLoaderService implements MetadataDbLoader {
               (availability) => new CreateBookAvailabilityDto(
                 {
                   ...availability,
-                  bookId: releaseBook?.id,
                   websiteId: websites[availability.url].id,
                 },
               ),
@@ -148,23 +141,27 @@ export class BookDbLoaderService implements MetadataDbLoader {
     if (R.isEmpty(releases))
       return null;
 
+    const mergedBook = mergeWithoutNulls(books, (key, a, b) => {
+      switch (key) {
+        case 'series':
+        case 'prizes':
+        case 'categories':
+        case 'tags':
+          return [...(a || []), ...(b || [])];
+
+        default:
+          return a ?? b;
+      }
+    });
+
     return bookService.upsert(
       new CreateBookDto(
         {
-          id: releaseBook?.id,
-          ...mergeWithoutNulls(books, (key, a, b) => {
-            switch (key) {
-              case 'series':
-              case 'prizes':
-              case 'categories':
-              case 'tags':
-                return [...(a || []), ...(b || [])];
-
-              default:
-                return a ?? b;
-            }
-          }),
-
+          ...mergedBook,
+          ...cachedBook && {
+            id: cachedBook.id,
+            parameterizedSlug: cachedBook.parameterizedSlug,
+          },
           releases: await this.fixSimilarNamedReleasesPublishers(releases),
           authors: pickLongestArrayItem(R.pluck('authors', books)),
         },

@@ -2,7 +2,6 @@ import {Injectable} from '@nestjs/common';
 import {Connection, EntityManager, In} from 'typeorm';
 import * as R from 'ramda';
 
-import {parameterize} from '@shared/helpers/parameterize';
 import {
   forwardTransaction,
   runTransactionWithPostHooks,
@@ -46,28 +45,6 @@ export class BookService {
     private readonly prizeService: BookPrizeService,
     private readonly kindService: BookKindService,
   ) {}
-
-  /**
-   * Finds book with similar title
-   *
-   * @param {string} title
-   * @param {number} [similarity=2]
-   * @returns
-   * @memberof BookService
-   */
-  createSimilarNamedQuery(title: string, similarity: number = 2) {
-    return (
-      BookEntity
-        .createQueryBuilder('book')
-        .where(
-          'levenshtein("parameterizedSlug", :title) <= :similarity',
-          {
-            title: parameterize(title),
-            similarity,
-          },
-        )
-    );
-  }
 
   /**
    * Remove single book release
@@ -182,7 +159,7 @@ export class BookService {
             Entity: BookEntity,
             data: new BookEntity(
               {
-                parameterizedSlug: BookEntity.genSlug(dto),
+                parameterizedSlug: dto.genSlug(),
                 defaultTitle: dto.defaultTitle,
                 originalTitle: dto.originalTitle,
                 originalLang: dto.originalLang,

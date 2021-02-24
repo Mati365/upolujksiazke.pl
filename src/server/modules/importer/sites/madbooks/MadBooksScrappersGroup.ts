@@ -4,19 +4,19 @@ import {
   BookShopScrappersGroupConfig,
 } from '@importer/kinds/scrappers/BookShop.scrapper';
 
-import {WbiblioteceBookMatcher} from './WbiblioteceBook.matcher';
-import {WbiblioteceBookParser} from './WbiblioteceBook.parser';
+import {MadBooksBookMatcher} from './MadBooksBook.matcher';
+import {MadBooksBookParser} from './MadBooksBook.parser';
 
-export class WbiblioteceScrappersGroup extends BookShopScrappersGroup {
+export class MadBooksScrappersGroup extends BookShopScrappersGroup {
   constructor(options: BookShopScrappersGroupConfig) {
     super(
       {
         ...options,
         matchers: {
-          [ScrapperMetadataKind.BOOK]: new WbiblioteceBookMatcher(options),
+          [ScrapperMetadataKind.BOOK]: new MadBooksBookMatcher(options),
         },
         parsers: {
-          [ScrapperMetadataKind.BOOK]: new WbiblioteceBookParser,
+          [ScrapperMetadataKind.BOOK]: new MadBooksBookParser,
         },
       },
     );

@@ -1,14 +1,25 @@
 import * as R from 'ramda';
 import stringSimilarity from 'string-similarity';
+
 import {normalizeParsedText} from '@server/common/helpers';
+import {safeArray} from '@shared/helpers';
+
+import {CanBeArray} from '@shared/types';
 
 type BookSimilarityFields = {
   title: string,
-  author?: string,
+  author?: CanBeArray<string>,
 };
 
+const normalizeAuthorField = (author: string) => R.sortBy(R.identity, author.toLowerCase().split(' ')).join(' ');
+const normalizeTextField = (text: string) => normalizeParsedText(text)?.toLowerCase();
+
 export const normalizeObjFields = R.mapObjIndexed(
-  (title: string) => normalizeParsedText(title)?.toLowerCase(),
+  (title: CanBeArray<string>) => (
+    title instanceof Array
+      ? title.map(normalizeTextField)
+      : normalizeTextField(title)
+  ),
 );
 
 export function fuzzyFindBookAnchor(
@@ -25,9 +36,9 @@ export function fuzzyFindBookAnchor(
     anchorSelector(anchor: cheerio.Element): BookSimilarityFields,
   },
 ) {
-  const [lowerTitle, lowerAuthor] = [
+  const [lowerTitle, lowerAuthors] = [
     title.toLowerCase(),
-    author?.toLowerCase(),
+    <string[]> safeArray(author).map(normalizeAuthorField),
   ];
 
   const item = R.head(
@@ -37,9 +48,25 @@ export function fuzzyFindBookAnchor(
         .toArray()
         .map((el): [number, cheerio.Element] => {
           const selected = <BookSimilarityFields> normalizeObjFields(anchorSelector(el));
+          let authorSimilarity = 1;
+
+          if (selected.author) {
+            authorSimilarity = 0;
+
+            const rowAuthors = safeArray(selected.author).map(normalizeAuthorField);
+            for (const sourceAuthor of lowerAuthors) {
+              for (const rowAuthor of rowAuthors) {
+                authorSimilarity = Math.max(
+                  authorSimilarity,
+                  stringSimilarity.compareTwoStrings(sourceAuthor || '', rowAuthor || ''),
+                );
+              }
+            }
+          }
+
           const similarity = (
             stringSimilarity.compareTwoStrings(lowerTitle || '', selected.title || '')
-              * (selected.author ? stringSimilarity.compareTwoStrings(lowerAuthor || '', selected.author || '') : 1)
+              * authorSimilarity
           );
 
           return (

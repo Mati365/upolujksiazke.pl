@@ -170,7 +170,7 @@ export class BookReleaseEntity extends DatedRecordEntity {
   @BeforeInsert()
   @BeforeUpdate()
   transformFields() {
-    const {isbn, title, description, translator} = this;
+    const {isbn, title, description, translator, type} = this;
     if (isbn)
       this.isbn = isbn.replaceAll('-', '');
 
@@ -182,5 +182,10 @@ export class BookReleaseEntity extends DatedRecordEntity {
 
     if (R.isEmpty(translator))
       this.translator = null;
+
+    if (type === BookType.AUDIOBOOK) {
+      this.totalPages = null;
+      this.binding = null;
+    }
   }
 }

@@ -1,5 +1,4 @@
-import * as R from 'ramda';
-
+import {extractTableRowsMap} from '@scrapper/helpers';
 import {
   normalizeISBN,
   normalizeURL,
@@ -23,7 +22,7 @@ import {
 } from '@importer/kinds/scrappers/Book.scrapper';
 
 import {AsyncURLParseResult} from '@server/common/helpers/fetchAsyncHTML';
-import {WebsiteScrapperParser} from '../../modules/scrapper/service/shared';
+import {WebsiteScrapperParser} from '@scrapper/service/shared';
 
 export class BonitoBookParser
   extends WebsiteScrapperParser<CreateBookDto>
@@ -56,7 +55,7 @@ export class BonitoBookParser
       return null;
 
     const {$} = bookPage;
-    const basicProps = BonitoBookParser.extractBookProps($);
+    const basicProps = extractTableRowsMap($, 'span[itemprop="offerDetails"] > table > tbody > tr');
     const title = $('h1 > span[itemprop="name"]').text();
 
     const release = new CreateBookReleaseDto(
@@ -134,38 +133,6 @@ export class BonitoBookParser
           .replace('cache/', 'zdjecia/')
           .replace('_200.', '.'),
       )
-    );
-  }
-
-  /**
-   * Extract info about book from table
-   *
-   * @see
-   *  Used in ArosBooks!
-   *
-   * @static
-   * @param {cheerio.Root} $
-   * @returns
-   * @memberof BonitoBookMatcher
-   */
-  static extractBookProps($: cheerio.Root) {
-    const rows = (
-      $('span[itemprop="offerDetails"] > table > tbody > tr')
-        .toArray()
-        .filter((row) => $(row).children().length === 2)
-    );
-
-    return R.fromPairs(
-      rows.map(
-        (row) => {
-          const $row = $(row);
-
-          return [
-            normalizeParsedText($row.children().first().text()).match(/^([^:]+)/)?.[1]?.toLowerCase(),
-            normalizeParsedText($row.children().eq(1).text()),
-          ];
-        },
-      ),
     );
   }
 }

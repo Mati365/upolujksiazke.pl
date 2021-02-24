@@ -1,5 +1,6 @@
 import * as R from 'ramda';
 
+import {extractTableRowsMap} from '@scrapper/helpers';
 import {
   normalizeISBN,
   normalizeParsedText,
@@ -23,7 +24,7 @@ import {
 } from '@importer/kinds/scrappers/Book.scrapper';
 
 import {AsyncURLParseResult} from '@server/common/helpers/fetchAsyncHTML';
-import {WebsiteScrapperParser} from '../../modules/scrapper/service/shared';
+import {WebsiteScrapperParser} from '@scrapper/service/shared';
 
 export class MadBooksBookParser
   extends WebsiteScrapperParser<CreateBookDto>
@@ -56,9 +57,12 @@ export class MadBooksBookParser
       return null;
 
     const {$} = bookPage;
-    const basicProps = MadBooksBookParser.extractBookProps($);
-    const isbn = normalizeISBN(basicProps['isbn'] || basicProps['ean']);
+    const basicProps = extractTableRowsMap(
+      $,
+      '#dane-techniczne table.product-specification-table > tbody > tr, .product-attributes > tbody > tr',
+    );
 
+    const isbn = normalizeISBN(basicProps['isbn'] || basicProps['ean']);
     if (!isbn)
       return null;
 
@@ -117,25 +121,4 @@ export class MadBooksBookParser
     );
   }
   /* eslint-enable @typescript-eslint/dot-notation */
-
-  static extractBookProps($: cheerio.Root) {
-    const rows = (
-      $('#dane-techniczne table.product-specification-table > tbody > tr, .product-attributes > tbody > tr')
-        .toArray()
-        .filter((row) => $(row).children().length === 2)
-    );
-
-    return R.fromPairs(
-      rows.map(
-        (row) => {
-          const $row = $(row);
-
-          return [
-            normalizeParsedText($row.children().first().text()).match(/^([^:]+)/)?.[1]?.toLowerCase(),
-            normalizeParsedText($row.children().eq(1).text()),
-          ];
-        },
-      ),
-    );
-  }
 }

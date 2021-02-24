@@ -50,6 +50,7 @@ export type AppEnv = Partial<{
       publio: BookShopUrlsConfig,
       hrosskar: BookShopUrlsConfig,
       madbooks: BookShopUrlsConfig,
+      gandalf: BookShopUrlsConfig,
       wykop: {
         homepageURL: string,
         authConfig: WykopAPIAuthParams,
@@ -182,6 +183,10 @@ export const GLOBAL_CONFIG: Record<string, AppEnv> = {
         madbooks: {
           homepageURL: 'https://madbooks.pl/',
           searchURL: 'https://madbooks.pl/s',
+        },
+        gandalf: {
+          homepageURL: 'https://www.gandalf.com.pl/',
+          searchURL: 'https://www.gandalf.com.pl/ex',
         },
         bonito: {
           homepageURL: 'https://bonito.pl',

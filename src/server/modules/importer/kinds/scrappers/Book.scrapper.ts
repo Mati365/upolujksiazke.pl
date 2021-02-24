@@ -48,7 +48,7 @@ export const BOOK_TYPE_TRANSLATION_MAPPINGS = Object.freeze(
     /* eslint-disable quote-props */
     'audiobook': BookType.AUDIOBOOK,
     'ebook': BookType.EBOOK,
-    'paper': BookType.PAPER,
+    'książka': BookType.PAPER,
     /* eslint-enable quote-props */
   },
 );

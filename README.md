@@ -50,12 +50,11 @@ OpenSource book reviews aggregator, something like Metacritic / Digg for books. 
 - [x] Aros.pl
 - [x] Publio.pl
 - [x] Hrosskar.blogspot.com
-- [ ] Madbooks.pl
-- [ ] promocjeksiazkowe.pl (Blog Post)
+- [x] Madbooks.pl
+- [x] Gandalf.com.pl
 - [ ] ibuk.pl
 - [ ] LitRes.pl
 - [ ] audible.com
-- [ ] Gandalf.com.pl
 - [ ] tantis.pl
 - [ ] Woblink.com
 - [ ] Znak.com.pl
@@ -65,6 +64,7 @@ OpenSource book reviews aggregator, something like Metacritic / Digg for books. 
 - [ ] litres.pl
 - [ ] selkar.pl
 - [ ] Taniaksiazka.pl
+- [ ] promocjeksiazkowe.pl (Blog Post)
 - [ ] Tantis.pl
 - [ ] Gandalf.com
 - [ ] Wolnelektury.pl

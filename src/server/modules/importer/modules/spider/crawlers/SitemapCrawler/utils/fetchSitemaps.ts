@@ -32,7 +32,7 @@ export async function fetchSitemaps(
   {
     sitemaps,
     tmpDir,
-    timeout = 30_000,
+    timeout = 60_000,
     concurrency = 5,
   }: SitemapsFetcherAttrs,
 ) {

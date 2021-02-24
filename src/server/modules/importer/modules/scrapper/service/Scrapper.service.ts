@@ -16,6 +16,7 @@ import {
   DadadaScrappersGroup,
   ArosScrappersGroup,
   PublioScrappersGroup,
+  GandalfScrappersGroup,
   WykopScrappersGroup,
   HrosskarScrappersGroup,
   MadBooksScrappersGroup,
@@ -45,6 +46,7 @@ export class ScrapperService {
       new ArosScrappersGroup(PARSERS_ENV.aros),
       new MadBooksScrappersGroup(PARSERS_ENV.madbooks),
       new HrosskarScrappersGroup(PARSERS_ENV.hrosskar),
+      new GandalfScrappersGroup(PARSERS_ENV.gandalf),
       new WykopScrappersGroup(
         {
           homepageURL: PARSERS_ENV.wykop.homepageURL,

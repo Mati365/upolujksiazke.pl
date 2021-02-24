@@ -1,3 +1,4 @@
+import {extractTableRowsMap} from '@scrapper/helpers';
 import {
   normalizeISBN,
   normalizeParsedText,
@@ -56,7 +57,7 @@ export class ArosBookParser
       return null;
 
     const {$} = bookPage;
-    const basicProps = BonitoBookParser.extractBookProps($);
+    const basicProps = extractTableRowsMap($, 'span[itemprop="offerDetails"] > table > tbody > tr');
     if (!basicProps['oprawa'])
       return null;
 

@@ -1,88 +1,88 @@
 import {Injectable} from '@nestjs/common';
-import {FindOneOptions, In, SelectQueryBuilder} from 'typeorm';
+import {SelectQueryBuilder} from 'typeorm';
 import * as R from 'ramda';
 
 import {parameterize} from '@shared/helpers/parameterize';
 
 import {CreateBookDto} from './dto/CreateBook.dto';
 import {CreateBookReviewDto} from './modules/review/dto/CreateBookReview.dto';
+import {CreateBookReleaseDto} from './modules/release/dto/CreateBookRelease.dto';
 import {BookEntity} from './Book.entity';
-import {BookReleaseEntity} from './modules/release/BookRelease.entity';
 
 @Injectable()
 export class FuzzyBookSearchService {
   /**
-   * Finds book with similar title
+   * Find book based on multiple dtos
    *
-   * @param {string} title
+   * @todo
+   *  Maybe merge with findAlreadyCachedReviewBook?
+   *
+   * @param {CreateBookDto[]} books
+   * @param {CreateBookReleaseDto[]} [allReleases]
    * @param {number} [similarity=2]
    * @returns
    * @memberof FuzzyBookSearchService
    */
-  createSimilarNamedQuery(title: string, similarity: number = 2) {
-    return (
-      BookEntity
-        .createQueryBuilder('book')
-        .where(
-          'levenshtein("parameterizedSlug", :title) <= :similarity',
+  async findAlreadyCachedSimilarToBooks(
+    books: CreateBookDto[],
+    allReleases?: CreateBookReleaseDto[],
+    similarity: number = 2,
+  ) {
+    allReleases ??= R.unnest(R.pluck('releases', books));
+
+    const [bookIds, isbns, releasesIds] = [
+      R.pluck('id', books),
+      R.pluck('isbn', allReleases),
+      R.pluck('id', allReleases),
+    ]
+      .map((array: any[]) => array.filter(Boolean));
+
+    let query: SelectQueryBuilder<BookEntity> = BookEntity.createQueryBuilder('book');
+
+    // check slugs
+    if (bookIds.length)
+      query = query.where('book.id in (:...bookIds)', {bookIds});
+    else {
+      books
+        .flatMap((book) => book.genSlugPermutations().map(
+          (slug) => [
+            'levenshtein(book.parameterizedSlug, :slug) <= :similarity',
+            {
+              similarity,
+              slug,
+            },
+          ],
+        ))
+        .forEach(([column, vars]: [string, any]) => {
+          query = query.orWhere(column, vars);
+        });
+
+      if (isbns.length)
+        query = query.orWhere('release.isbn in (:...isbns)', {isbns});
+
+      if (releasesIds.length)
+        query = query.orWhere('release.id in (:...releasesIds)', {releasesIds});
+
+      allReleases.forEach((release) => {
+        if (release.title)
+          return;
+
+        query = query.orWhere(
+          'levenshtein(release.parameterizedSlug, :slug) <= :similarity',
           {
-            title: parameterize(title),
             similarity,
+            slug: parameterize(release.title),
           },
-        )
-    );
-  }
-
-  /**
-   * Find book based on multiple dtos
-   *
-   * @param {CreateBookDto[]} books
-   * @returns
-   * @memberof FuzzyBookSearchService
-   */
-  async findAlreadyCachedSimilarToBooks(books: CreateBookDto[]) {
-    const allReleases = R.unnest(R.pluck('releases', books));
-    let book = (await BookReleaseEntity.findOne(
-      {
-        relations: ['book'],
-        where: [
-          {
-            title: In(R.pluck('title', allReleases)),
-          },
-          {
-            isbn: In(R.pluck('isbn', allReleases)),
-          },
-        ],
-      },
-    ))?.book;
-
-    if (R.isNil(book)) {
-      book = (await BookEntity.findOne(
-        {
-          where: R.chain(
-            (dto): FindOneOptions<BookEntity>['where'][] => [
-              {
-                parameterizedSlug: In(
-                  [
-                    dto.genSlug(),
-                    ...R.map(
-                      (author) => dto.genSlug(author.name),
-                      dto.authors || [],
-                    ),
-                  ],
-                ),
-              },
-            ],
-            books,
-          ),
-        },
-      ));
+        );
+      });
     }
 
-    return {
-      allReleases,
-      book,
-    };
+    return (
+      query
+        .innerJoinAndSelect('book.releases', 'release')
+        .select(['release.id', 'release.isbn', 'book.id'])
+        .getOne()
+    );
   }
 
   /**
@@ -93,29 +93,24 @@ export class FuzzyBookSearchService {
    * @memberof BookService
    */
   findAlreadyCachedReviewBook({book, bookId, releaseId}: Pick<CreateBookReviewDto, 'book'|'bookId'|'releaseId'>) {
-    let query: SelectQueryBuilder<BookEntity> = null;
-
-    if (R.isNil(releaseId) || !R.isNil(bookId)) {
-      const id = bookId ?? book?.id;
-
-      query = (
-        R.isNil(id)
-          ? this.createSimilarNamedQuery(book.title)
-          : BookEntity.createQueryBuilder('book').where({id})
-      );
-    } else {
-      query = (
-        BookEntity
-          .createQueryBuilder('book')
-          .where('release.id = :id', {id: releaseId})
-      );
-    }
-
-    return (
-      query
-        .innerJoinAndSelect('book.releases', 'release')
-        .select(['release.id', 'release.isbn', 'book.id'])
-        .getOne()
+    return this.findAlreadyCachedSimilarToBooks(
+      [
+        new CreateBookDto(
+          {
+            id: bookId ?? book?.id,
+            ...book,
+            ...!R.isNil(releaseId) && {
+              releases: [
+                new CreateBookReleaseDto(
+                  {
+                    id: releaseId,
+                  },
+                ),
+              ],
+            },
+          },
+        ),
+      ],
     );
   }
 }

@@ -113,4 +113,14 @@ export class CreateBookDto {
       `${defaultTitle ?? title}-${author || R.sortBy(R.prop('name'), authors)[0]?.name || 'unknown'}`,
     );
   }
+
+  genSlugPermutations() {
+    return [
+      this.genSlug(),
+      ...R.map(
+        (author) => this.genSlug(author.name),
+        this.authors || [],
+      ),
+    ];
+  }
 }

@@ -16,7 +16,7 @@ import {pickLongestArrayItem} from '@shared/helpers';
 import {BookService} from '@server/modules/book/Book.service';
 import {BookPublisherService} from '@server/modules/book/modules/publisher/BookPublisher.service';
 
-import {CreateBookDto, FuzzyBookSearchService} from '@server/modules/book';
+import {BookEntity, CreateBookDto, FuzzyBookSearchService} from '@server/modules/book';
 import {CreateBookPublisherDto} from '@server/modules/book/modules/publisher/dto/BookPublisher.dto';
 import {CreateBookReleaseDto} from '@server/modules/book/modules/release/dto/CreateBookRelease.dto';
 import {CreateBookAvailabilityDto} from '@server/modules/book/modules/availability/dto/CreateBookAvailability.dto';
@@ -111,20 +111,31 @@ export class BookDbLoaderService implements MetadataDbLoader {
    * Merges book into one and loads to DB
    *
    * @param {CreateBookDto[]} books
+   * @param {Object} attrs
    * @returns
    * @memberof BookDbLoaderService
    */
-  async mergeAndExtractBooksToDb(books: CreateBookDto[]) {
+  async mergeAndExtractBooksToDb(
+    books: CreateBookDto[],
+    attrs: {
+      skipIfAlreadyInDb?: boolean,
+      skipCacheLookup?: boolean,
+    } = {},
+  ) {
     const {
       scrapperService,
       fuzzyBookSearchService,
       bookService,
     } = this;
 
-    const {
-      allReleases,
-      book: cachedBook,
-    } = await fuzzyBookSearchService.findAlreadyCachedSimilarToBooks(books);
+    const allReleases = R.unnest(R.pluck('releases', books));
+    let cachedBook: BookEntity = null;
+
+    if (!attrs.skipCacheLookup) {
+      cachedBook = await fuzzyBookSearchService.findAlreadyCachedSimilarToBooks(books, allReleases);
+      if (attrs.skipIfAlreadyInDb && cachedBook)
+        return cachedBook;
+    }
 
     const websites = await scrapperService.findOrCreateWebsitesByUrls(
       R.pluck(

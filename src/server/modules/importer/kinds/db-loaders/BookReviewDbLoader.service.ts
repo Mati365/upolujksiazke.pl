@@ -4,7 +4,6 @@ import * as R from 'ramda';
 
 import {CreateBookReviewDto} from '@server/modules/book/modules/review/dto/CreateBookReview.dto';
 import {ScrapperMetadataEntity} from '@scrapper/entity/ScrapperMetadata.entity';
-
 import {MetadataDbLoader} from '@db-loader/MetadataDbLoader.interface';
 import {FuzzyBookSearchService} from '@server/modules/book/FuzzyBookSearch.service';
 import {BookReviewService} from '@server/modules/book/modules/review/BookReview.service';
@@ -58,8 +57,15 @@ export class BookReviewDbLoaderService implements MetadataDbLoader {
     let review = plainToClass(CreateBookReviewDto, metadata.content);
     let book = await fuzzyBookSearchService.findAlreadyCachedReviewBook(review);
 
-    if (!book)
-      book = await bookDbLoader.searchAndExtractToDb(review.book);
+    if (!book) {
+      book = await bookDbLoader.mergeAndExtractBooksToDb(
+        [review.book],
+        {
+          skipIfAlreadyInDb: true,
+          skipCacheLookup: true,
+        },
+      );
+    }
 
     if (!book) {
       logger.warn(`Unable to match review book with title "${review.book.title}"!`);
@@ -72,7 +78,9 @@ export class BookReviewDbLoaderService implements MetadataDbLoader {
         review = new CreateBookReviewDto(
           {
             ...review,
-            releaseId: book.releases.find(R.propEq('isbn', isbn))?.id,
+            releaseId: (
+              book.releases?.find(R.propEq('isbn', isbn))?.id
+            ),
           },
         );
       }

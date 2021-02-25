@@ -5,6 +5,8 @@ import {
   ManyToOne, OneToMany, RelationId,
 } from 'typeorm';
 
+import {parameterize} from '@shared/helpers/parameterize';
+
 import {Language} from '@server/constants/language';
 import {ImageAttachmentEntity} from '@server/modules/attachment/entity/ImageAttachment.entity';
 import {DatedRecordEntity} from '../../../database/DatedRecord.entity';
@@ -41,6 +43,9 @@ export class BookReleaseEntity extends DatedRecordEntity {
 
   @Column('citext', {nullable: true})
   title: string;
+
+  @Column('citext', {nullable: true})
+  parameterizedSlug: string;
 
   @Column('text', {nullable: true})
   description: string;
@@ -174,8 +179,10 @@ export class BookReleaseEntity extends DatedRecordEntity {
     if (isbn)
       this.isbn = isbn.replaceAll('-', '');
 
-    if (title)
+    if (title) {
       this.title = title.trim();
+      this.parameterizedSlug = parameterize(this.title);
+    }
 
     if (description)
       this.description = description.trim();

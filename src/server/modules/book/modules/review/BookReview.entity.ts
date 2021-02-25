@@ -1,7 +1,6 @@
 import {
   Column, ManyToOne,
   JoinColumn, RelationId, Index, Check,
-  BeforeInsert, BeforeUpdate,
 } from 'typeorm';
 
 import {RemoteRecordEntity, RemoteRecordFields} from '@server/modules/remote/entity/RemoteRecord.entity';
@@ -58,14 +57,5 @@ export class BookReviewEntity extends RemoteRecordFields {
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(partial: Partial<BookReviewEntity>) {
     super(partial);
-  }
-
-  @BeforeInsert()
-  @BeforeUpdate()
-  transformFields() {
-    const {description} = this;
-
-    if (description)
-      this.description = description.replace(/\n+/g, '\n');
   }
 }

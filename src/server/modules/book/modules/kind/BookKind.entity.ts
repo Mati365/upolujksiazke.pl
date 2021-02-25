@@ -24,6 +24,6 @@ export class BookKindEntity extends DatedRecordEntity {
   transformFields() {
     const {name} = this;
     if (name)
-      this.name = name.toLowerCase();
+      this.name = name.trim().toLowerCase();
   }
 }

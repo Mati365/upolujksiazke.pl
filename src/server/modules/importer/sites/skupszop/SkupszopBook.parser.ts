@@ -65,7 +65,7 @@ export class SkupszopBookParser
         format: normalizeParsedText(detailsText.match(/Rozmiar: ([\S]+)/)?.[1]),
         defaultPrice: normalizePrice($('.market-price > span').text())?.price,
         title: productSchema.name,
-        description: productSchema.description,
+        description: normalizeParsedText(productSchema.description),
         totalPages: +bookSchema.numberOfPages || null,
         publishDate: bookSchema.copyrightYear,
         availability: (await this.parseAvailability(bookPage)).result,

@@ -1,5 +1,7 @@
 import * as R from 'ramda';
+
 import {mergeNonNullProperties} from '@shared/helpers';
+import {normalizeParsedText} from '@server/common/helpers';
 
 export const WYKOP_POST_PROPS_KEYS: Readonly<(keyof WykopBookReviewHeader)[]> = Object.freeze(
   [
@@ -35,7 +37,7 @@ export abstract class WykopEntryContentParser {
   process(body: string): WykopContentParserResult {
     return {
       properties: this.matchProperties(body),
-      description: this.matchDescription(body),
+      description: normalizeParsedText(this.matchDescription(body)),
     };
   }
 

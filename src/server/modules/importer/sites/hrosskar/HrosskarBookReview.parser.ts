@@ -1,6 +1,9 @@
 import * as R from 'ramda';
 
-import {normalizeISBN} from '@server/common/helpers';
+import {
+  normalizeISBN,
+  normalizeParsedText,
+} from '@server/common/helpers';
 
 import {VotingStatsEmbeddable} from '@server/modules/shared/VotingStats.embeddable';
 import {WebsiteScrapperParser} from '@scrapper/service/shared';
@@ -46,7 +49,7 @@ export class HrosskarBookReviewParser extends WebsiteScrapperParser<CreateBookRe
       {
         book,
         url,
-        description: R.trim(
+        description: normalizeParsedText(
           description.substr(0, description.lastIndexOf('Ocena:')),
         ),
         rating: (

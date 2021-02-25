@@ -251,7 +251,7 @@ export class PublioBookParser
             {
               url,
               remoteId: parameterize(`${id}-${authorName}-${creationTime}`),
-              description: content,
+              description: normalizeParsedText(content),
               publishDate: new Date(creationTime),
               reviewer: new CreateBookReviewerDto(
                 {

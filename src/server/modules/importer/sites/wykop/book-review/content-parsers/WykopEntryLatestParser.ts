@@ -131,15 +131,18 @@ export class WykopEntryLatestParser extends WykopEntryContentParser {
    * @memberof WykopEntryLatestParser
    */
   protected matchDescription(body: string): string {
-    const match = (
+    let match = (
       body
-        .replace(/\n/g, '')
+        .replaceAll('\n', '')
         // eslint-disable-next-line max-len
-        .match(/(?:[☆★]|\d+\s*\/\s*\d+(?:<br \/><br \/>[☆★]+)?)(?:<br\s\/>)+(.+?)(?<!<a)(?:<br \/>)*(?:Wpis dodano za pomocą stron|#?<a href="#bookmeter).*/mi)
+        .match(/(?:[☆★]|\d+\s*\/\s*\d+(?:<br \/><br \/>[☆★]+)?)(?:<br\s\/>)+(.*?)(?<!<a)(?:<br \/>)*(?:Wpis dodano za pomocą stron|#?<a href="#bookmeter).*/mi)
     )?.[1] ?? null;
 
     if (!match)
       return null;
+
+    if (/[☆★]/.test(match))
+      match = match.match(/[☆★]+(?:<br\s\/>)*(.*)/)?.[1] || match;
 
     return (
       R
@@ -149,6 +152,7 @@ export class WykopEntryLatestParser extends WykopEntryContentParser {
           /<a href="spoiler:(.+)">\[.+\]<\/a>/g,
           (_, p1) => `<spoiler>${decodeURIComponent(p1).replace(/\+/g, ' ')}</spoiler>`,
         )
+        .replaceAll('&quot;', '"')
     );
   }
 }

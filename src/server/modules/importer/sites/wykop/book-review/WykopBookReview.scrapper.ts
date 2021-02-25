@@ -102,7 +102,7 @@ export class WykopBookReviewScrapper extends AsyncScrapper<BookReviewScrapperInf
       description,
     } = WykopEntryContentParser.reduceContent(WykopBookReviewScrapper.contentParsers, body);
 
-    if (R.isEmpty(properties) || !description)
+    if (R.isEmpty(properties) || (!description && R.isNil(properties.score)))
       return null;
 
     const {author, id: remoteId} = post;

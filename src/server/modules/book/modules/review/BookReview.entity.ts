@@ -1,6 +1,6 @@
 import {
   Column, ManyToOne,
-  JoinColumn, RelationId, Index,
+  JoinColumn, RelationId, Index, Check,
 } from 'typeorm';
 
 import {RemoteRecordEntity, RemoteRecordFields} from '@server/modules/remote/entity/RemoteRecord.entity';
@@ -16,6 +16,7 @@ import {BookReleaseEntity} from '../release/BookRelease.entity';
   },
 )
 @Index(['book'])
+@Check('"description" <> null OR "rating" <> null')
 export class BookReviewEntity extends RemoteRecordFields {
   @Column('timestamp')
   publishDate: Date;
@@ -28,7 +29,7 @@ export class BookReviewEntity extends RemoteRecordFields {
   @RelationId((entity: BookReviewEntity) => entity.reviewer)
   reviewerId: number;
 
-  @Column('text')
+  @Column('text', {nullable: true})
   description: string;
 
   @Column('smallint', {nullable: true})

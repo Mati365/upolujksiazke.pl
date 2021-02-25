@@ -97,6 +97,7 @@ export class BookReviewService {
           entityManager: transaction,
           Entity: BookReviewEntity,
           data: reviewEntities,
+          coalesce: false,
         },
       );
     };

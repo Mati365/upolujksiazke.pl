@@ -41,7 +41,7 @@ test('test content parser matching', async () => {
   for await (const [, entry] of Object.entries(ENTRIES_DB)) {
     const {id: recordId} = entry.response.data;
     const result = await scrapper.fetchSingle(recordId.toString());
-    const {dto} = result;
+    const {dto} = result || {};
 
     expect(dto.description, `Description for entry ${recordId} mismatch!`).toEqual(entry.description);
     expect(dto.book.title).toEqual(entry.properties.title);

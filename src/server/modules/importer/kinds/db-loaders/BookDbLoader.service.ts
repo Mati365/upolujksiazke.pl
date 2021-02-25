@@ -75,6 +75,39 @@ export class BookDbLoaderService implements MetadataDbLoader {
   }
 
   /**
+   * Lookups book to be present in other websites and loads to DB
+   *
+   * @param {CreateBookDto} book
+   * @memberof BookDbLoaderService
+   */
+  async searchAndExtractToDb(book: CreateBookDto) {
+    const {
+      logger,
+      scrapperMatcherService,
+    } = this;
+
+    if (!BookDbLoaderService.isEnoughToBeScrapped(book))
+      return null;
+
+    const matchedBooks = R.pluck(
+      'result',
+      await scrapperMatcherService.searchRemoteRecord<CreateBookDto>(
+        {
+          kind: ScrapperMetadataKind.BOOK,
+          data: book,
+        },
+      ),
+    );
+
+    if (R.isEmpty(matchedBooks)) {
+      logger.warn(`Book ${JSON.stringify(book)} not matched!`);
+      return null;
+    }
+
+    return this.mergeAndExtractBooksToDb(matchedBooks);
+  }
+
+  /**
    * Merges book into one and loads to DB
    *
    * @param {CreateBookDto[]} books
@@ -167,39 +200,6 @@ export class BookDbLoaderService implements MetadataDbLoader {
         },
       ),
     );
-  }
-
-  /**
-   * Lookups book to be present in other websites and loads to DB
-   *
-   * @param {CreateBookDto} book
-   * @memberof BookDbLoaderService
-   */
-  async searchAndExtractToDb(book: CreateBookDto) {
-    const {
-      logger,
-      scrapperMatcherService,
-    } = this;
-
-    if (!BookDbLoaderService.isEnoughToBeScrapped(book))
-      return null;
-
-    const matchedBooks = R.pluck(
-      'result',
-      await scrapperMatcherService.searchRemoteRecord<CreateBookDto>(
-        {
-          kind: ScrapperMetadataKind.BOOK,
-          data: book,
-        },
-      ),
-    );
-
-    if (R.isEmpty(matchedBooks)) {
-      logger.warn(`Book ${JSON.stringify(book)} not matched!`);
-      return null;
-    }
-
-    return this.mergeAndExtractBooksToDb(matchedBooks);
   }
 
   /**

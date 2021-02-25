@@ -17,13 +17,14 @@ import {BookReleaseEntity} from '../release/BookRelease.entity';
 @RemoteRecordEntity(
   {
     name: 'book_availability',
+    withUniqConstraint: false,
   },
 )
 @Index(['book'])
 @Index(['book', 'releaseId'])
 @Unique(
-  'book_availability_unique_book_website',
-  ['book', 'website', 'release'],
+  'book_availability_unique_book_remote_website',
+  ['book', 'website', 'remoteId', 'release'],
 )
 export class BookAvailabilityEntity extends RemoteRecordFields {
   @Column(

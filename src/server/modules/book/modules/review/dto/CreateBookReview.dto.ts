@@ -28,7 +28,7 @@ export class CreateBookReviewDto extends CreateRemoteRecordDto {
   @IsDate()
   readonly publishDate: Date;
 
-  @IsDefined()
+  @IsOptional()
   @IsString()
   readonly description: string;
 

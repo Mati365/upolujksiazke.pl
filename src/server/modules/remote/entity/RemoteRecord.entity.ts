@@ -30,12 +30,22 @@ export abstract class RemoteRecordFields extends DatedRecordEntity {
   }
 }
 
-export function RemoteRecordEntity<F extends {new (...args: any[]): {}}>(options?: EntityOptions) {
+type RemoteRecordEntityOptions = EntityOptions & {
+  withUniqConstraint?: boolean,
+};
+
+export function RemoteRecordEntity<F extends {new (...args: any[]): {}}>(
+  {
+    withUniqConstraint = true,
+    ...options
+  }: RemoteRecordEntityOptions = {},
+) {
   if (!options.name)
     throw new Error('Missing table name!');
 
   return (Base: F): any => {
-    Unique(`${options.name}_unique_remote`, ['website', 'remoteId'])(Base as any);
+    if (withUniqConstraint)
+      Unique(`${options.name}_unique_remote`, ['website', 'remoteId'])(Base as any);
 
     return Entity(options)(Base);
   };

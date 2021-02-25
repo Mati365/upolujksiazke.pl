@@ -45,7 +45,7 @@ export class GandalfBookParser
         result: [
           new CreateBookAvailabilityDto(
             {
-              totalRatings: +$avgRating.find('.rating-counted').text().match(/(\d+) ocen/)?.[1],
+              totalRatings: +$avgRating.find('.rating-counted').text().match(/(\d+) ocen/)?.[1] || null,
               avgRating: Number.parseFloat($avgRating.find('.rating-label').text().split('/')[0]) * 2.0,
               remoteId: $reviewsCard.find('.form.form-rating').data('prodid'),
               price: normalizePrice($('#right-sidebar .current-price').text())?.price,

@@ -229,6 +229,7 @@ export class ScrapperRefreshService {
         Entity: ScrapperMetadataEntity,
         constraint: 'scrapper_metadata_unique_remote',
         data: newEntity,
+        coalesce: false,
       },
     );
 

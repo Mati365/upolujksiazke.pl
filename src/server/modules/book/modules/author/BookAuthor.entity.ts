@@ -35,6 +35,10 @@ export class BookAuthorEntity extends DatedRecordEntity {
   @BeforeUpdate()
   transformFields() {
     const {parameterizedName, name} = this;
+
+    if (name)
+      this.name = name.trim();
+
     if (!parameterizedName && name)
       this.parameterizedName = parameterize(name);
   }

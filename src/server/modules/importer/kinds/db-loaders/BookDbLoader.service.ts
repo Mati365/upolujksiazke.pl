@@ -27,6 +27,11 @@ import {MetadataDbLoader} from '@db-loader/MetadataDbLoader.interface';
 import {ScrapperMatcherService} from '@scrapper/service/actions';
 import {ScrapperService} from '@scrapper/service/Scrapper.service';
 
+type BookExtractorAttrs = {
+  skipIfAlreadyInDb?: boolean,
+  skipCacheLookup?: boolean,
+};
+
 @Injectable()
 export class BookDbLoaderService implements MetadataDbLoader {
   private readonly logger = new Logger(BookDbLoaderService.name);
@@ -78,9 +83,11 @@ export class BookDbLoaderService implements MetadataDbLoader {
    * Lookups book to be present in other websites and loads to DB
    *
    * @param {CreateBookDto} book
+   * @param {BookExtractorAttrs} [attrs={}]
+   * @returns
    * @memberof BookDbLoaderService
    */
-  async searchAndExtractToDb(book: CreateBookDto) {
+  async searchAndExtractToDb(book: CreateBookDto, attrs: BookExtractorAttrs = {}) {
     const {
       logger,
       scrapperMatcherService,
@@ -104,24 +111,18 @@ export class BookDbLoaderService implements MetadataDbLoader {
       return null;
     }
 
-    return this.mergeAndExtractBooksToDb(matchedBooks);
+    return this.mergeAndExtractBooksToDb(matchedBooks, attrs);
   }
 
   /**
    * Merges book into one and loads to DB
    *
    * @param {CreateBookDto[]} books
-   * @param {Object} attrs
+   * @param {BookExtractorAttrs} attrs
    * @returns
    * @memberof BookDbLoaderService
    */
-  async mergeAndExtractBooksToDb(
-    books: CreateBookDto[],
-    attrs: {
-      skipIfAlreadyInDb?: boolean,
-      skipCacheLookup?: boolean,
-    } = {},
-  ) {
+  async mergeAndExtractBooksToDb(books: CreateBookDto[], attrs: BookExtractorAttrs = {}) {
     const {
       scrapperService,
       fuzzyBookSearchService,
@@ -235,12 +236,17 @@ export class BookDbLoaderService implements MetadataDbLoader {
     const similarPublisherReleases = releases.reduce(
       (acc, release) => {
         release = release.mapPublisher(
-          (publisher) => new CreateBookPublisherDto(
-            {
-              ...publisher,
-              parameterizedName: parameterize(publisher.name),
-            },
-          ),
+          (publisher) => {
+            const name = BookDbLoaderService.dropPublisherPrefix(publisher.name);
+
+            return new CreateBookPublisherDto(
+              {
+                ...publisher,
+                name,
+                parameterizedName: parameterize(publisher.name),
+              },
+            );
+          },
         );
 
         if (!release.publisher)
@@ -303,5 +309,15 @@ export class BookDbLoaderService implements MetadataDbLoader {
       ...R.filter(R.propSatisfies(R.isNil, 'publisher'), releases),
       ...R.unnest(R.values(mappedReleases)),
     ];
+  }
+
+  /**
+   *Some publishers
+   *
+   * @param {string} name
+   * @memberof BookDbLoaderService
+   */
+  static dropPublisherPrefix(name: string) {
+    return name?.replace(/^(wydawnictwo|wydawca)\s*/, '');
   }
 }

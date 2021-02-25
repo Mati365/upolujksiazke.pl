@@ -58,8 +58,8 @@ export class BookReviewDbLoaderService implements MetadataDbLoader {
     let book = await fuzzyBookSearchService.findAlreadyCachedReviewBook(review);
 
     if (!book) {
-      book = await bookDbLoader.mergeAndExtractBooksToDb(
-        [review.book],
+      book = await bookDbLoader.searchAndExtractToDb(
+        review.book,
         {
           skipIfAlreadyInDb: true,
           skipCacheLookup: true,

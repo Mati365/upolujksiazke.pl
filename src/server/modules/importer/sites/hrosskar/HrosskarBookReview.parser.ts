@@ -44,14 +44,12 @@ export class HrosskarBookReviewParser extends WebsiteScrapperParser<CreateBookRe
       },
     );
 
-    const rating = description.match(/Ocena:\s(\d+)\s*\/\s*(\d+)/)?.slice(1, 3);
+    const rating = description.match(/(?:Ocena:|Moja ocena)\s*(\d+)\s*\/\s*(\d+)/)?.slice(1, 3);
     return new CreateBookReviewDto(
       {
         book,
         url,
-        description: normalizeParsedText(
-          description.substr(0, description.lastIndexOf('Ocena:')),
-        ),
+        description: normalizeParsedText(description),
         rating: (
           rating?.length === 2
             ? ((+rating[0]) / (+rating[1])) * 10

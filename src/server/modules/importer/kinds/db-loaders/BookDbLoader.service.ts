@@ -207,6 +207,7 @@ export class BookDbLoaderService implements MetadataDbLoader {
             id: cachedBook.id,
             parameterizedSlug: cachedBook.parameterizedSlug,
           },
+          defaultTitle: BookDbLoaderService.dropBookPostfix(mergedBook.defaultTitle || mergedBook.title),
           releases: await this.fixSimilarNamedReleasesPublishers(releases),
           authors: pickLongestArrayItem(R.pluck('authors', books)),
         },
@@ -319,5 +320,17 @@ export class BookDbLoaderService implements MetadataDbLoader {
    */
   static dropPublisherPrefix(name: string) {
     return name?.replace(/^(wydawnictwo|wydawca)\s*/i, '');
+  }
+
+  /**
+   * Some books have not necessary titles suffixes
+   *
+   * @static
+   * @param {string} name
+   * @returns
+   * @memberof BookDbLoaderService
+   */
+  static dropBookPostfix(name: string) {
+    return name?.replace(/(\. Tom|, wydanie|\. Część|\. Księga|\. wydanie).*/i, '');
   }
 }

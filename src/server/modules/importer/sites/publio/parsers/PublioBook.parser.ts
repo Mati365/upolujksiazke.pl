@@ -167,12 +167,13 @@ export class PublioBookParser
         ))
     );
 
+    const kind = normalizeParsedText(basicProps['rodzaj publikacji']?.[0]?.split(',')[0]);
     return new CreateBookDto(
       {
         defaultTitle: title,
-        kind: new CreateBookKindDto(
+        kind: kind && new CreateBookKindDto(
           {
-            name: basicProps['rodzaj publikacji']?.[0],
+            name: kind,
           },
         ),
         tags: (

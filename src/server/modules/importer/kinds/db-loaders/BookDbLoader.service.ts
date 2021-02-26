@@ -243,7 +243,7 @@ export class BookDbLoaderService implements MetadataDbLoader {
               {
                 ...publisher,
                 name,
-                parameterizedName: parameterize(publisher.name),
+                parameterizedName: parameterize(name),
               },
             );
           },
@@ -318,6 +318,6 @@ export class BookDbLoaderService implements MetadataDbLoader {
    * @memberof BookDbLoaderService
    */
   static dropPublisherPrefix(name: string) {
-    return name?.replace(/^(wydawnictwo|wydawca)\s*/, '');
+    return name?.replace(/^(wydawnictwo|wydawca)\s*/i, '');
   }
 }

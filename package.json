@@ -17,7 +17,7 @@
     "schema:migrate": "node_modules/.bin/ts-node --project tsconfig.json -r tsconfig-paths/register ./node_modules/.bin/typeorm migration:run --config src/server/ormconfig.js",
     "seed:config": "node_modules/.bin/ts-node --project tsconfig.json -r tsconfig-paths/register ./node_modules/typeorm-seeding/dist/cli.js config --config src/server/ormconfig.js",
     "seed:run": "node_modules/.bin/ts-node --project tsconfig.json -r tsconfig-paths/register ./node_modules/typeorm-seeding/dist/cli.js seed --config src/server/ormconfig.js",
-    "console": "NODE_REPL_HISTORY_FILE=$HOME/.node_history node_modules/.bin/ts-node --project tsconfig.json -r tsconfig-paths/register ./src/console.ts"
+    "console": "NODE_REPL_HISTORY_FILE=$HOME/.node_history node ./dist/console.js"
   },
   "husky": {
     "hooks": {
@@ -50,6 +50,7 @@
     "@types/mkdirp": "^1.0.1",
     "@types/multer": "^1.4.5",
     "@types/node": "^14.14.21",
+    "@types/pug": "^2.0.4",
     "@types/purdy": "^3.5.0",
     "@types/ramda": "^0.27.32",
     "@types/react": "^17.0.0",
@@ -78,6 +79,7 @@
     "jest-expect-message": "^1.0.2",
     "mini-css-extract-plugin": "^1.3.4",
     "nodemon-webpack-plugin": "^4.4.4",
+    "raw-loader": "^4.0.2",
     "sass": "^1.32.4",
     "sass-loader": "^10.1.1",
     "ts-jest": "^26.4.4",
@@ -130,6 +132,7 @@
     "p-map": "^4.0.0",
     "pg": "^8.5.1",
     "pretty-repl": "^2.4.0",
+    "pug": "^3.0.0",
     "purdy": "^3.5.1",
     "querystring": "^0.2.0",
     "ramda": "^0.27.1",

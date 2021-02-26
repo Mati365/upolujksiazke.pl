@@ -52,6 +52,10 @@ const createConfig = ({
       rules: [
         ...rules,
         {
+          test: /\.(jade|pug)$/i,
+          use: 'raw-loader',
+        },
+        {
           test: /\.(png|jpe?g|gif|ttf|svg)$/,
           use: [
             {
@@ -222,6 +226,25 @@ module.exports = [
         server: resolveSource('tasks/gulpfile.ts'),
       },
       distPath: 'gulpfile.js',
+      externals: [
+        nodeExternals(),
+      ],
+      override: {
+        optimization: {
+          minimize: false,
+        },
+      },
+    },
+  ),
+
+  // gulp
+  createConfig(
+    {
+      target: 'node',
+      entry: {
+        server: resolveSource('console.ts'),
+      },
+      distPath: 'console.js',
       externals: [
         nodeExternals(),
       ],

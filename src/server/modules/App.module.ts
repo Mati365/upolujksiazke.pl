@@ -37,6 +37,17 @@ import {SentryModule} from './sentry';
                 },
               },
             ),
+            FrontModule,
+            ManifestModule.forRoot(
+              {
+                file: 'public/files-manifest.json',
+              },
+            ),
+            SentryModule.forRoot(
+              isDevMode()
+                ? {}
+                : SERVER_ENV.sentry,
+            ),
           ]
       ),
       ...(
@@ -44,19 +55,9 @@ import {SentryModule} from './sentry';
           ? [ScheduleModule.forRoot()]
           : []
       ),
-      SentryModule.forRoot(
-        isDevMode()
-          ? {}
-          : SERVER_ENV.sentry,
-      ),
       AttachmentModule.forRoot(
         {
           dest: SERVER_ENV.cdn.localPath,
-        },
-      ),
-      ManifestModule.forRoot(
-        {
-          file: 'public/files-manifest.json',
         },
       ),
       TmpDirModule.forRoot(
@@ -65,7 +66,6 @@ import {SentryModule} from './sentry';
         },
       ),
       RemoteModule,
-      FrontModule,
       ImporterModule,
     ],
   },

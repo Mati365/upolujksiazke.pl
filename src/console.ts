@@ -1,3 +1,5 @@
+/// <reference types="./shared/globals" />
+
 import * as path from 'path';
 import * as R from 'ramda';
 import {NestFactory} from '@nestjs/core';

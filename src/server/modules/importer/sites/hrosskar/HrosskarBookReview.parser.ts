@@ -17,12 +17,18 @@ import {CreateBookReviewerDto} from '@server/modules/book/modules/reviewer/dto/C
 export class HrosskarBookReviewParser extends WebsiteScrapperParser<CreateBookReviewDto> {
   parse({$, url}: AsyncURLParseResult): CreateBookReviewDto {
     const blogPost = $('[itemprop="blogPost"]');
-    const description = $(blogPost).text();
-    const bookInfo = $(blogPost).find('div').text();
-    const header = $(blogPost).find('h3.post-title[itemprop=\'name\']').text();
+    const postBody = $(blogPost).find('.post-body');
 
-    const [title, author] = R.map(R.trim, header.split(' - '));
-    const isbn = normalizeISBN(bookInfo.match(/ISBN:\s*([\w-]+)/)?.[1]);
+    const description = postBody.text();
+    const bookInfo = $(postBody).find('div').text();
+    const header = $(blogPost).find('h3.post-title[itemprop=\'name\']').text();
+    let [title, author] = R.map(R.trim, header.split(' - '));
+
+    [title] = title.split(',');
+    if (!author)
+      author = normalizeParsedText(bookInfo.match(/Autor:\s*(.*)\n/i)?.[1]);
+
+    const isbn = normalizeISBN(bookInfo.match(/ISBN:\s*([\w-]+)/i)?.[1]);
     const book = new CreateBookDto(
       {
         defaultTitle: title,
@@ -44,7 +50,7 @@ export class HrosskarBookReviewParser extends WebsiteScrapperParser<CreateBookRe
       },
     );
 
-    const rating = description.match(/(?:Ocena:|Moja ocena)\s*(\d+)\s*\/\s*(\d+)/)?.slice(1, 3);
+    const rating = description.match(/(?:Ocena:|Moja ocena)\s*(\d+)\s*\/\s*(\d+)/i)?.slice(1, 3);
     return new CreateBookReviewDto(
       {
         book,

@@ -48,14 +48,14 @@ export class BookReviewDbLoaderService implements MetadataDbLoader {
    */
   async parseAndAssignBook(metadata: ScrapperMetadataEntity) {
     const {
-      fuzzyBookSearchService,
+      // fuzzyBookSearchService,
       scrapperService,
       bookDbLoader,
       logger,
     } = this;
 
     let review = plainToClass(CreateBookReviewDto, metadata.content);
-    let book = await fuzzyBookSearchService.findAlreadyCachedReviewBook(review);
+    let book = null; // await fuzzyBookSearchService.findAlreadyCachedReviewBook(review);
 
     if (!book) {
       book = await bookDbLoader.searchAndExtractToDb(

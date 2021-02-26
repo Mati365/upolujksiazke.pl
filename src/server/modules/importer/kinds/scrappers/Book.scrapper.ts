@@ -1,4 +1,4 @@
-import {matchByRegex, RegExpMatchArray} from '@shared/helpers';
+import * as R from 'ramda';
 
 import {Language} from '@server/constants/language';
 import {CreateBookDto} from '@server/modules/book/dto/CreateBook.dto';
@@ -53,16 +53,10 @@ export const BOOK_TYPE_TRANSLATION_MAPPINGS = Object.freeze(
   },
 );
 
-export const BOOK_TYPE_TITLE_REGEXS: Readonly<RegExpMatchArray<BookType>> = Object.freeze(
-  [
-    [/ebook/i, () => BookType.EBOOK],
-    [/audiobook/i, () => BookType.AUDIOBOOK],
-  ],
+export const BOOK_TYPE_TITLE_REGEX = new RegExp(
+  `(?<left>.*)?[\\s.,]*(?<type>${R.keys(BOOK_TYPE_TRANSLATION_MAPPINGS).join('|')})?[\\s.,]*(?<right>.*)?`,
+  'i',
 );
-
-export function matchBookTypeByTitle(title: string) {
-  return matchByRegex(BOOK_TYPE_TITLE_REGEXS, title) ?? BookType.PAPER;
-}
 
 export type BookScrappedPropsMap = Record<string, [string, cheerio.Cheerio]>;
 

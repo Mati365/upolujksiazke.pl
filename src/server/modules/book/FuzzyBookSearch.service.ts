@@ -2,8 +2,6 @@ import {Injectable} from '@nestjs/common';
 import {SelectQueryBuilder} from 'typeorm';
 import * as R from 'ramda';
 
-import {parameterize} from '@shared/helpers/parameterize';
-
 import {CreateBookDto} from './dto/CreateBook.dto';
 import {CreateBookReviewDto} from './modules/review/dto/CreateBookReview.dto';
 import {CreateBookReleaseDto} from './modules/release/dto/CreateBookRelease.dto';
@@ -14,9 +12,6 @@ export class FuzzyBookSearchService {
   /**
    * Find book based on multiple dtos
    *
-   * @todo
-   *  Maybe merge with findAlreadyCachedReviewBook?
-   *
    * @param {CreateBookDto[]} books
    * @param {CreateBookReleaseDto[]} [allReleases]
    * @param {number} [similarity=2]
@@ -26,7 +21,7 @@ export class FuzzyBookSearchService {
   async findAlreadyCachedSimilarToBooks(
     books: CreateBookDto[],
     allReleases?: CreateBookReleaseDto[],
-    similarity: number = 2,
+    similarity: number = 4,
   ) {
     allReleases ??= R.unnest(R.pluck('releases', books));
 
@@ -62,19 +57,6 @@ export class FuzzyBookSearchService {
 
       if (releasesIds.length)
         query = query.orWhere('release.id in (:...releasesIds)', {releasesIds});
-
-      allReleases.forEach((release) => {
-        if (release.title)
-          return;
-
-        query = query.orWhere(
-          'levenshtein(release.parameterizedSlug, :slug) <= :similarity',
-          {
-            similarity,
-            slug: parameterize(release.title),
-          },
-        );
-      });
     }
 
     return (

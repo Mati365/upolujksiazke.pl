@@ -15,7 +15,7 @@ import {CreateImageAttachmentDto} from '@server/modules/attachment/dto';
 import {CreateBookAuthorDto} from '@server/modules/book/modules/author/dto/CreateBookAuthor.dto';
 import {CreateBookCategoryDto} from '@server/modules/book/modules/category/dto/CreateBookCategory.dto';
 
-import {BookAvailabilityParser, matchBookTypeByTitle} from '@importer/kinds/scrappers/Book.scrapper';
+import {BookAvailabilityParser} from '@importer/kinds/scrappers/Book.scrapper';
 import {AsyncURLParseResult} from '@server/common/helpers/fetchAsyncHTML';
 import {WebsiteScrapperParser} from '../../modules/scrapper/service/shared';
 
@@ -61,7 +61,6 @@ export class SkupszopBookParser
     const release = new CreateBookReleaseDto(
       {
         lang: Language.PL,
-        type: matchBookTypeByTitle(productSchema.name),
         format: normalizeParsedText(detailsText.match(/Rozmiar: ([\S]+)/)?.[1]),
         defaultPrice: normalizePrice($('.market-price > span').text())?.price,
         title: productSchema.name,

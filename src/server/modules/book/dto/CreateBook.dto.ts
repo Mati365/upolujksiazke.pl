@@ -107,11 +107,16 @@ export class CreateBookDto {
   }
 
   genSlug(author?: string) {
-    const {defaultTitle, title, authors} = this;
+    const {defaultTitle, title, authors, volume} = this;
+    const str = [
+      defaultTitle ?? title,
+      author || R.sortBy(R.prop('name'), authors)[0]?.name || 'anonym',
+      volume
+        ? volume.name
+        : '1',
+    ];
 
-    return parameterize(
-      `${defaultTitle ?? title}-${author || R.sortBy(R.prop('name'), authors)[0]?.name || 'unknown'}`,
-    );
+    return parameterize(str.join('-'));
   }
 
   genSlugPermutations() {

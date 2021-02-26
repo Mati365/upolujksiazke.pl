@@ -2,7 +2,10 @@ import * as R from 'ramda';
 
 import slugify from 'slugify';
 import {underscoreParameterize} from '@shared/helpers/parameterize';
-import {fuzzyFindBookAnchor} from '@scrapper/helpers/fuzzyFindBookAnchor';
+import {
+  fuzzyFindBookAnchor,
+  fuzzyAuthorsSimilarity,
+} from '@scrapper/helpers/fuzzyFindBookAnchor';
 
 import {CreateBookDto} from '@server/modules/book/dto/CreateBook.dto';
 import {ScrapperMatcherResult, WebsiteScrapperMatcher} from '@scrapper/service/shared/ScrapperMatcher';
@@ -15,13 +18,25 @@ export class LiteraturaGildiaBookMatcher extends WebsiteScrapperMatcher<CreateBo
    * @inheritdoc
    */
   async searchRemoteRecord({data}: MatchRecordAttrs<CreateBookDto>): Promise<ScrapperMatcherResult<CreateBookDto>> {
+    const parseResult: CreateBookDto = await this.parsers[ScrapperMetadataKind.BOOK].parse(
+      (await this.directSearch(data)) || (await this.searchByFirstLetter(data)),
+      {
+        shallowParse: true,
+      },
+    );
+
+    if (parseResult?.authors && data.authors) {
+      const similarity = fuzzyAuthorsSimilarity(
+        R.pluck('name', data.authors),
+        R.pluck('name', parseResult.authors),
+      );
+
+      if (similarity < 0.6)
+        return null;
+    }
+
     return {
-      result: await this.parsers[ScrapperMetadataKind.BOOK].parse(
-        (await this.directSearch(data)) || (await this.searchByFirstLetter(data)),
-        {
-          shallowParse: true,
-        },
-      ),
+      result: parseResult,
     };
   }
 

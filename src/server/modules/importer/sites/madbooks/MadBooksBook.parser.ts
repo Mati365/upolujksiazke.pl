@@ -20,7 +20,6 @@ import {
   BINDING_TRANSLATION_MAPPINGS,
   LANGUAGE_TRANSLATION_MAPPINGS,
   BookAvailabilityParser,
-  matchBookTypeByTitle,
 } from '@importer/kinds/scrappers/Book.scrapper';
 
 import {AsyncURLParseResult} from '@server/common/helpers/fetchAsyncHTML';
@@ -71,7 +70,6 @@ export class MadBooksBookParser
       {
         title,
         isbn,
-        type: matchBookTypeByTitle(title),
         lang: LANGUAGE_TRANSLATION_MAPPINGS[basicProps['język']] ?? Language.PL,
         format: basicProps['format'],
         defaultPrice: normalizePrice(basicProps['cena katalogowa'])?.price,

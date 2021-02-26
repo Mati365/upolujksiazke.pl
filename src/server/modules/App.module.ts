@@ -43,12 +43,12 @@ import {SentryModule} from './sentry';
                 file: 'public/files-manifest.json',
               },
             ),
+            ...(
+              isRootClusterAppInstance()
+                ? [ScheduleModule.forRoot()]
+                : []
+            ),
           ]
-      ),
-      ...(
-        isRootClusterAppInstance()
-          ? [ScheduleModule.forRoot()]
-          : []
       ),
       SentryModule.forRoot(
         isDevMode() || isCmdAppInstance()

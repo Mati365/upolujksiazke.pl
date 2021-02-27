@@ -3,6 +3,8 @@ import {
   IsOptional, IsString,
 } from 'class-validator';
 
+export const DEFAULT_BOOK_VOLUME_NAME = '1';
+
 export class CreateBookVolumeDto {
   @IsOptional()
   @IsNumber()

@@ -13,7 +13,7 @@ import {IsTagCorrect} from '@server/modules/tag/validators/IsTagCorrect';
 import {CreateBookReleaseDto} from '../modules/release/dto/CreateBookRelease.dto';
 import {CreateBookAuthorDto} from '../modules/author/dto/CreateBookAuthor.dto';
 import {CreateBookCategoryDto} from '../modules/category/dto/CreateBookCategory.dto';
-import {CreateBookVolumeDto} from '../modules/volume/dto/CreateBookVolume.dto';
+import {CreateBookVolumeDto, DEFAULT_BOOK_VOLUME_NAME} from '../modules/volume/dto/CreateBookVolume.dto';
 import {CreateBookSeriesDto} from '../modules/series/dto/CreateBookSeries.dto';
 import {CreateBookPrizeDto} from '../modules/prize/dto/CreateBookPrize.dto';
 import {CreateBookKindDto} from '../modules/kind/dto/CreateBookKind.dto';
@@ -113,7 +113,7 @@ export class CreateBookDto {
       author || R.sortBy(R.prop('name'), authors)[0]?.name || 'anonym',
       volume
         ? volume.name
-        : '1',
+        : DEFAULT_BOOK_VOLUME_NAME,
     ];
 
     return parameterize(str.join('-'));
@@ -127,5 +127,21 @@ export class CreateBookDto {
         this.authors || [],
       ),
     ];
+  }
+
+  /**
+   * Maps releases and returns new dto
+   *
+   * @param {(release: CreateBookReleaseDto) => CreateBookReleaseDto} fn
+   * @returns {CreateBookDto}
+   * @memberof CreateBookDto
+   */
+  mapReleases(fn: (release: CreateBookReleaseDto) => CreateBookReleaseDto): CreateBookDto {
+    return new CreateBookDto(
+      {
+        ...this,
+        releases: this.releases.map(fn),
+      },
+    );
   }
 }

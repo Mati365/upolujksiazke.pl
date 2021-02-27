@@ -10,6 +10,8 @@ import {BookReviewService} from '@server/modules/book/modules/review/BookReview.
 import {ScrapperService} from '../../modules/scrapper/service/Scrapper.service';
 import {BookDbLoaderService} from './Book.loader';
 
+import {normalizeBookDTO} from '../scrappers/helpers';
+
 @Injectable()
 export class BookReviewDbLoaderService implements MetadataDbLoader {
   private readonly logger = new Logger(BookReviewDbLoaderService.name);
@@ -48,15 +50,23 @@ export class BookReviewDbLoaderService implements MetadataDbLoader {
    */
   async parseAndAssignBook(metadata: ScrapperMetadataEntity) {
     const {
-      // fuzzyBookSearchService,
+      fuzzyBookSearchService,
       scrapperService,
       bookDbLoader,
       logger,
     } = this;
 
+    // deserialize and normalize search data
     let review = plainToClass(CreateBookReviewDto, metadata.content);
-    let book = null; // await fuzzyBookSearchService.findAlreadyCachedReviewBook(review); fixme
+    review = new CreateBookReviewDto(
+      {
+        ...review,
+        book: normalizeBookDTO(review.book),
+      },
+    );
 
+    // lookup in cache
+    let book = await fuzzyBookSearchService.findAlreadyCachedReviewBook(review);
     if (!book) {
       book = await bookDbLoader.searchAndExtractToDb(
         review.book,

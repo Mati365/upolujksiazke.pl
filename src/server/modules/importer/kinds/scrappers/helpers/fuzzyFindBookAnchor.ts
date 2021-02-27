@@ -5,17 +5,49 @@ import {safeArray} from '@shared/helpers';
 import {CanBeArray} from '@shared/types';
 
 import {normalizeParsedText} from '@server/common/helpers';
-import {normalizeBookTitle} from './normalizeBookTitle';
+import {normalizeBookTitle, NormalizedBookTitleInfo} from './normalizeBookTitle';
 
 type BookSimilarityFields = {
   title: string,
+  volume?: string,
   author?: CanBeArray<string>,
 };
 
-export const orderAuthorField = (author: string) => R.sortBy(
-  R.identity,
-  normalizeParsedText(author).toLowerCase().split(' '),
-).join(' ');
+export const orderAuthorField = (author: string) => {
+  if (!author)
+    return null;
+
+  const normalized = normalizeParsedText(author);
+  if (!normalized)
+    return null;
+
+  return R.sortBy(
+    R.identity,
+    normalized.toLowerCase().split(' '),
+  ).join(' ');
+};
+
+/**
+ * Calculate similarity between books based on titles
+ *
+ * @export
+ * @param {Pick<NormalizedBookTitleInfo, 'title'|'volume'>} a
+ * @param {Pick<NormalizedBookTitleInfo, 'title'|'volume'>} b
+ * @returns
+ */
+export function getNormalizedBooksSimilarity(
+  a: Pick<NormalizedBookTitleInfo, 'title'|'volume'>,
+  b: Pick<NormalizedBookTitleInfo, 'title'|'volume'>,
+) {
+  let similarity = (
+    stringSimilarity.compareTwoStrings(a.title || '', b.title || '')
+  );
+
+  if (similarity > 0.5 && a.volume === b.volume)
+    similarity *= 1.15;
+
+  return similarity;
+}
 
 /**
  * Compares authors strings
@@ -64,10 +96,8 @@ export function fuzzyFindBookAnchor(
     anchorSelector(anchor: cheerio.Element): BookSimilarityFields,
   },
 ) {
-  const [lowerTitle, lowerAuthors] = [
-    normalizeBookTitle(title.toLowerCase()).title,
-    <string[]> safeArray(author || []).map(orderAuthorField),
-  ];
+  const source = normalizeBookTitle(title.toLowerCase());
+  const lowerAuthors = <string[]> safeArray(author || []).map(orderAuthorField);
 
   const item = R.head(
     R.sort(
@@ -79,8 +109,8 @@ export function fuzzyFindBookAnchor(
           if (!selectorValue)
             return null;
 
-          const selected: BookSimilarityFields = {
-            title: normalizeBookTitle(selectorValue.title?.toLowerCase())?.title,
+          const selected = {
+            ...normalizeBookTitle(selectorValue.title?.toLowerCase()),
             author: safeArray(selectorValue.author || []).map(orderAuthorField),
           };
 
@@ -100,8 +130,7 @@ export function fuzzyFindBookAnchor(
           }
 
           const similarity = (
-            stringSimilarity.compareTwoStrings(lowerTitle || '', selected.title || '')
-              * authorSimilarity
+            getNormalizedBooksSimilarity(source, selected) * authorSimilarity
           );
 
           return (

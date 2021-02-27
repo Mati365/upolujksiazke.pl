@@ -9,7 +9,6 @@ import {
 } from '@nestjs/common';
 
 import {mapObjValuesToPromise} from '@shared/helpers/async/mapObjValuesToPromise';
-import {mergeWithoutNulls} from '@shared/helpers/mergeWithoutNulls';
 import {parameterize} from '@shared/helpers/parameterize';
 import {pickLongestArrayItem} from '@shared/helpers';
 
@@ -21,14 +20,22 @@ import {CreateBookPublisherDto} from '@server/modules/book/modules/publisher/dto
 import {CreateBookReleaseDto} from '@server/modules/book/modules/release/dto/CreateBookRelease.dto';
 import {CreateBookAvailabilityDto} from '@server/modules/book/modules/availability/dto/CreateBookAvailability.dto';
 import {CreateBookReviewDto} from '@server/modules/book/modules/review/dto/CreateBookReview.dto';
-import {CreateBookVolumeDto} from '@server/modules/book/modules/volume/dto/CreateBookVolume.dto';
-import {ScrapperMetadataEntity, ScrapperMetadataKind} from '@scrapper/entity';
+import {
+  CreateBookVolumeDto,
+  DEFAULT_BOOK_VOLUME_NAME,
+} from '@server/modules/book/modules/volume/dto/CreateBookVolume.dto';
+
+import {
+  ScrapperMetadataEntity,
+  ScrapperMetadataKind,
+} from '@scrapper/entity';
 
 import {MetadataDbLoader} from '@db-loader/MetadataDbLoader.interface';
 import {ScrapperMatcherService} from '@scrapper/service/actions';
 import {ScrapperService} from '@scrapper/service/Scrapper.service';
 
 import {
+  mergeBooks,
   normalizeBookTitle,
   normalizePublisherTitle,
 } from '../scrappers/helpers';
@@ -71,7 +78,7 @@ export class BookDbLoaderService implements MetadataDbLoader {
       return null;
     }
 
-    return this.mergeAndExtractBooksToDb(
+    return this.extractBookVolumesToDb(
       [
         book,
       ],
@@ -124,7 +131,30 @@ export class BookDbLoaderService implements MetadataDbLoader {
       return null;
     }
 
-    return this.extractBookVolumesToDb(matchedBooks, attrs);
+    const extractedBooks = await this.extractBookVolumesToDb(matchedBooks, attrs);
+    const searchSlug = book.genSlug();
+
+    return R.reduce(
+      (acc, item) => {
+        const similarity = stringSimilarity.compareTwoStrings(searchSlug, item.parameterizedSlug);
+        if (!acc.book || similarity > acc.similarity) {
+          return {
+            book: item,
+            similarity,
+          };
+        }
+
+        return acc;
+      },
+      {
+        book: null,
+        similarity: null,
+      } as {
+        book: BookEntity,
+        similarity: number,
+      },
+      extractedBooks,
+    ).book;
   }
 
   /**
@@ -135,7 +165,59 @@ export class BookDbLoaderService implements MetadataDbLoader {
    * @memberof BookDbLoaderService
    */
   async extractBookVolumesToDb(books: CreateBookDto[], attrs: BookExtractorAttrs = {}) {
-    return null;
+    // extract volume info from all reelases titles, assign type based on title and edition
+    const normalizedReleasesBooks = books.map((book) => ({
+      book,
+      volumesReleases: book.releases.map(
+        (release): [string, CreateBookReleaseDto] => {
+          if (R.isNil(release.title))
+            return [DEFAULT_BOOK_VOLUME_NAME, release];
+
+          const {edition, title, type, volume} = normalizeBookTitle(release.title);
+          return [volume, new CreateBookReleaseDto(
+            {
+              ...release,
+              title,
+              type: release.type ?? type,
+              edition: release.edition ?? edition,
+            },
+          )];
+        },
+      ),
+    }));
+
+    // group books by volume and rearrange releases
+    const volumes: Record<string, CreateBookDto[]> = {};
+    normalizedReleasesBooks.forEach(({book, volumesReleases}) => {
+      volumesReleases.forEach(([volume, release]) => {
+        (volumes[volume] ||= []).push(new CreateBookDto(
+          {
+            ...book,
+            authors: (
+              book.authors?.length > 0
+                ? book.authors
+                : R.find(({authors}) => authors?.length > 0, books)?.authors
+            ),
+            defaultTitle: release.title,
+            releases: [release],
+            volume: new CreateBookVolumeDto(
+              {
+                name: volume,
+              },
+            ),
+          },
+        ));
+      });
+    });
+
+    // extract all rearranged books to db
+    return pMap(
+      R.values(volumes),
+      (volumeBooks) => this.mergeAndExtractBookToDb(volumeBooks, attrs),
+      {
+        concurrency: 2,
+      },
+    );
   }
 
   /**
@@ -155,6 +237,9 @@ export class BookDbLoaderService implements MetadataDbLoader {
       fuzzyBookSearchService,
       bookService,
     } = this;
+
+    if (R.isEmpty(books))
+      return null;
 
     const allReleases = R.unnest(R.pluck('releases', books));
     let cachedBook: BookEntity = null;
@@ -176,7 +261,6 @@ export class BookDbLoaderService implements MetadataDbLoader {
     );
 
     // book normalization
-    // todo: add group by volume!
     const releases = await pMap(
       allReleases.filter(({isbn}) => !!isbn),
       async (release) => {
@@ -222,36 +306,16 @@ export class BookDbLoaderService implements MetadataDbLoader {
     if (R.isEmpty(releases))
       return null;
 
-    const mergedBook = mergeWithoutNulls(books, (key, a, b) => {
-      switch (key) {
-        case 'series':
-        case 'prizes':
-        case 'categories':
-        case 'tags':
-          return [...(a || []), ...(b || [])];
-
-        default:
-          return a ?? b;
-      }
-    });
-
-    const bookTitleProps = normalizeBookTitle(mergedBook.defaultTitle || mergedBook.title);
     return bookService.upsert(
       new CreateBookDto(
         {
-          ...mergedBook,
+          ...mergeBooks(books),
           ...cachedBook && {
             id: cachedBook.id,
             parameterizedSlug: cachedBook.parameterizedSlug,
           },
-          defaultTitle: bookTitleProps.title,
           releases: await this.fixSimilarNamedReleasesPublishers(releases),
           authors: pickLongestArrayItem(R.pluck('authors', books)),
-          volume: mergedBook.volume ?? (bookTitleProps.volume && new CreateBookVolumeDto(
-            {
-              name: bookTitleProps.volume,
-            },
-          )),
         },
       ),
     );
@@ -340,9 +404,3 @@ export class BookDbLoaderService implements MetadataDbLoader {
     ];
   }
 }
-
-// todo:
-// - Write tests below
-// - Fix grouping by volume
-// - Uncomment scrappers.service
-// gulp scrapper:refresh:single --remoteId 2017/01/opowiadania-zebrane-tom-2.html --website hrosskar.blogspot.com --kind BOOK_REVIEW

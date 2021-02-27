@@ -14,31 +14,31 @@
   "Chakra + CD": {
     "type": 3,
     "title": "Chakra",
-    "volume": null,
+    "volume": "1",
     "edition": null
   },
   "CDAction": {
     "type": 2,
     "title": "CDAction",
-    "volume": null,
+    "volume": "1",
     "edition": null
   },
   "Książka o gotowaniu": {
     "type": 2,
     "title": "Książka o gotowaniu",
-    "volume": null,
+    "volume": "1",
     "edition": null
   },
   "Księga dżungli (audiobook) - Audiobook": {
     "type": 3,
     "title": "Księga dżungli",
-    "volume": null,
+    "volume": "1",
     "edition": null
   },
   "tomek i atomek": {
     "type": 2,
     "title": "tomek i atomek",
-    "volume": null,
+    "volume": "1",
     "edition": null
   },
   "tomek i atomek część 3": {
@@ -56,7 +56,7 @@
   "(audiobook) księga dżungli ((audiobook))": {
     "type": 3,
     "title": "księga dżungli",
-    "volume": null,
+    "volume": "1",
     "edition": null
   }
 }

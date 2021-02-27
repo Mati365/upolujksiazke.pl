@@ -1,12 +1,25 @@
 import * as R from 'ramda';
 
 import {trimBorderSpecialCharacters} from '@server/common/helpers/text/trimBorderSpecialCharacters';
+
 import {BookType} from '@server/modules/book/modules/release/BookRelease.entity';
+import {CreateBookDto} from '@server/modules/book/dto/CreateBook.dto';
+import {
+  CreateBookVolumeDto,
+  DEFAULT_BOOK_VOLUME_NAME,
+} from '@server/modules/book/modules/volume/dto/CreateBookVolume.dto';
 
 import {
   BOOK_TYPE_TRANSLATION_MAPPINGS,
   BOOK_TYPE_TITLE_REGEX,
 } from '../Book.scrapper';
+
+export type NormalizedBookTitleInfo = {
+  title: string,
+  volume: string,
+  edition: string,
+  type: BookType,
+};
 
 /**
  * Drops book type from name and returns type
@@ -54,7 +67,7 @@ export function extractBookPostifxes(name: string): {
   if (!result) {
     return {
       title: trimBorderSpecialCharacters(name),
-      volume: null,
+      volume: DEFAULT_BOOK_VOLUME_NAME,
       edition: null,
     };
   }
@@ -66,7 +79,7 @@ export function extractBookPostifxes(name: string): {
     (item) => item?.trim() || null,
     {
       title: trimBorderSpecialCharacters(title),
-      volume: !editionType ? part : null, // todo: convert IX to 9 etc
+      volume: (!editionType && part) || DEFAULT_BOOK_VOLUME_NAME, // todo: convert IX to 9 etc
       edition: editionType ? part : null,
     },
   );
@@ -76,9 +89,9 @@ export function extractBookPostifxes(name: string): {
  * Extract all useful info from title
  *
  * @param {string} name
- * @returns
+ * @returns {NormalizedBookTitleInfo}
  */
-export function normalizeBookTitle(name: string) {
+export function normalizeBookTitle(name: string): NormalizedBookTitleInfo {
   if (!name)
     return null;
 
@@ -90,4 +103,29 @@ export function normalizeBookTitle(name: string) {
     type,
     ...extractBookPostifxes(title),
   };
+}
+
+/**
+ * Drop unecessary data from name and assigns volume
+ *
+ * @export
+ * @param {CreateBookDto} book
+ */
+export function normalizeBookDTO(book: CreateBookDto) {
+  const {
+    title,
+    volume: volumeName,
+  } = normalizeBookTitle(book.defaultTitle || book.title);
+
+  return new CreateBookDto(
+    {
+      ...book,
+      defaultTitle: title,
+      volume: volumeName && new CreateBookVolumeDto(
+        {
+          name: volumeName,
+        },
+      ),
+    },
+  );
 }

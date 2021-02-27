@@ -2,10 +2,12 @@ import {Injectable} from '@nestjs/common';
 import {SelectQueryBuilder} from 'typeorm';
 import * as R from 'ramda';
 
+import {BookEntity} from './Book.entity';
+import {BookVolumeEntity} from './modules/volume/BookVolume.entity';
+
 import {CreateBookDto} from './dto/CreateBook.dto';
 import {CreateBookReviewDto} from './modules/review/dto/CreateBookReview.dto';
 import {CreateBookReleaseDto} from './modules/release/dto/CreateBookRelease.dto';
-import {BookEntity} from './Book.entity';
 
 @Injectable()
 export class FuzzyBookSearchService {
@@ -25,8 +27,9 @@ export class FuzzyBookSearchService {
   ) {
     allReleases ??= R.unnest(R.pluck('releases', books)) || [];
 
-    const [bookIds, isbns, releasesIds] = [
+    const [bookIds, volumes, isbns, releasesIds] = [
       R.pluck('id', books),
+      R.pluck('volume', books),
       R.pluck('isbn', allReleases),
       R.pluck('id', allReleases),
     ]
@@ -57,6 +60,26 @@ export class FuzzyBookSearchService {
 
       if (releasesIds.length)
         query = query.orWhere('release.id in (:...releasesIds)', {releasesIds});
+
+      if (volumes.length) {
+        query = query.andWhere(
+          (qb) => {
+            const subQuery = (
+              qb
+                .createQueryBuilder()
+                .select('volume.id')
+                .from(BookVolumeEntity, 'volume')
+                .where('volume.name in (:...volumeNames)')
+                .getQuery()
+            );
+
+            return `book.volumeId in (${subQuery})`;
+          },
+          {
+            volumeNames: R.pluck('name', volumes),
+          },
+        );
+      }
     }
 
     return (

@@ -7,12 +7,18 @@
  *
  * @export
  * @param {string} text
- * @param {RegExp} [trimCharsRegex=/[\s()+-/:!.,]/i]
+ * @param {Object} attrs
  * @returns
  */
 export function trimBorderSpecialCharacters(
   text: string,
-  trimCharsRegex: RegExp = /[\s()+-/:!.,]/i,
+  {
+    trimBrackets = true,
+    trimCharsRegex = /[\s+-/:!.,()]/i,
+  }: {
+    trimBrackets?: boolean,
+    trimCharsRegex?: RegExp,
+  } = {},
 ) {
   if (!text)
     return null;
@@ -21,8 +27,20 @@ export function trimBorderSpecialCharacters(
   let startOutput: string = null;
   for (let i = 0; i < text.length; ++i) {
     const char = text.charAt(i);
-    if (startOutput === null && trimCharsRegex.test(char))
-      continue;
+    if (startOutput === null) {
+      // transforms: "(dupa) str" => "str"
+      if (trimBrackets && char === '(') {
+        let nesting = 1;
+
+        for (; i < text.length && nesting > 0; ++i) {
+          if (text.charAt(i) === ')')
+            nesting--;
+        }
+
+        continue;
+      } else if (trimCharsRegex.test(char))
+        continue;
+    }
 
     startOutput = (startOutput || '') + char;
   }
@@ -30,8 +48,20 @@ export function trimBorderSpecialCharacters(
   let endOutput: string = null;
   for (let i = startOutput.length - 1; i >= 0; --i) {
     const char = startOutput.charAt(i);
-    if (endOutput === null && trimCharsRegex.test(char))
-      continue;
+    if (endOutput === null) {
+      // transforms: "str (dupa)" => "str"
+      if (trimBrackets && char === ')') {
+        let nesting = 1;
+
+        for (; i >= 0 && nesting > 0; --i) {
+          if (startOutput.charAt(i) === '(')
+            nesting--;
+        }
+
+        continue;
+      } else if (trimCharsRegex.test(char))
+        continue;
+    }
 
     endOutput = char + (endOutput || '');
   }

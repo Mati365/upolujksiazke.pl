@@ -1,3 +1,3 @@
-export * from './BookReviewDbLoader.service';
-export * from './BookDbLoader.service';
-export * from './UrlDbLoader.service';
+export * from './Book.loader';
+export * from './BookReview.loader';
+export * from './Url.loader';

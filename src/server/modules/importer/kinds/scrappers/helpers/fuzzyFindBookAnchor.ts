@@ -1,26 +1,21 @@
 import * as R from 'ramda';
 import stringSimilarity from 'string-similarity';
 
-import {normalizeParsedText} from '@server/common/helpers';
 import {safeArray} from '@shared/helpers';
-
 import {CanBeArray} from '@shared/types';
+
+import {normalizeParsedText} from '@server/common/helpers';
+import {normalizeBookTitle} from './normalizeBookTitle';
 
 type BookSimilarityFields = {
   title: string,
   author?: CanBeArray<string>,
 };
 
-export const orderAuthorField = (author: string) => R.sortBy(R.identity, author.toLowerCase().split(' ')).join(' ');
-export const normalizeLowerTextField = (text: string) => normalizeParsedText(text)?.toLowerCase();
-
-export const normalizeObjFields = R.mapObjIndexed(
-  (title: CanBeArray<string>) => (
-    title instanceof Array
-      ? title.map(normalizeLowerTextField)
-      : normalizeLowerTextField(title)
-  ),
-);
+export const orderAuthorField = (author: string) => R.sortBy(
+  R.identity,
+  normalizeParsedText(author).toLowerCase().split(' '),
+).join(' ');
 
 /**
  * Compares authors strings
@@ -70,8 +65,8 @@ export function fuzzyFindBookAnchor(
   },
 ) {
   const [lowerTitle, lowerAuthors] = [
-    title.toLowerCase(),
-    <string[]> safeArray(author).map(orderAuthorField),
+    normalizeBookTitle(title.toLowerCase()).title,
+    <string[]> safeArray(author || []).map(orderAuthorField),
   ];
 
   const item = R.head(
@@ -80,15 +75,22 @@ export function fuzzyFindBookAnchor(
       $
         .toArray()
         .map((el): [number, cheerio.Element] => {
-          const selected = <BookSimilarityFields> normalizeObjFields(anchorSelector(el));
+          const selectorValue = anchorSelector(el);
+          if (!selectorValue)
+            return null;
+
+          const selected: BookSimilarityFields = {
+            title: normalizeBookTitle(selectorValue.title?.toLowerCase())?.title,
+            author: safeArray(selectorValue.author || []).map(orderAuthorField),
+          };
+
           let authorSimilarity = author ? 0 : 1;
 
           if (selected.author) {
             authorSimilarity = 0;
 
-            const rowAuthors = safeArray(selected.author).map(orderAuthorField);
             for (const sourceAuthor of lowerAuthors) {
-              for (const rowAuthor of rowAuthors) {
+              for (const rowAuthor of selected.author) {
                 authorSimilarity = Math.max(
                   authorSimilarity,
                   stringSimilarity.compareTwoStrings(sourceAuthor || '', rowAuthor || ''),

@@ -23,7 +23,7 @@ export class FuzzyBookSearchService {
     allReleases?: CreateBookReleaseDto[],
     similarity: number = 4,
   ) {
-    allReleases ??= R.unnest(R.pluck('releases', books));
+    allReleases ??= R.unnest(R.pluck('releases', books)) || [];
 
     const [bookIds, isbns, releasesIds] = [
       R.pluck('id', books),

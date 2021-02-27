@@ -1,5 +1,5 @@
 import {escapeIso88592} from '@server/common/helpers/encoding/escapeIso88592';
-import {fuzzyFindBookAnchor} from '@scrapper/helpers';
+import {fuzzyFindBookAnchor} from '@importer/kinds/scrappers/helpers/fuzzyFindBookAnchor';
 
 import {CreateBookDto} from '@server/modules/book/dto/CreateBook.dto';
 

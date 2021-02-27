@@ -1,5 +1,3 @@
-import * as R from 'ramda';
-
 import {Language} from '@server/constants/language';
 import {CreateBookDto} from '@server/modules/book/dto/CreateBook.dto';
 import {CreateBookAvailabilityDto} from '@server/modules/book/modules/availability/dto/CreateBookAvailability.dto';
@@ -47,6 +45,7 @@ export const BOOK_TYPE_TRANSLATION_MAPPINGS = Object.freeze(
   {
     /* eslint-disable quote-props */
     'audiobook': BookType.AUDIOBOOK,
+    'cd': BookType.AUDIOBOOK,
     'ebook': BookType.EBOOK,
     'książka': BookType.PAPER,
     /* eslint-enable quote-props */
@@ -54,7 +53,7 @@ export const BOOK_TYPE_TRANSLATION_MAPPINGS = Object.freeze(
 );
 
 export const BOOK_TYPE_TITLE_REGEX = new RegExp(
-  `(?<left>.*)?[\\s.,]*(?<type>${R.keys(BOOK_TYPE_TRANSLATION_MAPPINGS).join('|')})?[\\s.,]*(?<right>.*)?`,
+  '(?<left>.*)?(?:[\\s.,(]|^)*(?<type>cd|ebook|audiobook)(?:[\\s.,)]|$)(?<right>.*)?',
   'i',
 );
 

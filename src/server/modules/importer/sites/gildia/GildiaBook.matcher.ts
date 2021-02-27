@@ -1,4 +1,4 @@
-import {fuzzyFindBookAnchor} from '@scrapper/helpers/fuzzyFindBookAnchor';
+import {fuzzyFindBookAnchor} from '@importer/kinds/scrappers/helpers/fuzzyFindBookAnchor';
 
 import {CreateBookDto} from '@server/modules/book/dto/CreateBook.dto';
 import {MatchRecordAttrs} from '@scrapper/service/shared/WebsiteScrappersGroup';

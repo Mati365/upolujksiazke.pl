@@ -120,6 +120,8 @@ const createConfig = ({
           : [
             new ESLintPlugin(
               {
+                extensions: ['ts', 'tsx', 'js'],
+                failOnError: false,
                 emitError: true,
                 cache: true,
               },
@@ -237,7 +239,7 @@ module.exports = [
     },
   ),
 
-  // gulp
+  // console
   createConfig(
     {
       target: 'node',

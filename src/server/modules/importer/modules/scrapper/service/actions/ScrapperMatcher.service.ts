@@ -38,6 +38,7 @@ export class ScrapperMatcherService {
         try {
           return await scrapper.searchRemoteRecord(attrs);
         } catch (e) {
+          console.error(e);
           logger.error(`Scrapper ${chalk.bold(scrapper.websiteURL)}: ${e}`);
           sentryService.instance.captureException(e);
           return null;

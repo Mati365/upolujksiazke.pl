@@ -7,8 +7,8 @@ import {ScrapperMetadataEntity} from '@scrapper/entity/ScrapperMetadata.entity';
 import {MetadataDbLoader} from '@db-loader/MetadataDbLoader.interface';
 import {FuzzyBookSearchService} from '@server/modules/book/FuzzyBookSearch.service';
 import {BookReviewService} from '@server/modules/book/modules/review/BookReview.service';
-import {BookDbLoaderService} from './BookDbLoader.service';
-import {ScrapperService} from '../../modules/scrapper/service';
+import {ScrapperService} from '../../modules/scrapper/service/Scrapper.service';
+import {BookDbLoaderService} from './Book.loader';
 
 @Injectable()
 export class BookReviewDbLoaderService implements MetadataDbLoader {
@@ -55,7 +55,7 @@ export class BookReviewDbLoaderService implements MetadataDbLoader {
     } = this;
 
     let review = plainToClass(CreateBookReviewDto, metadata.content);
-    let book = null; // await fuzzyBookSearchService.findAlreadyCachedReviewBook(review);
+    let book = null; // await fuzzyBookSearchService.findAlreadyCachedReviewBook(review); fixme
 
     if (!book) {
       book = await bookDbLoader.searchAndExtractToDb(

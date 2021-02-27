@@ -1,0 +1,62 @@
+{
+  "Audiobook. - Winnetou. Czerwonoskóry gentleman. Tom 1": {
+    "type": 3,
+    "title": "Winnetou. Czerwonoskóry gentleman",
+    "volume": "1",
+    "edition": null
+  },
+  "Winnetou. Czerwonoskóry gentleman. Tom 1 - Audiobook": {
+    "type": 3,
+    "title": "Winnetou. Czerwonoskóry gentleman",
+    "volume": "1",
+    "edition": null
+  },
+  "Chakra + CD": {
+    "type": 3,
+    "title": "Chakra",
+    "volume": null,
+    "edition": null
+  },
+  "CDAction": {
+    "type": 2,
+    "title": "CDAction",
+    "volume": null,
+    "edition": null
+  },
+  "Książka o gotowaniu": {
+    "type": 2,
+    "title": "Książka o gotowaniu",
+    "volume": null,
+    "edition": null
+  },
+  "Księga dżungli (audiobook) - Audiobook": {
+    "type": 3,
+    "title": "Księga dżungli",
+    "volume": null,
+    "edition": null
+  },
+  "tomek i atomek": {
+    "type": 2,
+    "title": "tomek i atomek",
+    "volume": null,
+    "edition": null
+  },
+  "tomek i atomek część 3": {
+    "type": 2,
+    "title": "tomek i atomek",
+    "volume": "3",
+    "edition": null
+  },
+  "tomek i atomek część 3 (audiobook)": {
+    "type": 3,
+    "title": "tomek i atomek",
+    "volume": "3",
+    "edition": null
+  },
+  "(audiobook) księga dżungli ((audiobook))": {
+    "type": 3,
+    "title": "księga dżungli",
+    "volume": null,
+    "edition": null
+  }
+}

@@ -1,5 +1,5 @@
 import {Injectable} from '@nestjs/common';
-import {SelectQueryBuilder} from 'typeorm';
+import {Brackets, SelectQueryBuilder} from 'typeorm';
 import * as R from 'ramda';
 
 import {BookEntity} from './Book.entity';
@@ -41,25 +41,31 @@ export class FuzzyBookSearchService {
     if (bookIds.length)
       query = query.where('book.id in (:...bookIds)', {bookIds});
     else {
-      books
-        .flatMap((book) => book.genSlugPermutations().map(
-          (slug) => [
-            'levenshtein(book.parameterizedSlug, :slug) <= :similarity',
-            {
-              similarity,
-              slug,
-            },
-          ],
-        ))
-        .forEach(([column, vars]: [string, any]) => {
-          query = query.orWhere(column, vars);
-        });
+      query.andWhere(
+        new Brackets((qb) => {
+          R.uniqBy(
+            R.nth(0),
+            books.flatMap((book) => book.genSlugPermutations().map(
+              (slug) => [
+                'levenshtein(book.parameterizedSlug, :slug) <= :similarity',
+                {
+                  similarity,
+                  slug,
+                },
+              ],
+            )),
+          )
+            .forEach(([column, vars]: [string, any]) => {
+              qb = qb.orWhere(column, vars);
+            });
 
-      if (isbns.length)
-        query = query.orWhere('release.isbn in (:...isbns)', {isbns});
+          if (isbns.length)
+            qb = qb.orWhere('release.isbn in (:...isbns)', {isbns});
 
-      if (releasesIds.length)
-        query = query.orWhere('release.id in (:...releasesIds)', {releasesIds});
+          if (releasesIds.length)
+            qb = qb.orWhere('release.id in (:...releasesIds)', {releasesIds});
+        }),
+      );
 
       if (volumes.length) {
         query = query.andWhere(

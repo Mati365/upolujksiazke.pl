@@ -45,6 +45,9 @@ export function trimBorderSpecialCharacters(
     startOutput = (startOutput || '') + char;
   }
 
+  if (startOutput === null)
+    return null;
+
   let endOutput: string = null;
   for (let i = startOutput.length - 1; i >= 0; --i) {
     const char = startOutput.charAt(i);

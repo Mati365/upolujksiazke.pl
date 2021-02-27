@@ -58,5 +58,65 @@
     "title": "księga dżungli",
     "volume": "1",
     "edition": null
+  },
+  "Wiedźmin. Tom 3. Klątwa kruków": {
+    "type": 2,
+    "title": "Wiedźmin: Klątwa kruków",
+    "volume": "3",
+    "edition": null
+  },
+  "Kwiat paproci. Tom 1. Szeptucha": {
+    "type": 2,
+    "title": "Kwiat paproci: Szeptucha",
+    "volume": "1",
+    "edition": null
+  },
+  "W drodze do CCNA. Część II": {
+    "type": 2,
+    "title": "W drodze do CCNA",
+    "volume": "2",
+    "edition": null
+  },
+  "Władca Pierścieni Tom 1: Bractwo Pierścienia": {
+    "type": 2,
+    "title": "Władca Pierścieni: Bractwo Pierścienia",
+    "volume": "1",
+    "edition": null
+  },
+  "Pan Lodowego Ogrodu T.12 w.2": {
+    "type": 2,
+    "title": "Pan Lodowego Ogrodu",
+    "volume": "12",
+    "edition": "2"
+  },
+  "Bizancjum w średniowieczu (wydanie 2)": {
+    "type": 2,
+    "title": "Bizancjum w średniowieczu",
+    "volume": "1",
+    "edition": "2"
+  },
+  "Najlepiej w życiu ma twój kot. Listy": {
+    "type": 2,
+    "title": "Najlepiej w życiu ma twój kot. Listy",
+    "volume": "1",
+    "edition": null
+  },
+  "Więzień labiryntu T.2 Próby ognia w.2014": {
+    "type": 2,
+    "title": "Więzień labiryntu: Próby ognia",
+    "volume": "2",
+    "edition": "2014"
+  },
+  "Wiedźmin - 2 - ralala jakaś": {
+    "type":  2,
+    "volume": "2",
+    "title": "Wiedźmin: ralala jakaś",
+    "edition": null
+  },
+  "Niepowszedni. Księga 2. W potrzasku": {
+    "type": 2,
+    "volume": "2",
+    "title": "Niepowszedni: W potrzasku",
+    "edition": null
   }
 }

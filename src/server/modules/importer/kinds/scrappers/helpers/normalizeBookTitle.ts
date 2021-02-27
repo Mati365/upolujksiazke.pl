@@ -1,6 +1,8 @@
 import * as R from 'ramda';
 
+import {safeToString} from '@shared/helpers';
 import {trimBorderSpecialCharacters} from '@server/common/helpers/text/trimBorderSpecialCharacters';
+import {parseIfRomanNumber} from '@server/common/helpers/text';
 
 import {BookType} from '@server/modules/book/modules/release/BookRelease.entity';
 import {CreateBookDto} from '@server/modules/book/dto/CreateBook.dto';
@@ -63,24 +65,49 @@ export function extractBookPostifxes(name: string): {
   if (!name)
     return null;
 
-  const result = name.match(/(?<title>.*)(?:[\s.,]+(?<type>tom|wydanie|część)(?:[\s.,]+|$)(?<part>[\w]+))/i);
+  // check separator form
+  let result = name.match(/(?<title>.*)(?:- (?<part>\d+) -)\s*(?<rest>.*)/i);
+
+  // old form
+  result ||= name.match(/(?<title>.*)(?:Księga (?<part>\d+))[\s,.]*(?<rest>.*)/i);
+
+  // check long form
+  result ||= name.match(
+    /(?<title>.*)(?:[\s.,(]+(?<type>tom|wydanie|część)(?:[\s.,)]+|$)(?<part>[\w]+))[,.\s:]*(?<rest>.*)?/i,
+  );
+
+  // check shortcut form
+  result ||= name.match(/(?<title>.*)(?:[\s.,]+(?<type>t|w)\.\s*(?<part>\d+))[,.\s:]*(?<rest>.*)/i);
+
   if (!result) {
     return {
       title: trimBorderSpecialCharacters(name),
-      volume: DEFAULT_BOOK_VOLUME_NAME,
+      volume: null,
       edition: null,
     };
   }
 
-  const {groups: {title, type, part}} = result;
-  const editionType = type.toLowerCase() === 'wydanie';
+  const {groups: {title, type, part, rest}} = result;
+  const lowerType = type?.toLowerCase();
+  const editionType = lowerType === 'wydanie' || lowerType === 'w';
+
+  let volume: string = null;
+  if (!editionType && part)
+    volume = safeToString(parseIfRomanNumber(part));
+  else
+    volume = null;
 
   return R.mapObjIndexed(
     (item) => item?.trim() || null,
     {
-      title: trimBorderSpecialCharacters(title),
-      volume: (!editionType && part) || DEFAULT_BOOK_VOLUME_NAME, // todo: convert IX to 9 etc
+      volume,
       edition: editionType ? part : null,
+      title: (
+        [title, rest]
+          .filter(Boolean)
+          .map((str) => trimBorderSpecialCharacters(str))
+          .join(': ')
+      ),
     },
   );
 }
@@ -99,9 +126,15 @@ export function normalizeBookTitle(name: string): NormalizedBookTitleInfo {
     name.replace(/[ ]{2,}/g, ' '),
   );
 
+  // fixme: sucky performance
+  const firstPass = extractBookPostifxes(title);
+  const secondPass = extractBookPostifxes(firstPass.title);
+
   return {
     type,
-    ...extractBookPostifxes(title),
+    edition: firstPass.edition ?? secondPass.edition,
+    volume: firstPass.volume ?? secondPass.volume ?? DEFAULT_BOOK_VOLUME_NAME,
+    title: secondPass.title,
   };
 }
 

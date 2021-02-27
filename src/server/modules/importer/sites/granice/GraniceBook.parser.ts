@@ -25,12 +25,15 @@ export class GraniceBookParser
    */
   parseAvailability({$, url}: AsyncURLParseResult) {
     const remoteId = $('#book_id.detailsbig').attr('book-id');
+    const rating = $('#book_id [itemprop="aggregateRating"]');
 
     return Promise.resolve(
       {
         result: [
           new CreateBookAvailabilityDto(
             {
+              avgRating: Number.parseFloat(rating.find('rating[itemprop="ratingValue"]')?.text()) * 2 || null,
+              totalRatings: Number.parseFloat(rating.find('rating[itemprop="ratingCount"]')?.text()) || null,
               remoteId,
               url,
             },

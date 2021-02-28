@@ -50,7 +50,7 @@ export class MatrasBookMatcher extends WebsiteScrapperMatcher<CreateBookDto, Boo
 
           return {
             title: $title.find('.title h2').text(),
-            author: $title.find('.title h3').text(),
+            author: $title.find('.title h3').text().split(','),
           };
         },
       },

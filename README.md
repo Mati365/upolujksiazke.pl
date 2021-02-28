@@ -55,12 +55,15 @@ OpenSource book reviews aggregator, something like Metacritic / Digg for books. 
 - [x] Hrosskar.blogspot.com
 - [x] Madbooks.pl
 - [x] Gandalf.com.pl
-- [ ] ibuk.pl
-- [ ] LitRes.pl
-- [ ] audible.com
-- [ ] tantis.pl
+- [x] ibuk.pl
+- [ ] Swiatksiazki.pl
+- [ ] wbibliotece.pl
 - [ ] Woblink.com
+- [ ] Wolnelektury.pl
+- [ ] LitRes.pl
+- [ ] tantis.pl
 - [ ] Znak.com.pl
+- [ ] audible.com
 - [ ] Chodnikliteracki.pl
 - [ ] czeskieklimaty.pl
 - [ ] paskarz.pl
@@ -71,11 +74,8 @@ OpenSource book reviews aggregator, something like Metacritic / Digg for books. 
 - [ ] eczytanie-eksiazki.blogspot.com (Blog Post)
 - [ ] Tantis.pl
 - [ ] Gandalf.com
-- [ ] Wolnelektury.pl
 - [ ] Booklips.pl
-- [ ] Swiatksiazki.pl
 - [ ] Allegro.pl
-- [ ] wbibliotece.pl
 - [ ] Cyfroteka.pl
 - [ ] Amazon.com
 - [ ] Nieprzeczytane.pl

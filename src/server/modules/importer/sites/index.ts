@@ -12,3 +12,4 @@ export * from './aros';
 export * from './publio';
 export * from './hrosskar';
 export * from './gandalf';
+export * from './ibuk';

@@ -2,6 +2,9 @@ import {Injectable, Logger} from '@nestjs/common';
 import {plainToClass} from 'class-transformer';
 import * as R from 'ramda';
 
+import {isDevMode} from '@shared/helpers';
+
+import {BookEntity} from '@server/modules/book/Book.entity';
 import {CreateBookReviewDto} from '@server/modules/book/modules/review/dto/CreateBookReview.dto';
 import {ScrapperMetadataEntity} from '@scrapper/entity/ScrapperMetadata.entity';
 import {MetadataDbLoader} from '@db-loader/MetadataDbLoader.interface';
@@ -66,7 +69,12 @@ export class BookReviewDbLoaderService implements MetadataDbLoader {
     );
 
     // lookup in cache
-    let book = await fuzzyBookSearchService.findAlreadyCachedReviewBook(review);
+    let book: BookEntity = (
+      isDevMode()
+        ? null
+        : await fuzzyBookSearchService.findAlreadyCachedReviewBook(review)
+    );
+
     if (!book) {
       book = await bookDbLoader.searchAndExtractToDb(
         review.book,

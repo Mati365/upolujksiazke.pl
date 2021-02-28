@@ -13,7 +13,7 @@ type BookSimilarityFields = {
   author?: CanBeArray<string>,
 };
 
-export const orderAuthorField = (author: string) => {
+export function orderAuthorField(author: string) {
   if (!author)
     return null;
 
@@ -25,7 +25,7 @@ export const orderAuthorField = (author: string) => {
     R.identity,
     normalized.toLowerCase().split(' '),
   ).join(' ');
-};
+}
 
 /**
  * Calculate similarity between books based on titles

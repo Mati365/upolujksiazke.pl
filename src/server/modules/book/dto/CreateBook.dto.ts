@@ -18,6 +18,8 @@ import {CreateBookSeriesDto} from '../modules/series/dto/CreateBookSeries.dto';
 import {CreateBookPrizeDto} from '../modules/prize/dto/CreateBookPrize.dto';
 import {CreateBookKindDto} from '../modules/kind/dto/CreateBookKind.dto';
 
+import {reorderAuthorName} from '../modules/author/BookAuthor.entity';
+
 export class CreateBookDto {
   @IsOptional()
   @IsNumber()
@@ -110,7 +112,9 @@ export class CreateBookDto {
     const {defaultTitle, title, authors, volume} = this;
     const str = [
       defaultTitle ?? title,
-      author || R.sortBy(R.prop('name'), authors)[0]?.name || 'anonym',
+      reorderAuthorName(
+        author || R.sortBy(R.prop('name'), authors)[0]?.name || 'anonym',
+      ),
       volume
         ? volume.name
         : DEFAULT_BOOK_VOLUME_NAME,

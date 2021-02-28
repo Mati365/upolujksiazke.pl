@@ -7,6 +7,7 @@ import {extractHostname} from '@shared/helpers';
 import {RemoteWebsiteEntity} from '@server/modules/remote/entity';
 import {WykopAPI} from '@importer/sites/wykop/api/WykopAPI';
 import {
+  IbukScrappersGroup,
   GraniceScrappersGroup,
   MatrasScrappersGroup,
   GildiaScrappersGroup,
@@ -17,9 +18,9 @@ import {
   ArosScrappersGroup,
   PublioScrappersGroup,
   GandalfScrappersGroup,
-  WykopScrappersGroup,
   HrosskarScrappersGroup,
   MadBooksScrappersGroup,
+  WykopScrappersGroup,
 } from '@importer/sites';
 
 import {WebsiteScrappersGroup} from './shared';
@@ -47,6 +48,7 @@ export class ScrapperService {
       new MadBooksScrappersGroup(PARSERS_ENV.madbooks),
       new HrosskarScrappersGroup(PARSERS_ENV.hrosskar),
       new GandalfScrappersGroup(PARSERS_ENV.gandalf),
+      new IbukScrappersGroup(PARSERS_ENV.ibuk),
       new WykopScrappersGroup(
         {
           homepageURL: PARSERS_ENV.wykop.homepageURL,

@@ -15,30 +15,35 @@ import {CreateImageAttachmentDto} from '@server/modules/attachment/dto';
 import {CreateBookAvailabilityDto} from '@server/modules/book/modules/availability/dto/CreateBookAvailability.dto';
 
 import {
-  BINDING_TRANSLATION_MAPPINGS,
+  LANGUAGE_TRANSLATION_MAPPINGS,
   BookAvailabilityParser,
 } from '@importer/kinds/scrappers/Book.scrapper';
 
+import {BookType} from '@server/modules/book/modules/release/BookRelease.entity';
 import {AsyncURLParseResult} from '@server/common/helpers/fetchAsyncHTML';
 import {WebsiteScrapperParser} from '../../modules/scrapper/service/shared';
-import {BonitoBookParser} from '../bonito/BonitoBook.parser';
 
-export class ArosBookParser
+export class IbukBookParser
   extends WebsiteScrapperParser<CreateBookDto>
   implements BookAvailabilityParser<AsyncURLParseResult> {
   /**
    * @inheritdoc
    */
   parseAvailability({$, url}: AsyncURLParseResult) {
+    const $section = $('#pageContent section.item');
+    const $content = $section.find('.row__stars .col-xs-12.pad-left.pad-right');
+    const $priceSidebar = $section.find('.wrapper-max .row > .pad-right');
+
     return Promise.resolve(
       {
         result: [
           new CreateBookAvailabilityDto(
             {
-              remoteId: $('input[type="hidden"][name="dodaj"]').attr('value'),
-              price: normalizePrice($('[itemprop="offerDetails"] [itemprop="price"]').attr('content'))?.price,
-              avgRating: (Number.parseFloat($('[itemprop="ratingValue"]').text()) / 6) * 10 || null,
-              totalRatings: Number.parseInt($('[itemprop="ratingCount"]').text(), 10) || null,
+              totalRatings: +$content.find('.item__how-many').text().match(/(\d+)/)?.[1] || null,
+              avgRating: +$content.find('.rating-value.book-stars').val() || null,
+              remoteId: $content.find('[data-bookid]:first').data('bookid'),
+              price: normalizePrice($priceSidebar.find('.item-accept__new > span').text())?.price,
+              prevPrice: normalizePrice($priceSidebar.find('.item-accept__old > span').text())?.price,
               url,
             },
           ),
@@ -56,38 +61,42 @@ export class ArosBookParser
       return null;
 
     const {$} = bookPage;
-    const basicProps = extractTableRowsMap($, 'span[itemprop="offerDetails"] > table > tbody > tr');
-    if (!basicProps['number isbn'])
+    const $section = $('#pageContent section.item');
+    const $content = $section.find('.row__stars .col-xs-12.pad-left.pad-right');
+    const basicProps = extractTableRowsMap(
+      $,
+      $('#pageContent section.book-desc .col-xs-12 .table > tbody > tr').toArray(),
+    );
+
+    if (!basicProps['isbn-13'])
       return null;
 
-    const title = $('h1').text();
-    const authors = basicProps['autor']?.split(',').map(
-      (name) => new CreateBookAuthorDto(
+    const authors = $content.find('.item__author[itemtype="https://schema.org/Person"]').toArray().map(
+      (author) => new CreateBookAuthorDto(
         {
-          name: normalizeParsedText(name),
+          name: normalizeParsedText($(author).text()),
         },
       ),
     );
 
     const release = new CreateBookReleaseDto(
       {
-        title,
-        lang: Language.PL,
-        description: normalizeParsedText($('[itemprop="description"]').text()),
+        type: BookType.EBOOK,
+        title: $content.find('h1').text(),
+        lang: LANGUAGE_TRANSLATION_MAPPINGS[basicProps['język publikacji']?.toLowerCase()] ?? Language.PL,
+        description: normalizeParsedText($('#js_desc_text + p').text()),
         totalPages: +basicProps['liczba stron'] || null,
-        format: basicProps['format'],
-        publishDate: basicProps['data premiery'],
-        isbn: normalizeISBN(basicProps['numer isbn']),
-        binding: BINDING_TRANSLATION_MAPPINGS[basicProps['oprawa']?.toLowerCase()],
+        isbn: normalizeISBN(basicProps['isbn-13']),
+        edition: normalizeParsedText(basicProps['numer wydania'] || basicProps['wydanie']),
         availability: (await this.parseAvailability(bookPage)).result,
         publisher: new CreateBookPublisherDto(
           {
-            name: basicProps['wydawnictwo'],
+            name: normalizeParsedText($content.find('.item__publisher[itemprop="publisher"]').text()),
           },
         ),
         cover: new CreateImageAttachmentDto(
           {
-            originalUrl: BonitoBookParser.normalizeImageURL($('a[title="Powiększ"] img').attr('src')),
+            originalUrl: $section.find('.item__cover .item__img .img-responsive[itemprop="image"]').attr('src'),
           },
         ),
       },
@@ -96,12 +105,13 @@ export class ArosBookParser
     return new CreateBookDto(
       {
         authors,
-        defaultTitle: title,
+        defaultTitle: release.title,
         releases: [
           release,
         ],
+        tags: $('#js_desc_tags li').toArray().map((item) => $(item).text()),
         categories: (
-          $('td[style="height: 26px; padding-left: 7px;"] a:not(:first-child):not(:last-child):gt(0)')
+          $('#js_desc_path > ul.book-desc__tag-path > li > a')
             .toArray()
             .map(
               (name) => new CreateBookCategoryDto(

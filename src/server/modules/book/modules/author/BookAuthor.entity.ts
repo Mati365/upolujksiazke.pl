@@ -1,3 +1,4 @@
+import * as R from 'ramda';
 import {
   Entity, Column, ManyToMany,
   BeforeInsert, BeforeUpdate,
@@ -5,8 +6,13 @@ import {
 
 import {parameterize} from '@shared/helpers/parameterize';
 
-import {DatedRecordEntity} from '../../../database/DatedRecord.entity';
+import {DatedRecordEntity} from '@server/modules/database/DatedRecord.entity';
 import {BookEntity} from '../../Book.entity';
+
+export const reorderAuthorName = (name: string) => R.sortBy(
+  R.identity,
+  name.split(' '),
+).join(' ');
 
 @Entity(
   {
@@ -40,6 +46,6 @@ export class BookAuthorEntity extends DatedRecordEntity {
       this.name = name.trim();
 
     if (!parameterizedName && name)
-      this.parameterizedName = parameterize(name);
+      this.parameterizedName = parameterize(reorderAuthorName(name));
   }
 }

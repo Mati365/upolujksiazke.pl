@@ -36,7 +36,7 @@ OpenSource book reviews aggregator, something like Metacritic / Digg for books. 
 - [ ] Fb top offers bot post publish
 - [ ] product basket, compare multiple books prices in table and summarize per shop basket price
 - [ ] RSS integration
-- [ ] E-Book readers price section
+- [ ] E-Book readers price section and reviews
 
 ## Available websites
 

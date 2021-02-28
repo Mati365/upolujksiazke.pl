@@ -37,6 +37,7 @@ OpenSource book reviews aggregator, something like Metacritic / Digg for books. 
 - [ ] product basket, compare multiple books prices in table and summarize per shop basket price
 - [ ] RSS integration
 - [ ] E-Book readers price section and reviews
+- [ ] Section: Top Books/Reviews from Wykop.pl 
 
 ## Available websites
 

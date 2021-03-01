@@ -3,120 +3,175 @@
     "type": 3,
     "title": "Winnetou. Czerwonoskóry gentleman",
     "volume": "1",
-    "edition": null
+    "edition": null,
+    "series": null
   },
   "Winnetou. Czerwonoskóry gentleman. Tom 1 - Audiobook": {
     "type": 3,
     "title": "Winnetou. Czerwonoskóry gentleman",
     "volume": "1",
-    "edition": null
+    "edition": null,
+    "series": null
   },
   "Chakra + CD": {
     "type": 3,
     "title": "Chakra",
     "volume": "1",
-    "edition": null
+    "edition": null,
+    "series": null
   },
   "CDAction": {
     "type": 2,
     "title": "CDAction",
     "volume": "1",
-    "edition": null
+    "edition": null,
+    "series": null
   },
   "Książka o gotowaniu": {
     "type": 2,
     "title": "Książka o gotowaniu",
     "volume": "1",
-    "edition": null
+    "edition": null,
+    "series": null
   },
   "Księga dżungli (audiobook) - Audiobook": {
     "type": 3,
     "title": "Księga dżungli",
     "volume": "1",
-    "edition": null
+    "edition": null,
+    "series": null
   },
   "tomek i atomek": {
     "type": 2,
     "title": "tomek i atomek",
     "volume": "1",
-    "edition": null
+    "edition": null,
+    "series": null
   },
   "tomek i atomek część 3": {
     "type": 2,
     "title": "tomek i atomek",
     "volume": "3",
-    "edition": null
+    "edition": null,
+    "series": null
   },
   "tomek i atomek część 3 (audiobook)": {
     "type": 3,
     "title": "tomek i atomek",
     "volume": "3",
-    "edition": null
+    "edition": null,
+    "series": null
   },
   "(audiobook) księga dżungli ((audiobook))": {
     "type": 3,
     "title": "księga dżungli",
     "volume": "1",
-    "edition": null
+    "edition": null,
+    "series": null
   },
   "Wiedźmin. Tom 3. Klątwa kruków": {
     "type": 2,
     "title": "Wiedźmin: Klątwa kruków",
     "volume": "3",
-    "edition": null
+    "edition": null,
+    "series": null
   },
   "Kwiat paproci. Tom 1. Szeptucha": {
     "type": 2,
     "title": "Kwiat paproci: Szeptucha",
     "volume": "1",
-    "edition": null
+    "edition": null,
+    "series": null
   },
   "W drodze do CCNA. Część II": {
     "type": 2,
     "title": "W drodze do CCNA",
     "volume": "2",
-    "edition": null
+    "edition": null,
+    "series": null
   },
   "Władca Pierścieni Tom 1: Bractwo Pierścienia": {
     "type": 2,
     "title": "Władca Pierścieni: Bractwo Pierścienia",
     "volume": "1",
-    "edition": null
+    "edition": null,
+    "series": null
   },
   "Pan Lodowego Ogrodu T.12 w.2": {
     "type": 2,
     "title": "Pan Lodowego Ogrodu",
     "volume": "12",
-    "edition": "2"
+    "edition": "2",
+    "series": null
   },
   "Bizancjum w średniowieczu (wydanie 2)": {
     "type": 2,
     "title": "Bizancjum w średniowieczu",
     "volume": "1",
-    "edition": "2"
+    "edition": "2",
+    "series": null
   },
   "Najlepiej w życiu ma twój kot. Listy": {
     "type": 2,
     "title": "Najlepiej w życiu ma twój kot. Listy",
     "volume": "1",
-    "edition": null
+    "edition": null,
+    "series": null
   },
   "Więzień labiryntu T.2 Próby ognia w.2014": {
     "type": 2,
     "title": "Więzień labiryntu: Próby ognia",
     "volume": "2",
-    "edition": "2014"
+    "edition": "2014",
+    "series": null
   },
   "Wiedźmin - 2 - ralala jakaś": {
     "type":  2,
     "volume": "2",
     "title": "Wiedźmin: ralala jakaś",
-    "edition": null
+    "edition": null,
+    "series": null
   },
   "Niepowszedni. Księga 2. W potrzasku": {
     "type": 2,
     "volume": "2",
     "title": "Niepowszedni: W potrzasku",
+    "edition": null,
+    "series": null
+  },
+  "Cykl krzyżacki (#3). Gniewny pomruk burzy": {
+    "type": 2,
+    "edition": null,
+    "title": "Gniewny pomruk burzy",
+    "volume": "3",
+    "series": "krzyżacki"
+  },
+  "Cykl": {
+    "type": 2,
+    "edition": null,
+    "title": "Cykl",
+    "volume": "1",
+    "series": null
+  },
+  "Mgła cykl meteo 4": {
+    "type": 2,
+    "title": "Mgła",
+    "edition": null,
+    "series": "meteo",
+    "volume": "4"
+  },
+  "soból i panna. Cykl myśliwski": {
+    "type": 2,
+    "title": "soból i panna",
+    "series": "myśliwski",
+    "volume": "1",
     "edition": null
+  },
+  "Okko 10 Cykl wody": {
+    "type": 2,
+    "title": "Okko",
+    "volume": "10",
+    "edition": null,
+    "series": "wody"
   }
 }

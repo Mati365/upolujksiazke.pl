@@ -20,6 +20,7 @@ export type NormalizedBookTitleInfo = {
   title: string,
   volume: string,
   edition: string,
+  series?: string,
   type: BookType,
 };
 
@@ -79,6 +80,9 @@ export function extractBookPostifxes(name: string): {
   // check shortcut form
   result ||= name.match(/(?<title>.*)(?:[\s.,]+(?<type>t|w)\.\s*(?<part>\d+))[,.\s:]*(?<rest>.*)/i);
 
+  // hash number
+  result ||= name.match(/(?<title>.*)(?:[\s.,(]+(?<type>#)\s*(?<part>\d+))[,.\s:)]*(?<rest>.*)/i);
+
   if (!result) {
     return {
       title: trimBorderSpecialCharacters(name),
@@ -113,6 +117,38 @@ export function extractBookPostifxes(name: string): {
 }
 
 /**
+ * Picks series from title
+ *
+ * @export
+ * @param {string} name
+ */
+export function extractBookSeries(name: string) {
+  // ending with keyword and has number before
+  let result = name.match(/(?<title>.+)\s(?<volume>\d+)\.?\s*Cykl.\s*(?<series>[^\d]+)$/i);
+
+  // ending with keyword
+  result ||= name.match(/(?<title>.+)\.?\s*Cykl.\s*(?<series>[^\d]+)(?:\s*(?<volume>\d+)?|$)/i);
+
+  // starting with keyword
+  result ||= name.match(/^Cykl.\s*(?<series>[^\d:.]+)(?:\s*(?<volume>\d+)?)?[:.]\s*(?<title>.+)\s*$/i);
+
+  if (!result) {
+    return {
+      title: name,
+      series: null,
+      volume: null,
+    };
+  }
+
+  const {groups: {title, series, volume}} = result;
+  return {
+    title: trimBorderSpecialCharacters(title),
+    series: series?.trim(),
+    volume,
+  };
+}
+
+/**
  * Extract all useful info from title
  *
  * @param {string} name
@@ -129,9 +165,21 @@ export function normalizeBookTitle(name: string): NormalizedBookTitleInfo {
   // fixme: sucky performance
   const firstPass = extractBookPostifxes(title);
   const secondPass = extractBookPostifxes(firstPass.title);
+  let series: string = null;
+
+  if (secondPass.title.match(/cykl/i)) {
+    const thirdPass = extractBookSeries(secondPass.title);
+
+    if (thirdPass) {
+      series = thirdPass.series;
+      secondPass.title = thirdPass.title;
+      secondPass.volume ??= thirdPass.volume;
+    }
+  }
 
   return {
     type,
+    series,
     edition: firstPass.edition ?? secondPass.edition,
     volume: firstPass.volume ?? secondPass.volume ?? DEFAULT_BOOK_VOLUME_NAME,
     title: secondPass.title,

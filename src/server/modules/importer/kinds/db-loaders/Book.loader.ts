@@ -272,6 +272,7 @@ export class BookDbLoaderService implements MetadataDbLoader {
         return new CreateBookReleaseDto(
           {
             ...release,
+            description: release.description?.replace(/(&quot;|"{2,})/g, '"'),
             publisher: publisher && new CreateBookPublisherDto(
               {
                 ...publisher,

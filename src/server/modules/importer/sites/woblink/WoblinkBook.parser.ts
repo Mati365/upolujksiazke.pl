@@ -18,12 +18,13 @@ import {CreateImageAttachmentDto} from '@server/modules/attachment/dto';
 import {CreateBookAvailabilityDto} from '@server/modules/book/modules/availability/dto/CreateBookAvailability.dto';
 
 import {
-  BINDING_TRANSLATION_MAPPINGS,
   BookAvailabilityParser,
+  LANGUAGE_TRANSLATION_MAPPINGS,
+  BINDING_TRANSLATION_MAPPINGS,
   BOOK_TYPE_TRANSLATION_MAPPINGS,
 } from '@importer/kinds/scrappers/Book.scrapper';
 
-import {BookType} from '@server/modules/book/modules/release/BookRelease.entity';
+import {BookProtection, BookType} from '@server/modules/book/modules/release/BookRelease.entity';
 import {AsyncURLParseResult} from '@server/common/helpers/fetchAsyncHTML';
 import {WebsiteScrapperParser} from '../../modules/scrapper/service/shared';
 
@@ -41,7 +42,7 @@ export class WoblinkBookParser
     } = extractJsonLD($);
 
     const {aggregateRating, offers} = bookSchema;
-    const remoteId = url.match(/(\d+)$/)[1];
+    const remoteId = url.match(/-([^-]+)$/)[1];
 
     return Promise.resolve(
       {
@@ -95,9 +96,17 @@ export class WoblinkBookParser
       {
         isbn,
         availability,
+        protection: (
+          tableProps['typ zabezpieczenia'] === 'Watermak'
+            ? BookProtection.WATERMARK
+            : null
+        ),
+        lang: LANGUAGE_TRANSLATION_MAPPINGS[tableProps['język ebooka'] || tableProps['język audiobooka']],
         type: BOOK_TYPE_TRANSLATION_MAPPINGS[type.toLowerCase()] ?? BookType.EBOOK,
         binding: binding && BINDING_TRANSLATION_MAPPINGS[binding.toLowerCase()],
         title: bookSchema['name'],
+        format: tableProps['format'],
+        recordingLength: WoblinkBookParser.extractRecordingLength(tableProps['czas słuchania']),
         description: normalizeParsedText(bookSchema['description']),
         totalPages: +tableProps['liczba stron'] || null,
         publishDate: bookSchema['releaseDate'],
@@ -136,4 +145,28 @@ export class WoblinkBookParser
     );
   }
   /* eslint-enable @typescript-eslint/dot-notation */
+
+  /**
+   * Transforms duration length title into seconds
+   *
+   * @static
+   * @param {string} text
+   * @returns
+   * @memberof WoblinkBookParser
+   */
+  static extractRecordingLength(text: string) {
+    if (!text)
+      return null;
+
+    const {
+      groups: {
+        hours,
+        minutes,
+        seconds,
+      },
+    // eslint-disable-next-line max-len
+    } = text.match(/(?:(?<hours>[.\d]+)\s*godzin)?\s*(?:(?<minutes>[.\d]+)\s*minut)?\s*(?:(?<seconds>[.\d]+)\s*sekund)?/i);
+
+    return (+hours || 0) * 3600 + (+minutes || 0) * 60 + (+seconds);
+  }
 }

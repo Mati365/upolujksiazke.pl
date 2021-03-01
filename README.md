@@ -38,6 +38,7 @@ OpenSource book reviews aggregator, something like Metacritic / Digg for books. 
 - [ ] RSS integration
 - [ ] E-Book readers price section and reviews
 - [ ] Section: Top Books/Reviews from Wykop.pl 
+- [ ] Machine learning for book (review) picking
 
 ## Available websites
 

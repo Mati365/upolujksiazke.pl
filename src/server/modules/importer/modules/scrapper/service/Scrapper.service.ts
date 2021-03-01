@@ -20,6 +20,7 @@ import {
   GandalfScrappersGroup,
   HrosskarScrappersGroup,
   MadBooksScrappersGroup,
+  WoblinkScrappersGroup,
   WykopScrappersGroup,
 } from '@importer/sites';
 
@@ -49,6 +50,7 @@ export class ScrapperService {
       new HrosskarScrappersGroup(PARSERS_ENV.hrosskar),
       new GandalfScrappersGroup(PARSERS_ENV.gandalf),
       new IbukScrappersGroup(PARSERS_ENV.ibuk),
+      new WoblinkScrappersGroup(PARSERS_ENV.woblink),
       new WykopScrappersGroup(
         {
           homepageURL: PARSERS_ENV.wykop.homepageURL,

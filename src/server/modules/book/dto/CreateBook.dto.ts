@@ -112,6 +112,7 @@ export class CreateBookDto {
     const {defaultTitle, title, authors, volume} = this;
     const str = [
       defaultTitle ?? title,
+      // do not reorder by name - primary author should be always first!
       reorderAuthorName(
         author || R.sortBy(R.prop('name'), authors)[0]?.name || 'anonym',
       ),

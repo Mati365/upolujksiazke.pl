@@ -7,6 +7,14 @@ import {WykopAPIAuthParams} from '@sites/wykop/api/WykopAPI';
 /* eslint-disable import/no-default-export */
 require('dotenv').config();
 
+type DefaultConfigBookShopNames = (
+  'literaturaGildia' | 'gildia' | 'matras'
+  | 'woblink' | 'bonito' | 'granice'
+  | 'skupszop' | 'dadada' | 'aros'
+  | 'publio' | 'hrosskar' | 'madbooks'
+  | 'gandalf' | 'ibuk' | 'woblink'
+);
+
 export type AppEnv = Partial<{
   server: {
     instances: number,
@@ -38,20 +46,7 @@ export type AppEnv = Partial<{
       localPath: string,
     },
     sentry: Omit<SentryOptions, 'integrations'>,
-    parsers: {
-      literaturaGildia: BookShopUrlsConfig,
-      gildia: BookShopUrlsConfig,
-      matras: BookShopUrlsConfig,
-      bonito: BookShopUrlsConfig,
-      granice: BookShopUrlsConfig,
-      skupszop: BookShopUrlsConfig,
-      dadada: BookShopUrlsConfig,
-      aros: BookShopUrlsConfig,
-      publio: BookShopUrlsConfig,
-      hrosskar: BookShopUrlsConfig,
-      madbooks: BookShopUrlsConfig,
-      gandalf: BookShopUrlsConfig,
-      ibuk: BookShopUrlsConfig,
+    parsers: Record<DefaultConfigBookShopNames, BookShopUrlsConfig> & {
       wykop: {
         homepageURL: string,
         authConfig: WykopAPIAuthParams,
@@ -176,6 +171,10 @@ export const GLOBAL_CONFIG: Record<string, AppEnv> = {
         gildia: {
           homepageURL: 'https://www.gildia.pl/',
           searchURL: 'https://www.gildia.pl/szukaj',
+        },
+        woblink: {
+          homepageURL: 'https://woblink.com',
+          searchURL: 'https://woblink.com/katalog/al',
         },
         matras: {
           homepageURL: 'https://www.matras.pl',

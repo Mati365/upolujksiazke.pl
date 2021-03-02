@@ -22,6 +22,7 @@ import {
   MadBooksScrappersGroup,
   WoblinkScrappersGroup,
   WykopScrappersGroup,
+  TaniaksiazkaScrappersGroup,
 } from '@importer/sites';
 
 import {WebsiteScrappersGroup} from './shared';
@@ -51,6 +52,7 @@ export class ScrapperService {
       new GandalfScrappersGroup(PARSERS_ENV.gandalf),
       new IbukScrappersGroup(PARSERS_ENV.ibuk),
       new WoblinkScrappersGroup(PARSERS_ENV.woblink),
+      new TaniaksiazkaScrappersGroup(PARSERS_ENV.taniaksiazka),
       new WykopScrappersGroup(
         {
           homepageURL: PARSERS_ENV.wykop.homepageURL,

@@ -15,7 +15,13 @@ import {pickLongestArrayItem} from '@shared/helpers';
 import {BookService} from '@server/modules/book/Book.service';
 import {BookPublisherService} from '@server/modules/book/modules/publisher/BookPublisher.service';
 
-import {BookEntity, CreateBookDto, FuzzyBookSearchService} from '@server/modules/book';
+import {
+  BookEntity,
+  CreateBookDto,
+  FuzzyBookSearchService,
+} from '@server/modules/book';
+
+import {CreateBookSeriesDto} from '@server/modules/book/modules/series/dto/CreateBookSeries.dto';
 import {CreateBookPublisherDto} from '@server/modules/book/modules/publisher/dto/BookPublisher.dto';
 import {CreateBookReleaseDto} from '@server/modules/book/modules/release/dto/CreateBookRelease.dto';
 import {CreateBookAvailabilityDto} from '@server/modules/book/modules/availability/dto/CreateBookAvailability.dto';
@@ -78,7 +84,7 @@ export class BookDbLoaderService implements MetadataDbLoader {
       return null;
     }
 
-    return this.extractBookVolumesToDb(
+    return this.parseTitlesAndExtractBooksToDb(
       [
         book,
       ],
@@ -131,7 +137,7 @@ export class BookDbLoaderService implements MetadataDbLoader {
       return null;
     }
 
-    const extractedBooks = await this.extractBookVolumesToDb(matchedBooks, attrs);
+    const extractedBooks = await this.parseTitlesAndExtractBooksToDb(matchedBooks, attrs);
     const searchSlug = book.genSlug();
 
     return R.reduce(
@@ -164,24 +170,41 @@ export class BookDbLoaderService implements MetadataDbLoader {
    * @param {BookExtractorAttrs} [attrs={}]
    * @memberof BookDbLoaderService
    */
-  async extractBookVolumesToDb(books: CreateBookDto[], attrs: BookExtractorAttrs = {}) {
+  async parseTitlesAndExtractBooksToDb(books: CreateBookDto[], attrs: BookExtractorAttrs = {}) {
     // extract volume info from all reelases titles, assign type based on title and edition
     const normalizedReleasesBooks = books.map((book) => ({
       book,
       volumesReleases: book.releases.map(
-        (release): [string, CreateBookReleaseDto] => {
-          if (R.isNil(release.title))
-            return [DEFAULT_BOOK_VOLUME_NAME, release];
+        (release): [{volume: string, series: string}, CreateBookReleaseDto] => {
+          if (R.isNil(release.title)) {
+            return [
+              {
+                volume: DEFAULT_BOOK_VOLUME_NAME,
+                series: null,
+              },
+              release,
+            ];
+          }
 
-          const {edition, title, type, volume} = normalizeBookTitle(release.title);
-          return [volume, new CreateBookReleaseDto(
+          const {
+            edition, title, type,
+            series, volume,
+          } = normalizeBookTitle(release.title);
+
+          return [
             {
-              ...release,
-              title,
-              type: release.type ?? type,
-              edition: release.edition ?? edition,
+              volume,
+              series,
             },
-          )];
+            new CreateBookReleaseDto(
+              {
+                ...release,
+                title,
+                type: release.type ?? type,
+                edition: release.edition ?? edition,
+              },
+            ),
+          ];
         },
       ),
     }));
@@ -189,17 +212,24 @@ export class BookDbLoaderService implements MetadataDbLoader {
     // group books by volume and rearrange releases
     const volumes: Record<string, CreateBookDto[]> = {};
     normalizedReleasesBooks.forEach(({book, volumesReleases}) => {
-      volumesReleases.forEach(([volume, release]) => {
+      volumesReleases.forEach(([{volume, series}, release]) => {
         (volumes[volume] ||= []).push(new CreateBookDto(
           {
             ...book,
+            defaultTitle: release.title,
+            releases: [release],
+            series: series && [
+              new CreateBookSeriesDto(
+                {
+                  name: series,
+                },
+              ),
+            ],
             authors: (
               book.authors?.length > 0
                 ? book.authors
                 : R.find(({authors}) => authors?.length > 0, books)?.authors
             ),
-            defaultTitle: release.title,
-            releases: [release],
             volume: new CreateBookVolumeDto(
               {
                 name: volume,

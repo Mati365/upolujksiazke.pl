@@ -5,7 +5,6 @@ import {
   normalizePrice,
 } from '@server/common/helpers';
 
-import {Language} from '@server/constants/language';
 import {CreateBookAuthorDto} from '@server/modules/book/modules/author/dto/CreateBookAuthor.dto';
 import {CreateBookDto} from '@server/modules/book/dto/CreateBook.dto';
 import {CreateBookReleaseDto} from '@server/modules/book/modules/release/dto/CreateBookRelease.dto';
@@ -83,7 +82,7 @@ export class IbukBookParser
       {
         type: BookType.EBOOK,
         title: $content.find('h1').text(),
-        lang: LANGUAGE_TRANSLATION_MAPPINGS[basicProps['język publikacji']?.toLowerCase()] ?? Language.PL,
+        lang: LANGUAGE_TRANSLATION_MAPPINGS[basicProps['język publikacji']?.toLowerCase()],
         description: normalizeParsedText($('#js_desc_text + p').text()),
         totalPages: +basicProps['liczba stron'] || null,
         isbn: normalizeISBN(basicProps['isbn-13']),

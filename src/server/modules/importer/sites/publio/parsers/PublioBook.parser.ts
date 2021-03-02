@@ -9,7 +9,6 @@ import {
 } from '@server/common/helpers';
 
 import {ID} from '@shared/types';
-import {Language} from '@server/constants/language';
 
 import {CreateBookAuthorDto} from '@server/modules/book/modules/author/dto/CreateBookAuthor.dto';
 import {CreateBookDto} from '@server/modules/book/dto/CreateBook.dto';
@@ -124,7 +123,6 @@ export class PublioBookParser
         isbn: parentIsbn,
         lang: (
           LANGUAGE_TRANSLATION_MAPPINGS[basicProps['język publikacji']?.[0].toLowerCase()]
-            ?? Language.PL
         ),
         description: normalizeParsedText($('.product-description > .teaser-wrapper').text()),
         totalPages: +basicProps['format']?.[0]?.match(/w wersji papierowej (\d+) stron/)?.[1] || null,

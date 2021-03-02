@@ -14,3 +14,4 @@ export * from './hrosskar';
 export * from './gandalf';
 export * from './ibuk';
 export * from './woblink';
+export * from './taniaksiazka';

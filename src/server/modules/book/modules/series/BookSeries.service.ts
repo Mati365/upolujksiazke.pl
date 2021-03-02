@@ -1,5 +1,6 @@
 import {Injectable} from '@nestjs/common';
 import {Connection, EntityManager} from 'typeorm';
+import * as R from 'ramda';
 
 import {upsert} from '@server/common/helpers/db';
 
@@ -42,7 +43,9 @@ export class BookSeriesService {
         connection,
         Entity: BookSeriesEntity,
         primaryKey: 'parameterizedName',
-        data: dtos.map((dto) => new BookSeriesEntity(dto)),
+        data: R.uniqBy(R.prop('name'), dtos).map(
+          (dto) => new BookSeriesEntity(dto),
+        ),
       },
     );
   }

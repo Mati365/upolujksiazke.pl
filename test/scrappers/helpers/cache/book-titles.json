@@ -173,5 +173,12 @@
     "volume": "10",
     "edition": null,
     "series": "wody"
+  },
+  "Siostra perły. Cykl Siedem Sióstr. Tom 4": {
+    "type": 2,
+    "title": "Siostra perły",
+    "series": "Siedem Sióstr",
+    "volume": "4",
+    "edition": null
   }
 }

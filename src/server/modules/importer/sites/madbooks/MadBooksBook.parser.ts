@@ -7,7 +7,6 @@ import {
   normalizePrice,
 } from '@server/common/helpers';
 
-import {Language} from '@server/constants/language';
 import {CreateBookAuthorDto} from '@server/modules/book/modules/author/dto/CreateBookAuthor.dto';
 import {CreateBookDto} from '@server/modules/book/dto/CreateBook.dto';
 import {CreateBookReleaseDto} from '@server/modules/book/modules/release/dto/CreateBookRelease.dto';
@@ -70,7 +69,7 @@ export class MadBooksBookParser
       {
         title,
         isbn,
-        lang: LANGUAGE_TRANSLATION_MAPPINGS[basicProps['język']] ?? Language.PL,
+        lang: LANGUAGE_TRANSLATION_MAPPINGS[basicProps['język']],
         format: basicProps['format'],
         defaultPrice: normalizePrice(basicProps['cena katalogowa'])?.price,
         description: normalizeParsedText($('#opis [itemprop="description"]').text()),

@@ -13,6 +13,7 @@ type DefaultConfigBookShopNames = (
   | 'skupszop' | 'dadada' | 'aros'
   | 'publio' | 'hrosskar' | 'madbooks'
   | 'gandalf' | 'ibuk' | 'woblink'
+  | 'taniaksiazka'
 );
 
 export type AppEnv = Partial<{
@@ -175,6 +176,10 @@ export const GLOBAL_CONFIG: Record<string, AppEnv> = {
         woblink: {
           homepageURL: 'https://woblink.com',
           searchURL: 'https://woblink.com/katalog/al',
+        },
+        taniaksiazka: {
+          homepageURL: 'https://www.taniaksiazka.pl',
+          searchURL: 'https://www.taniaksiazka.pl/Szukaj/',
         },
         matras: {
           homepageURL: 'https://www.matras.pl',

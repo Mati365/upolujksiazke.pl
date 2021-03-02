@@ -59,6 +59,8 @@ OpenSource book reviews aggregator, something like Metacritic / Digg for books. 
 - [x] Gandalf.com.pl
 - [x] ibuk.pl
 - [x] Woblink.com
+- [ ] Taniaksiazka.pl
+- [ ] Virtualo.pl
 - [ ] Swiatksiazki.pl
 - [ ] wbibliotece.pl
 - [ ] Wolnelektury.pl
@@ -71,7 +73,6 @@ OpenSource book reviews aggregator, something like Metacritic / Digg for books. 
 - [ ] paskarz.pl
 - [ ] litres.pl
 - [ ] selkar.pl
-- [ ] Taniaksiazka.pl
 - [ ] promocjeksiazkowe.pl (Blog Post)
 - [ ] eczytanie-eksiazki.blogspot.com (Blog Post)
 - [ ] Tantis.pl

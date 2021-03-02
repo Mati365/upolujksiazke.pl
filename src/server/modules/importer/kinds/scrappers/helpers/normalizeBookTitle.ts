@@ -6,6 +6,7 @@ import {parseIfRomanNumber} from '@server/common/helpers/text';
 
 import {BookType} from '@server/modules/book/modules/release/BookRelease.entity';
 import {CreateBookDto} from '@server/modules/book/dto/CreateBook.dto';
+import {CreateBookSeriesDto} from '@server/modules/book/modules/series/dto/CreateBookSeries.dto';
 import {
   CreateBookVolumeDto,
   DEFAULT_BOOK_VOLUME_NAME,
@@ -195,6 +196,7 @@ export function normalizeBookTitle(name: string): NormalizedBookTitleInfo {
 export function normalizeBookDTO(book: CreateBookDto) {
   const {
     title,
+    series,
     volume: volumeName,
   } = normalizeBookTitle(book.defaultTitle || book.title);
 
@@ -202,6 +204,13 @@ export function normalizeBookDTO(book: CreateBookDto) {
     {
       ...book,
       defaultTitle: title,
+      series: series && [
+        new CreateBookSeriesDto(
+          {
+            name: series,
+          },
+        ),
+      ],
       volume: volumeName && new CreateBookVolumeDto(
         {
           name: volumeName,

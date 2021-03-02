@@ -43,25 +43,46 @@ export class FuzzyBookSearchService {
     else {
       query.andWhere(
         new Brackets((qb) => {
+          // find matching book slug
           R.uniqBy(
-            R.nth(0),
-            books.flatMap((book) => book.genSlugPermutations().map(
-              (slug) => [
+            R.identity,
+            books.flatMap((book) => book.genSlugPermutations()),
+          )
+            .forEach((slug) => {
+              qb = qb.orWhere(
                 'levenshtein(book.parameterizedSlug, :slug) <= :similarity',
                 {
-                  similarity,
                   slug,
+                  similarity,
                 },
-              ],
-            )),
-          )
-            .forEach(([column, vars]: [string, any]) => {
-              qb = qb.orWhere(column, vars);
+              );
             });
 
+          // find book slug by release slug
+          R.uniqBy(
+            R.identity,
+            books.flatMap((book) => book.genSlugPermutations('')),
+          )
+            .forEach((bookSlugPostfix) => {
+              qb = qb.orWhere(
+                `
+                  levenshtein(
+                    book.parameterizedSlug,
+                    CONCAT(release.parameterizedSlug, :bookSlugPostfix::text)
+                  ) <= :similarity
+                `,
+                {
+                  similarity,
+                  bookSlugPostfix,
+                },
+              );
+            });
+
+          // search by isbn
           if (isbns.length)
             qb = qb.orWhere('release.isbn in (:...isbns)', {isbns});
 
+          // search by release id
           if (releasesIds.length)
             qb = qb.orWhere('release.id in (:...releasesIds)', {releasesIds});
         }),

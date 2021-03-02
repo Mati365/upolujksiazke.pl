@@ -25,7 +25,7 @@ import {BookKindEntity} from './modules/kind/BookKind.entity';
   },
 )
 export class BookEntity extends DatedRecordEntity {
-  @Column('citext', {unique: true, nullable: true})
+  @Column('text', {unique: true, nullable: true})
   parameterizedSlug: string;
 
   @Column('citext')

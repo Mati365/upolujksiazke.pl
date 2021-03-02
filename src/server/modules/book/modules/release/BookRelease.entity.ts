@@ -44,7 +44,7 @@ export class BookReleaseEntity extends DatedRecordEntity {
   @Column('citext', {nullable: true})
   title: string;
 
-  @Column('citext', {nullable: true})
+  @Column('text', {nullable: true})
   parameterizedSlug: string;
 
   @Column('text', {nullable: true})

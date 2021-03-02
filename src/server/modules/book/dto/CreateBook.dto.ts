@@ -108,13 +108,21 @@ export class CreateBookDto {
     return this.releases[0].isbn;
   }
 
-  genSlug(author?: string) {
+  /**
+   * Generate unique book slug
+   *
+   * @param {string} [overrideAuthor]
+   * @param {string} [overrideTitle]
+   * @returns
+   * @memberof CreateBookDto
+   */
+  genSlug(overrideAuthor?: string, overrideTitle?: string) {
     const {defaultTitle, title, authors, volume} = this;
     const str = [
-      defaultTitle ?? title,
+      overrideTitle ?? defaultTitle ?? title,
       // do not reorder by name - primary author should be always first!
       reorderAuthorName(
-        author || R.sortBy(R.prop('name'), authors)[0]?.name || 'anonym',
+        overrideAuthor || R.sortBy(R.prop('name'), authors)[0]?.name || 'anonym',
       ),
       volume
         ? volume.name
@@ -124,11 +132,11 @@ export class CreateBookDto {
     return parameterize(str.join('-'));
   }
 
-  genSlugPermutations() {
+  genSlugPermutations(overrideTitle?: string) {
     return [
-      this.genSlug(),
+      this.genSlug(null, overrideTitle),
       ...R.map(
-        (author) => this.genSlug(author.name),
+        (author) => this.genSlug(author.name, overrideTitle),
         this.authors || [],
       ),
     ];

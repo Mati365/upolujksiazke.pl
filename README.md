@@ -39,6 +39,8 @@ OpenSource book reviews aggregator, something like Metacritic / Digg for books. 
 - [ ] E-Book readers price section and reviews
 - [ ] Section: Top Books/Reviews from Wykop.pl
 - [ ] Machine learning for book (review) picking
+- [ ] Users who bought this book bought also section
+- [ ] Automatic blog posts
 
 ## Available websites
 
@@ -61,12 +63,12 @@ OpenSource book reviews aggregator, something like Metacritic / Digg for books. 
 - [x] Woblink.com
 - [x] Taniaksiazka.pl
 - [ ] Virtualo.pl
+- [ ] tantis.pl
+- [ ] Znak.com.pl
 - [ ] Swiatksiazki.pl
 - [ ] wbibliotece.pl
 - [ ] Wolnelektury.pl
 - [ ] LitRes.pl
-- [ ] tantis.pl
-- [ ] Znak.com.pl
 - [ ] audible.com
 - [ ] Chodnikliteracki.pl
 - [ ] czeskieklimaty.pl

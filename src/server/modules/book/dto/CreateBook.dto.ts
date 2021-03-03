@@ -132,6 +132,13 @@ export class CreateBookDto {
     return parameterize(str.join('-'));
   }
 
+  /**
+   * Generate all possible book slug with random author order
+   *
+   * @param {string} [overrideTitle]
+   * @returns
+   * @memberof CreateBookDto
+   */
   genSlugPermutations(overrideTitle?: string) {
     return [
       this.genSlug(null, overrideTitle),

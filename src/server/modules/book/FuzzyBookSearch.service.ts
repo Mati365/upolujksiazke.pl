@@ -58,29 +58,28 @@ export class FuzzyBookSearchService {
               );
             });
 
-          // find book slug by release slug
-          R.uniqBy(
-            R.identity,
-            books.flatMap((book) => book.genSlugPermutations('')),
-          )
-            .forEach((bookSlugPostfix) => {
-              qb = qb.orWhere(
-                `
-                  levenshtein(
-                    book.parameterizedSlug,
-                    CONCAT(release.parameterizedSlug, :bookSlugPostfix::text)
-                  ) <= :similarity
-                `,
-                {
-                  similarity,
-                  bookSlugPostfix,
-                },
-              );
-            });
-
           // search by isbn
           if (isbns.length)
             qb = qb.orWhere('release.isbn in (:...isbns)', {isbns});
+          else {
+            // find book slug by release slug + book author slug
+            R.uniqBy(
+              R.identity,
+              books.flatMap((book) => book.genSlugPermutations('')),
+            )
+              .forEach((bookSlugPostfix) => {
+                qb = qb.orWhere(
+                  'levenshtein('
+                    + 'book.parameterizedSlug,'
+                    + 'CONCAT(release.parameterizedSlug, :bookSlugPostfix::text)'
+                  + ') <= :similarity',
+                  {
+                    similarity,
+                    bookSlugPostfix,
+                  },
+                );
+              });
+          }
 
           // search by release id
           if (releasesIds.length)

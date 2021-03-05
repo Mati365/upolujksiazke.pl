@@ -4,7 +4,6 @@ import * as R from 'ramda';
 
 import {BookEntity} from './Book.entity';
 import {BookVolumeEntity} from './modules/volume/BookVolume.entity';
-import {BookAliasService} from './modules/alias/BookAlias.service';
 
 import {CreateBookDto} from './dto/CreateBook.dto';
 import {CreateBookReviewDto} from './modules/review/dto/CreateBookReview.dto';
@@ -12,10 +11,6 @@ import {CreateBookReleaseDto} from './modules/release/dto/CreateBookRelease.dto'
 
 @Injectable()
 export class FuzzyBookSearchService {
-  constructor(
-    private readonly bookAliasService: BookAliasService,
-  ) {}
-
   /**
    * Find book based on multiple dtos
    *
@@ -30,8 +25,6 @@ export class FuzzyBookSearchService {
     allReleases?: CreateBookReleaseDto[],
     similarity: number = 4,
   ) {
-    const {bookAliasService} = this;
-
     allReleases ??= R.unnest(R.pluck('releases', books)) || [];
     const [bookIds, volumes, isbns, releasesIds] = [
       R.pluck('id', books),
@@ -48,11 +41,9 @@ export class FuzzyBookSearchService {
       query = query.where('book.id in (:...bookIds)', {bookIds});
     else {
       // find redirected slugs
-      const slugs = await bookAliasService.replaceRedirected(
-        R.uniqBy(
-          R.identity,
-          books.flatMap((book) => book.genSlugPermutations()),
-        ),
+      const slugs = R.uniqBy(
+        R.identity,
+        books.flatMap((book) => book.genSlugPermutations()),
       );
 
       query.andWhere(

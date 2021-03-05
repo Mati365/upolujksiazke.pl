@@ -12,7 +12,6 @@ import {BookAvailabilityModule} from './modules/availability';
 import {BookVolumeModule} from './modules/volume';
 import {BookPrizeModule} from './modules/prize';
 import {BookSeriesModule} from './modules/series';
-import {BookAliasModule} from './modules/alias';
 import {BookEntity} from './Book.entity';
 import {BookService} from './Book.service';
 import {TagModule} from '../tag';
@@ -32,7 +31,6 @@ import {FuzzyBookSearchService} from './FuzzyBookSearch.service';
       BookKindModule,
       BookPrizeModule,
       BookSeriesModule,
-      BookAliasModule,
       TagModule,
       TypeOrmModule.forFeature([BookEntity]),
     ],
@@ -54,7 +52,6 @@ import {FuzzyBookSearchService} from './FuzzyBookSearch.service';
       BookKindModule,
       BookPrizeModule,
       BookSeriesModule,
-      BookAliasModule,
     ],
   },
 )

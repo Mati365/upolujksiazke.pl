@@ -8,7 +8,12 @@ import * as mime from 'mime-types';
 import * as R from 'ramda';
 
 import {checkIfExists, runInPostHookIfPresent} from '@server/common/helpers/db';
-import {safeArray, mapObjValuesToPromise} from '@shared/helpers';
+import {
+  safeArray,
+  mapObjValuesToPromise,
+  asyncExec,
+} from '@shared/helpers';
+
 import {
   downloadFile,
   isImageMimeType,
@@ -283,6 +288,9 @@ export class ImageAttachmentService {
       logger.warn(`File ${chalk.bold(originalUrl)} is not present!`);
       return null;
     }
+
+    // drop file meta info
+    await asyncExec(`exiv2 rm "${resultFile.outputFile}"`);
 
     const convertResult = await convert(
       {

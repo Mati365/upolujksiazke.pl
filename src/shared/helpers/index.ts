@@ -34,3 +34,4 @@ export * from './safeToNumber';
 export * from './matchByRegex';
 export * from './getArrayWithLengthLimit';
 export * from './pickLongestArrayItem';
+export * from './asyncExec';

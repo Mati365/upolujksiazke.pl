@@ -173,6 +173,6 @@ export class WoblinkBookParser
       },
     } = match;
 
-    return (+hours || 0) * 3600 + (+minutes || 0) * 60 + (+seconds);
+    return (+hours || 0) * 3600 + (+minutes || 0) * 60 + (+seconds || 0);
   }
 }

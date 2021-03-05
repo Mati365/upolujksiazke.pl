@@ -23,11 +23,11 @@ export type BookShopScrappersGroupConfig = ScrappersGroupInitializer & BookShopU
  * @implements {URLPathMatcher}
  */
 export abstract class BookShopScrappersGroup extends WebsiteScrappersGroup {
-  constructor({scrappers, ...config}: BookShopScrappersGroupConfig) {
+  constructor({scrappers, websiteInfoScrapper, ...config}: BookShopScrappersGroupConfig) {
     super(
       {
-        websiteInfoScrapper: new WebsiteInfoScrapper(config.homepageURL),
         ...config,
+        websiteInfoScrapper: websiteInfoScrapper ?? new WebsiteInfoScrapper(config.homepageURL),
         scrappers: scrappers ?? SpiderQueueProxyScrapper.createKindProxy(),
       },
     );

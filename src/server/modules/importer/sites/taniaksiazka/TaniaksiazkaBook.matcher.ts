@@ -25,6 +25,9 @@ export class TaniaksiazkaBookMatcher extends WebsiteScrapperMatcher<CreateBookDt
     };
   }
 
+  /**
+   * @inheritdoc
+   */
   private async searchByPhrase({title, authors}: CreateBookDto) {
     const $ = (await this.fetchPageBySearch(`q-${encodeURIComponent(title)}`))?.$;
     if (!$)

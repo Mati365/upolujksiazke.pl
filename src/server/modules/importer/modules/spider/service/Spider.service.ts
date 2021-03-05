@@ -5,10 +5,7 @@ import chalk from 'chalk';
 
 import {InterceptMethod} from '@shared/helpers/decorators/InterceptMethod';
 import {TmpDirService} from '@server/modules/tmp-dir/TmpDir.service';
-import {
-  WebsiteInfoScrapperService,
-  ScrapperService,
-} from '@scrapper/service';
+import {WebsiteInfoScrapperService} from '@scrapper/service';
 
 import {UrlDbLoaderService} from '@importer/kinds/db-loaders';
 import {WebsiteScrappersGroup} from '../../scrapper/service/shared/WebsiteScrappersGroup';
@@ -25,26 +22,11 @@ export class SpiderService {
   private readonly logger = new Logger(SpiderService.name);
 
   constructor(
-    private readonly scrapperService: ScrapperService,
     private readonly websiteInfoService: WebsiteInfoScrapperService,
     private readonly tmpDirService: TmpDirService,
     private readonly urlDbLoaderService: UrlDbLoaderService,
     private readonly dbQueueDriver: ScrapperMetadataQueueDriver,
   ) {}
-
-  /**
-   * Start spider for all websites
-   *
-   * @todo
-   *  Add support for all scrappers
-   *
-   * @memberof SpiderService
-   */
-  async run() {
-    const {scrapperService} = this;
-
-    await this.runForScrappersGroup(scrapperService.scrappersGroups[0]);
-  }
 
   /**
    * Starts spider on provided website

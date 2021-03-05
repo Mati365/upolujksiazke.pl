@@ -51,8 +51,8 @@ export class WoblinkBookParser
           new CreateBookAvailabilityDto(
             {
               remoteId,
-              totalRatings: aggregateRating.ratingCount || null,
-              avgRating: aggregateRating.ratingValue || null,
+              totalRatings: aggregateRating?.ratingCount || null,
+              avgRating: aggregateRating?.ratingValue || null,
               prevPrice: normalizePrice(offers.highPrice)?.price,
               price: normalizePrice(offers.lowPrice)?.price,
               url,
@@ -158,14 +158,20 @@ export class WoblinkBookParser
     if (!text)
       return null;
 
+    const match = text.match(
+      /(?:(?<hours>[.\d]+)\s*godzin)?\s*(?:(?<minutes>[.\d]+)\s*minut)?\s*(?:(?<seconds>[.\d]+)\s*sekund)?/i,
+    );
+
+    if (!match?.groups)
+      return null;
+
     const {
       groups: {
         hours,
         minutes,
         seconds,
       },
-    // eslint-disable-next-line max-len
-    } = text.match(/(?:(?<hours>[.\d]+)\s*godzin)?\s*(?:(?<minutes>[.\d]+)\s*minut)?\s*(?:(?<seconds>[.\d]+)\s*sekund)?/i);
+    } = match;
 
     return (+hours || 0) * 3600 + (+minutes || 0) * 60 + (+seconds);
   }

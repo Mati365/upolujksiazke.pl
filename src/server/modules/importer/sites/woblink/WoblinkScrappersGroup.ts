@@ -4,6 +4,7 @@ import {
   BookShopScrappersGroupConfig,
 } from '@importer/kinds/scrappers/BookShop.scrapper';
 
+import {SimpleWebsiteScrapperSpider} from '@scrapper/service/shared';
 import {WoblinkBookMatcher} from './WoblinkBook.matcher';
 import {WoblinkBookParser} from './WoblinkBook.parser';
 
@@ -12,6 +13,11 @@ export class WoblinkScrappersGroup extends BookShopScrappersGroup {
     super(
       {
         ...options,
+        spider: SimpleWebsiteScrapperSpider.createForRegexMap(
+          [
+            [/\/ksiazka\/.*$/, () => ScrapperMetadataKind.BOOK],
+          ],
+        ),
         matchers: {
           [ScrapperMetadataKind.BOOK]: new WoblinkBookMatcher(options),
         },

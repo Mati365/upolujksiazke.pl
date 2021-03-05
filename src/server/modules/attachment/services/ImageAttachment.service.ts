@@ -279,7 +279,7 @@ export class ImageAttachmentService {
         url: originalUrl,
         outputFile: path.join(tmpFolderPath, `source${path.extname(originalUrl)}`),
         headerValidatorFn: ({size: {kilobytes}, type}) => (
-          kilobytes < 2_000 && isImageMimeType(type)
+          kilobytes < 5_000 && isImageMimeType(type)
         ),
       },
     );

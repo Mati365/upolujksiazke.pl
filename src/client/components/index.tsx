@@ -1,2 +1,3 @@
-export * from './IsomorphicRouter';
 export * from './ViewDataProvider';
+export * from './AsyncRoute';
+export * from './AsyncRouter';

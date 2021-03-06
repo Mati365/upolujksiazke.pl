@@ -82,6 +82,7 @@ const createConfig = ({
     resolve: {
       extensions: ['.tsx', '.ts', '.js', '.jsx'],
       alias: {
+        '@api': resolveSource('api/'),
         '@client': resolveSource('client/'),
         '@server': resolveSource('server/'),
         '@shared': resolveSource('shared/'),

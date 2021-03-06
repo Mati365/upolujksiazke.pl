@@ -1,18 +1,15 @@
 import React from 'react';
-import {
-  Route, Switch,
-  StaticRouterProps, RouteProps,
-} from 'react-router';
+import {StaticRouterProps} from 'react-router';
 
-import {safeArray} from '@shared/helpers/safeArray';
+import {AsyncRouterRouteInfo} from '@client/components/utils/asyncRouteUtils';
 import {
-  IsomorphicRouter,
+  AsyncRouter,
   ViewDataProvider,
 } from '@client/components';
 
 import {HomeRoute} from './Home';
 
-export const APP_ROUTES_LIST: RouteProps[] = [
+export const APP_ROUTES_LIST: AsyncRouterRouteInfo[] = [
   {
     component: HomeRoute,
     path: '/',
@@ -27,17 +24,9 @@ export type PageRootProps = {
 
 export const PageRoot = ({viewData, routerConfig}: PageRootProps) => (
   <ViewDataProvider initialData={viewData}>
-    <IsomorphicRouter {...routerConfig}>
-      <Switch>
-        {APP_ROUTES_LIST.map(
-          (route) => (
-            <Route
-              key={safeArray(route.path).join(',')}
-              {...route}
-            />
-          ),
-        )}
-      </Switch>
-    </IsomorphicRouter>
+    <AsyncRouter
+      {...routerConfig}
+      routes={APP_ROUTES_LIST}
+    />
   </ViewDataProvider>
 );

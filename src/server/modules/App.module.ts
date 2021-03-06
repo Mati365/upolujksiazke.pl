@@ -19,11 +19,13 @@ import {AttachmentModule} from './attachment';
 import {ImporterModule} from './importer';
 import {TmpDirModule} from './tmp-dir';
 import {SentryModule} from './sentry';
+import {APIModule} from './api';
 
 @Module(
   {
     imports: [
       DatabaseModule,
+      APIModule,
       ...(
         isCmdAppInstance()
           ? []

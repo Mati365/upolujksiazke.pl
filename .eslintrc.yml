@@ -9,6 +9,7 @@
     import/resolver:
       alias: {
         map: [
+          ['@api', './src/api/'],
           ['@client', './src/client/'],
           ['@server', './src/server/'],
           ['@scrapper', './src/server/modules/importer/modules/scrapper'],

@@ -8,8 +8,8 @@ import {CanBePromise} from '@shared/types';
 import {ScrapperGroupChild, MatchRecordAttrs} from './WebsiteScrappersGroup';
 
 export type ScrapperMatcherResult<T> = {
-  cached?: boolean,
   result: T,
+  discovery?: any[],
 };
 
 export interface ScrapperMatchable<Type> {

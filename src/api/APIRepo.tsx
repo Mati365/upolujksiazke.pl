@@ -13,7 +13,7 @@ export interface APIWritable<T> {
 export interface APIReadable<T, F> {
   find?(item: T): Promise<T>;
   findOne?(id: ID): Promise<T>;
-  findAll?(filters?: APIPaginationFilters<F>): Promise<APIPaginationResult<T, F>>;
+  findAll?(filters?: APIPaginationFilters<F>): Promise<APIPaginationResult<T>>;
   findPlainList?(filters?: APIPaginationFilters<F>): Promise<T[]>;
   count?(filters?: APIPaginationFilters<F>): Promise<number>;
 }

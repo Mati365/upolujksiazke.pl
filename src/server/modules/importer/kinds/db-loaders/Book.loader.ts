@@ -12,7 +12,7 @@ import {mapObjValuesToPromise} from '@shared/helpers/async/mapObjValuesToPromise
 import {parameterize} from '@shared/helpers/parameterize';
 import {pickLongestArrayItem} from '@shared/helpers';
 
-import {BookService} from '@server/modules/book/Book.service';
+import {BookService} from '@server/modules/book/services/Book.service';
 import {BookPublisherService} from '@server/modules/book/modules/publisher/BookPublisher.service';
 
 import {

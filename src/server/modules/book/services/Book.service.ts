@@ -8,20 +8,20 @@ import {
   upsert,
 } from '@server/common/helpers/db';
 
-import {TagService} from '../tag/Tag.service';
-import {BookAuthorService} from './modules/author/BookAuthor.service';
-import {BookReleaseService} from './modules/release/BookRelease.service';
-import {BookCategoryService} from './modules/category';
-import {BookVolumeService} from './modules/volume/BookVolume.service';
-import {BookSeriesService} from './modules/series/BookSeries.service';
-import {BookPrizeService} from './modules/prize/BookPrize.service';
-import {BookKindService} from './modules/kind/BookKind.service';
+import {TagService} from '../../tag/Tag.service';
+import {BookAuthorService} from '../modules/author/BookAuthor.service';
+import {BookReleaseService} from '../modules/release/BookRelease.service';
+import {BookCategoryService} from '../modules/category';
+import {BookVolumeService} from '../modules/volume/BookVolume.service';
+import {BookSeriesService} from '../modules/series/BookSeries.service';
+import {BookPrizeService} from '../modules/prize/BookPrize.service';
+import {BookKindService} from '../modules/kind/BookKind.service';
 
-import {CreateBookDto} from './dto/CreateBook.dto';
-import {CreateBookReleaseDto} from './modules/release/dto/CreateBookRelease.dto';
-import {BookEntity} from './Book.entity';
-import {BookVolumeEntity} from './modules/volume/BookVolume.entity';
-import {BookReviewEntity} from './modules/review/BookReview.entity';
+import {CreateBookDto} from '../dto/CreateBook.dto';
+import {CreateBookReleaseDto} from '../modules/release/dto/CreateBookRelease.dto';
+import {BookEntity} from '../Book.entity';
+import {BookVolumeEntity} from '../modules/volume/BookVolume.entity';
+import {BookReviewEntity} from '../modules/review/BookReview.entity';
 
 /**
  * @see

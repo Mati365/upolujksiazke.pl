@@ -1,6 +1,7 @@
 import {Module} from '@nestjs/common';
 import {TypeOrmModule} from '@nestjs/typeorm';
 
+import {TagModule} from '../tag';
 import {BookAuthorModule} from './modules/author/BookAuthor.module';
 import {BookReviewerModule} from './modules/reviewer/BookReviewer.module';
 import {BookCategoryModule} from './modules/category/BookCategory.module';
@@ -13,9 +14,11 @@ import {BookVolumeModule} from './modules/volume';
 import {BookPrizeModule} from './modules/prize';
 import {BookSeriesModule} from './modules/series';
 import {BookEntity} from './Book.entity';
-import {BookService} from './Book.service';
-import {TagModule} from '../tag';
-import {FuzzyBookSearchService} from './FuzzyBookSearch.service';
+import {
+  FuzzyBookSearchService,
+  BookService,
+  BookGroupsService,
+} from './services';
 
 @Module(
   {
@@ -36,11 +39,13 @@ import {FuzzyBookSearchService} from './FuzzyBookSearch.service';
     ],
     providers: [
       BookService,
+      BookGroupsService,
       FuzzyBookSearchService,
     ],
     exports: [
       BookService,
       FuzzyBookSearchService,
+      BookGroupsService,
       BookAvailabilityModule,
       BookPublisherModule,
       BookReleaseModule,

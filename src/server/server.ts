@@ -78,14 +78,14 @@ async function forkApp(
       )
       .listen(port + 1);
 
-    console.info(`🚀 API server is running at https://${address}:${port + 1}!`);
+    console.info(`🚀 APP server is running at https://${address}:${port + 1}!`);
   } else {
     http
       .createServer(server)
       .listen(port);
   }
 
-  console.info(`🚀 API server is running at http://${address}:${port}!`);
+  console.info(`🚀 APP server is running at http://${address}:${port}!`);
 }
 
 ClusterService.clusterize(

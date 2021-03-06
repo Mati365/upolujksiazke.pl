@@ -1,5 +1,7 @@
 import * as R from 'ramda';
 
+import type {PaginationResult} from '@server/common/helpers/db';
+
 import {SortKeys} from '@shared/types';
 import {BooksRepo} from './repo/Books.repo';
 
@@ -12,10 +14,7 @@ export type APIPaginationFilters<F = {}> = F & {
   sort?: SortKeys,
 };
 
-export type APIPaginationResult<T, F = {}> = {
-  items: T[],
-  meta: APIPaginationFilters<F>,
-};
+export type APIPaginationResult<T> = PaginationResult<T>;
 
 export abstract class APIClientChild<T extends APIClient = APIClient> {
   protected api: T;

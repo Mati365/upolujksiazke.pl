@@ -13,5 +13,5 @@ export type CategoryGroupedBooks = {
 }[];
 
 export interface BooksRepo extends APIRepo<BookRecord> {
-  findRecentCategoriesBooks(filters?: RecentCategoriesBooksFilters): CanBePromise<CategoryGroupedBooks>;
+  findCategoriesRecentBooks(filters?: RecentCategoriesBooksFilters): CanBePromise<CategoryGroupedBooks>;
 }

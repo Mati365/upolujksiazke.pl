@@ -4,7 +4,9 @@ import {BooksRepo, CategoryGroupedBooks} from '@api/repo';
 import type {ServerAPIClient} from '../ServerAPIClient';
 
 export class BooksServerRepo extends APIClientChild<ServerAPIClient> implements BooksRepo {
-  findRecentCategoriesBooks(): CategoryGroupedBooks {
+  async findCategoriesRecentBooks(): Promise<CategoryGroupedBooks> {
+    await this.api.services.bookGroupsService.findCategoriesRecentBooks();
+
     return [];
   }
 }

@@ -8,7 +8,7 @@ export const HomeRoute: AsyncRoute = () => (
 );
 
 HomeRoute.getInitialProps = async ({api}) => {
-  await api.repo.books.findRecentCategoriesBooks();
+  await api.repo.books.findCategoriesRecentBooks();
 
   return null;
 };

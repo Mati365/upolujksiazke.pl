@@ -41,6 +41,7 @@ OpenSource book reviews aggregator, something like Metacritic / Digg for books. 
 - [ ] Machine learning for book (review) picking
 - [ ] Users who bought this book bought also section
 - [ ] Automatic blog posts
+- [ ] SEOLinks on blog posts / reviews
 
 ## Available websites
 

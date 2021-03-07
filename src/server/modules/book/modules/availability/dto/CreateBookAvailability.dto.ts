@@ -26,6 +26,10 @@ export class CreateBookAvailabilityDto extends CreateRemoteRecordDto {
   @IsNumber()
   readonly totalRatings: number;
 
+  @IsOptional()
+  @IsNumber()
+  readonly inStock: boolean;
+
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(partial: Partial<CreateBookAvailabilityDto>) {
     super(partial);

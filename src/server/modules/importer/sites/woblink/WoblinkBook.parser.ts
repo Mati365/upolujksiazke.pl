@@ -51,11 +51,12 @@ export class WoblinkBookParser
           new CreateBookAvailabilityDto(
             {
               remoteId,
+              url,
+              inStock: $('#book-card > .header > .container > .prices > .price-options').data('inStock') !== false,
               totalRatings: aggregateRating?.ratingCount || null,
               avgRating: aggregateRating?.ratingValue || null,
               prevPrice: normalizePrice(offers.highPrice)?.price,
               price: normalizePrice(offers.lowPrice)?.price,
-              url,
             },
           ),
         ],
@@ -81,11 +82,11 @@ export class WoblinkBookParser
     if (!isbn)
       return null;
 
-    const {groups: {type, binding}} = (
+    const {type, binding} = (
       $('#woblink-items > a.woblink-redirect__highlighted > .format')
         .text()
         .match(/^(?<type>książka|ebook|audiobook)(?:\s*-?\s*Oprawa\s*)?(?<binding>.*)$/i)
-    );
+    )?.groups || {};
 
     const tableProps = extractTableRowsMap(
       $,
@@ -102,7 +103,7 @@ export class WoblinkBookParser
             : null
         ),
         lang: LANGUAGE_TRANSLATION_MAPPINGS[tableProps['język ebooka'] || tableProps['język audiobooka']],
-        type: BOOK_TYPE_TRANSLATION_MAPPINGS[type.toLowerCase()] ?? BookType.EBOOK,
+        type: BOOK_TYPE_TRANSLATION_MAPPINGS[type?.toLowerCase()] ?? BookType.EBOOK,
         binding: binding && BINDING_TRANSLATION_MAPPINGS[binding.toLowerCase()],
         title: bookSchema['name'],
         format: tableProps['format'],

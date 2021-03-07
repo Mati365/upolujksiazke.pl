@@ -1,7 +1,7 @@
 import * as R from 'ramda';
 import {Transform} from 'class-transformer';
 import {
-  Entity, Column,
+  Entity, Column, OneToOne,
   ManyToMany, OneToMany, JoinTable,
   JoinColumn, ManyToOne, RelationId,
 } from 'typeorm';
@@ -72,6 +72,14 @@ export class BookEntity extends DatedRecordEntity {
     },
   )
   tags: TagEntity[];
+
+  @OneToOne(() => BookReleaseEntity, {onDelete: 'SET NULL'})
+  @JoinColumn({name: 'primaryReleaseId'})
+  primaryRelease: BookReleaseEntity;
+
+  @Column({nullable: true})
+  @RelationId((entity: BookEntity) => entity.primaryRelease)
+  primaryReleaseId: number;
 
   @OneToMany(
     () => BookReleaseEntity,

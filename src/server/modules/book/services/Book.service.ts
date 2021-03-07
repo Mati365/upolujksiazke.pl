@@ -22,6 +22,7 @@ import {CreateBookReleaseDto} from '../modules/release/dto/CreateBookRelease.dto
 import {BookEntity} from '../Book.entity';
 import {BookVolumeEntity} from '../modules/volume/BookVolume.entity';
 import {BookReviewEntity} from '../modules/review/BookReview.entity';
+import {BookReleaseEntity} from '../modules/release/BookRelease.entity';
 
 /**
  * @see
@@ -178,23 +179,7 @@ export class BookService {
         );
       }
 
-      Object.assign(
-        book,
-        await transaction.save(
-          new BookEntity(
-            {
-              id: book.id,
-              series,
-              prizes,
-              authors,
-              tags,
-              categories,
-            },
-          ),
-        ),
-      );
-
-      book.releases = await releaseService.upsertList(
+      const upsertedReleases = await releaseService.upsertList(
         dto.releases.map(
           (release) => new CreateBookReleaseDto(
             {
@@ -209,6 +194,38 @@ export class BookService {
         },
       );
 
+      // get most popular release
+      const primaryReleaseId = dto.primaryReleaseId ?? book.primaryReleaseId ?? (
+        R.reduce(
+          (acc, item) => (
+            (acc?.availability?.length || 0) < (item.availability?.length || 0)
+              ? item
+              : acc
+          ),
+          null as BookReleaseEntity,
+          upsertedReleases,
+        )?.id
+      );
+
+      await transaction.save(
+        Object.assign(
+          book,
+          {
+            id: book.id,
+            series,
+            prizes,
+            authors,
+            tags,
+            categories,
+            ...!R.isNil(primaryReleaseId) && {
+              primaryReleaseId,
+            },
+          },
+        ),
+      );
+
+      // prevent typeorm saving, releases already contains bookId
+      book.releases = upsertedReleases;
       return book;
     });
   }

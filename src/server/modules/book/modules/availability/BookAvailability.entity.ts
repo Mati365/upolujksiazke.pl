@@ -53,6 +53,9 @@ export class BookAvailabilityEntity extends RemoteRecordFields {
   @Column('integer', {nullable: true})
   totalRatings: number;
 
+  @Column('boolean', {default: true, nullable: true})
+  inStock: boolean;
+
   @ManyToOne(() => BookEntity, (entity) => entity.availability, {onDelete: 'CASCADE'})
   @JoinColumn({name: 'bookId'})
   book: BookEntity;

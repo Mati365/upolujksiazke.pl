@@ -35,3 +35,4 @@ export * from './getArrayWithLengthLimit';
 export * from './pickLongestArrayItem';
 export * from './asyncExec';
 export * from './findAndMap';
+export * from './uniqFlatHashByProp';

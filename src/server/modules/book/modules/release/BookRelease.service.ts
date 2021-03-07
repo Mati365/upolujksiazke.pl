@@ -121,7 +121,7 @@ export class BookReleaseService {
       );
 
       if (reviews?.length) {
-        await reviewsService.upsert(
+        releaseEntity.reviews = await reviewsService.upsert(
           reviews.map((review) => new CreateBookReviewDto(
             {
               ...review,
@@ -134,7 +134,7 @@ export class BookReleaseService {
       }
 
       if (availability?.length) {
-        await availabilityService.upsertList(
+        releaseEntity.availability = await availabilityService.upsertList(
           availability.map(
             (item) => new CreateBookAvailabilityDto(
               {

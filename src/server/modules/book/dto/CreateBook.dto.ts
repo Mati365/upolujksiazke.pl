@@ -67,6 +67,10 @@ export class CreateBookDto {
   @IsNumber()
   readonly volumeId: number;
 
+  @IsOptional()
+  @IsNumber()
+  readonly primaryReleaseId: number;
+
   @IsDefined()
   @ValidateNested()
   @Type(() => CreateBookKindDto)

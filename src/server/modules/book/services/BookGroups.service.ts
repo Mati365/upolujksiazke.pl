@@ -1,11 +1,11 @@
 import {Injectable} from '@nestjs/common';
-import {EntityManager, In} from 'typeorm';
+import {EntityManager} from 'typeorm';
 import * as R from 'ramda';
 
 import {uniqFlatHashByProp} from '@shared/helpers';
 
 import {BookCategoryEntity} from '../modules/category/BookCategory.entity';
-import {BookEntity} from '../Book.entity';
+import {BookService} from './Book.service';
 
 export type RecentCategoriesBooksFilters = {
   itemsPerGroup: number,
@@ -17,6 +17,7 @@ export type RecentCategoriesBooksFilters = {
 export class BookGroupsService {
   constructor(
     private readonly entityManager: EntityManager,
+    private readonly bookService: BookService,
   ) {}
 
   /**
@@ -33,11 +34,16 @@ export class BookGroupsService {
       offset: 5,
     },
   ) {
-    const {entityManager} = this;
-    const categoryBooks: {id: number, name: string, items: number[]}[] = await entityManager.query(
+    const {entityManager, bookService} = this;
+    const categoryBooks: {
+      id: number,
+      name: string,
+      parameterizedName: string,
+      items: number[],
+    }[] = await entityManager.query(
       /* sql */ `
         select
-          category."id", category."name", category."paremterizedName",
+          category."id", category."name", category."parameterizedName",
           books."items"
         from book_category category
         cross join lateral (
@@ -66,20 +72,22 @@ export class BookGroupsService {
 
     const booksEntities = uniqFlatHashByProp(
       'id',
-      await BookEntity.find(
-        {
-          id: In(bookIds),
-        },
+      await (
+        bookService
+          .createCardsQuery()
+          .whereInIds(bookIds)
+          .getMany()
       ),
     );
 
     return categoryBooks.map(
-      ({id, name, items}) => ({
+      ({id, name, parameterizedName, items}) => ({
         items: items.map((bookId) => booksEntities[bookId]),
         category: new BookCategoryEntity(
           {
             id,
             name,
+            parameterizedName,
           },
         ),
       }),

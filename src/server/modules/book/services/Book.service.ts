@@ -35,6 +35,13 @@ import {BookReleaseEntity} from '../modules/release/BookRelease.entity';
  */
 @Injectable()
 export class BookService {
+  public static readonly BOOK_CARD_FIELDS = [
+    'book.id', 'book.parameterizedSlug',
+    'release.id', 'release.title',
+    'author.id', 'author.name', 'author.parameterizedName',
+    'cover.ratio', 'cover.nsfw', 'cover.version', 'attachment.file',
+  ];
+
   constructor(
     private readonly connection: Connection,
     private readonly tagService: TagService,
@@ -46,6 +53,24 @@ export class BookService {
     private readonly prizeService: BookPrizeService,
     private readonly kindService: BookKindService,
   ) {}
+
+  /**
+   * Creates query used to generate book cards
+   *
+   * @returns
+   * @memberof BookService
+   */
+  createCardsQuery() {
+    return (
+      BookEntity
+        .createQueryBuilder('book')
+        .select(BookService.BOOK_CARD_FIELDS)
+        .leftJoin('book.authors', 'author')
+        .leftJoin('book.primaryRelease', 'release')
+        .leftJoin('release.cover', 'cover')
+        .leftJoin('cover.attachment', 'attachment')
+    );
+  }
 
   /**
    * Remove single book release

@@ -1,3 +1,6 @@
-import {APINamedRecord} from '../APIRecord';
+import {APIRecord} from '../APIRecord';
 
-export class BookCategoryRecord extends APINamedRecord {}
+export interface BookCategoryRecord extends APIRecord {
+  name: string;
+  parameterizedName: string;
+}

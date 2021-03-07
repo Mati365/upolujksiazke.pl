@@ -3,16 +3,14 @@ import {
   JoinColumn, OneToOne, RelationId,
 } from 'typeorm';
 
+import {ImageVersion} from '@shared/enums/imageVersion';
 import {DatedRecordEntity} from '../../database/DatedRecord.entity';
 import {CreateImageAttachmentDto} from '../dto/CreateImageAttachment.dto';
 import {AttachmentEntity} from './Attachment.entity';
 
-export enum ImageVersion {
-  SMALL_THUMB = 'SMALL_THUMB',
-  THUMB = 'THUMB',
-  PREVIEW = 'PREVIEW',
-  BIG = 'BIG',
-}
+export {
+  ImageVersion,
+};
 
 @Entity('image_attachments')
 export class ImageAttachmentEntity extends DatedRecordEntity {

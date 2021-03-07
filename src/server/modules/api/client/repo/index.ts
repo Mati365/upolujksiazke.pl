@@ -1,1 +1,1 @@
-export * from './Books.server-repo';
+export * from './RecentBooks.server-repo';

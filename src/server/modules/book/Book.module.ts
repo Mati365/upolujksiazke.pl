@@ -17,7 +17,6 @@ import {BookEntity} from './Book.entity';
 import {
   FuzzyBookSearchService,
   BookService,
-  BookGroupsService,
 } from './services';
 
 @Module(
@@ -39,13 +38,11 @@ import {
     ],
     providers: [
       BookService,
-      BookGroupsService,
       FuzzyBookSearchService,
     ],
     exports: [
-      BookService,
       FuzzyBookSearchService,
-      BookGroupsService,
+      BookService,
       BookAvailabilityModule,
       BookPublisherModule,
       BookReleaseModule,

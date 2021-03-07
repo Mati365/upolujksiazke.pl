@@ -3,7 +3,7 @@ import * as R from 'ramda';
 import type {PaginationResult} from '@server/common/helpers/db';
 
 import {SortKeys} from '@shared/types';
-import {BooksRepo} from './repo/Books.repo';
+import {RecentBooksRepo} from './repo/RecentBooks.repo';
 
 export type APIPaginationFilters<F = {}> = F & {
   phrase?: string,
@@ -31,7 +31,7 @@ export function isAPIClientChild(obj: any): obj is APIClientChild<any> {
 export abstract class APIClient {
   constructor(
     public readonly repo: {
-      books: BooksRepo,
+      recentBooks: RecentBooksRepo,
     },
   ) {
     R.forEachObjIndexed(

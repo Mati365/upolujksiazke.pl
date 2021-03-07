@@ -1,5 +1,5 @@
 import {APIClient} from '@api/APIClient';
-import {BooksServerRepo} from './repo';
+import {RecentBooksServerRepo} from './repo';
 import type {APIClientService} from '../services/APIClient.service';
 
 export class ServerAPIClient extends APIClient {
@@ -8,7 +8,7 @@ export class ServerAPIClient extends APIClient {
   ) {
     super(
       {
-        books: new BooksServerRepo,
+        recentBooks: new RecentBooksServerRepo,
       },
     );
   }

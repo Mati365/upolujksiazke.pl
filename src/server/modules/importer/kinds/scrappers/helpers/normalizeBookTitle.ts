@@ -54,6 +54,20 @@ export function dropBookType(name: string): {
 }
 
 /**
+ * Removes separators etc from volume title
+ *
+ * @export
+ * @param {string} title
+ * @returns
+ */
+export function normalizeVolumeTitle(title: string) {
+  if (!title)
+    return null;
+
+  return title.replace(/[,:;]/g, '-');
+}
+
+/**
  * Some books have not necessary titles suffixes, extract them
  *
  * @param {string} name
@@ -75,7 +89,7 @@ export function extractBookPostifxes(name: string): {
 
   // check long form
   result ||= name.match(
-    /(?<title>.*)(?:[\s.,(]+(?<type>tom|wydanie|część)(?:[\s.,)]+|$)(?<part>[\w]+))[,.\s:]*(?<rest>.*)?/i,
+    /(?<title>.*)(?:[\s.,(]+(?<type>tom|wydanie|część)(?:[\s.,)]+|$)(?<part>[\w-,]+))[,.\s:]*(?<rest>.*)?/i,
   );
 
   // check shortcut form
@@ -105,7 +119,7 @@ export function extractBookPostifxes(name: string): {
   return R.mapObjIndexed(
     (item) => item?.trim() || null,
     {
-      volume,
+      volume: normalizeVolumeTitle(volume),
       edition: editionType ? part : null,
       title: (
         [title, rest]
@@ -145,7 +159,7 @@ export function extractBookSeries(name: string) {
   return {
     title: trimBorderSpecialCharacters(title),
     series: series?.trim(),
-    volume,
+    volume: normalizeVolumeTitle(volume),
   };
 }
 

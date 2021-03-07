@@ -180,5 +180,19 @@
     "series": "Siedem Sióstr",
     "volume": "4",
     "edition": null
+  },
+  "Jaga. Kwiat paproci. Tom 0,5": {
+    "type": 2,
+    "series": null,
+    "edition": null,
+    "volume": "0-5",
+    "title": "Jaga. Kwiat paproci"
+  },
+  "Powrót króla. Bitwa o Afganistan 1839-42": {
+    "type": 2,
+    "series": null,
+    "edition": null,
+    "volume": "1",
+    "title": "Powrót króla. Bitwa o Afganistan 1839-42"
   }
 }

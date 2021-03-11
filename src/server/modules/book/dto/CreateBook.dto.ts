@@ -100,6 +100,22 @@ export class CreateBookDto {
   @Type(() => CreateBookCategoryDto)
   readonly categories: CreateBookCategoryDto[];
 
+  @IsOptional()
+  @IsNumber()
+  readonly avgRating: number;
+
+  @IsOptional()
+  @IsNumber()
+  readonly totalRatings: number;
+
+  @IsOptional()
+  @IsNumber()
+  readonly lowestPrice: number;
+
+  @IsOptional()
+  @IsNumber()
+  readonly highestPrice: number;
+
   constructor(partial: Partial<CreateBookDto>) {
     Object.assign(this, partial);
   }

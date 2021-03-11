@@ -7,6 +7,8 @@ import {BookCardReleaseSerializer} from './BookCardRelease.serializer';
 
 export class BookCardSerializer extends BaseSerializer implements BookCardRecord {
   @Expose() parameterizedSlug: string;
+  @Expose() avgRating: number;
+  @Expose() totalRatings: number;
 
   @Expose()
   @Type(() => BookAuthorSerializer)

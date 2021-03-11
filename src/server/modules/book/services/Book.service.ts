@@ -23,6 +23,7 @@ import {BookEntity} from '../Book.entity';
 import {BookVolumeEntity} from '../modules/volume/BookVolume.entity';
 import {BookReviewEntity} from '../modules/review/BookReview.entity';
 import {BookReleaseEntity} from '../modules/release/BookRelease.entity';
+import {BookStatsService} from './BookStats.service';
 
 /**
  * @see
@@ -36,7 +37,7 @@ import {BookReleaseEntity} from '../modules/release/BookRelease.entity';
 @Injectable()
 export class BookService {
   public static readonly BOOK_CARD_FIELDS = [
-    'book.id', 'book.parameterizedSlug',
+    'book.id', 'book.parameterizedSlug', 'book.totalRatings', 'book.avgRating',
     'release.id', 'release.title',
     'author.id', 'author.name', 'author.parameterizedName',
     'cover.ratio', 'cover.nsfw', 'cover.version', 'attachment.file',
@@ -52,6 +53,7 @@ export class BookService {
     private readonly seriesService: BookSeriesService,
     private readonly prizeService: BookPrizeService,
     private readonly kindService: BookKindService,
+    private readonly bookStatsService: BookStatsService,
   ) {}
 
   /**
@@ -153,6 +155,7 @@ export class BookService {
         volumeService, releaseService,
         categoryService, seriesService,
         prizeService, kindService,
+        bookStatsService,
       } = this;
 
       const [
@@ -232,26 +235,35 @@ export class BookService {
         )?.id
       );
 
-      await transaction.save(
-        Object.assign(
-          book,
-          {
-            id: book.id,
-            series,
-            prizes,
-            authors,
-            tags,
-            categories,
-            ...!R.isNil(primaryReleaseId) && {
-              primaryReleaseId,
-            },
+      const mergedBook: BookEntity = Object.assign(
+        book,
+        {
+          id: book.id,
+          releases: upsertedReleases,
+          series,
+          prizes,
+          authors,
+          tags,
+          categories,
+          ...!R.isNil(primaryReleaseId) && {
+            primaryReleaseId,
           },
-        ),
+        },
       );
 
       // prevent typeorm saving, releases already contains bookId
-      book.releases = upsertedReleases;
-      return book;
+      Object.assign(
+        mergedBook,
+        bookStatsService.getLoadedEntityStats(mergedBook),
+      );
+
+      await transaction.save(
+        new BookEntity(
+          R.omit(['releases'], mergedBook),
+        ),
+      );
+
+      return mergedBook;
     });
   }
 }

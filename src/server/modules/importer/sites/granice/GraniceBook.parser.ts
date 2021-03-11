@@ -32,7 +32,7 @@ export class GraniceBookParser
         result: [
           new CreateBookAvailabilityDto(
             {
-              avgRating: Number.parseFloat(rating.find('rating[itemprop="ratingValue"]')?.text()) * 2 || null,
+              avgRating: Number.parseFloat(rating.find('rating[itemprop="ratingValue"]')?.text()) * (10 / 6) || null,
               totalRatings: Number.parseFloat(rating.find('rating[itemprop="ratingCount"]')?.text()) || null,
               remoteId,
               url,

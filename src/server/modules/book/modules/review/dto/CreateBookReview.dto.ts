@@ -1,5 +1,6 @@
 import {Type, Transform} from 'class-transformer';
 import {
+  IsBoolean,
   IsDate, IsDefined, IsNumber,
   IsOptional, IsString, ValidateNested,
 } from 'class-validator';
@@ -49,6 +50,10 @@ export class CreateBookReviewDto extends CreateRemoteRecordDto {
   @IsOptional()
   @IsNumber()
   readonly releaseId: number;
+
+  @IsOptional()
+  @IsBoolean()
+  readonly includeInStats: boolean;
 
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(partial: Partial<CreateBookReviewDto>) {

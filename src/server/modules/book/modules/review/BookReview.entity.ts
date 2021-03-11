@@ -35,6 +35,9 @@ export class BookReviewEntity extends RemoteRecordFields {
   @Column('smallint', {nullable: true})
   rating: number;
 
+  @Column('boolean', {default: false, nullable: true})
+  includeInStats: boolean;
+
   @ManyToOne(() => BookEntity, (book) => book.reviews)
   @JoinColumn({name: 'bookId'})
   book: BookEntity;

@@ -1,16 +1,18 @@
 import React from 'react';
+
 import {AsyncRoute} from '@client/components/utils/asyncRouteUtils';
+import {Container} from '@client/components/ui';
+import {Layout} from '@client/containers';
 
 export const HomeRoute: AsyncRoute = () => (
-  <div>
-    TEST
-  </div>
+  <Layout>
+    <Container>
+      ABC
+    </Container>
+  </Layout>
 );
 
 HomeRoute.getInitialProps = async ({api}) => {
-  const t = Date.now();
-  const r = await api.repo.recentBooks.findCategoriesRecentBooks();
-  console.info(Date.now() - t, JSON.stringify(r, null, 2));
-
+  await api.repo.recentBooks.findCategoriesRecentBooks();
   return null;
 };

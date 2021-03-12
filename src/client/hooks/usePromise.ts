@@ -41,7 +41,7 @@ export const usePromise = <T>(config: PromiseConfig<T>): PromiseHookReturnType<T
   const [promiseState, setPromiseState] = useState<PromiseState<T>>(
     {
       result: config.initialData ?? null,
-      loading: true,
+      loading: !config.skip,
     },
   );
 

@@ -52,6 +52,7 @@ export class RecentBooksServerRepo extends APIClientChild<ServerAPIClient> imple
               limit $1
           ) as items
         ) as books
+        where category."promotion" > 0
         order by category."promotion" desc
         limit $2
         offset $3

@@ -1,16 +1,10 @@
 import {MulterModule} from '@nestjs/platform-express';
-import {TypeOrmModule} from '@nestjs/typeorm';
 import {DynamicModule, Global, Module} from '@nestjs/common';
 import {diskStorage} from 'multer';
 import * as mime from 'mime-types';
 
 import {genUniqueFilename} from './helpers/genUniqueFilename';
-
 import {AttachmentSubscriber} from './subscribers/Attachment.subscriber';
-import {
-  AttachmentEntity,
-  ImageAttachmentEntity,
-} from './entity';
 
 import {
   ATTACHMENTS_OPTIONS,
@@ -46,12 +40,6 @@ export class AttachmentModule {
     return {
       module: AttachmentModule,
       imports: [
-        TypeOrmModule.forFeature(
-          [
-            AttachmentEntity,
-            ImageAttachmentEntity,
-          ],
-        ),
         multerModule,
       ],
       providers: [

@@ -11,6 +11,10 @@ export class CreateBookCategoryDto {
   readonly id: number;
 
   @IsOptional()
+  @IsNumber()
+  readonly parentCategoryId: number;
+
+  @IsOptional()
   @IsString()
   @IsUniqueValue(
     {

@@ -13,6 +13,19 @@ export class BookStatsService {
   ) {}
 
   /**
+   * Returns total number of books
+   *
+   * @todo
+   *  Add caching?
+   *
+   * @returns
+   * @memberof BookStatsService
+   */
+  getTotalBooks() {
+    return BookEntity.count();
+  }
+
+  /**
    * Calculates book stats for record that contains all
    * releases and availability records.
    * Used primarly during creating of record.
@@ -78,34 +91,37 @@ export class BookStatsService {
    */
   async refreshStats(id: number) {
     const {entityManager} = this;
-    const [stats]: [BookStats] = await entityManager.query(/* sql */ `
-      with
-        availability as (
-          select
-            min("price")::float as "lowestPrice",
-            max("price")::float as "highestPrice",
-            sum("avgRating")::float as "sumRatings",
-            sum(CASE WHEN "avgRating" IS NULL THEN 0 ELSE "totalRatings" END)::int as "totalRatings",
-            sum(CASE WHEN "avgRating" IS NULL THEN 0 ELSE 1 END)::int as "totalAvgItems"
-          from public.book_availability
-          where "bookId" = $1
-        ),
-        reviews as (
-          select
-            sum("rating")::float as "sumRatings",
-            count(CASE WHEN "rating" IS NULL THEN 0 ELSE 1 END)::int as "totalAvgItems"
-          from public.book_review
-          where "bookId" = $1 and "includeInStats" = true
-        )
-      select
-        a."lowestPrice",
-        a."highestPrice",
-        (coalesce(a."sumRatings", 0) + coalesce(r."sumRatings", 0))
-          / nullif(a."totalAvgItems" + r."totalAvgItems", 0) as "avgRating",
-        (coalesce(a."totalRatings", 0) + coalesce(r."totalAvgItems", 0)) as "totalRatings"
-      from availability a
-      cross join reviews r
-    `, [id]);
+    const [stats]: [BookStats] = await entityManager.query(
+      /* sql */ `
+        with
+          availability as (
+            select
+              min("price")::float as "lowestPrice",
+              max("price")::float as "highestPrice",
+              sum("avgRating")::float as "sumRatings",
+              sum(CASE WHEN "avgRating" IS NULL THEN 0 ELSE "totalRatings" END)::int as "totalRatings",
+              sum(CASE WHEN "avgRating" IS NULL THEN 0 ELSE 1 END)::int as "totalAvgItems"
+            from public.book_availability
+            where "bookId" = $1
+          ),
+          reviews as (
+            select
+              sum("rating")::float as "sumRatings",
+              count(CASE WHEN "rating" IS NULL THEN 0 ELSE 1 END)::int as "totalAvgItems"
+            from public.book_review
+            where "bookId" = $1 and "includeInStats" = true
+          )
+        select
+          a."lowestPrice",
+          a."highestPrice",
+          (coalesce(a."sumRatings", 0) + coalesce(r."sumRatings", 0))
+            / nullif(a."totalAvgItems" + r."totalAvgItems", 0) as "avgRating",
+          (coalesce(a."totalRatings", 0) + coalesce(r."totalAvgItems", 0)) as "totalRatings"
+        from availability a
+        cross join reviews r
+      `,
+      [id],
+    );
 
     await BookEntity.save(
       new BookEntity(

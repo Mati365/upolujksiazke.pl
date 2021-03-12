@@ -1,4 +1,4 @@
 export * from './dto/CreateBookCategory.dto';
 export * from './BookCategory.entity';
 export * from './BookCategory.module';
-export * from './BookCategory.service';
+export * from './services';

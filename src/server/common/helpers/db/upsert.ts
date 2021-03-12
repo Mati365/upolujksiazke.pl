@@ -17,9 +17,10 @@ export async function upsert<T, E extends T | T[], K extends keyof T>(
     conflictKeys,
     coalesce = true,
     doNothing,
+    columns,
     skip = ['id', 'createdAt'] as K[],
   }: {
-    connection: Connection,
+    connection?: Connection,
     entityManager?: EntityManager,
     Entity: EntityTarget<T>,
     data: E,
@@ -29,6 +30,7 @@ export async function upsert<T, E extends T | T[], K extends keyof T>(
     coalesce?: boolean,
     primaryKey?: CanBeArray<(string & keyof T) | `${string & keyof T}Id`>,
     skip?: K[],
+    columns?: K[],
   },
 ): Promise<E> {
   const repo = (
@@ -41,12 +43,15 @@ export async function upsert<T, E extends T | T[], K extends keyof T>(
   if (doNothing)
     conflictKeys ??= '';
   else {
-    const metadata = connection.getMetadata(Entity);
+    const metadata = (connection ?? entityManager.connection).getMetadata(Entity);
     updateStr = !doNothing && (
       metadata
         .columns
         .map(
           ({databaseName: key}) => {
+            if (columns && !columns.includes(key as K))
+              return null;
+
             if (skip.includes(key as K))
               return null;
 

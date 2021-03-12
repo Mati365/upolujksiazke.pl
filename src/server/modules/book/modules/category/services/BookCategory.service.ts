@@ -5,8 +5,8 @@ import * as R from 'ramda';
 import {upsert} from '@server/common/helpers/db';
 import {parameterize} from '@shared/helpers/parameterize';
 
-import {BookCategoryEntity} from './BookCategory.entity';
-import {CreateBookCategoryDto} from './dto/CreateBookCategory.dto';
+import {BookCategoryEntity} from '../BookCategory.entity';
+import {CreateBookCategoryDto} from '../dto/CreateBookCategory.dto';
 
 @Injectable()
 export class BookCategoryService {

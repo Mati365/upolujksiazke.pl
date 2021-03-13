@@ -1,5 +1,8 @@
 import {Expose, Type} from 'class-transformer';
 
+import {SERVER_ENV} from '@server/constants/env';
+import {concatUrls} from '@shared/helpers/concatUrls';
+
 import {ImageVersion} from '@shared/enums/imageVersion';
 import {ImageVersionedRecord} from '@api/types/ImageAttachment.record';
 
@@ -29,7 +32,7 @@ export function toImageVersionedRecord(attachments: ImageAttachmentDbResult[]): 
     (acc, {attachment, version, ...props}) => {
       acc[version] = {
         ...props,
-        file: attachment.file,
+        file: concatUrls(SERVER_ENV.cdn.publicUrl, attachment.file),
       };
 
       return acc;

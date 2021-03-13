@@ -1,0 +1,10 @@
+.c-books-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 25px;
+
+  @include mobile {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+}

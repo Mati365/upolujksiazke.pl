@@ -1,0 +1,18 @@
+.c-book-card {
+  &__cover {
+    display: block;
+    position: relative;
+    width: 100%;
+    height: 0;
+    padding-bottom: percentage($book-ratio);
+
+    > img {
+      position: absolute;
+      width: 100%;
+      max-height: 100%;
+      left: 0;
+      bottom: 0;
+      height: auto;
+    }
+  }
+}

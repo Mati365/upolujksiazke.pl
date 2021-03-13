@@ -1,0 +1,18 @@
+.c-section {
+  margin: 3rem 0;
+
+  &.is-divided > &__header {
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid color(section-header-border);
+  }
+
+  &__header {
+    margin-top: 0;
+    margin-bottom: 1.75rem;
+    text-transform: capitalize;
+  }
+
+  &__content {
+    padding: 0 1.75rem;
+  }
+}

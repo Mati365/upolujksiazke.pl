@@ -1,0 +1,9 @@
+// H1, H2, H3..
+@for $i from 1 through length($headers-sizes) {
+  $size: nth($headers-sizes, $i);
+
+  h#{$i} {
+    font-size: $size;
+  }
+}
+

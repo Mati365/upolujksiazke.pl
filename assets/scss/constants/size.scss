@@ -1,7 +1,17 @@
 $container-width: 1320px;
 
+$text-default-global-size: 15px;
+
 $text-tiny:   0.75rem;
 $text-small:  0.85rem;
 $text-normal: 1rem;
 $text-medium: 1.25rem;
 $text-big:    1.5rem;
+
+$breakpoint-mobile: 0, 480px;
+$breakpoint-tablet: 481px, 768px;
+$breakpoint-small-desktop: 769px, 1200px;
+$breakpoint-medium-desktop: 1201px, 1500px;
+$breakpoint-large-desktop: 1501px;
+
+$headers-sizes: 2rem 1.5rem 1.17rem 1.12rem .83rem .75rem;

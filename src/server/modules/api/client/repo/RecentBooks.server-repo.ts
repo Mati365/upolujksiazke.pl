@@ -23,11 +23,11 @@ export class RecentBooksServerRepo extends APIClientChild<ServerAPIClient> imple
    * @memberof RecentBooksServerRepo
    */
   async findCategoriesRecentBooks(
-    attrs: BooksGroupsFilters = {
-      itemsPerGroup: 12,
-      limit: 4,
-      offset: 0,
-    },
+    {
+      itemsPerGroup = 12,
+      offset = 0,
+      limit = 6,
+    }: BooksGroupsFilters = {},
   ): Promise<CategoryBooksGroup[]> {
     const {entityManager, bookService} = this.api.services;
 
@@ -58,9 +58,9 @@ export class RecentBooksServerRepo extends APIClientChild<ServerAPIClient> imple
         offset $3
       `,
       [
-        attrs.itemsPerGroup,
-        attrs.limit,
-        attrs.offset,
+        itemsPerGroup,
+        limit,
+        offset,
       ],
     );
 

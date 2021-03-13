@@ -47,6 +47,10 @@ async function forkApp(
       express.static(path.resolve(__dirname, 'public/no-prefix')),
     )
     .use(
+      '/cdn',
+      express.static(SERVER_ENV.cdn.localPath),
+    )
+    .use(
       '/public',
       express.static(path.resolve(__dirname, 'public/'), {fallthrough: false}),
     )

@@ -3,11 +3,11 @@ import {CategoryBooksGroup} from '@api/types/CategoryBooksGroup.record';
 import {APIRepo} from '../APIRepo';
 import {BookCardRecord} from '../types/BookCard.record';
 
-export type BooksGroupsFilters = {
+export type BooksGroupsFilters = Partial<{
   itemsPerGroup: number,
   limit: number,
   offset: number,
-};
+}>;
 
 export interface RecentBooksRepo extends APIRepo<BookCardRecord> {
   findCategoriesRecentBooks(filters?: BooksGroupsFilters): CanBePromise<CategoryBooksGroup[]>;

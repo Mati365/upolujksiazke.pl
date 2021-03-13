@@ -1,43 +1,59 @@
 @mixin mobile {
-  @media screen and (max-width: nth($breakpoint-mobile, 1)) { @content; }
+  @media screen and (max-width: nth($breakpoint-mobile, 2)) { @content; }
+}
+
+@mixin small-mobile {
+  @media screen and (max-width: nth($breakpoint-small-mobile, 2)) { @content; }
+}
+
+@mixin big-mobile {
+  @media screen and (min-width: nth($breakpoint-small-mobile, 2)) and (max-width: nth($breakpoint-mobile, 2)) {
+    @content;
+  }
+}
+
+@mixin except-mobile {
+  @media screen and (min-width: nth($breakpoint-tablet, 1)) {
+    @content;
+  }
 }
 
 @mixin tablet {
-  @media screen and (min-width: nth($breakpoint-tablet, 0)) and (max-width: nth($breakpoint-tablet, 1)) {
+  @media screen and (min-width: nth($breakpoint-tablet, 1)) and (max-width: nth($breakpoint-tablet, 2)) {
     @content;
   }
 }
 
 @mixin small-desktop {
-  @media screen and (min-width: nth($breakpoint-small-desktop, 0)) and (max-width: nth($breakpoint-small-desktop, 1)) {
+  @media screen and (min-width: nth($breakpoint-small-desktop, 1)) and (max-width: nth($breakpoint-small-desktop, 2)) {
     @content;
   }
 }
 
 @mixin medium-desktop {
-  @media screen and (min-width: nth($breakpoint-medium-desktop, 0)) and (max-width: nth($breakpoint-medium-desktop, 1)) {
+  @media screen and (min-width: nth($breakpoint-medium-desktop, 1)) and (max-width: nth($breakpoint-medium-desktop, 2)) {
     @content;
   }
 }
 
 @mixin large-desktop {
-  @media screen and (min-width: nth($breakpoint-large-desktop, 0)) and (max-width: nth($breakpoint-large-desktop, 1)) {
+  @media screen and (min-width: nth($breakpoint-large-desktop, 1)) and (max-width: nth($breakpoint-large-desktop, 2)) {
     @content;
   }
 }
 
 @mixin tablet-and-smaller {
-  @media screen and (max-width: nth($breakpoint-tablet, 1)) { @content; }
+  @media screen and (max-width: nth($breakpoint-tablet, 2)) { @content; }
 }
 
 @mixin small-desktop-and-smaller {
-  @media screen and (max-width: nth($breakpoint-small-desktop, 1)) { @content; }
+  @media screen and (max-width: nth($breakpoint-small-desktop, 2)) { @content; }
 }
 
 @mixin medium-desktop-and-smaller {
-  @media screen and (max-width: nth($breakpoint-medium-desktop, 1)) { @content; }
+  @media screen and (max-width: nth($breakpoint-medium-desktop, 2)) { @content; }
 }
 
 @mixin large-desktop-and-smaller {
-  @media screen and (max-width: nth($breakpoint-large-desktop, 1)) { @content; }
+  @media screen and (max-width: nth($breakpoint-large-desktop, 2)) { @content; }
 }

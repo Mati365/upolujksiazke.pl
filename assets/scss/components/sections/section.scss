@@ -26,4 +26,11 @@
   &__content {
     padding: 0 1.75rem;
   }
+
+  @include mobile {
+    &__content {
+      padding-left: 0;
+      padding-right: 0;
+    }
+  }
 }

@@ -1,10 +1,37 @@
 .c-books-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 25px;
+  --columns: 7;
+  --gap: 25px;
 
-  @include mobile {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
+  display: grid;
+  grid-template-columns: repeat(var(--columns), 1fr);
+  gap: var(--gap);
+
+  @mixin clean-book-border {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  @include except-mobile {
+    > .c-book-card:nth-last-child(-n+7) {
+      @include clean-book-border;
+    }
+  }
+
+  @include small-mobile {
+    --columns: 2;
+    --gap: 15px;
+
+    > .c-book-card:nth-last-child(-n+2) {
+      @include clean-book-border;
+    }
+  }
+
+  @include big-mobile {
+    --columns: 3;
+    --gap: 10px;
+
+    > .c-book-card:nth-last-child(-n+3) {
+      @include clean-book-border;
+    }
   }
 }

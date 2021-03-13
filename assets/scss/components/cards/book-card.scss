@@ -1,4 +1,7 @@
 .c-book-card {
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid color(grid-items-border);
+
   &__cover {
     display: block;
     position: relative;
@@ -27,5 +30,12 @@
 
   &__author {
     font-size: .8rem;
+  }
+
+  @include mobile {
+    &__ratings {
+      font-size: 0.9rem;
+      flex-wrap: wrap;
+    }
   }
 }

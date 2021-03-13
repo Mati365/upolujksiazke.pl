@@ -4,4 +4,12 @@ export const PL_LANG_PACK = {
       title: 'Upoluj książkę - sprawdź recenzje, opinie i porównaj ceny książek w większości księgarni w Polsce',
     },
   },
+  shared: {
+    book: {
+      price: 'Cena',
+    },
+    price: {
+      pln: 'zł',
+    },
+  },
 };

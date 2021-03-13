@@ -6,6 +6,8 @@ export interface BookCardRecord extends APIRecord {
   parameterizedSlug: string;
   avgRating: number;
   totalRatings: number;
+  lowestPrice: number;
+  highestPrice: number;
   authors: BookAuthorRecord[];
   primaryRelease: BookCardReleaseRecord,
 }

@@ -12,7 +12,8 @@ export const RecentCategoriesBooks = ({items: groups}: RecentCategoriesBooksProp
   ({category, items}) => (
     <Section
       key={category.id}
-      title={`${category.name} »`}
+      title={category.name}
+      headerClassName='has-double-link-chevron'
     >
       <BooksGrid items={items} />
     </Section>

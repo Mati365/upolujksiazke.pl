@@ -5,6 +5,10 @@
     svg > path {
       fill: color(primary);
     }
+
+    &.is-empty svg > path {
+      fill: #ccc;
+    }
   }
 
   &__total {

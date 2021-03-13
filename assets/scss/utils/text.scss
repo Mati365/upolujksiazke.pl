@@ -4,10 +4,15 @@
     line-height: $text-small-line-height;
   }
 
-  &-semibold {
-    font-weight: 600;
-  }
+  &-strike { text-decoration: line-through; }
+
+  &-semibold { font-weight: 600; }
+  &-bold     { font-weight: 700; }
 
   &-muted   { color: color(muted-text); }
   &-primary { color: color(primary); }
+}
+
+.has-double-link-chevron::after {
+  content: ' »';
 }

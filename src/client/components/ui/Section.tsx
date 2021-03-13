@@ -6,13 +6,15 @@ import {BasicWrapperProps} from '@client/components/ui';
 type SectionProps = BasicWrapperProps & {
   title?: ReactNode,
   bordered?: boolean,
+  headerClassName?: string,
 };
 
 export const Section = (
   {
     title,
     bordered = true,
-    className, children,
+    className, headerClassName,
+    children,
   }: SectionProps,
 ) => (
   <section
@@ -23,7 +25,12 @@ export const Section = (
     )}
   >
     {title && (
-      <h2 className='c-section__header'>
+      <h2
+        className={c(
+          'c-section__header',
+          headerClassName,
+        )}
+      >
         {title}
       </h2>
     )}

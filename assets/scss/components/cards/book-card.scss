@@ -19,6 +19,14 @@
     }
   }
 
+  &__info {
+    min-height: 80px;
+  }
+
+  &__price {
+    margin-top: .5rem;
+  }
+
   &__ratings {
     margin: .75rem 0 .55rem;
   }

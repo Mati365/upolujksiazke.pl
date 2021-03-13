@@ -1,4 +1,5 @@
 .c-icon {
+  display: inline-flex;
   color: inherit;
 
   svg {
@@ -7,6 +8,7 @@
 
     > path {
       color: currentColor;
+      fill: currentColor;
     }
   }
 }

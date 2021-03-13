@@ -1,5 +1,6 @@
 .m {
-  &l-1 {
-    margin-left: 5px;
+  &l {
+    &-1    { margin-left: 5px; }
+    &-auto { margin-left: auto; }
   }
 }

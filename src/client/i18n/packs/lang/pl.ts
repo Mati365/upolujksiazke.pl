@@ -7,6 +7,8 @@ export const PL_LANG_PACK = {
   shared: {
     book: {
       price: 'Cena',
+      compare: 'Porównaj',
+      total_ratings: 'Ocen',
     },
     price: {
       pln: 'zł',

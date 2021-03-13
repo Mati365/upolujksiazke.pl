@@ -5,7 +5,12 @@ import * as R from 'ramda';
 import {useI18n} from '@client/i18n';
 
 import {BookCardRecord} from '@api/types';
-import {Picture} from '@client/components/ui';
+import {Button, Picture} from '@client/components/ui';
+import {
+  BasketIcon,
+  ChevronRightIcon,
+} from '@client/components/svg';
+
 import {RatingsRow} from '../parts/RatingsRow';
 import {Price} from '../Price';
 
@@ -75,6 +80,17 @@ export const BookCard = (
           />
         )}
       </div>
+
+      <Button
+        className='c-book-card__cta'
+        type='primary'
+        size='medium-small'
+        iconSuffix
+      >
+        <BasketIcon className='mr-1 c-book-card__cta__basket-icon' />
+        {t('shared.book.compare')}
+        <ChevronRightIcon />
+      </Button>
     </article>
   );
 };

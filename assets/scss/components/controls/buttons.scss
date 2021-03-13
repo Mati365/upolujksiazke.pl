@@ -19,3 +19,66 @@
     padding: 0;
   }
 }
+
+.c-button {
+  @extend .c-clean-button;
+  @include flex-centered;
+
+  --btn-background: #{color(button-default)};
+  --btn-border: #{color(button-default-border)};
+  --btn-color: #{color(button-default-text)};
+  --btn-x-padding: 5px;
+  --btn-y-padding: 10px;
+
+  padding: var(--btn-x-padding) var(--btn-y-padding);
+  border-radius: 5px;
+  color: var(--btn-color);
+  background: var(--btn-background);
+  border: 1px solid var(--btn-border);
+  transition: background 250ms ease-in-out;
+
+  &.is-primary {
+    --btn-background: #{color(button-primary)};
+    --btn-border: #{color(button-primary-border)};
+    --btn-color: #{color(button-primary-text)};
+
+    &:hover {
+      background: color(button-primary-hover);
+    }
+  }
+
+  &.is-medium-small {
+    font-size: $text-small;
+  }
+
+  &.is-outlined {
+    &, &:hover {
+      transition: none;
+      background: none;
+      color: var(--btn-background);
+    }
+  }
+
+  &.has-icon-suffix {
+    $suffix-width: 24px;
+
+    position: relative;
+    justify-content: space-around;
+    padding-right: calc(#{$suffix-width} + var(--btn-x-padding));
+
+    > .c-icon:last-of-type {
+      @include flex-centered;
+
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: $suffix-width;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.15);
+    }
+
+    @include mobile {
+      justify-content: flex-start;
+    }
+  }
+}

@@ -17,3 +17,11 @@
   padding: 0;
   margin: 0;
 }
+
+@mixin limit-text-lines($lines) {
+  @extend .is-text-truncated;
+
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: $lines;
+}

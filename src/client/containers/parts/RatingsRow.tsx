@@ -2,6 +2,8 @@ import React from 'react';
 import c from 'classnames';
 import * as R from 'ramda';
 
+import {useI18n} from '@client/i18n';
+
 import {CleanList} from '@client/components/ui';
 import {
   StarFilledIcon,
@@ -26,6 +28,8 @@ export const RatingsRow = (
     totalStars = 5,
   }: RatingsRowProps,
 ) => {
+  const t = useI18n();
+
   const normalizedValue = value * totalStars;
   const stars = R.times(
     (score) => {
@@ -64,11 +68,9 @@ export const RatingsRow = (
       )}
     >
       {stars}
-      {totalReviews > 0 && (
-        <span className='c-ratings-row__total'>
-          {`(${totalReviews})`}
-        </span>
-      )}
+      <span className='c-ratings-row__total'>
+        {`(${totalReviews || 0} ${t('shared.book.total_ratings')})`}
+      </span>
     </CleanList>
   );
 };

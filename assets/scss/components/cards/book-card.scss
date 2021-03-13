@@ -32,6 +32,8 @@
   }
 
   &__title {
+    @include limit-text-lines(3);
+
     margin-top: 0;
     margin-bottom: .5rem;
   }
@@ -40,10 +42,39 @@
     font-size: .8rem;
   }
 
+  &__cta {
+    width: 100%;
+    margin-top: 1rem;
+    font-weight: 800;
+
+    &.has-icon-suffix {
+      justify-content: flex-start;
+    }
+
+    > .c-icon svg {
+      position: relative;
+      top: 1px;
+      transform: scale(1.25);
+    }
+
+    &__basket-icon {
+      margin-right: 10px;
+    }
+  }
+
   @include mobile {
     &__ratings {
       font-size: 0.9rem;
       flex-wrap: wrap;
+    }
+
+    &__price {
+      display: flex;
+      flex-direction: column;
+
+      > span {
+        margin-left: 0;
+      }
     }
   }
 }

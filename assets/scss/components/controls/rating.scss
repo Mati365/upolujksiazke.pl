@@ -12,7 +12,15 @@
   }
 
   &__total {
+    text-transform: lowercase;
     margin-left: 7px;
     font-size: 0.8em;
+  }
+
+  @include mobile {
+    &__total {
+      width: 100%;
+      margin: 5px 0 0;
+    }
   }
 }

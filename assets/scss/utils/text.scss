@@ -9,8 +9,14 @@
   &-semibold { font-weight: 600; }
   &-bold     { font-weight: 700; }
 
+  &-inherit { color: inherit; }
   &-muted   { color: color(muted-text); }
   &-primary { color: color(primary); }
+
+  &-truncated {
+    overflow: hidden;
+    text-overflow: hidden;
+  }
 }
 
 .has-double-link-chevron::after {

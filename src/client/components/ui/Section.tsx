@@ -32,6 +32,7 @@ export const Section = (
         )}
       >
         {title}
+        <span className='c-section__header-underline' />
       </h2>
     )}
 

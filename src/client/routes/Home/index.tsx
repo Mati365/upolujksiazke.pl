@@ -24,7 +24,7 @@ export const HomeRoute: AsyncRoute = ({recentCategoriesBooks}: HomeRouteProps) =
 HomeRoute.getInitialProps = async ({api}) => ({
   recentCategoriesBooks: await api.repo.recentBooks.findCategoriesRecentBooks(
     {
-      itemsPerGroup: 12,
+      itemsPerGroup: 14,
       limit: 6,
     },
   ),

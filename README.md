@@ -43,6 +43,14 @@ OpenSource book reviews aggregator, something like Metacritic / Digg for books. 
 - [ ] Automatic blog posts
 - [ ] SEOLinks on blog posts / reviews
 
+## Resources
+
+Icons:
+https://boxicons.com/
+
+Color palette:
+https://coolors.co/2b2d42-8d99ae-edf2f4-ef233c-d90429
+
 ## Available websites
 
 🇵🇱 Poland

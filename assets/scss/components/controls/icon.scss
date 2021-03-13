@@ -1,0 +1,12 @@
+.c-icon {
+  color: inherit;
+
+  svg {
+    width: 1em;
+    height: 1em;
+
+    > path {
+      color: currentColor;
+    }
+  }
+}

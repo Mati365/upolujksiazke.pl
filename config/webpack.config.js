@@ -56,7 +56,7 @@ const createConfig = ({
           use: 'raw-loader',
         },
         {
-          test: /\.(png|jpe?g|gif|ttf|svg)$/,
+          test: /\.(png|jpe?g|gif|ttf)$/,
           use: [
             {
               loader: 'file-loader',
@@ -64,6 +64,25 @@ const createConfig = ({
                 outputPath: 'public',
                 publicPath: '/public',
                 emitFile: target === 'web',
+              },
+            },
+          ],
+        },
+        {
+          test: /\.svg$/,
+          use: [
+            'babel-loader',
+            {
+              loader: 'react-svg-loader',
+              options: {
+                svgo: {
+                  plugins: [
+                    {
+                      removeTitle: false,
+                    },
+                  ],
+                  floatPrecision: 2,
+                },
               },
             },
           ],

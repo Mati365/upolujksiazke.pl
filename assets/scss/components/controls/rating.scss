@@ -1,0 +1,14 @@
+.c-ratings-row {
+  &__star {
+    display: inline-flex;
+
+    svg > path {
+      fill: color(primary);
+    }
+  }
+
+  &__total {
+    margin-left: 7px;
+    font-size: 0.8em;
+  }
+}

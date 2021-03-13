@@ -1,0 +1,10 @@
+.is-text {
+  &-small {
+    font-size: $text-small;
+    line-height: $text-small-line-height;
+  }
+
+  &-semibold {
+    font-weight: 600;
+  }
+}

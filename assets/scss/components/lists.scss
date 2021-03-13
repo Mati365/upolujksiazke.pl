@@ -1,0 +1,17 @@
+.c-clean-list {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+
+  &.is-inline {
+    @extend .c-flex-row;
+  }
+
+  &.is-spaced {
+    @for $i from 1 through 7 {
+      &-#{$i} > li:not(:last-child) {
+        margin-right: #{$i * 5}px;
+      }
+    }
+  }
+}

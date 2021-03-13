@@ -1,0 +1,21 @@
+/* fajne guziki i ogólnie strona https://coolors.co/ */
+
+.c-clean-button {
+  outline: 0;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  background: initial;
+  cursor: pointer;
+
+  &, &:focus {
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+    touch-action: manipulation;
+  }
+
+  &::-moz-focus-inner {
+    border: 0;
+    padding: 0;
+  }
+}

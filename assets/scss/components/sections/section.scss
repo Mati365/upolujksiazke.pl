@@ -2,14 +2,25 @@
   margin: 3rem 0;
 
   &.is-divided > &__header {
-    padding-bottom: 1.5rem;
+    padding-bottom: 1.15rem;
     border-bottom: 1px solid color(section-header-border);
   }
 
   &__header {
+    position: relative;
     margin-top: 0;
-    margin-bottom: 1.75rem;
+    margin-bottom: 2rem;
     text-transform: capitalize;
+
+    &::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -1px;
+      width: 64px;
+      height: 3px;
+      background: color(primary);
+    }
   }
 
   &__content {

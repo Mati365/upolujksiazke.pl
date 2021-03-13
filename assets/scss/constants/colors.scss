@@ -1,5 +1,6 @@
 $gray-1: #e8e8e8;
 $gray-2: #d9d9d9;
+$gray-4: #8f8f8f;
 
 $primary-red: #d90429;
 
@@ -7,6 +8,9 @@ $primary-red: #d90429;
   --c-section-header-border: #{$gray-1};
   --c-grid-items-border: #{$gray-1};
   --c-button-border:  #{$gray-2};
+
+  --c-muted-text: #{$gray-4};
   --c-default-text-color: #1f1f1f;
+
   --c-primary: #{$primary-red};
 }

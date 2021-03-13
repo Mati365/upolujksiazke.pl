@@ -7,4 +7,7 @@
   &-semibold {
     font-weight: 600;
   }
+
+  &-muted   { color: color(muted-text); }
+  &-primary { color: color(primary); }
 }

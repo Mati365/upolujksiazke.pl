@@ -59,8 +59,15 @@ export class FrontController {
         routerConfig={{
           location: req.url,
         }}
-        {...preloadedRouteData && {
-          viewData: {
+        viewData={{
+          lang: {
+            current: i18n.lang,
+            translations: {
+              [i18n.lang]: i18n.currentLangPack,
+            },
+          },
+
+          ...preloadedRouteData && {
             asyncRoute: {
               [preloadedRouteData.id]: preloadedRouteData.props,
             },

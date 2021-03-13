@@ -24,7 +24,7 @@ export const Picture = (
     <img
       src={src}
       alt={alt}
-      title={title}
+      title={title || alt}
       loading={loading}
     />
   </picture>

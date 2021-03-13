@@ -9,6 +9,10 @@ export class I18nContext {
     public readonly lang: string,
     public readonly service: I18nPackService,
   ) {}
+
+  get currentLangPack() {
+    return this.service.getPackForLang(this.lang);
+  }
 }
 
 @Injectable()

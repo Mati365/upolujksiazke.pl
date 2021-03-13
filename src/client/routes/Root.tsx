@@ -2,6 +2,7 @@ import React from 'react';
 import {StaticRouterProps} from 'react-router';
 
 import {AsyncRouterRouteInfo} from '@client/components/utils/asyncRouteUtils';
+import {ProvideI18n} from '@client/i18n/ProvideI18n';
 import {
   AsyncRouter,
   ViewDataProvider,
@@ -19,14 +20,19 @@ export const APP_ROUTES_LIST: AsyncRouterRouteInfo[] = [
 
 export type PageRootProps = {
   routerConfig?: StaticRouterProps,
-  viewData?: object,
+  viewData?: any,
 };
 
 export const PageRoot = ({viewData, routerConfig}: PageRootProps) => (
   <ViewDataProvider initialData={viewData}>
-    <AsyncRouter
-      {...routerConfig}
-      routes={APP_ROUTES_LIST}
-    />
+    <ProvideI18n
+      lang={viewData.lang.current}
+      translations={viewData.lang.translations}
+    >
+      <AsyncRouter
+        {...routerConfig}
+        routes={APP_ROUTES_LIST}
+      />
+    </ProvideI18n>
   </ViewDataProvider>
 );

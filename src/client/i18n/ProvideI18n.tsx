@@ -66,6 +66,6 @@ ProvideI18n.propTypes = {
 
 ProvideI18n.defaultProps = {
   translations: {},
-  lang: 'en',
-  fallbackLang: 'en',
+  lang: 'pl',
+  fallbackLang: 'pl',
 };

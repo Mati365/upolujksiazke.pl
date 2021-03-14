@@ -9,16 +9,18 @@ import {
 
 export const BookActionRow = () => {
   const t = useI18n();
+  const title = t('shared.book.compare');
 
   return (
     <Button
       className='c-book-card__cta'
       type='primary'
       size='medium-small'
+      aria-label={title}
       iconSuffix
     >
       <BasketIcon className='mr-1 c-book-card__cta__basket-icon' />
-      {t('shared.book.compare')}
+      {title}
       <ChevronRightIcon />
     </Button>
   );

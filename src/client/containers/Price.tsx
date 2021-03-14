@@ -2,6 +2,7 @@ import React from 'react';
 import * as R from 'ramda';
 
 import {useI18n} from '@client/i18n';
+import {normalizeFloatingNumber} from '@client/helpers/logic';
 
 type PriceProps = JSX.IntrinsicElements['span'] & {
   value: number,
@@ -15,7 +16,7 @@ export const Price = ({value, currency = 'pln', ...props}: PriceProps) => {
 
   return (
     <span {...props}>
-      {`${value.toFixed(2).replace('.', ',')} ${t(`shared.price.${currency}`)}`}
+      {`${normalizeFloatingNumber(value)} ${t(`shared.price.${currency}`)}`}
     </span>
   );
 };

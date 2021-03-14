@@ -7,8 +7,14 @@
 
   &.is-spaced {
     @for $i from 1 through 7 {
-      &-#{$i} > li:not(:last-child) {
-        margin-right: #{$i * 5}px;
+      $spacing: $i * 5;
+
+      &-#{$i}.is-inline > li:not(:last-child) {
+        margin-right: #{$spacing}px;
+      }
+
+      &-#{$i}:not(.is-inline) > li:not(:last-child) {
+        margin-bottom: #{$spacing}px;
       }
     }
   }

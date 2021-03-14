@@ -1,14 +1,16 @@
-import React from 'react';
+import React, {ReactNode} from 'react';
 import c from 'classnames';
 
 type PictureProps = JSX.IntrinsicElements['picture'] & Pick<
 JSX.IntrinsicElements['img'], 'alt'|'src'|'title'|'loading'
->;
+> & {
+  layer?: ReactNode,
+};
 
 export const Picture = (
   {
     children, src, alt,
-    title, className,
+    title, className, layer,
     loading = 'lazy',
     ...props
   }: PictureProps,
@@ -27,6 +29,7 @@ export const Picture = (
       title={title || alt}
       loading={loading}
     />
+    {layer}
   </picture>
 );
 

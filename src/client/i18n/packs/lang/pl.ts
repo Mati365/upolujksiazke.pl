@@ -24,5 +24,8 @@ export const PL_LANG_PACK = {
     ribbons: {
       top: 'HIT',
     },
+    breadcrumbs: {
+      home: 'Strona główna',
+    },
   },
 };

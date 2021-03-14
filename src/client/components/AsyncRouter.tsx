@@ -23,23 +23,25 @@ export const AsyncRouter = ({routes, ...routerProps}: AsyncRouterProps) => (
   <IsomorphicRouter {...routerProps}>
     <Switch>
       {routes.map(
-        ({component: Component, path, ...props}) => {
+        ({component: Component, ...props}) => {
+          const {route: routeInfo} = Component;
           const id = genRouteID(
             {
-              path,
+              path: routeInfo.path,
             },
           );
 
           return (
             <Route
               key={id}
-              path={path}
+              path={routeInfo.path}
               render={() => (
                 <AsyncRoutePreloader
                   id={id}
                   component={Component}
                 />
               )}
+              exact={routeInfo.exact}
               {...props}
             />
           );

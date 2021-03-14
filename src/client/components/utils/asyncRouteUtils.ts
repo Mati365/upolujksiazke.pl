@@ -1,17 +1,16 @@
-import {match, matchPath, RouteProps} from 'react-router';
+import {match, matchPath} from 'react-router';
 
 import {findAndMap} from '@shared/helpers/findAndMap';
 import {
   CanBeArray,
   CanBePromise,
-  Overwrite,
 } from '@shared/types';
 
 import {APIClient} from '@api/APIClient';
 
-export type AsyncRouterRouteInfo = Overwrite<RouteProps, {
+export type AsyncRouterRouteInfo = {
   component: AsyncRoute<any, any>,
-}>;
+};
 
 export type AsyncRouteContext = {
   match: match<any>,
@@ -22,6 +21,10 @@ export type AsyncRoute<Props = {}, AsyncProps extends Partial<Props> = Props> = 
   (props: Props): JSX.Element | null,
   defaultProps?: Partial<Props>,
   displayName?: string,
+  route: {
+    path: string,
+    exact?: boolean,
+  },
   getInitialProps?(ctx?: AsyncRouteContext): CanBePromise<AsyncProps>,
 };
 
@@ -70,22 +73,33 @@ export async function preloadAsyncRouteProps(
   },
 ) {
   const result = findAndMap(
-    (route) => {
-      const matched = matchPath(path, route.path);
+    ({component}) => {
+      const {route: routeInfo} = component;
+      const matched = matchPath(
+        path,
+        {
+          path: routeInfo.path,
+          exact: routeInfo.exact,
+        },
+      );
+
+      if (!matched)
+        return null;
+
       return {
         matched,
-        route,
+        component,
       };
     },
     routes,
   );
 
-  if (!result || !isAsyncRoute(result.route.component))
+  if (!result || !isAsyncRoute(result.component))
     return null;
 
   return {
-    id: genRouteID(result.route as any),
-    props: await result.route.component.getInitialProps(
+    id: genRouteID(result.component.route),
+    props: await result.component.getInitialProps(
       {
         ...ctx,
         match: result.matched,

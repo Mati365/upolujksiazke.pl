@@ -9,12 +9,14 @@ import {
 } from '@client/components';
 
 import {HomeRoute} from './Home';
+import {BookRoute} from './Book';
 
 export const APP_ROUTES_LIST: AsyncRouterRouteInfo[] = [
   {
     component: HomeRoute,
-    path: '/',
-    exact: false,
+  },
+  {
+    component: BookRoute,
   },
 ];
 

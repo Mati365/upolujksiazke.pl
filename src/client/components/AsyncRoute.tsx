@@ -4,7 +4,7 @@ import {useRouteMatch} from 'react-router';
 import {usePromise} from '@client/hooks';
 import {useViewData} from './ViewDataProvider';
 
-import {AsyncRoute} from './utils/asyncRouteUtils';
+import {AsyncRoute, isAsyncRoute} from './utils/asyncRouteUtils';
 
 type AsyncRoutePreloaderProps = {
   id: string,
@@ -25,7 +25,7 @@ export const AsyncRoutePreloader = (
 
   const promiseState = usePromise(
     {
-      skip: id in cache,
+      skip: (id in cache) || !isAsyncRoute(Component),
       initialData: cache[id],
       fn: () => Component?.getInitialProps(
         {

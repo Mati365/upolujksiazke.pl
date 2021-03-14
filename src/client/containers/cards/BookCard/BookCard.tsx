@@ -7,6 +7,7 @@ import {getBookRibbons} from '@client/helpers/logic';
 
 import {BookCardRecord} from '@api/types';
 import {Picture} from '@client/components/ui';
+import {BookLink} from '@client/routes/Links';
 
 import {RatingsRow} from '../../parts/RatingsRow';
 import {BookTypesRow} from './BookTypesRow';
@@ -43,21 +44,23 @@ export const BookCard = (
         withDescription && 'has-description',
       )}
     >
-      <Picture
-        className='c-book-card__cover'
-        alt={primaryRelease.title}
-        src={primaryRelease.cover.preview.file}
-        layer={(
-          <BookRibons
-            items={getBookRibbons(
-              {
-                t,
-                book: item,
-              },
-            )}
-          />
-        )}
-      />
+      <BookLink item={item}>
+        <Picture
+          className='c-book-card__cover'
+          alt={primaryRelease.title}
+          src={primaryRelease.cover.preview.file}
+          layer={(
+            <BookRibons
+              items={getBookRibbons(
+                {
+                  t,
+                  book: item,
+                },
+              )}
+            />
+          )}
+        />
+      </BookLink>
 
       <RatingsRow
         className='c-book-card__ratings'
@@ -66,9 +69,11 @@ export const BookCard = (
       />
 
       <div className='c-book-card__info'>
-        <h3 className='c-book-card__title is-text-semibold is-text-small has-double-link-chevron'>
-          {primaryRelease.title}
-        </h3>
+        <BookLink item={item}>
+          <h3 className='c-book-card__title is-text-semibold is-text-small has-double-link-chevron'>
+            {primaryRelease.title}
+          </h3>
+        </BookLink>
 
         <div className='c-book-card__author'>
           {R.pluck('name', authors).join(', ')}

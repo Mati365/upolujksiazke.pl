@@ -5,3 +5,4 @@ export * from './Section';
 export * from './CleanList';
 export * from './Icon';
 export * from './Button';
+export * from './Link';

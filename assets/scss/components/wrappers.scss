@@ -1,5 +1,11 @@
-.c-container {
-  margin: 0 auto;
-  width: $container-width;
-  max-width: calc(100vw - 20px);
+.c {
+  &-container {
+    margin: 0 auto;
+    width: $container-width;
+    max-width: calc(100vw - 20px);
+  }
+
+  &-sections-list .c-section:first-child {
+    margin-top: 1.75rem;
+  }
 }

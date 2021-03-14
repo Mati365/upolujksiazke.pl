@@ -98,6 +98,7 @@
     font-size: $text-tiny;
     font-weight: 600;
     box-shadow: 0 2px 4px rgb(0, 0, 0, 0.2);
+    text-align: center;
 
     &::after {
       content: ' ';
@@ -110,22 +111,18 @@
       border-width: 3px;
     }
 
-    &.is-green {
-      background: color(green-ribbon);
-      color: color(green-ribbon-text);
+    @mixin define-color($name, $color-name) {
+      &.is-#{$name} {
+        background: color($color-name);
+        color: color($color-name + '-text');
 
-      &::after {
-        border-color: color(green-ribbon) transparent transparent color(green-ribbon);
+        &::after {
+          border-color: color($color-name) transparent transparent color($color-name);
+        }
       }
     }
 
-    &.is-red {
-      background: color(red-ribbon);
-      color: color(red-ribbon-text);
-
-      &::after {
-        border-color: color(red-ribbon) transparent transparent color(red-ribbon);
-      }
-    }
+    @include define-color('green', 'green-ribbon');
+    @include define-color('red', 'red-ribbon');
   }
 }

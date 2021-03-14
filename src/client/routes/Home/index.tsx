@@ -8,6 +8,7 @@ import {
 } from '@client/components/ui';
 
 import {RecentCategoriesBooks} from '@client/containers/sections';
+import {HOME_PATH} from '../Links';
 
 type HomeRouteProps = {
   recentCategoriesBooks: CategoryBooksGroup[],
@@ -15,11 +16,16 @@ type HomeRouteProps = {
 
 export const HomeRoute: AsyncRoute = ({recentCategoriesBooks}: HomeRouteProps) => (
   <Layout>
-    <Container>
+    <Container className='c-sections-list'>
       <RecentCategoriesBooks items={recentCategoriesBooks} />
     </Container>
   </Layout>
 );
+
+HomeRoute.route = {
+  path: HOME_PATH,
+  exact: true,
+};
 
 HomeRoute.getInitialProps = async ({api}) => ({
   recentCategoriesBooks: await api.repo.recentBooks.findCategoriesRecentBooks(

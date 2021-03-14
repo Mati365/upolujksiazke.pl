@@ -3,6 +3,7 @@ import c from 'classnames';
 
 import {CleanList} from '@client/components/ui';
 import {ChevronRightIcon, HomeIcon} from '@client/components/svg/Icons';
+import {HomeLink} from '@client/routes/Links';
 
 type BreadcrumbInfo = {
   id: string,
@@ -19,7 +20,11 @@ export const Breadcrumbs = ({items = [], className}: BreadcrumbsProps) => {
   const mergedItems: BreadcrumbInfo[] = [
     {
       id: 'home',
-      node: <HomeIcon />,
+      node: (
+        <HomeLink>
+          <HomeIcon />
+        </HomeLink>
+      ),
     },
     ...items,
   ];

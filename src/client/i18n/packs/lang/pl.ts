@@ -26,6 +26,7 @@ export const PL_LANG_PACK = {
     },
     breadcrumbs: {
       home: 'Strona główna',
+      books: 'Książki',
     },
   },
 };

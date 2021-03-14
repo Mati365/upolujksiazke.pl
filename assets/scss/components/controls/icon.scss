@@ -8,7 +8,10 @@
 
     > path {
       color: currentColor;
-      fill: currentColor;
+
+      &:not([fill='none']) {
+        fill: currentColor;
+      }
     }
   }
 }

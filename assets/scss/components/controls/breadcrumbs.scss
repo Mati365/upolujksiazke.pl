@@ -1,4 +1,13 @@
 .c-breadcrumbs {
+  margin-bottom: 2rem;
   color: color(muted-text);
-  font-size: $text-small;;
+  font-size: $text-small;
+
+  &__item {
+    @include flex-centered;
+
+    > a {
+      display: inline-flex;
+    }
+  }
 }

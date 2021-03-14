@@ -17,6 +17,8 @@
         left: 0;
         bottom: 0;
         height: auto;
+        border-radius: 5px;
+        overflow: hidden;
       }
     }
 
@@ -89,6 +91,7 @@
   }
 
   &-ribbon {
+    position: relative;
     padding: 5px 10px;
     border-radius: 5px;
     border-bottom-right-radius: 0;
@@ -109,10 +112,19 @@
 
     &.is-green {
       background: color(green-ribbon);
-      color: #1a270a;
+      color: color(green-ribbon-text);
 
       &::after {
         border-color: color(green-ribbon) transparent transparent color(green-ribbon);
+      }
+    }
+
+    &.is-red {
+      background: color(red-ribbon);
+      color: color(red-ribbon-text);
+
+      &::after {
+        border-color: color(red-ribbon) transparent transparent color(red-ribbon);
       }
     }
   }

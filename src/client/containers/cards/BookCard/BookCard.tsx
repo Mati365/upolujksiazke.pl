@@ -2,8 +2,8 @@ import React from 'react';
 import c from 'classnames';
 import * as R from 'ramda';
 
-import {getDiscountPercentage} from '@client/helpers/logic/getDiscountPercentage';
-import {normalizeFloatingNumber} from '@client/helpers/logic';
+import {useI18n} from '@client/i18n';
+import {getBookRibbons} from '@client/helpers/logic';
 
 import {BookCardRecord} from '@api/types';
 import {Picture} from '@client/components/ui';
@@ -22,18 +22,19 @@ type BookCardProps = {
 export const BookCard = (
   {
     withDescription,
-    item: {
-      allTypes,
-      lowestPrice,
-      highestPrice,
-      avgRating,
-      totalRatings,
-      authors,
-      primaryRelease,
-    },
+    item,
   }: BookCardProps,
 ) => {
-  const discount = getDiscountPercentage(highestPrice, lowestPrice);
+  const t = useI18n();
+  const {
+    allTypes,
+    lowestPrice,
+    highestPrice,
+    avgRating,
+    totalRatings,
+    authors,
+    primaryRelease,
+  } = item;
 
   return (
     <article
@@ -48,11 +49,12 @@ export const BookCard = (
         src={primaryRelease.cover.preview.file}
         layer={(
           <BookRibons
-            items={[
-              discount && {
-                title: `-${normalizeFloatingNumber(discount, 0)}%`,
+            items={getBookRibbons(
+              {
+                t,
+                book: item,
               },
-            ]}
+            )}
           />
         )}
       />

@@ -21,5 +21,8 @@ export const PL_LANG_PACK = {
     price: {
       pln: 'zł',
     },
+    ribbons: {
+      top: 'HIT',
+    },
   },
 };

@@ -48,7 +48,7 @@ export class RecentBooksServerRepo extends APIClientChild<ServerAPIClient> imple
               from book_categories_book_category as book_categories
               left join book on book."id" = book_categories."bookId"
               where book_categories."bookCategoryId" = category."id"
-              order by book."createdAt" desc
+              order by book."totalRatings" desc
               limit $1
           ) as items
         ) as books

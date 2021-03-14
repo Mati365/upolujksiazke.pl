@@ -39,7 +39,7 @@ export class BookService {
   public static readonly BOOK_CARD_FIELDS = [
     'book.id', 'book.parameterizedSlug',
     'book.totalRatings', 'book.avgRating',
-    'book.lowestPrice', 'book.highestPrice',
+    'book.lowestPrice', 'book.highestPrice', 'book.allTypes',
     'release.id', 'release.title',
     'author.id', 'author.name', 'author.parameterizedName',
     'cover.ratio', 'cover.nsfw', 'cover.version', 'attachment.file',
@@ -144,6 +144,9 @@ export class BookService {
   /**
    * Creates or updates single book
    *
+   * @todo
+   *  Should we rewrite series / books etc or merge to existing?
+   *
    * @param {CreateBookDto} dto
    * @returns {Promise<BookEntity>}
    * @memberof BookService
@@ -160,6 +163,7 @@ export class BookService {
         bookStatsService,
       } = this;
 
+      const alreadyInDB = !R.isNil(dto.id);
       const [
         kind,
         volume,
@@ -181,7 +185,13 @@ export class BookService {
       );
 
       let book: BookEntity = null;
-      if (R.isNil(dto.id)) {
+      if (alreadyInDB) {
+        book = new BookEntity(
+          {
+            id: dto.id,
+          },
+        );
+      } else {
         book = await upsert(
           {
             connection,
@@ -199,12 +209,6 @@ export class BookService {
                 ...dto.volumeId ? {volumeId: dto.volumeId} : {volume},
               },
             ),
-          },
-        );
-      } else {
-        book = new BookEntity(
-          {
-            id: dto.id,
           },
         );
       }
@@ -254,16 +258,21 @@ export class BookService {
       );
 
       // prevent typeorm saving, releases already contains bookId
-      Object.assign(
-        mergedBook,
-        bookStatsService.getLoadedEntityStats(mergedBook),
-      );
+      if (!alreadyInDB) {
+        Object.assign(
+          mergedBook,
+          bookStatsService.getLoadedEntityStats(mergedBook),
+        );
+      }
 
       await transaction.save(
         new BookEntity(
           R.omit(['releases'], mergedBook),
         ),
       );
+
+      if (alreadyInDB)
+        await bookStatsService.refreshBookStats(book.id);
 
       return mergedBook;
     });

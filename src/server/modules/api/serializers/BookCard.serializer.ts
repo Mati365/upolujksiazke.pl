@@ -1,5 +1,6 @@
 import {Expose, Type, Transform} from 'class-transformer';
 
+import {BookType} from '@shared/enums';
 import {BookCardRecord} from '@api/types/BookCard.record';
 import {BaseSerializer} from './Base.serializer';
 import {BookAuthorSerializer} from './BookAuthor.serializer';
@@ -15,6 +16,7 @@ export class BookCardSerializer extends BaseSerializer implements BookCardRecord
   @Expose() parameterizedSlug: string;
   @Expose() avgRating: number;
   @Expose() totalRatings: number;
+  @Expose() allTypes: BookType[];
 
   @Expose()
   @Transform(({value}) => safeParsePrice(value))

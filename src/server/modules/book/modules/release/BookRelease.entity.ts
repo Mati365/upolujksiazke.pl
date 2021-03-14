@@ -6,6 +6,11 @@ import {
 } from 'typeorm';
 
 import {parameterize} from '@shared/helpers/parameterize';
+import {
+  BookProtection,
+  BookBindingKind,
+  BookType,
+} from '@shared/enums/bookTypes';
 
 import {Language} from '@server/constants/language';
 import {ImageAttachmentEntity} from '@server/modules/attachment/entity/ImageAttachment.entity';
@@ -15,22 +20,11 @@ import {BookPublisherEntity} from '../publisher/BookPublisher.entity';
 import {BookReviewEntity} from '../review/BookReview.entity';
 import {BookAvailabilityEntity} from '../availability/BookAvailability.entity';
 
-export enum BookProtection {
-  WATERMARK = 1,
-}
-
-export enum BookBindingKind {
-  HARDCOVER = 1,
-  PAPERBACK = 2,
-  NOTEBOOK = 3,
-  SPIRAL = 4,
-}
-
-export enum BookType {
-  EBOOK = 1,
-  PAPER = 2,
-  AUDIOBOOK = 3,
-}
+export {
+  BookProtection,
+  BookBindingKind,
+  BookType,
+};
 
 @Entity(
   {

@@ -18,6 +18,7 @@ import {CreateBookSeriesDto} from '../modules/series/dto/CreateBookSeries.dto';
 import {CreateBookPrizeDto} from '../modules/prize/dto/CreateBookPrize.dto';
 import {CreateBookKindDto} from '../modules/kind/dto/CreateBookKind.dto';
 
+import {BookType} from '../modules/release/BookRelease.entity';
 import {reorderAuthorName} from '../modules/author/BookAuthor.entity';
 
 export class CreateBookDto {
@@ -115,6 +116,10 @@ export class CreateBookDto {
   @IsOptional()
   @IsNumber()
   readonly highestPrice: number;
+
+  @IsOptional()
+  @IsEnum(BookType, {each: true})
+  readonly allTypes: BookType[];
 
   constructor(partial: Partial<CreateBookDto>) {
     Object.assign(this, partial);

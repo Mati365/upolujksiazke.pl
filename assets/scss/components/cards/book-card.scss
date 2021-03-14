@@ -23,7 +23,9 @@
     min-height: 80px;
   }
 
-  &__price {
+  &__types {
+    @include flex-list;
+
     margin-top: .5rem;
   }
 

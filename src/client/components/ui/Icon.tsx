@@ -6,6 +6,7 @@ type IconProps = {
   size?: string,
   color?: string,
   viewBox?: string,
+  title?: string,
   svgComponent: ComponentType<any>,
 };
 
@@ -14,11 +15,13 @@ export const Icon = (
     svgComponent: SvgComponent,
     size = 'normal',
     color,
+    title,
     viewBox,
     className,
   }: IconProps,
 ) => (
   <i
+    title={title}
     className={c(
       'c-icon',
       `is-text-${size}`,

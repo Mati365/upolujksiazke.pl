@@ -1,3 +1,2 @@
-export * from './Chevron';
+export * from './Icons';
 export * from './Stars';
-export * from './Basket';

@@ -162,6 +162,12 @@ gulp scrapper:reanalyze:all
 gulp scrapper:reanalyze:single --remoteId szepty-spoza-nicosci-remigiusz-mroz,p697692.html --website www.publio.pl
 ```
 
+Stats (console):
+
+```
+app.select(BookModule).get('BookStatsService').refreshBooksStats(R.pluck('id', books))
+```
+
 Spiders:
 
 ```bash

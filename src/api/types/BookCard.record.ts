@@ -1,3 +1,4 @@
+import {BookType} from '@shared/enums';
 import {APIRecord} from '../APIRecord';
 import {BookAuthorRecord} from './BookAuthor.record';
 import {BookCardReleaseRecord} from './BookCardRelease.record';
@@ -10,4 +11,5 @@ export interface BookCardRecord extends APIRecord {
   highestPrice: number;
   authors: BookAuthorRecord[];
   primaryRelease: BookCardReleaseRecord,
+  allTypes: BookType[],
 }

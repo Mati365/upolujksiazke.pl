@@ -4,7 +4,8 @@
     line-height: $text-small-line-height;
   }
 
-  &-strike { text-decoration: line-through; }
+  &-inactive { opacity: 0.35; }
+  &-strike   { text-decoration: line-through; }
 
   &-semibold { font-weight: 600; }
   &-bold     { font-weight: 700; }
@@ -15,7 +16,6 @@
 
   &-truncated {
     overflow: hidden;
-    text-overflow: hidden;
   }
 }
 

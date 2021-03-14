@@ -65,7 +65,7 @@ export class BookCategoryRankingService {
             .map(
               (category) => (
                 category.totalBooks > 0
-                  ? Math.ceil((category.totalBooks / totalBooks) * 10)
+                  ? Math.ceil((category.totalBooks / totalBooks) * 100)
                   : 0
               ),
             )

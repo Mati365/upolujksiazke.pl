@@ -12,6 +12,12 @@
   justify-content: center;
 }
 
+@mixin flex-list {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+}
+
 @mixin clean-list {
   list-style-type: none;
   padding: 0;

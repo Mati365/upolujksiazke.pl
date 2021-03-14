@@ -5,7 +5,7 @@ import {
   MinLength, ValidateNested,
 } from 'class-validator';
 
-import {Language} from '@server/constants/language';
+import {Language} from '@shared/enums/language';
 import {CreateImageAttachmentDto} from '@server/modules/attachment/dto';
 import {CreateBookAvailabilityDto} from '../../availability/dto/CreateBookAvailability.dto';
 import {CreateBookPublisherDto} from '../../publisher/dto/BookPublisher.dto';

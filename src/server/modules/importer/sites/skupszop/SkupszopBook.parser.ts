@@ -6,7 +6,7 @@ import {
   normalizePrice,
 } from '@server/common/helpers';
 
-import {Language} from '@server/constants/language';
+import {Language} from '@shared/enums/language';
 import {CreateBookAvailabilityDto} from '@server/modules/book/modules/availability/dto/CreateBookAvailability.dto';
 import {CreateBookReleaseDto} from '@server/modules/book/modules/release/dto/CreateBookRelease.dto';
 import {CreateBookDto} from '@server/modules/book/dto/CreateBook.dto';

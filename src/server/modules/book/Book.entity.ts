@@ -6,7 +6,7 @@ import {
   JoinColumn, ManyToOne, RelationId,
 } from 'typeorm';
 
-import {Language} from '@server/constants/language';
+import {Language} from '@shared/enums/language';
 import {DatedRecordEntity} from '../database/DatedRecord.entity';
 import {TagEntity} from '../tag/Tag.entity';
 import {BookAuthorEntity} from './modules/author/BookAuthor.entity';

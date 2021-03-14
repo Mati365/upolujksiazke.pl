@@ -4,6 +4,7 @@ import type {PaginationResult} from '@server/common/helpers/db';
 
 import {SortKeys} from '@shared/types';
 import {RecentBooksRepo} from './repo/RecentBooks.repo';
+import {BooksRepo} from './repo/Books.repo';
 
 export type APIPaginationFilters<F = {}> = F & {
   phrase?: string,
@@ -32,6 +33,7 @@ export abstract class APIClient {
   constructor(
     public readonly repo: {
       recentBooks: RecentBooksRepo,
+      books: BooksRepo,
     },
   ) {
     R.forEachObjIndexed(

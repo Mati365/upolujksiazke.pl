@@ -5,6 +5,7 @@ import {BookCardRecord} from '@api/types/BookCard.record';
 import {BaseSerializer} from './Base.serializer';
 import {BookAuthorSerializer} from './BookAuthor.serializer';
 import {BookCardReleaseSerializer} from './BookCardRelease.serializer';
+import {BookVolumeSerializer} from './BookVolume.serializer';
 
 const safeParsePrice = (value: string) => (
   value
@@ -13,6 +14,7 @@ const safeParsePrice = (value: string) => (
 );
 
 export class BookCardSerializer extends BaseSerializer implements BookCardRecord {
+  @Expose() defaultTitle: string;
   @Expose() parameterizedSlug: string;
   @Expose() avgRating: number;
   @Expose() totalRatings: number;
@@ -33,4 +35,8 @@ export class BookCardSerializer extends BaseSerializer implements BookCardRecord
   @Expose()
   @Type(() => BookCardReleaseSerializer)
   primaryRelease: BookCardReleaseSerializer;
+
+  @Expose()
+  @Type(() => BookVolumeSerializer)
+  volume: BookVolumeSerializer;
 }

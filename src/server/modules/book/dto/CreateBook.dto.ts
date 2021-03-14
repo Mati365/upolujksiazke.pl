@@ -7,7 +7,7 @@ import {
 
 import {parameterize} from '@shared/helpers/parameterize';
 
-import {Language} from '@server/constants/language';
+import {Language} from '@shared/enums/language';
 import {IsTagCorrect} from '@server/modules/tag/validators/IsTagCorrect';
 
 import {CreateBookReleaseDto} from '../modules/release/dto/CreateBookRelease.dto';

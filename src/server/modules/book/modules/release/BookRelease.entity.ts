@@ -12,7 +12,7 @@ import {
   BookType,
 } from '@shared/enums/bookTypes';
 
-import {Language} from '@server/constants/language';
+import {Language} from '@shared/enums/language';
 import {ImageAttachmentEntity} from '@server/modules/attachment/entity/ImageAttachment.entity';
 import {DatedRecordEntity} from '../../../database/DatedRecord.entity';
 import {BookEntity} from '../../Book.entity';

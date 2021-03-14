@@ -3,7 +3,7 @@ import c from 'classnames';
 import * as R from 'ramda';
 
 import {useI18n} from '@client/i18n';
-import {getBookRibbons} from '@client/helpers/logic';
+import {formatBookTitle, getBookRibbons} from '@client/helpers/logic';
 
 import {BookCardRecord} from '@api/types';
 import {Picture} from '@client/components/ui';
@@ -37,6 +37,13 @@ export const BookCard = (
     primaryRelease,
   } = item;
 
+  const formattedTitle = formatBookTitle(
+    {
+      t,
+      book: item,
+    },
+  );
+
   return (
     <article
       className={c(
@@ -47,7 +54,7 @@ export const BookCard = (
       <BookLink item={item}>
         <Picture
           className='c-book-card__cover'
-          alt={primaryRelease.title}
+          alt={formattedTitle}
           src={primaryRelease.cover.preview.file}
           layer={(
             <BookRibons
@@ -71,7 +78,7 @@ export const BookCard = (
       <div className='c-book-card__info'>
         <BookLink item={item}>
           <h3 className='c-book-card__title is-text-semibold is-text-small has-double-link-chevron'>
-            {primaryRelease.title}
+            {formattedTitle}
           </h3>
         </BookLink>
 

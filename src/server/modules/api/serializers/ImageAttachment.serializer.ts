@@ -28,6 +28,9 @@ export class ImageAttachmentDbResult {
  * @returns {ImageVersionedRecord}
  */
 export function toImageVersionedRecord(attachments: ImageAttachmentDbResult[]): ImageVersionedRecord {
+  if (!attachments)
+    return null;
+
   const grouped = attachments.reduce(
     (acc, {attachment, version, ...props}) => {
       acc[version] = {

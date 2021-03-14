@@ -6,7 +6,7 @@ import {
   normalizePrice,
 } from '@server/common/helpers';
 
-import {Language} from '@server/constants/language';
+import {Language} from '@shared/enums/language';
 import {ScrapperMetadataKind} from '@scrapper/entity';
 
 import {CreateBookAuthorDto} from '@server/modules/book/modules/author/dto/CreateBookAuthor.dto';

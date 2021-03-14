@@ -12,6 +12,8 @@ import {
 } from '@api/repo';
 
 import {BookCategoryGroupSerializer} from '../../serializers';
+import {MeasureCallDuration} from '../../helpers/MeasureCallDuration';
+
 import type {ServerAPIClient} from '../ServerAPIClient';
 
 export class RecentBooksServerRepo extends APIClientChild<ServerAPIClient> implements RecentBooksRepo {
@@ -22,6 +24,7 @@ export class RecentBooksServerRepo extends APIClientChild<ServerAPIClient> imple
    * @returns {Promise<CategoryBooksGroup>}
    * @memberof RecentBooksServerRepo
    */
+  @MeasureCallDuration()
   async findCategoriesRecentBooks(
     {
       itemsPerGroup = 12,

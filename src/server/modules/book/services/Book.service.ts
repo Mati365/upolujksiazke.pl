@@ -37,12 +37,19 @@ import {BookStatsService} from './BookStats.service';
 @Injectable()
 export class BookService {
   public static readonly BOOK_CARD_FIELDS = [
-    'book.id', 'book.parameterizedSlug',
+    'book.id', 'book.defaultTitle', 'book.parameterizedSlug',
     'book.totalRatings', 'book.avgRating',
     'book.lowestPrice', 'book.highestPrice', 'book.allTypes',
-    'release.id', 'release.title',
+    'primaryRelease.id',
     'author.id', 'author.name', 'author.parameterizedName',
     'cover.ratio', 'cover.nsfw', 'cover.version', 'attachment.file',
+  ];
+
+  public static readonly BOOK_FULL_CARD_FIELDS = [
+    ...BookService.BOOK_CARD_FIELDS,
+    'primaryRelease.description',
+    'tag.id', 'tag.name',
+    'category.id', 'category.name', 'category.parameterizedName',
   ];
 
   constructor(
@@ -61,18 +68,35 @@ export class BookService {
   /**
    * Creates query used to generate book cards
    *
+   * @param {string[]} [selectFields=BookService.BOOK_CARD_FIELDS]
    * @returns
    * @memberof BookService
    */
-  createCardsQuery() {
+  createCardsQuery(selectFields: string[] = BookService.BOOK_CARD_FIELDS) {
     return (
       BookEntity
         .createQueryBuilder('book')
-        .select(BookService.BOOK_CARD_FIELDS)
+        .select(selectFields)
+        .leftJoinAndSelect('book.volume', 'volume')
         .leftJoin('book.authors', 'author')
-        .leftJoin('book.primaryRelease', 'release')
-        .leftJoin('release.cover', 'cover')
+        .innerJoin('book.primaryRelease', 'primaryRelease')
+        .leftJoin('primaryRelease.cover', 'cover')
         .leftJoin('cover.attachment', 'attachment')
+    );
+  }
+
+  /**
+   * Create query with all fields for single book
+   *
+   * @memberof BookService
+   */
+  createFullCardQuery() {
+    return (
+      this
+        .createCardsQuery(BookService.BOOK_FULL_CARD_FIELDS)
+        .leftJoin('book.tags', 'tag')
+        .leftJoin('book.categories', 'category')
+        .leftJoinAndSelect('book.releases', 'release')
     );
   }
 

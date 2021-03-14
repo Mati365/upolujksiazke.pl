@@ -2,12 +2,12 @@
   &__star {
     display: inline-flex;
 
-    svg > path {
-      fill: color(primary);
+    svg {
+      color: color(primary);
     }
 
-    &.is-empty svg > path {
-      fill: #ccc;
+    &.is-empty svg {
+      color: #ccc;
     }
   }
 

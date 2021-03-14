@@ -11,7 +11,6 @@ import {
 
 export class BookCardReleaseSerializer implements BookCardReleaseRecord {
   @Expose() id: ID;
-  @Expose() title: string;
 
   @Expose()
   @Type(() => ImageAttachmentDbResult)

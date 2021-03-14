@@ -8,6 +8,7 @@ export const PL_LANG_PACK = {
   },
   shared: {
     book: {
+      volume: 'Tom',
       price: 'Cena',
       compare: 'Porównaj',
       total_ratings: 'Ocen',

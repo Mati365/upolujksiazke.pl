@@ -1,4 +1,4 @@
-import {Language} from '@server/constants/language';
+import {Language} from '@shared/enums/language';
 import {CreateBookDto} from '@server/modules/book/dto/CreateBook.dto';
 import {CreateBookAvailabilityDto} from '@server/modules/book/modules/availability/dto/CreateBookAvailability.dto';
 import {BookBindingKind, BookProtection, BookType} from '@server/modules/book/modules/release/BookRelease.entity';

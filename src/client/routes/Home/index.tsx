@@ -31,7 +31,7 @@ HomeRoute.getInitialProps = async ({api}) => ({
   recentCategoriesBooks: await api.repo.recentBooks.findCategoriesRecentBooks(
     {
       itemsPerGroup: 14,
-      limit: 6,
+      limit: 3,
     },
   ),
 });

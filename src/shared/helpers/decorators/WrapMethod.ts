@@ -6,7 +6,7 @@
  * @param {(fn: T) => any} decorator
  * @returns
  */
-export function WrapMethod<T>(decorator: (fn: T) => any) {
+export function WrapMethod<T extends Function = Function>(decorator: (fn: T) => any) {
   return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
     const wrappedFn = descriptor.value;
     let method: Function = null;

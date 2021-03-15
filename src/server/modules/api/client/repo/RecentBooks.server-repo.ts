@@ -1,7 +1,10 @@
 import * as R from 'ramda';
 import {plainToClass} from 'class-transformer';
 
-import {uniqFlatHashByProp} from '@shared/helpers';
+import {
+  convertHoursToSeconds,
+  uniqFlatHashByProp,
+} from '@shared/helpers';
 
 import {BookCategoryEntity} from '@server/modules/book/modules/category';
 import {CategoryBooksGroup} from '@api/types/CategoryBooksGroup.record';
@@ -12,7 +15,10 @@ import {
 } from '@api/repo';
 
 import {BookCategoryGroupSerializer} from '../../serializers';
-import {MeasureCallDuration} from '../../helpers/MeasureCallDuration';
+import {
+  MeasureCallDuration,
+  RedisCacheCall,
+} from '../../helpers';
 
 import type {ServerAPIClient} from '../ServerAPIClient';
 
@@ -25,6 +31,12 @@ export class RecentBooksServerRepo extends APIClientChild<ServerAPIClient> imple
    * @memberof RecentBooksServerRepo
    */
   @MeasureCallDuration()
+  @RedisCacheCall(
+    () => ({
+      key: 'recent-categories-books',
+      expire: convertHoursToSeconds(5),
+    }),
+  )
   async findCategoriesRecentBooks(
     {
       itemsPerGroup = 12,

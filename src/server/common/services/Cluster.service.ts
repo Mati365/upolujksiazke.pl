@@ -2,8 +2,8 @@ import cluster from 'cluster';
 import {Injectable} from '@nestjs/common';
 import * as R from 'ramda';
 
-import {isDevMode} from '@shared/helpers/isDevMode';
 import {SERVER_ENV} from '@server/constants/env';
+import {isDevMode} from '@shared/helpers/isDevMode';
 
 @Injectable()
 export class ClusterService {

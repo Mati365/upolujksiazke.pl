@@ -21,7 +21,7 @@ export const BookRoute: AsyncRoute = ({book}: BookRouteProps) => {
 
   return (
     <Layout>
-      <Container>
+      <Container className='c-book-route'>
         <Breadcrumbs
           items={[
             {

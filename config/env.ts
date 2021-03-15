@@ -93,7 +93,7 @@ const {
   SENTRY_DSN,
   REDIS_PORT = '6379',
   REDIS_HOST = 'localhost',
-  REDIS_PREFIX = 'bookmeter-queue',
+  REDIS_PREFIX = 'upolujksiazke',
   WYKOP_KEY,
   WYKOP_SECRET,
   WYKOP_ACCOUNT_NAME,

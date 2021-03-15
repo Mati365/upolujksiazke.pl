@@ -19,6 +19,7 @@ import {AttachmentModule} from './attachment';
 import {ImporterModule} from './importer';
 import {TmpDirModule} from './tmp-dir';
 import {SentryModule} from './sentry';
+import {RedisCacheModule} from './cache';
 import {APIModule} from './api';
 
 @Module(
@@ -30,6 +31,7 @@ import {APIModule} from './api';
         isCmdAppInstance()
           ? []
           : [
+            RedisCacheModule,
             BullModule.forRoot(
               {
                 redis: SERVER_ENV.redisConfig,

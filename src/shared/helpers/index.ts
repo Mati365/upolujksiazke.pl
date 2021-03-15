@@ -36,3 +36,4 @@ export * from './pickLongestArrayItem';
 export * from './asyncExec';
 export * from './findAndMap';
 export * from './uniqFlatHashByProp';
+export * from './time/conversion';

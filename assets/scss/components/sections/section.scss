@@ -1,5 +1,11 @@
 .c-section {
-  margin: 4rem 0;
+  &.is-spaced {
+    @for $i from 1 through 4 {
+      &-#{$i} {
+        margin: #{$i}rem 0;
+      }
+    }
+  }
 
   &.is-divided > &__header {
     padding-bottom: 1.15rem;
@@ -23,7 +29,9 @@
   }
 
   &__content {
-    padding: 0 1.75rem;
+    &:not(.has-no-spacing) {
+      padding: 0 1.75rem;
+    }
   }
 
   @include mobile {

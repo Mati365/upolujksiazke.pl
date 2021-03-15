@@ -1,0 +1,6 @@
+.c-book-info-section {
+  > .c-section__content {
+    display: grid;
+    grid-template-columns: 1fr 70%;
+  }
+}

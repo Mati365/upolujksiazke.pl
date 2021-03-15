@@ -50,6 +50,10 @@ export class BookService {
     'primaryRelease.description',
     'tag.id', 'tag.name',
     'category.id', 'category.name', 'category.parameterizedName',
+    'release.title', 'release.binding', 'release.type', 'release.protection',
+    'release.lang', 'release.place', 'release.format', 'release.publishDate',
+    'release.totalPages', 'release.edition', 'release.translator', 'release.defaultPrice',
+    'release.isbn', 'release.weight', 'release.recordingLength', 'release.parameterizedSlug',
   ];
 
   constructor(
@@ -96,7 +100,7 @@ export class BookService {
         .createCardsQuery(BookService.BOOK_FULL_CARD_FIELDS)
         .leftJoin('book.tags', 'tag')
         .leftJoin('book.categories', 'category')
-        .leftJoinAndSelect('book.releases', 'release')
+        .leftJoin('book.releases', 'release')
     );
   }
 

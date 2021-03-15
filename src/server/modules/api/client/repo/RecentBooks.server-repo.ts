@@ -17,7 +17,7 @@ import {
 import {BookCategoryGroupSerializer} from '../../serializers';
 import {
   MeasureCallDuration,
-  RedisCacheCall,
+  RedisMemoize,
 } from '../../helpers';
 
 import type {ServerAPIClient} from '../ServerAPIClient';
@@ -31,7 +31,7 @@ export class RecentBooksServerRepo extends APIClientChild<ServerAPIClient> imple
    * @memberof RecentBooksServerRepo
    */
   @MeasureCallDuration()
-  @RedisCacheCall(
+  @RedisMemoize(
     () => ({
       key: 'recent-categories-books',
       expire: convertHoursToSeconds(5),

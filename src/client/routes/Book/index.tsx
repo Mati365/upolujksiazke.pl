@@ -5,6 +5,7 @@ import {useI18n} from '@client/i18n';
 import {BookFullInfoRecord} from '@api/types';
 import {AsyncRoute} from '@client/components/utils/asyncRouteUtils';
 import {Breadcrumbs} from '@client/containers/Breadcrumbs';
+import {BookInfo} from '@client/containers/sections/BookInfo';
 import {
   Layout,
   Container,
@@ -34,7 +35,7 @@ export const BookRoute: AsyncRoute = ({book}: BookRouteProps) => {
             },
           ]}
         />
-        {JSON.stringify(book)}
+        <BookInfo book={book} />
       </Container>
     </Layout>
   );

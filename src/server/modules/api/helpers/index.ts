@@ -1,2 +1,2 @@
-export * from './RedisCacheCall';
+export * from './RedisMemoize';
 export * from './MeasureCallDuration';

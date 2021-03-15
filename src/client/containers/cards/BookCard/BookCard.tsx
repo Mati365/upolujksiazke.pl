@@ -3,17 +3,16 @@ import c from 'classnames';
 import * as R from 'ramda';
 
 import {useI18n} from '@client/i18n';
-import {formatBookTitle, getBookRibbons} from '@client/helpers/logic';
+import {formatBookTitle} from '@client/helpers/logic';
 
 import {BookCardRecord} from '@api/types';
-import {Picture} from '@client/components/ui';
 import {BookLink} from '@client/routes/Links';
 
 import {RatingsRow} from '../../parts/RatingsRow';
 import {BookTypesRow} from './BookTypesRow';
 import {BookPriceRow} from './BookPriceRow';
 import {BookActionRow} from './BookActionsRow';
-import {BookRibons} from './BookRibbons';
+import {BookCover} from './BookCover';
 
 type BookCardProps = {
   item: BookCardRecord,
@@ -34,7 +33,6 @@ export const BookCard = (
     avgRating,
     totalRatings,
     authors,
-    primaryRelease,
   } = item;
 
   const formattedTitle = formatBookTitle(
@@ -52,20 +50,9 @@ export const BookCard = (
       )}
     >
       <BookLink item={item}>
-        <Picture
-          className='c-book-card__cover'
+        <BookCover
           alt={formattedTitle}
-          src={primaryRelease.cover.preview.file}
-          layer={(
-            <BookRibons
-              items={getBookRibbons(
-                {
-                  t,
-                  book: item,
-                },
-              )}
-            />
-          )}
+          book={item}
         />
       </BookLink>
 

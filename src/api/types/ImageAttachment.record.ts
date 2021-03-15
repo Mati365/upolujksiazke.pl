@@ -4,4 +4,6 @@ export class ImageAttachmentRecord {
   file: string;
 }
 
-export type ImageVersionedRecord = Record<'smallTumb'|'thumb'|'preview'|'big', ImageAttachmentRecord>;
+export type ImageVersionField = 'smallTumb'|'thumb'|'preview'|'big';
+
+export type ImageVersionedRecord = Record<ImageVersionField, ImageAttachmentRecord>;

@@ -1,10 +1,12 @@
 import {plainToClass} from 'class-transformer';
 
 import {ID} from '@shared/types';
+import {convertHoursToSeconds} from '@shared/helpers';
 
 import {APIClientChild} from '@api/APIClient';
 import {BooksRepo} from '@api/repo';
 
+import {RedisMemoize} from '../../helpers';
 import {MeasureCallDuration} from '../../helpers/MeasureCallDuration';
 import {BookFullInfoSerializer} from '../../serializers';
 
@@ -19,6 +21,12 @@ export class BooksServerRepo extends APIClientChild<ServerAPIClient> implements 
    * @memberof BooksServerRepo
    */
   @MeasureCallDuration()
+  @RedisMemoize(
+    (id: ID) => ({
+      key: `book-${id}`,
+      expire: convertHoursToSeconds(0.5),
+    }),
+  )
   async findOne(id: ID) {
     const {bookService} = this.api.services;
     const book = await (
@@ -29,10 +37,10 @@ export class BooksServerRepo extends APIClientChild<ServerAPIClient> implements 
             id,
           },
         )
-        .limit(1)
         .getOne()
     );
 
+    console.info(book);
     return plainToClass(
       BookFullInfoSerializer,
       book,

@@ -8,6 +8,10 @@ import {BookFullInfoReleaseSerializer} from './BookFullInfoRelease.serializer';
 
 export class BookFullInfoSerializer extends BookCardSerializer implements BookFullInfoRecord {
   @Expose()
+  @Type(() => BookFullInfoReleaseSerializer)
+  primaryRelease: BookFullInfoReleaseSerializer;
+
+  @Expose()
   @Type(() => BookTagSerializer)
   tags: BookTagSerializer[];
 

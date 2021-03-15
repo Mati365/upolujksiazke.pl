@@ -5,21 +5,29 @@ import {BasicWrapperProps} from '@client/components/ui';
 
 type SectionProps = BasicWrapperProps & {
   title?: ReactNode,
+  spaced?: number,
   bordered?: boolean,
+  noContentSpacing?: boolean,
+  contentClassName?: string,
   headerClassName?: string,
 };
 
 export const Section = (
   {
     title,
+    spaced = 4,
     bordered = true,
-    className, headerClassName,
+    className,
+    contentClassName,
+    noContentSpacing,
+    headerClassName,
     children,
   }: SectionProps,
 ) => (
   <section
     className={c(
       'c-section',
+      spaced && `is-spaced-${spaced}`,
       bordered && 'is-divided',
       className,
     )}
@@ -36,7 +44,13 @@ export const Section = (
       </h2>
     )}
 
-    <div className='c-section__content'>
+    <div
+      className={c(
+        'c-section__content',
+        noContentSpacing && 'has-no-spacing',
+        contentClassName,
+      )}
+    >
       {children}
     </div>
   </section>

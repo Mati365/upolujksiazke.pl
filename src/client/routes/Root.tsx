@@ -26,19 +26,21 @@ export const APP_ROUTES_LIST: AsyncRouterRouteInfo[] = [
 
 export type PageRootProps = {
   routerConfig?: StaticRouterProps,
-  viewData?: any,
+  initialViewData?: any,
 };
 
-export const PageRoot = ({viewData, routerConfig}: PageRootProps) => (
-  <ViewDataProvider initialData={viewData}>
-    <ProvideI18n
-      lang={viewData.lang.current}
-      translations={viewData.lang.translations}
-    >
-      <AsyncRouter
-        {...routerConfig}
-        routes={APP_ROUTES_LIST}
-      />
-    </ProvideI18n>
+export const PageRoot = ({initialViewData, routerConfig}: PageRootProps) => (
+  <ViewDataProvider initialData={initialViewData}>
+    {(viewData) => (
+      <ProvideI18n
+        lang={viewData.lang.current}
+        translations={viewData.lang.translations}
+      >
+        <AsyncRouter
+          {...routerConfig}
+          routes={APP_ROUTES_LIST}
+        />
+      </ProvideI18n>
+    )}
   </ViewDataProvider>
 );

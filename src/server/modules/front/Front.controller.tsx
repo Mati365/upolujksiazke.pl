@@ -54,24 +54,26 @@ export class FrontController {
       },
     );
 
+    const viewData = {
+      lang: {
+        current: i18n.lang,
+        translations: {
+          [i18n.lang]: i18n.currentLangPack,
+        },
+      },
+
+      ...preloadedRouteData && {
+        asyncRoute: {
+          [preloadedRouteData.id]: preloadedRouteData.props,
+        },
+      },
+    };
+
     const html = ReactDOMServer.renderToStaticMarkup(
       <PageRoot
+        initialViewData={viewData}
         routerConfig={{
           location: req.url,
-        }}
-        viewData={{
-          lang: {
-            current: i18n.lang,
-            translations: {
-              [i18n.lang]: i18n.currentLangPack,
-            },
-          },
-
-          ...preloadedRouteData && {
-            asyncRoute: {
-              [preloadedRouteData.id]: preloadedRouteData.props,
-            },
-          },
         }}
       />,
     );
@@ -80,6 +82,7 @@ export class FrontController {
       this.getDefaultHTMLSkel()(
         {
           lang: i18n.lang,
+          viewData: JSON.stringify(viewData),
           files,
           html,
         },

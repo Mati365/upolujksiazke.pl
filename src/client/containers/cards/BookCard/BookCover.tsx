@@ -11,6 +11,7 @@ import {BookRibons} from './BookRibbons';
 type BookCoverProps = {
   book: BookCardRecord,
   className?: string,
+  forceRatio?: boolean,
   alt?: string,
   version?: ImageVersionField,
 };
@@ -20,6 +21,7 @@ export const BookCover = (
     className,
     alt,
     book,
+    forceRatio = true,
     version = 'preview',
   }: BookCoverProps,
 ) => {
@@ -29,6 +31,7 @@ export const BookCover = (
     <Picture
       className={c(
         'c-book-cover',
+        forceRatio && 'has-forced-ratio',
         className,
       )}
       alt={alt}

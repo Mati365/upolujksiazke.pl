@@ -8,6 +8,7 @@ import {
 } from '@client/components/ui';
 
 import {RecentCategoriesBooks} from '@client/containers/sections';
+import {LazyHydrate} from '@client/components/ui/LazyHydrate';
 import {HOME_PATH} from '../Links';
 
 type HomeRouteProps = {
@@ -16,9 +17,11 @@ type HomeRouteProps = {
 
 export const HomeRoute: AsyncRoute = ({recentCategoriesBooks}: HomeRouteProps) => (
   <Layout>
-    <Container className='c-sections-list'>
-      <RecentCategoriesBooks items={recentCategoriesBooks} />
-    </Container>
+    <LazyHydrate>
+      <Container className='c-sections-list'>
+        <RecentCategoriesBooks items={recentCategoriesBooks} />
+      </Container>
+    </LazyHydrate>
   </Layout>
 );
 

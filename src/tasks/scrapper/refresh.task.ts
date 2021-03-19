@@ -143,8 +143,8 @@ export const refreshSingleTask: TaskFunction = async () => {
 
   const app = await NestFactory.create(AppModule);
   const scrapperMod = app.select(ScrapperModule);
-  app.enableShutdownHooks();
 
+  app.enableShutdownHooks();
   await (
     scrapperMod
       .get(ScrapperRefreshService)

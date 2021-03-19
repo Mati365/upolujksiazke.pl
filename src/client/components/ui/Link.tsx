@@ -1,7 +1,6 @@
 import React, {ReactNode} from 'react';
 import {Link, LinkProps} from 'react-router-dom';
 import * as R from 'ramda';
-import c from 'classnames';
 import {buildURL} from '@shared/helpers/urlEncoder';
 
 type LinkItem<I> = I & {
@@ -21,6 +20,7 @@ export type ContainerLinkProps<I = {}, P = {}> = P & {
   hash?: string,
   utm?: object,
   action?: string,
+  spaMode?: boolean,
   onClick?: React.MouseEventHandler,
 };
 
@@ -30,7 +30,7 @@ export function ContainerLink<I = {}, P = {}>(
   {
     urlGenerator, underline,
     searchParams, state, absolute, action,
-    href, hash, utm, item, className,
+    href, hash, utm, item, className, spaMode,
     ...props
   }: ContainerLinkProps<I, P>,
 ) {
@@ -73,12 +73,25 @@ export function ContainerLink<I = {}, P = {}>(
     };
   }
 
+  const generatedClassName = (
+    className ?? `is-undecorated-link ${underline ? 'is-text-underline' : 'has-hover-underline'}`
+  );
+
+  if (!spaMode && typeof to === 'string') {
+    return (
+      // eslint-disable-next-line jsx-a11y/anchor-has-content
+      <a
+        href={to}
+        className={generatedClassName}
+        {...props}
+      />
+    );
+  }
+
   return (
     <Link
       to={to}
-      className={c(
-        className ?? `is-undecorated-link ${underline ? 'is-text-underline' : 'has-hover-underline'}`,
-      )}
+      className={className}
       {...props}
     />
   );

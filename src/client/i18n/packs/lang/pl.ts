@@ -25,6 +25,10 @@ export const PL_LANG_PACK = {
     ribbons: {
       top: 'HIT',
     },
+    buttons: {
+      more: 'pokaż więcej',
+      less: 'pokaż mniej',
+    },
     breadcrumbs: {
       home: 'Strona główna',
       books: 'Książki',

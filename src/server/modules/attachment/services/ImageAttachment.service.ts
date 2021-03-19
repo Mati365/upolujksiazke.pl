@@ -11,10 +11,10 @@ import {checkIfExists, runInPostHookIfPresent} from '@server/common/helpers/db';
 import {
   safeArray,
   mapObjValuesToPromise,
-  asyncExec,
 } from '@shared/helpers';
 
 import {
+  asyncExec,
   downloadFile,
   isImageMimeType,
 } from '@server/common/helpers';

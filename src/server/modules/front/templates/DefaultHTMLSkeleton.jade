@@ -30,4 +30,10 @@ html(lang=lang)
 
     link(rel='stylesheet' type='text/css' href=files['client.css'])
   body
-    != html
+    #app-hydrate-root
+      != html
+
+    script(id='app-hydrate-data' type='application/json')
+      != viewData
+
+    script(src=files['client.js'] async)

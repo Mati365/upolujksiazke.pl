@@ -7,7 +7,7 @@ import {BookFullInfoRecord} from '@api/types';
 import {BookAuthorsRow} from '@client/containers/cards/BookCard/BookAuthorsRow';
 import {BookCover} from '@client/containers/cards/BookCard/BookCover';
 import {
-  DescriptionBox,
+  ExpandableDescriptionBox,
   Section,
 } from '@client/components/ui';
 
@@ -34,6 +34,7 @@ export const BookInfo = ({book}: BookInfoProps) => {
         <BookCover
           alt={formattedTitle}
           book={book}
+          forceRatio={false}
         />
       </div>
 
@@ -45,8 +46,8 @@ export const BookInfo = ({book}: BookInfoProps) => {
         <div className='c-book-info-section__author'>
           {`${t('book.created_by')}:`}
           <BookAuthorsRow
-            className='ml-1'
             block={false}
+            className='ml-1'
             authors={authors}
             linkProps={{
               underline: true,
@@ -54,10 +55,9 @@ export const BookInfo = ({book}: BookInfoProps) => {
           />
         </div>
 
-        <DescriptionBox
-          dangerouslySetInnerHTML={{
-            __html: primaryRelease.description,
-          }}
+        <ExpandableDescriptionBox
+          maxCharactersCount={900}
+          text={primaryRelease.description}
         />
       </div>
     </Section>

@@ -1,3 +1,6 @@
+/* eslint-disable import/first */
+process.env.CMD_APP_INSTANCE = 'gulp';
+
 import 'isomorphic-fetch';
 import gulp from 'gulp';
 

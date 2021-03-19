@@ -1,22 +1,48 @@
 /* fajne guziki i ogólnie strona https://coolors.co/ */
 
-.c-clean-button {
-  outline: 0;
-  padding: 0;
-  margin: 0;
-  border: 0;
-  background: initial;
-  cursor: pointer;
+.c {
+  &-clean-button {
+    outline: 0;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    background: initial;
+    cursor: pointer;
 
-  &, &:focus {
-    -webkit-tap-highlight-color: transparent;
-    outline: none;
-    touch-action: manipulation;
+    &, &:focus {
+      -webkit-tap-highlight-color: transparent;
+      outline: none;
+      touch-action: manipulation;
+    }
+
+    &::-moz-focus-inner {
+      border: 0;
+      padding: 0;
+    }
   }
 
-  &::-moz-focus-inner {
-    border: 0;
-    padding: 0;
+  &-text-button {
+    @extend .c-clean-button;
+
+    display: inline-flex;
+    white-space: nowrap;
+    background: none;
+
+    &, &:active, &:focus, &:hover {
+      background: none;
+      cursor: pointer;
+      font-size: inherit;
+      box-shadow: none;
+    }
+
+    &[disabled] {
+      opacity: 0.3;
+      pointer-events: none;
+    }
+
+    &:hover {
+      text-decoration: underline;
+    }
   }
 }
 

@@ -26,7 +26,6 @@ import {APIModule} from './api';
   {
     imports: [
       DatabaseModule,
-      APIModule,
       ...(
         isCmdAppInstance()
           ? []
@@ -41,6 +40,7 @@ import {APIModule} from './api';
                 },
               },
             ),
+            APIModule,
             FrontModule,
             ManifestModule.forRoot(
               {

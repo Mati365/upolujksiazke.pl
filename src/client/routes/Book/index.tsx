@@ -1,5 +1,6 @@
 import React from 'react';
 
+import {formatBookTitle} from '@client/helpers/logic';
 import {useI18n} from '@client/i18n';
 
 import {BookFullInfoRecord} from '@api/types';
@@ -31,7 +32,12 @@ export const BookRoute: AsyncRoute = ({book}: BookRouteProps) => {
             },
             {
               id: 'book',
-              node: 'Hyperion',
+              node: formatBookTitle(
+                {
+                  t,
+                  book,
+                },
+              ),
             },
           ]}
         />

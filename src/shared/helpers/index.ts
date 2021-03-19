@@ -18,7 +18,6 @@ export * from './removeNullValues';
 export * from './shallowCompareArrays';
 export * from './nestedPropPick';
 export * from './capitalize';
-export * from './flattenObject';
 export * from './reduceIdArrayToObject';
 export * from './memoizeOne';
 export * from './async/mapObjValuesToPromise';

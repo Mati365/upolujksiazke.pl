@@ -6,8 +6,12 @@
     }
 
     &-inactive { opacity: 0.35; }
-    &-strike   { text-decoration: line-through; }
     &-truncated { overflow: hidden; }
+
+    &-strike    { text-decoration: line-through; }
+    &-underline { text-decoration: underline; }
+
+    &-justify  { text-align: justify; }
 
     &-semibold { font-weight: 600; }
     &-bold     { font-weight: 700; }
@@ -19,14 +23,17 @@
 
   &-undecorated-link {
     color: inherit;
-    text-decoration: none;
 
-    &:not(.has-hover-underline):hover {
+    &:not(.is-text-underline) {
       text-decoration: none;
-    }
 
-    &.has-hover-underline:hover {
-      text-decoration: underline;
+      &:not(.has-hover-underline):hover {
+        text-decoration: none;
+      }
+
+      &.has-hover-underline:hover {
+        text-decoration: underline;
+      }
     }
   }
 }

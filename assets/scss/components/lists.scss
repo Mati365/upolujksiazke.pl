@@ -3,6 +3,10 @@
 
   &.is-inline {
     @extend .c-flex-row;
+
+    &:not(.is-block) {
+      display: inline-flex
+    }
   }
 
   &.is-spaced {
@@ -17,5 +21,9 @@
         margin-bottom: #{$spacing}px;
       }
     }
+  }
+
+  &.is-wrapped {
+    flex-wrap: wrap;
   }
 }

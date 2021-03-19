@@ -8,6 +8,8 @@ import {
   upsert,
 } from '@server/common/helpers/db';
 
+import {ImageVersion} from '@shared/enums';
+
 import {TagService} from '../../tag/Tag.service';
 import {BookAuthorService} from '../modules/author/BookAuthor.service';
 import {BookReleaseService} from '../modules/release/BookRelease.service';
@@ -48,12 +50,12 @@ export class BookService {
   public static readonly BOOK_FULL_CARD_FIELDS = [
     ...BookService.BOOK_CARD_FIELDS,
     'primaryRelease.description',
-    'tag.id', 'tag.name',
-    'category.id', 'category.name', 'category.parameterizedName',
-    'release.title', 'release.binding', 'release.type', 'release.protection',
-    'release.lang', 'release.place', 'release.format', 'release.publishDate',
-    'release.totalPages', 'release.edition', 'release.translator', 'release.defaultPrice',
-    'release.isbn', 'release.weight', 'release.recordingLength', 'release.parameterizedSlug',
+    // 'tag.id', 'tag.name',
+    // 'category.id', 'category.name', 'category.parameterizedName',
+    // 'release.title', 'release.binding', 'release.type', 'release.protection',
+    // 'release.lang', 'release.place', 'release.format', 'release.publishDate',
+    // 'release.totalPages', 'release.edition', 'release.translator', 'release.defaultPrice',
+    // 'release.isbn', 'release.weight', 'release.recordingLength', 'release.parameterizedSlug',
   ];
 
   constructor(
@@ -81,11 +83,27 @@ export class BookService {
       BookEntity
         .createQueryBuilder('book')
         .select(selectFields)
-        .leftJoinAndSelect('book.volume', 'volume')
+        .innerJoinAndSelect('book.volume', 'volume')
         .leftJoin('book.authors', 'author')
         .innerJoin('book.primaryRelease', 'primaryRelease')
-        .leftJoin('primaryRelease.cover', 'cover')
-        .leftJoin('cover.attachment', 'attachment')
+        .innerJoin('primaryRelease.cover', 'cover', `cover.version = '${ImageVersion.PREVIEW}'`)
+        .innerJoin('cover.attachment', 'attachment')
+    );
+  }
+
+  /**
+   * Find multiple cards
+   *
+   * @param {number[]} ids
+   * @returns
+   * @memberof BookService
+   */
+  findCards(ids: number[]) {
+    return (
+      this
+        .createCardsQuery()
+        .whereInIds(ids)
+        .getMany()
     );
   }
 
@@ -94,13 +112,19 @@ export class BookService {
    *
    * @memberof BookService
    */
-  createFullCardQuery() {
+  findFullCard(id: number) {
     return (
       this
         .createCardsQuery(BookService.BOOK_FULL_CARD_FIELDS)
-        .leftJoin('book.tags', 'tag')
-        .leftJoin('book.categories', 'category')
-        .leftJoin('book.releases', 'release')
+        // .leftJoin('book.tags', 'tag')
+        // .leftJoin('book.categories', 'category')
+        // .leftJoin('book.releases', 'release')
+        .where(
+          {
+            id,
+          },
+        )
+        .getOne()
     );
   }
 

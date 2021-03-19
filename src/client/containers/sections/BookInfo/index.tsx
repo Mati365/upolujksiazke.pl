@@ -4,8 +4,12 @@ import {useI18n} from '@client/i18n';
 import {formatBookTitle} from '@client/helpers/logic';
 
 import {BookFullInfoRecord} from '@api/types';
+import {BookAuthorsRow} from '@client/containers/cards/BookCard/BookAuthorsRow';
 import {BookCover} from '@client/containers/cards/BookCard/BookCover';
-import {Section} from '@client/components/ui';
+import {
+  DescriptionBox,
+  Section,
+} from '@client/components/ui';
 
 type BookInfoProps = {
   book: BookFullInfoRecord,
@@ -13,7 +17,7 @@ type BookInfoProps = {
 
 export const BookInfo = ({book}: BookInfoProps) => {
   const t = useI18n();
-  const {primaryRelease} = book;
+  const {primaryRelease, authors} = book;
   const formattedTitle = formatBookTitle(
     {
       t,
@@ -33,14 +37,29 @@ export const BookInfo = ({book}: BookInfoProps) => {
         />
       </div>
 
-      <Section
-        title={formattedTitle}
-        className='c-book-info-section__info'
-        contentClassName='c-description-box'
-        spaced={0}
-      >
-        {primaryRelease.description}
-      </Section>
+      <div className='c-book-info-section__info'>
+        <h1 className='c-book-info-section__header'>
+          {formattedTitle}
+        </h1>
+
+        <div className='c-book-info-section__author'>
+          {`${t('book.created_by')}:`}
+          <BookAuthorsRow
+            className='ml-1'
+            block={false}
+            authors={authors}
+            linkProps={{
+              underline: true,
+            }}
+          />
+        </div>
+
+        <DescriptionBox
+          dangerouslySetInnerHTML={{
+            __html: primaryRelease.description,
+          }}
+        />
+      </div>
     </Section>
   );
 };

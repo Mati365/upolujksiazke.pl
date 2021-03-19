@@ -34,7 +34,7 @@ export class LoggerInterceptor implements NestInterceptor {
           this.logger.log(getLoggerContent());
         }),
         catchError((err) => {
-          this.logger.error(getLoggerContent());
+          this.logger.error(getLoggerContent(), err.stack);
           return throwError(err);
         }),
       );

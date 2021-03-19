@@ -1,7 +1,7 @@
 import React, {ReactNode} from 'react';
 import {Link, LinkProps} from 'react-router-dom';
 import * as R from 'ramda';
-
+import c from 'classnames';
 import {buildURL} from '@shared/helpers/urlEncoder';
 
 type LinkItem<I> = I & {
@@ -16,6 +16,7 @@ export type ContainerLinkProps<I = {}, P = {}> = P & {
   searchParams?: object,
   state?: object,
   absolute?: boolean,
+  underline?: boolean,
   href?: string,
   hash?: string,
   utm?: object,
@@ -27,7 +28,7 @@ type LinkURLGeneratorFn<I, P> = (item: LinkItem<I>, props: P, action: string) =>
 
 export function ContainerLink<I = {}, P = {}>(
   {
-    urlGenerator,
+    urlGenerator, underline,
     searchParams, state, absolute, action,
     href, hash, utm, item, className,
     ...props
@@ -75,7 +76,9 @@ export function ContainerLink<I = {}, P = {}>(
   return (
     <Link
       to={to}
-      className={className ?? 'is-undecorated-link has-hover-underline'}
+      className={c(
+        className ?? `is-undecorated-link ${underline ? 'is-text-underline' : 'has-hover-underline'}`,
+      )}
       {...props}
     />
   );

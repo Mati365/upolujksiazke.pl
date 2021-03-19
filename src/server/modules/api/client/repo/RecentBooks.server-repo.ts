@@ -87,12 +87,7 @@ export class RecentBooksServerRepo extends APIClientChild<ServerAPIClient> imple
 
     const booksEntities = uniqFlatHashByProp(
       'id',
-      await (
-        bookService
-          .createCardsQuery()
-          .whereInIds(bookIds)
-          .getMany()
-      ),
+      await bookService.findCards(bookIds),
     );
 
     const groupEntities = (

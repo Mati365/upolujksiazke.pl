@@ -46,6 +46,7 @@ OpenSource book reviews aggregator, something like Metacritic / Digg for books. 
 ## Resources
 
 Similar websites:
+https://dribbble.com/shots/9367777-Overindulge-Buy-Books-Product-Page-Exploration-E-commerce
 https://www.waterstones.com/book/hamnet/maggie-ofarrell/9781472273468
 https://www.barnesandnoble.com/w/shadow-and-bone-leigh-bardugo/1105622727;jsessionid=C67A01F0724C7ED1FB131018117261F6.prodny_store02-atgap14?ean=9781250027436
 

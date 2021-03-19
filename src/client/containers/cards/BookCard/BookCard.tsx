@@ -1,6 +1,5 @@
 import React from 'react';
 import c from 'classnames';
-import * as R from 'ramda';
 
 import {useI18n} from '@client/i18n';
 import {formatBookTitle} from '@client/helpers/logic';
@@ -13,6 +12,7 @@ import {BookTypesRow} from './BookTypesRow';
 import {BookPriceRow} from './BookPriceRow';
 import {BookActionRow} from './BookActionsRow';
 import {BookCover} from './BookCover';
+import {BookAuthorsRow} from './BookAuthorsRow';
 
 type BookCardProps = {
   item: BookCardRecord,
@@ -51,6 +51,7 @@ export const BookCard = (
     >
       <BookLink item={item}>
         <BookCover
+          className='c-book-card__cover'
           alt={formattedTitle}
           book={item}
         />
@@ -69,9 +70,10 @@ export const BookCard = (
           </h3>
         </BookLink>
 
-        <div className='c-book-card__author'>
-          {R.pluck('name', authors).join(', ')}
-        </div>
+        <BookAuthorsRow
+          className='c-book-card__author'
+          authors={authors}
+        />
       </div>
 
       <BookTypesRow types={allTypes} />

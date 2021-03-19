@@ -15,12 +15,17 @@
       height: auto;
       border-radius: 5px;
       overflow: hidden;
+      // box-shadow: 0 3px 5px rgb(0, 0, 0, 0.08);
     }
   }
 
   &-card {
     padding-bottom: 1.5rem;
     border-bottom: 1px solid color(grid-items-border);
+
+    &__cover {
+
+    }
 
     &__info {
       min-height: 80px;

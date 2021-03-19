@@ -11,6 +11,7 @@ import {
 import {mapObjValuesToPromise} from '@shared/helpers/async/mapObjValuesToPromise';
 import {parameterize} from '@shared/helpers/parameterize';
 import {pickLongestArrayItem} from '@shared/helpers';
+import {trimBorderSpecialCharacters} from '@server/common/helpers/text/trimBorderSpecialCharacters';
 
 import {BookService} from '@server/modules/book/services/Book.service';
 import {BookPublisherService} from '@server/modules/book/modules/publisher/BookPublisher.service';
@@ -26,6 +27,7 @@ import {CreateBookPublisherDto} from '@server/modules/book/modules/publisher/dto
 import {CreateBookReleaseDto} from '@server/modules/book/modules/release/dto/CreateBookRelease.dto';
 import {CreateBookAvailabilityDto} from '@server/modules/book/modules/availability/dto/CreateBookAvailability.dto';
 import {CreateBookReviewDto} from '@server/modules/book/modules/review/dto/CreateBookReview.dto';
+import {CreateBookAuthorDto} from '@server/modules/book/modules/author/dto/CreateBookAuthor.dto';
 import {
   CreateBookVolumeDto,
   DEFAULT_BOOK_VOLUME_NAME,
@@ -337,6 +339,15 @@ export class BookDbLoaderService implements MetadataDbLoader {
     if (R.isEmpty(releases))
       return null;
 
+    const authors = pickLongestArrayItem(R.pluck('authors', books)).map(
+      (author) => new CreateBookAuthorDto(
+        {
+          ...author,
+          name: trimBorderSpecialCharacters(author.name),
+        },
+      ),
+    );
+
     return bookService.upsert(
       new CreateBookDto(
         {
@@ -346,7 +357,7 @@ export class BookDbLoaderService implements MetadataDbLoader {
             parameterizedSlug: cachedBook.parameterizedSlug,
           },
           releases: await this.fixSimilarNamedReleasesPublishers(releases),
-          authors: pickLongestArrayItem(R.pluck('authors', books)),
+          authors,
         },
       ),
     );

@@ -30,4 +30,7 @@ export const PL_LANG_PACK = {
       books: 'Książki',
     },
   },
+  book: {
+    created_by: 'Autor',
+  },
 };

@@ -1,3 +1,5 @@
+import {trimBorderSpecialCharacters} from '@server/common/helpers/text/trimBorderSpecialCharacters';
+
 /**
  * Removes unecessary prefixes from publisher names
  *
@@ -6,5 +8,7 @@
  * @returns
  */
 export function normalizePublisherTitle(name: string) {
-  return name?.replace(/^(wydawnictwo|wydawca)\s*/i, '');
+  return trimBorderSpecialCharacters(
+    name?.replace(/^(wydawnictwo|wydawca)\s*/i, ''),
+  );
 }

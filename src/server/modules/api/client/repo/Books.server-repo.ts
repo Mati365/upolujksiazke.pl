@@ -29,18 +29,8 @@ export class BooksServerRepo extends APIClientChild<ServerAPIClient> implements 
   )
   async findOne(id: ID) {
     const {bookService} = this.api.services;
-    const book = await (
-      bookService
-        .createFullCardQuery()
-        .where(
-          {
-            id,
-          },
-        )
-        .getOne()
-    );
+    const book = await bookService.findFullCard(+id);
 
-    console.info(book);
     return plainToClass(
       BookFullInfoSerializer,
       book,

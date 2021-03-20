@@ -42,6 +42,7 @@ OpenSource book reviews aggregator, something like Metacritic / Digg for books. 
 - [ ] Users who bought this book bought also section
 - [ ] Automatic blog posts
 - [ ] SEOLinks on blog posts / reviews
+- [ ] Tinder alternative but for books
 
 ## Resources
 

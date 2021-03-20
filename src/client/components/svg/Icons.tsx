@@ -4,6 +4,7 @@ import BasketSVG from '@assets/icons/svg/basket.svg';
 import DevicesSVG from '@assets/icons/svg/devices.svg';
 import BookSVG from '@assets/icons/svg/book.svg';
 import HomeSVG from '@assets/icons/svg/home.svg';
+import PurchaseSVG from '@assets/icons/svg/purchase.svg';
 
 import {Icon} from '../ui/Icon';
 
@@ -13,3 +14,4 @@ export const DevicesIcon = Icon.createFromSVG(DevicesSVG);
 export const BookIcon = Icon.createFromSVG(BookSVG);
 export const BasketIcon = Icon.createFromSVG(BasketSVG);
 export const HomeIcon = Icon.createFromSVG(HomeSVG);
+export const PurchaseIcon = Icon.createFromSVG(PurchaseSVG);

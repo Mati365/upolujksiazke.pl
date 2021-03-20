@@ -3,6 +3,7 @@ import c from 'classnames';
 
 import {useI18n} from '@client/i18n';
 
+import {PurchaseIcon} from '@client/components/svg/Icons';
 import {BookFullInfoRecord} from '@api/types';
 import {BookCtaButton} from '@client/containers/controls/BookCtaButton';
 import {BookPriceGroup} from './BookPriceGroup';
@@ -24,6 +25,7 @@ export const BookPriceBox = ({className, book}: BookPriceBoxProps) => {
       )}
     >
       <div className='c-book-price-box__header'>
+        <PurchaseIcon className='mr-1' />
         {t('header')}
       </div>
 

@@ -28,9 +28,16 @@
 
   &-book-price-box {
     &__header {
+      @extend .c-flex-row;
+
       margin-bottom: .75rem;
       font-weight: 600;
       font-size: $text-small;
+
+      > i {
+        position: relative;
+        top: 1px;
+      }
     }
 
     &__price-wrapper {

@@ -2,10 +2,11 @@ import React from 'react';
 import c from 'classnames';
 import {BasicWrapperProps} from './Container';
 
-type ButtonProps = BasicWrapperProps & {
+export type ButtonProps = BasicWrapperProps & {
   type?: string,
   size?: string,
   outlined?: boolean,
+  expanded?: boolean,
   iconSuffix?: boolean,
   htmlType?: JSX.IntrinsicElements['button']['type'],
 };
@@ -16,6 +17,7 @@ export const Button = (
     type,
     size,
     outlined,
+    expanded,
     iconSuffix,
     htmlType = 'button',
     ...props
@@ -30,6 +32,7 @@ export const Button = (
       size && `is-${size}`,
       outlined && 'is-outlined',
       iconSuffix && 'has-icon-suffix',
+      expanded && 'is-expanded',
       className,
     )}
     {...props}

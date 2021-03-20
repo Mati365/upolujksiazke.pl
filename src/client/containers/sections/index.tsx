@@ -1,2 +1,3 @@
-export * from './RecentCategoriesBooks';
+export * from './CategoriesGroupsBooks';
+export * from './RecentBooks';
 export * from './BookInfo';

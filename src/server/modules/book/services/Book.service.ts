@@ -39,7 +39,7 @@ import {BookStatsService} from './BookStats.service';
 @Injectable()
 export class BookService {
   public static readonly BOOK_CARD_FIELDS = [
-    'book.id', 'book.defaultTitle', 'book.parameterizedSlug',
+    'book.createdAt', 'book.id', 'book.defaultTitle', 'book.parameterizedSlug',
     'book.totalRatings', 'book.avgRating',
     'book.lowestPrice', 'book.highestPrice', 'book.allTypes',
     'primaryRelease.id',

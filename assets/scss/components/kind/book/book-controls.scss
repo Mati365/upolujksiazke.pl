@@ -1,0 +1,15 @@
+.c-book-cta {
+  font-weight: 800;
+
+  &.has-icon-suffix {
+    justify-content: flex-start;
+  }
+
+  > .c-icon svg {
+    transform: scale(1.25);
+  }
+
+  &__prefix-icon {
+    margin-right: 10px;
+  }
+}

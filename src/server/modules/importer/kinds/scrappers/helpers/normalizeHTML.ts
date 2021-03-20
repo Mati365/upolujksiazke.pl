@@ -13,11 +13,6 @@ export function normalizeHTML(html: string) {
   if (!html)
     return html;
 
-  return serializer.process(
-    html
-      .replace(/(&quot;|"{2,})/g, '"')
-      .replace(/<br\s*[/]?>/g, '\n'),
-  );
+  const output = serializer.process(html.replace(/(&quot;|"{2,})/g, '"'));
+  return output.replace(/\n{3,}/g, '\n\n');
 }
-
-// http://lvh.me:3002/ksiazka/2010-odyseja-kosmiczna-arthur-c-clarke-1,292

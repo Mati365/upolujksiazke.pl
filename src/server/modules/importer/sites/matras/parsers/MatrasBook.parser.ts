@@ -97,7 +97,7 @@ export class MatrasBookParser
         {
           lang: Language.PL,
           title: normalizeParsedTitle(title),
-          description: normalizeParsedText($('#con-notes > .text:first-child').text()),
+          description: normalizeParsedText($('#con-notes > .text:first-child').html()),
           isbn: normalizeISBN(detailsText.match(/ISBN:\s*([\w-]+)/)?.[1]),
           totalPages: (+detailsText.match(/Liczba stron:\s*(\d+)/)?.[1]) || null,
           edition: normalizeParsedText(detailsText.match(/Wydanie:\s*(\S+)/)?.[1]),

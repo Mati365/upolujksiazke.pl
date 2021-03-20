@@ -124,7 +124,7 @@ export class PublioBookParser
         lang: (
           LANGUAGE_TRANSLATION_MAPPINGS[basicProps['język publikacji']?.[0].toLowerCase()]
         ),
-        description: normalizeParsedText($('.product-description > .teaser-wrapper').text()),
+        description: normalizeParsedText($('.product-description > .teaser-wrapper').html()),
         totalPages: +basicProps['format']?.[0]?.match(/w wersji papierowej (\d+) stron/)?.[1] || null,
         protection: PROTECTION_TRANSLATION_MAPPINGS[basicProps['zabezpieczenie']?.[0].toLowerCase()],
         translator: PublioBookParser.extractTitlesRow($, $(basicProps['tłumacz']?.[1])),

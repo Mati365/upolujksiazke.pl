@@ -27,7 +27,7 @@ export class PublioPublisherParser extends WebsiteScrapperParser<CreateBookPubli
     return new CreateBookPublisherDto(
       {
         name: $('h1').text().match(/(.*)\s-\s/)[1],
-        description: $('.listing-details .expandable.--open').text(),
+        description: $('.listing-details .expandable.--open').html(),
         logo: logoUrl && new CreateImageAttachmentDto(
           {
             originalUrl: concatUrls(

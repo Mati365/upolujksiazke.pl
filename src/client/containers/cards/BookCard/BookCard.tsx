@@ -1,16 +1,17 @@
 import React from 'react';
 import c from 'classnames';
+import * as R from 'ramda';
 
 import {useI18n} from '@client/i18n';
 import {formatBookTitle} from '@client/helpers/logic';
 
 import {BookCardRecord} from '@api/types';
 import {BookLink} from '@client/routes/Links';
+import {BookCtaButton} from '@client/containers/controls/BookCtaButton';
 
 import {RatingsRow} from '../../parts/RatingsRow';
 import {BookTypesRow} from './BookTypesRow';
 import {BookPriceRow} from './BookPriceRow';
-import {BookActionRow} from './BookActionsRow';
 import {BookCover} from './BookCover';
 import {BookAuthorsRow} from './BookAuthorsRow';
 
@@ -72,7 +73,9 @@ export const BookCard = (
 
         <BookAuthorsRow
           className='c-book-card__author'
-          authors={authors}
+          authors={
+            R.take(2, authors)
+          }
         />
       </div>
 
@@ -82,7 +85,12 @@ export const BookCard = (
         highestPrice={highestPrice}
       />
 
-      <BookActionRow />
+      <BookCtaButton
+        className='c-book-card__cta'
+        title={
+          t('shared.book.compare')
+        }
+      />
     </article>
   );
 };

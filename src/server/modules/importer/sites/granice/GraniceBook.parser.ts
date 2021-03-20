@@ -83,7 +83,7 @@ export class GraniceBookParser
       {
         title,
         lang: Language.PL,
-        description: normalizeParsedText($content.find('> .desc > p:not(:empty):not(.tags)').text()),
+        description: normalizeParsedText($content.find('> .desc > p:not(:empty):not(.tags)').html()),
         totalPages: +$details.find('span[itemprop="numberOfPages"]').text() || null,
         publishDate: normalizeParsedText(detailsText.match(/Data wydania: ([\S]+)/)?.[1]),
         availability: (await this.parseAvailability(bookPage)).result,

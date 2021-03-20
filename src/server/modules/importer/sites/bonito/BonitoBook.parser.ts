@@ -63,7 +63,7 @@ export class BonitoBookParser
         lang: Language.PL,
         format: basicProps['format'],
         defaultPrice: normalizePrice(basicProps['cena rynkowa'])?.price,
-        description: normalizeParsedText($('span[itemprop="productDetails"] [itemprop="description"]').text()),
+        description: normalizeParsedText($('span[itemprop="productDetails"] [itemprop="description"]').html()),
         totalPages: +basicProps['liczba stron'] || null,
         publishDate: basicProps['rok wydania'],
         isbn: normalizeISBN(basicProps['numer isbn']),

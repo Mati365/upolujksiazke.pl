@@ -73,7 +73,7 @@ export class ArosBookParser
       {
         title,
         lang: Language.PL,
-        description: normalizeParsedText($('[itemprop="description"]').text()),
+        description: normalizeParsedText($('[itemprop="description"]').html()),
         totalPages: +basicProps['liczba stron'] || null,
         format: basicProps['format'],
         publishDate: basicProps['data premiery'],

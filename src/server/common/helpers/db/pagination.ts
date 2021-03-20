@@ -4,11 +4,14 @@ import * as R from 'ramda';
 
 import {ID} from '@shared/types';
 
-export type PaginationOptions = {
-  serialize?: boolean,
-  page?: number,
+export type BasicLimitPaginationOptions = {
   offset?: number,
   limit: number,
+};
+
+export type PaginationOptions = BasicLimitPaginationOptions & {
+  serialize?: boolean,
+  page?: number,
   phrase?: string,
   excludeIds?: ID[],
 };

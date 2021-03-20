@@ -72,7 +72,7 @@ export class MadBooksBookParser
         lang: LANGUAGE_TRANSLATION_MAPPINGS[basicProps['język']],
         format: basicProps['format'],
         defaultPrice: normalizePrice(basicProps['cena katalogowa'])?.price,
-        description: normalizeParsedText($('#opis [itemprop="description"]').text()),
+        description: normalizeParsedText($('#opis [itemprop="description"]').html()),
         totalPages: +basicProps['ilość stron'] || null,
         publishDate: basicProps['rok wydania'],
         edition: basicProps['wydanie'],

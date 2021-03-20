@@ -83,7 +83,7 @@ export class IbukBookParser
         type: BookType.EBOOK,
         title: $content.find('h1').text(),
         lang: LANGUAGE_TRANSLATION_MAPPINGS[basicProps['język publikacji']?.toLowerCase()],
-        description: normalizeParsedText($('#js_desc_text + p').text()),
+        description: normalizeParsedText($('#js_desc_text + p').html()),
         totalPages: +basicProps['liczba stron'] || null,
         isbn: normalizeISBN(basicProps['isbn-13']),
         edition: normalizeParsedText(basicProps['numer wydania'] || basicProps['wydanie']),

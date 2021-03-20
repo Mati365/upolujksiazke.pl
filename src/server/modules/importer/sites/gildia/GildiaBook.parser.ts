@@ -131,7 +131,7 @@ export class GildiaBookParser
       {
         lang: Language.PL,
         title: normalizeParsedTitle($('.product-page-description .product-page-title').text()),
-        description: normalizeParsedText($('.product-page-description-details > p').text()),
+        description: normalizeParsedText($('.product-page-description-details > p').html()),
         isbn: normalizeISBN(basicProps['isbn-13'] ?? basicProps['isbn']),
         totalPages: +basicProps['liczba stron'] || null,
         format: normalizeParsedText(basicProps['format']),

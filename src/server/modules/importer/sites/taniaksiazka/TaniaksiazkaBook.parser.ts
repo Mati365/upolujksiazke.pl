@@ -88,7 +88,7 @@ export class TaniaksiazkaBookParser
         type: BOOK_TYPE_TRANSLATION_MAPPINGS[type] ?? BookType.PAPER,
         binding: BINDING_TRANSLATION_MAPPINGS[basicProps['oprawa']?.text.toLowerCase()],
         format: (basicProps['format'] || basicProps['rodzaj pliku'])?.text,
-        description: normalizeParsedText($('#product-description').text()),
+        description: normalizeParsedText($('#product-description').html()),
         totalPages: +basicProps['ilość stron']?.text || null,
         publishDate: basicProps['rok wydania']?.text,
         availability: (await this.parseAvailability(bookPage)).result,

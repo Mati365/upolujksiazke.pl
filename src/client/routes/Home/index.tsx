@@ -1,25 +1,42 @@
 import React from 'react';
 
+import {objPropsToPromise} from '@shared/helpers';
+
 import {AsyncRoute} from '@client/components/utils/asyncRouteUtils';
-import {CategoryBooksGroup} from '@api/types';
+import {
+  BookCardRecord,
+  CategoryBooksGroup,
+} from '@api/types';
+
 import {
   Layout,
   Container,
 } from '@client/components/ui';
 
-import {RecentCategoriesBooks} from '@client/containers/sections';
+import {
+  RecentBooksSection,
+  CategoriesGroupsBooksSection,
+} from '@client/containers/sections';
+
 import {LazyHydrate} from '@client/components/ui/LazyHydrate';
 import {HOME_PATH} from '../Links';
 
 type HomeRouteProps = {
-  recentCategoriesBooks: CategoryBooksGroup[],
+  recentBooks: BookCardRecord[],
+  popularCategoriesBooks: CategoryBooksGroup[],
 };
 
-export const HomeRoute: AsyncRoute = ({recentCategoriesBooks}: HomeRouteProps) => (
+export const HomeRoute: AsyncRoute = (
+  {
+    recentBooks,
+    popularCategoriesBooks,
+  }: HomeRouteProps,
+) => (
   <Layout>
     <LazyHydrate>
       <Container className='c-sections-list'>
-        <RecentCategoriesBooks items={recentCategoriesBooks} />
+        <RecentBooksSection items={recentBooks} />
+        <CategoriesGroupsBooksSection items={popularCategoriesBooks} />
       </Container>
     </LazyHydrate>
   </Layout>
@@ -30,11 +47,18 @@ HomeRoute.route = {
   exact: true,
 };
 
-HomeRoute.getInitialProps = async ({api}) => ({
-  recentCategoriesBooks: await api.repo.recentBooks.findCategoriesRecentBooks(
-    {
-      itemsPerGroup: 14,
-      limit: 3,
-    },
-  ),
-});
+HomeRoute.getInitialProps = ({api: {repo}}) => objPropsToPromise(
+  {
+    recentBooks: repo.books.findRecentBooks(
+      {
+        limit: 7,
+      },
+    ),
+    popularCategoriesBooks: repo.recentBooks.findCategoriesPopularBooks(
+      {
+        itemsPerGroup: 14,
+        limit: 3,
+      },
+    ),
+  },
+);

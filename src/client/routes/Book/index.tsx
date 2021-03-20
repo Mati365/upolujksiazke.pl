@@ -1,4 +1,5 @@
 import React from 'react';
+import {Redirect} from 'react-router';
 
 import {formatBookTitle} from '@client/helpers/logic';
 import {useI18n} from '@client/i18n';
@@ -12,7 +13,10 @@ import {
   Container,
 } from '@client/components/ui';
 
-import {BOOK_PATH} from '../Links';
+import {
+  BOOK_PATH,
+  HOME_PATH,
+} from '../Links';
 
 type BookRouteProps = {
   book: BookFullInfoRecord,
@@ -20,6 +24,8 @@ type BookRouteProps = {
 
 export const BookRoute: AsyncRoute = ({book}: BookRouteProps) => {
   const t = useI18n();
+  if (!book)
+    return <Redirect to={HOME_PATH} />;
 
   return (
     <Layout>

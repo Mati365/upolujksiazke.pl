@@ -8,7 +8,7 @@ import {
   Logger, forwardRef,
 } from '@nestjs/common';
 
-import {mapObjValuesToPromise} from '@shared/helpers/async/mapObjValuesToPromise';
+import {objPropsToPromise} from '@shared/helpers/async/mapObjValuesToPromise';
 import {parameterize} from '@shared/helpers/parameterize';
 import {pickLongestArrayItem} from '@shared/helpers';
 import {trimBorderSpecialCharacters} from '@server/common/helpers/text/trimBorderSpecialCharacters';
@@ -411,8 +411,7 @@ export class BookDbLoaderService implements MetadataDbLoader {
       {} as Record<string, CreateBookReleaseDto[]>,
     );
 
-    const similarNames = await mapObjValuesToPromise<string>(
-      R.identity,
+    const similarNames = await objPropsToPromise<string>(
       R.mapObjIndexed(
         (groupedReleases) => (
           publisherService

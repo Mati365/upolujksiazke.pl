@@ -1,8 +1,7 @@
 import {asyncIteratorToObservable} from '../rx/asyncIteratorToObservable';
+import {BasicLimitPaginationOptions} from './pagination';
 
-type PaginatedAsyncIterator<T> = {
-  offset?: number,
-  limit: number,
+type PaginatedAsyncIterator<T> = BasicLimitPaginationOptions & {
   increment?: boolean,
   queryExecutor(
     attrs: {

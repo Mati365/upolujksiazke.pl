@@ -16,7 +16,7 @@ export class LiteraturaGildiaBookAuthorParser extends WebsiteScrapperParser<Crea
     return new CreateBookAuthorDto(
       {
         name: normalizeParsedText($('h1').text()),
-        description: normalizeParsedText($('.widetext .visible-sentence')?.text()),
+        description: normalizeParsedText($('.widetext .visible-sentence')?.html()),
       },
     );
   }

@@ -4,12 +4,15 @@ import chalk from 'chalk';
 
 const measureLogger = new Logger('MeasureCallDuration');
 
-export function MeasureCallDuration() {
-  return InterceptMethod(() => {
+export function MeasureCallDuration(name?: string|((...args: any) => string)) {
+  return InterceptMethod((...args: any[]) => {
     const t = Date.now();
 
     return (result, wrapper) => {
-      measureLogger.log(`Called ${chalk.bold(wrapper.name)} in ${chalk.bold(`${Date.now() - t}ms`)}!`);
+      if (name instanceof Function)
+        name = name(...args);
+
+      measureLogger.log(`Called ${chalk.bold(name ?? wrapper.name)} in ${chalk.bold(`${Date.now() - t}ms`)}!`);
     };
   });
 }

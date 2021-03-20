@@ -79,7 +79,7 @@ export class DadadaBookParser
         title,
         type: BOOK_TYPE_TRANSLATION_MAPPINGS[$('.productFlagTag').text()?.toLowerCase()],
         lang: Language.PL,
-        description: normalizeParsedText($('.productDescriptionContent').text()),
+        description: normalizeParsedText($('.productDescriptionContent').html()),
         totalPages: +basicProps['liczba stron']?.[0] || null,
         format: basicProps['format']?.[0],
         publishDate: basicProps['rok wydania']?.[0],

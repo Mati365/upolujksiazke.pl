@@ -36,5 +36,17 @@ export const PL_LANG_PACK = {
   },
   book: {
     created_by: 'Autor',
+
+    price_box: {
+      header: 'Ceny książki:',
+      highest_price: 'Najwyższa cena:',
+      lowest_price: 'Najniższa cena:',
+      buy_cta: 'Kup książkę',
+    },
+  },
+  sections: {
+    recent_books: {
+      title: 'Ostatnio dodane książki',
+    },
   },
 };

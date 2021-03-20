@@ -1,0 +1,72 @@
+.c {
+  &-book-info-section {
+    > .c-section__content {
+      display: grid;
+      grid-template-columns: 210px 1fr 210px;
+      grid-gap: 50px;
+    }
+
+    &__cover img {
+      -webkit-box-reflect: below 10px -webkit-gradient(linear, left top, left bottom, from(transparent), color-stop(70%, transparent) , to(rgba(250, 250, 250, 0.1)));
+    }
+
+    &__header {
+      margin-top: 0;
+      margin-bottom: .75rem;
+    }
+
+    &__author {
+      margin-bottom: 1.75rem;
+      color: color(muted-text);
+    }
+  }
+
+  &-lazy-book-section {
+    content-visibility: auto;
+    contain-intrinsic-size: 1000px;
+  }
+
+  &-book-price-box {
+    &__header {
+      margin-bottom: .75rem;
+      font-weight: 600;
+      font-size: $text-small;
+    }
+
+    &__price-wrapper {
+      margin-bottom: 1.25rem;
+      padding: 1.2rem 1.5rem;
+      background: #f5f5f5;
+    }
+
+    &__current-price {
+      &:not(:last-child) {
+        margin-bottom: 1rem;
+      }
+
+      .c-book-price-group__value {
+        font-size: 1.7rem;
+        color: color(primary);
+      }
+    }
+
+    &__prev-price .c-book-price-group__value {
+      font-weight: 500;
+      text-decoration: line-through;
+    }
+  }
+
+  &-book-price-group {
+    &__label {
+      margin-bottom: .35rem;
+      font-size: $text-small;
+      font-weight: 600;
+      color: color(muted-text);
+    }
+
+    &__value {
+      font-size: 1.1rem;
+      font-weight: 800;
+    }
+  }
+}

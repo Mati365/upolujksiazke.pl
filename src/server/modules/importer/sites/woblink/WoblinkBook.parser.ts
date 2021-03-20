@@ -108,7 +108,10 @@ export class WoblinkBookParser
         title: bookSchema['name'],
         format: tableProps['format'],
         recordingLength: WoblinkBookParser.extractRecordingLength(tableProps['czas słuchania']),
-        description: normalizeParsedText(bookSchema['description']),
+        description: (
+          $('#product-card-description > .description > [itemprop="about"] > *:not(.heading)').html()
+            || normalizeParsedText(bookSchema['description'])
+        ),
         totalPages: +tableProps['liczba stron'] || null,
         publishDate: bookSchema['releaseDate'],
         publisher: new CreateBookPublisherDto(

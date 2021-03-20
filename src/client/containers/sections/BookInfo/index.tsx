@@ -11,6 +11,8 @@ import {
   Section,
 } from '@client/components/ui';
 
+import {BookPriceBox} from './BookPriceBox';
+
 type BookInfoProps = {
   book: BookFullInfoRecord,
 };
@@ -60,6 +62,8 @@ export const BookInfo = ({book}: BookInfoProps) => {
           text={primaryRelease.description}
         />
       </div>
+
+      <BookPriceBox book={book} />
     </Section>
   );
 };

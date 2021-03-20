@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
+import {StaticRouterContext} from 'react-router';
 
 import pug from 'pug';
 import {Response, Request} from 'express';
@@ -69,14 +70,21 @@ export class FrontController {
       },
     };
 
+    const context: StaticRouterContext = {};
     const html = ReactDOMServer.renderToStaticMarkup(
       <PageRoot
         initialViewData={viewData}
         routerConfig={{
           location: req.url,
+          context,
         }}
       />,
     );
+
+    if (context.url) {
+      res.redirect(301, context.url);
+      return;
+    }
 
     res.send(
       this.getDefaultHTMLSkel()(

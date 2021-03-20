@@ -99,7 +99,7 @@ export class LiteraturaGildiaBookParser
         publisher,
         lang: Language.PL,
         title: normalizeParsedTitle($('h1').text()),
-        description: normalizeParsedText($wideText.find('div > p').text()),
+        description: normalizeParsedText($wideText.find('div > p').html()),
         edition: normalizeParsedText(text.match(/Wydanie: ([\S]+)/)?.[1]),
         isbn: normalizeISBN(text.match(/ISBN: ([\w-]+)/)?.[1]),
         totalPages: (+text.match(/Liczba stron: (\d+)/)?.[1]) || null,

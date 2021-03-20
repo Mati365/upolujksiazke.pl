@@ -50,3 +50,15 @@ export function mapObjValuesToPromise<R>(
       .then(nonNullPairsToObj) as any
   );
 }
+
+/**
+ * Picks already mapped object and returns awaited result
+ *
+ * @export
+ * @template R
+ * @param {*} obj
+ * @returns {Promise<Record<string, R>>}
+ */
+export function objPropsToPromise<R>(obj: any): Promise<Record<string, R>> {
+  return mapObjValuesToPromise(R.identity, obj);
+}

@@ -8,21 +8,19 @@ import {
 
 import {BookCategoryEntity} from '@server/modules/book/modules/category';
 import {CategoryBooksGroup} from '@api/types/CategoryBooksGroup.record';
-import {APIClientChild} from '@api/APIClient';
 import {
   RecentBooksRepo,
   BooksGroupsFilters,
 } from '@api/repo';
 
+import {ServerAPIClientChild} from '../ServerAPIClientChild';
 import {BookCategoryGroupSerializer} from '../../serializers';
 import {
   MeasureCallDuration,
   RedisMemoize,
 } from '../../helpers';
 
-import type {ServerAPIClient} from '../ServerAPIClient';
-
-export class RecentBooksServerRepo extends APIClientChild<ServerAPIClient> implements RecentBooksRepo {
+export class RecentBooksServerRepo extends ServerAPIClientChild implements RecentBooksRepo {
   /**
    * Return grouped books
    *
@@ -30,21 +28,21 @@ export class RecentBooksServerRepo extends APIClientChild<ServerAPIClient> imple
    * @returns {Promise<CategoryBooksGroup>}
    * @memberof RecentBooksServerRepo
    */
-  @MeasureCallDuration()
+  @MeasureCallDuration('findCategoriesPopularBooks')
   @RedisMemoize(
     () => ({
-      key: 'recent-categories-books',
+      key: 'popular-categories-books',
       expire: convertHoursToSeconds(5),
     }),
   )
-  async findCategoriesRecentBooks(
+  async findCategoriesPopularBooks(
     {
       itemsPerGroup = 12,
       offset = 0,
       limit = 6,
     }: BooksGroupsFilters = {},
   ): Promise<CategoryBooksGroup[]> {
-    const {entityManager, bookService} = this.api.services;
+    const {entityManager, bookService} = this.services;
 
     const categoryBooks: {
       id: number,

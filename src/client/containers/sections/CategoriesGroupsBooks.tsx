@@ -4,15 +4,16 @@ import {Section} from '@client/components/ui';
 import {CategoryBooksGroup} from '@api/types/CategoryBooksGroup.record';
 import {BooksGrid} from '../grids/BooksGrid';
 
-type RecentCategoriesBooksProps = {
+type CategoriesGroupsBooksProps = {
   items: CategoryBooksGroup[],
 };
 
-export const RecentCategoriesBooks = ({items: groups}: RecentCategoriesBooksProps): any => groups.map(
+export const CategoriesGroupsBooksSection = ({items: groups}: CategoriesGroupsBooksProps): any => groups.map(
   ({category, items}) => (
     <Section
       key={category.id}
       title={category.name}
+      className='c-lazy-book-section'
       headerClassName='has-double-link-chevron'
     >
       <BooksGrid items={items} />
@@ -20,4 +21,4 @@ export const RecentCategoriesBooks = ({items: groups}: RecentCategoriesBooksProp
   ),
 );
 
-RecentCategoriesBooks.displayName = 'RecentCategoriesBooks';
+CategoriesGroupsBooksSection.displayName = 'CategoriesGroupsBooksSection';

@@ -36,7 +36,7 @@ export const PL_LANG_PACK = {
   },
   book: {
     created_by: 'Autor',
-
+    no_description: 'Brak opisu :(',
     price_box: {
       header: 'Ceny książki:',
       highest_price: 'Najwyższa cena:',

@@ -1,15 +1,32 @@
-.c-book-cta {
-  font-weight: 800;
+.c {
+  &-book-cta {
+    font-weight: 800;
 
-  &.has-icon-suffix {
-    justify-content: flex-start;
+    &.has-icon-suffix {
+      justify-content: flex-start;
+    }
+
+    > .c-icon svg {
+      transform: scale(1.25);
+    }
+
+    &__prefix-icon {
+      margin-right: 10px;
+    }
   }
 
-  > .c-icon svg {
-    transform: scale(1.25);
-  }
+  &-book-authors-row.is-separated {
+    > li:not(:last-child) {
+      position: relative;
 
-  &__prefix-icon {
-    margin-right: 10px;
+      &::after {
+        content: '|';
+        position: absolute;
+        top: 2px;
+        right: -11px;
+        font-size: .75rem;
+        opacity: 0.45;
+      }
+    }
   }
 }

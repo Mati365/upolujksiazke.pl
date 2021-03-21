@@ -36,8 +36,10 @@ export class BonitoBookParser
           new CreateBookAvailabilityDto(
             {
               remoteId: url.match(/k-([^-]*)-/)[1],
-              price: normalizePrice($('[itemprop="offerDetails"] [itemprop="price"]').attr('content'))?.price,
               url,
+              price: normalizePrice(
+                $('[itemtype="https://schema.org/Product"] [itemprop="price"]').attr('content'),
+              )?.price,
             },
           ),
         ],
@@ -54,16 +56,26 @@ export class BonitoBookParser
       return null;
 
     const {$} = bookPage;
-    const basicProps = extractTableRowsMap($, 'span[itemprop="offerDetails"] > table > tbody > tr');
-    const title = $('h1 > span[itemprop="name"]').text();
+    const $details = $('[itemtype="https://schema.org/Product"]');
 
+    const basicProps = extractTableRowsMap(
+      $,
+      $details
+        .find('[itemtype="https://schema.org/Offer"] + table > tbody > tr')
+        .toArray(),
+    );
+
+    if (!basicProps['numer isbn'])
+      return null;
+
+    const title = $('h1 > span[itemprop="name"]').text();
     const release = new CreateBookReleaseDto(
       {
         title,
         lang: Language.PL,
         format: basicProps['format'],
         defaultPrice: normalizePrice(basicProps['cena rynkowa'])?.price,
-        description: normalizeParsedText($('span[itemprop="productDetails"] [itemprop="description"]').html()),
+        description: normalizeParsedText($details.find('[itemprop="description"]').html()),
         totalPages: +basicProps['liczba stron'] || null,
         publishDate: basicProps['rok wydania'],
         isbn: normalizeISBN(basicProps['numer isbn']),
@@ -88,16 +100,18 @@ export class BonitoBookParser
     return new CreateBookDto(
       {
         defaultTitle: title,
-        authors: $('span[itemprop="productDetails"] h2 a[href^="/autor/"]').toArray().map((author) => (
+        authors: $details.find('h2 a[href^="/autor/"]').toArray().map((author) => (
           new CreateBookAuthorDto(
             {
               name: $(author).text(),
             },
           )
         )),
-        releases: [release],
+        releases: [
+          release,
+        ],
         categories: (
-          $('[itemprop="productDetails"] [itemprop="category"] > a:not(:first-child)').toArray().map(
+          $details.find('[itemprop="category"] > a:not(:first-child)').toArray().map(
             (item) => new CreateBookCategoryDto(
               {
                 name: $(item).text(),

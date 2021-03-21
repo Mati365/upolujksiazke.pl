@@ -149,6 +149,7 @@
     "slugify": "^1.4.6",
     "snakecase-keys": "^3.2.1",
     "string-similarity": "^4.0.4",
+    "string-strip-html": "^8.2.5",
     "ts-enum-util": "^4.0.2",
     "ts-node": "^9.1.1",
     "typeorm": "^0.2.30",
@@ -156,7 +157,6 @@
     "uuid": "^8.3.2",
     "wikijs": "^6.0.1",
     "xml-stream": "^0.4.5",
-    "xss": "^1.0.8",
     "yarn": "^1.22.10"
   }
 }

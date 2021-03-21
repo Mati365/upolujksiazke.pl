@@ -1,7 +1,6 @@
 import {
   normalizeISBN,
   normalizeURL,
-  normalizeParsedTitle,
   normalizeParsedText,
   normalizePrice,
 } from '@server/common/helpers';
@@ -96,7 +95,7 @@ export class MatrasBookParser
       release: new CreateBookReleaseDto(
         {
           lang: Language.PL,
-          title: normalizeParsedTitle(title),
+          title,
           description: normalizeParsedText($('#con-notes > .text:first-child').html()),
           isbn: normalizeISBN(detailsText.match(/ISBN:\s*([\w-]+)/)?.[1]),
           totalPages: (+detailsText.match(/Liczba stron:\s*(\d+)/)?.[1]) || null,

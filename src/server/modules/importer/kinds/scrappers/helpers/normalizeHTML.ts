@@ -1,18 +1,19 @@
-import {FilterXSS} from 'xss';
-
-const serializer = new FilterXSS(
-  {
-    css: false,
-    whiteList: {},
-    stripIgnoreTag: true,
-    stripIgnoreTagBody: ['script', 'template', 'svg'],
-  },
-);
+import {stripHtml} from 'string-strip-html';
 
 export function normalizeHTML(html: string) {
   if (!html)
     return html;
 
-  const output = serializer.process(html.replace(/(&quot;|"{2,})/g, '"'));
-  return output.replace(/\n{3,}/g, '\n\n');
+  const {result: output} = stripHtml(
+    html
+      .replace(/&nbsp;/g, '')
+      .replace(/(&quot;|"{2,})/g, '"')
+      .replace(/<br\s*[/]?>/g, '\n'),
+  );
+
+  return (
+    output
+      .replace(/\s*\n[\n\s]{1,}/g, '\n\n')
+      .trim()
+  );
 }

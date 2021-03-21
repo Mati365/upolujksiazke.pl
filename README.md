@@ -156,6 +156,12 @@ gulp scrapper:refresh:latest --kind BOOK_REVIEW --website wykop.pl
 
 # Fetches all reviews pages from websites using all scrappers
 gulp scrapper:refresh:all --kind BOOK_REVIEW
+
+# Fetches missing favicons
+gulp entity:website:fetch-missing-logos
+
+# Refreshes promotion value in categories
+gulp entity:category:refresh-ranking
 ```
 
 Analyzers:
@@ -180,6 +186,7 @@ Spiders:
 ```bash
  gulp scrapper:spider:run
 ```
+
 
 ### Importers
 

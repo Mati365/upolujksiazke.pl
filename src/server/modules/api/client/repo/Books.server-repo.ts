@@ -1,5 +1,5 @@
 import {plainToClass} from 'class-transformer';
-import * as R from 'ramda';
+import {SelectQueryBuilder} from 'typeorm';
 
 import {ID} from '@shared/types';
 import {
@@ -7,7 +7,7 @@ import {
   convertHoursToSeconds,
 } from '@shared/helpers';
 
-import {BookEntity} from '@server/modules/book';
+import {BookEntity, BookService} from '@server/modules/book';
 import {BooksRepo} from '@api/repo';
 import {BasicAPIPagination} from '@api/shared/types';
 
@@ -42,26 +42,27 @@ export class BooksServerRepo extends ServerAPIClientChild implements BooksRepo {
     }: BasicAPIPagination = {},
   ) {
     const {services: {bookService}} = this;
-    const latestBooksIds = R.pluck(
-      'id',
-      await BookEntity
-        .createQueryBuilder('book')
-        .select(['id'])
-        .offset(offset)
-        .limit(limit)
+    const books = await (
+      bookService
+        .createCardsQuery(
+          BookService.BOOK_CARD_FIELDS,
+          (qb: SelectQueryBuilder<BookEntity>) => (
+            qb
+              .subQuery()
+              .from(BookEntity, 'book')
+              .select('*')
+              .offset(offset)
+              .limit(limit)
+              .orderBy('book.createdAt', 'DESC')
+          ),
+        )
         .orderBy('book.createdAt', 'DESC')
-        .getRawMany(),
+        .getMany()
     );
 
     return plainToClass(
       BookCardSerializer,
-      await (
-        bookService
-          .createCardsQuery()
-          .whereInIds(latestBooksIds)
-          .orderBy('book.createdAt', 'DESC')
-          .getMany()
-      ),
+      books,
       {
         excludeExtraneousValues: true,
       },

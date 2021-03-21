@@ -40,46 +40,51 @@ export class FuzzyBookSearchService {
     if (bookIds.length)
       query = query.where('book.id in (:...bookIds)', {bookIds});
     else {
-      // find redirected slugs
-      const slugs = R.uniqBy(
-        R.identity,
-        books.flatMap((book) => book.genSlugPermutations()),
-      );
-
       query.andWhere(
         new Brackets((qb) => {
-          // find matching book slug
-          slugs.forEach((slug) => {
-            qb = qb.orWhere(
-              'levenshtein(book.parameterizedSlug, :slug) <= :similarity',
-              {
-                slug,
-                similarity,
-              },
-            );
-          });
-
           // search by isbn
           if (isbns.length)
             qb = qb.orWhere('release.isbn in (:...isbns)', {isbns});
           else {
-            // find book slug by release slug + book author slug
-            R.uniqBy(
+            // find redirected slugs
+            const slugs = R.uniqBy(
+              R.identity,
+              books.flatMap((book) => book.genSlugPermutations()),
+            );
+
+            // some websites migth contain book with single author
+            // but there can be also multiple authors
+            // just ignore author part when checking slugs
+            const nonPrefixedSlugs = R.uniqBy(
               R.identity,
               books.flatMap((book) => book.genSlugPermutations('')),
-            )
-              .forEach((bookSlugPostfix) => {
+            );
+
+            // find matching book slug
+            slugs.forEach((slug) => {
+              qb = qb.orWhere(
+                'levenshtein(book.parameterizedSlug, :slug) <= :similarity',
+                {
+                  slug,
+                  similarity,
+                },
+              );
+
+              // find book slug by release slug + book author slug
+              nonPrefixedSlugs.forEach((bookSlugPostfix) => {
                 qb = qb.orWhere(
                   'levenshtein('
-                    + 'book.parameterizedSlug,'
+                    + ':slug,'
                     + 'CONCAT(release.parameterizedSlug, :bookSlugPostfix::text)'
                   + ') <= :similarity',
                   {
+                    slug,
                     similarity,
                     bookSlugPostfix,
                   },
                 );
               });
+            });
           }
 
           // search by release id

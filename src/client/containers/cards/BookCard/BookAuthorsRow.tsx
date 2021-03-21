@@ -1,4 +1,5 @@
 import React from 'react';
+import c from 'classnames';
 
 import {BookAuthorRecord} from '@api/types';
 import {AuthorLink} from '@client/routes/Links';
@@ -10,19 +11,28 @@ import {
 
 type BookAuthorsRowProps = CleanListProps & {
   className?: string,
+  separated?: boolean,
   linkProps?: Partial<ContainerLinkProps<any, {}>>,
   authors: BookAuthorRecord[],
 };
 
 export const BookAuthorsRow = (
   {
-    className, authors,
+    className, authors, separated,
     linkProps, ...props
   }: BookAuthorsRowProps,
 ) => (
   <CleanList
-    className={className}
-    spaced={2}
+    className={c(
+      className,
+      'c-book-authors-row',
+      separated && 'is-separated',
+    )}
+    spaced={(
+      separated
+        ? 3
+        : 2
+    )}
     inline
     wrap
     {...props}

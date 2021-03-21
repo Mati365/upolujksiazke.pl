@@ -19,7 +19,6 @@ import {CreateImageAttachmentDto} from '@server/modules/attachment/dto';
 import {CreateBookAvailabilityDto} from '@server/modules/book/modules/availability/dto/CreateBookAvailability.dto';
 import {CreateBookKindDto} from '@server/modules/book/modules/kind/dto/CreateBookKind.dto';
 import {CreateBookPrizeDto} from '@server/modules/book/modules/prize/dto/CreateBookPrize.dto';
-import {CreateBookVolumeDto} from '@server/modules/book/modules/volume/dto/CreateBookVolume.dto';
 import {CreateBookSeriesDto} from '@server/modules/book/modules/series/dto/CreateBookSeries.dto';
 import {CreateBookReviewDto} from '@server/modules/book/modules/review/dto/CreateBookReview.dto';
 import {CreateBookReviewerDto} from '@server/modules/book/modules/reviewer';
@@ -96,7 +95,6 @@ export class PublioBookParser
     if (!basicProps['isbn'])
       return null;
 
-    const [title, volumeName] = PublioBookParser.extractTitle($);
     const [parentIsbn, ...childIsbn] = basicProps['isbn'][0].split(',').map(normalizeISBN);
     const {
       result: availability,
@@ -117,7 +115,7 @@ export class PublioBookParser
 
     const parentRelease = new CreateBookReleaseDto(
       {
-        title,
+        title: $('h1 > .title').text(),
         type,
         defaultPrice: price.originalPrice,
         isbn: parentIsbn,
@@ -168,7 +166,7 @@ export class PublioBookParser
     const kind = normalizeParsedText(basicProps['rodzaj publikacji']?.[0]?.split(',')[0]);
     return new CreateBookDto(
       {
-        defaultTitle: title,
+        defaultTitle: parentRelease.title,
         kind: kind && new CreateBookKindDto(
           {
             name: kind,
@@ -189,13 +187,6 @@ export class PublioBookParser
         series: PublioBookParser.extractSeries(basicProps['seria']?.[0]),
         prizes,
         authors,
-        ...volumeName && {
-          volume: new CreateBookVolumeDto(
-            {
-              name: volumeName,
-            },
-          ),
-        },
       },
     );
   }
@@ -320,21 +311,6 @@ export class PublioBookParser
           0,
         )
     );
-  }
-
-  /**
-   * Extract title and volume name
-   *
-   * @static
-   * @param {cheerio.Root} $
-   * @memberof PublioBookParser
-   */
-  static extractTitle($: cheerio.Root) {
-    const title = normalizeParsedText($('h1 > .title').text());
-    if (R.contains('. Tom', title))
-      return title.match(/^(.*)\.\sTom\s(\d+)$/).splice(1, 2);
-
-    return [title, null];
   }
 
   /**

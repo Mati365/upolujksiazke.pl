@@ -1,10 +1,10 @@
 import * as R from 'ramda';
 
 import {countLetter} from '@shared/helpers';
+
 import {
   normalizeISBN,
   normalizeURL,
-  normalizeParsedTitle,
   normalizeParsedText,
   normalizePrice,
 } from '@server/common/helpers';
@@ -40,12 +40,12 @@ export class GildiaBookParser
           new CreateBookAvailabilityDto(
             {
               url,
-              remoteId: $('.product-page-description [data-add-product]').data('addProduct'),
-              totalRatings: null,
+              remoteId: GildiaBookParser.extractID($),
+              totalRatings: 1,
               avgRating: (
                 countLetter(
                   '',
-                  $('.product-page-description .rating-stars').data('content'),
+                  $('.product-page-description .rating-stars[data-content]').data('content'),
                 ) * 2
               ) || null,
 
@@ -130,7 +130,7 @@ export class GildiaBookParser
     return new CreateBookReleaseDto(
       {
         lang: Language.PL,
-        title: normalizeParsedTitle($('.product-page-description .product-page-title').text()),
+        title: $('.product-page-description .product-page-title').text(),
         description: normalizeParsedText($('.product-page-description-details > p').html()),
         isbn: normalizeISBN(basicProps['isbn-13'] ?? basicProps['isbn']),
         totalPages: +basicProps['liczba stron'] || null,
@@ -156,5 +156,17 @@ export class GildiaBookParser
       },
     );
     /* eslint-enable @typescript-eslint/dot-notation */
+  }
+
+  /**
+   * Extracts id from page
+   *
+   * @static
+   * @param {cheerio.Root} $
+   * @returns
+   * @memberof GildiaBookParser
+   */
+  static extractID($: cheerio.Root) {
+    return $('.product-page-description [data-add-product]').data('addProduct');
   }
 }

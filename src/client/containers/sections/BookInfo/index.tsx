@@ -20,6 +20,7 @@ type BookInfoProps = {
 export const BookInfo = ({book}: BookInfoProps) => {
   const t = useI18n();
   const {primaryRelease, authors} = book;
+
   const formattedTitle = formatBookTitle(
     {
       t,
@@ -48,18 +49,21 @@ export const BookInfo = ({book}: BookInfoProps) => {
         <div className='c-book-info-section__author'>
           {`${t('book.created_by')}:`}
           <BookAuthorsRow
-            block={false}
             className='ml-1'
             authors={authors}
             linkProps={{
               underline: true,
             }}
+            block={false}
+            separated
           />
         </div>
 
         <ExpandableDescriptionBox
           maxCharactersCount={900}
-          text={primaryRelease.description}
+          text={
+            primaryRelease.description || t('book.no_description')
+          }
         />
       </div>
 

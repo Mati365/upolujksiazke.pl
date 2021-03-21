@@ -33,4 +33,5 @@ export * from './getArrayWithLengthLimit';
 export * from './pickLongestArrayItem';
 export * from './findAndMap';
 export * from './uniqFlatHashByProp';
+export * from './parameterize';
 export * from './time/conversion';

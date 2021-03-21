@@ -30,9 +30,9 @@
     &__header {
       @extend .c-flex-row;
 
-      margin-bottom: .75rem;
+      margin-bottom: 1.25rem;
       font-weight: 600;
-      font-size: $text-small;
+      font-size: 0.95rem;
 
       > i {
         position: relative;
@@ -41,9 +41,9 @@
     }
 
     &__price-wrapper {
+      @extend .c-layer-box;
+
       margin-bottom: 1.25rem;
-      padding: 1.2rem 1.5rem;
-      background: #f5f5f5;
     }
 
     &__current-price {

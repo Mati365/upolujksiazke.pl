@@ -121,12 +121,11 @@ export function extractBookPostifxes(name: string): {
     {
       volume: normalizeVolumeTitle(volume),
       edition: editionType ? part : null,
-      title: (
+      title: R.uniq(
         [title, rest]
           .filter(Boolean)
-          .map((str) => trimBorderSpecialCharacters(str))
-          .join(': ')
-      ),
+          .map((str) => trimBorderSpecialCharacters(str)),
+      ).join(': '),
     },
   );
 }

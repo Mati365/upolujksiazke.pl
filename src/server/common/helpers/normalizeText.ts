@@ -10,12 +10,6 @@ export const normalizeParsedText: (str: string) => string = R.unless(
   ),
 );
 
-export const normalizeParsedTitle = (title: string) => {
-  const normalizedText = normalizeParsedText(title);
-
-  return normalizedText.match(/(?:.*#\d+\s-\s*)?([^().#]*)/)?.[1] ?? normalizedText;
-};
-
 export const normalizeISBN = R.unless(
   R.isNil,
   R.pipe(

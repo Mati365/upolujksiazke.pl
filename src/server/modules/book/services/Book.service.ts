@@ -1,7 +1,8 @@
 import {Injectable} from '@nestjs/common';
-import {Connection, EntityManager, In} from 'typeorm';
+import {Connection, EntityManager, EntityTarget, In} from 'typeorm';
 import * as R from 'ramda';
 
+import {objPropsToPromise} from '@shared/helpers';
 import {
   forwardTransaction,
   runTransactionWithPostHooks,
@@ -10,10 +11,11 @@ import {
 
 import {ImageVersion} from '@shared/enums';
 
+import {TagEntity} from '@server/modules/tag/Tag.entity';
 import {TagService} from '../../tag/Tag.service';
 import {BookAuthorService} from '../modules/author/BookAuthor.service';
 import {BookReleaseService} from '../modules/release/BookRelease.service';
-import {BookCategoryService} from '../modules/category';
+import {BookCategoryEntity, BookCategoryService} from '../modules/category';
 import {BookVolumeService} from '../modules/volume/BookVolume.service';
 import {BookSeriesService} from '../modules/series/BookSeries.service';
 import {BookPrizeService} from '../modules/prize/BookPrize.service';
@@ -75,13 +77,25 @@ export class BookService {
    * Creates query used to generate book cards
    *
    * @param {string[]} [selectFields=BookService.BOOK_CARD_FIELDS]
+   * @param {EntityTarget<BookEntity>} [from=BookEntity]
    * @returns
    * @memberof BookService
    */
-  createCardsQuery(selectFields: string[] = BookService.BOOK_CARD_FIELDS) {
+  createCardsQuery(
+    selectFields: string[] = BookService.BOOK_CARD_FIELDS,
+    from: EntityTarget<BookEntity> = BookEntity,
+  ) {
+    const query = (
+      this
+        .connection
+        .createQueryBuilder()
+        .from(from, 'book')
+    );
+
+    query.expressionMap.mainAlias.metadata = query.connection.getMetadata(BookEntity);
+
     return (
-      BookEntity
-        .createQueryBuilder('book')
+      query
         .select(selectFields)
         .innerJoinAndSelect('book.volume', 'volume')
         .leftJoin('book.authors', 'author')
@@ -110,22 +124,62 @@ export class BookService {
   /**
    * Create query with all fields for single book
    *
+   * @param {number} id
+   * @returns
    * @memberof BookService
    */
-  findFullCard(id: number) {
-    return (
-      this
-        .createCardsQuery(BookService.BOOK_FULL_CARD_FIELDS)
-        // .leftJoin('book.tags', 'tag')
-        // .leftJoin('book.categories', 'category')
-        // .leftJoin('book.releases', 'release')
-        .where(
-          {
-            id,
-          },
-        )
-        .getOne()
+  async findFullCard(id: number) {
+    const entity = new BookEntity;
+    const {card, tags, categories} = await objPropsToPromise(
+      {
+        card: (
+          this
+            .createCardsQuery(BookService.BOOK_FULL_CARD_FIELDS)
+            .where(
+              {
+                id,
+              },
+            )
+            .getOne()
+        ),
+
+        tags: (
+          TagEntity
+            .createQueryBuilder('t')
+            .innerJoin('book_tags_tag', 'bt', 'bt.bookId = :bookId and bt.tagId = t.id', {bookId: id})
+            .select(['t.id', 't.name', 't.parameterizedName'])
+            .getMany()
+        ),
+
+        categories: (
+          BookCategoryEntity
+            .createQueryBuilder('c')
+            .innerJoin(
+              'book_categories_book_category',
+              'bc', 'bc.bookId = :bookId and bc.bookCategoryId = c.id',
+              {
+                bookId: id,
+              },
+            )
+            .select(['c.id', 'c.name', 'c.parameterizedName'])
+            .getMany()
+        ),
+      },
     );
+
+    if (!card)
+      return null;
+
+    Object.assign(
+      entity,
+      card,
+      {
+        tags,
+        categories,
+      },
+    );
+
+    return entity;
   }
 
   /**

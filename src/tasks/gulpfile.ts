@@ -4,11 +4,12 @@ process.env.CMD_APP_INSTANCE = 'gulp';
 import 'isomorphic-fetch';
 import gulp from 'gulp';
 
-import * as Website from './entity/website';
+import {Website, Category} from './entity';
 import * as Scrapper from './scrapper';
 
 // entities
 gulp.task('entity:website:fetch-missing-logos', Website.fetchMissingLogosTask);
+gulp.task('entity:category:refresh-ranking', Category.refreshCategoriesRanking);
 
 // scrapper
 gulp.task('scrapper:refresh:single', Scrapper.refreshSingleTask);

@@ -61,7 +61,7 @@ export class TagService {
         entityManager,
         connection,
         Entity: TagEntity,
-        primaryKey: 'name',
+        primaryKey: 'parameterizedName',
         data: (
           R
             .uniqBy(

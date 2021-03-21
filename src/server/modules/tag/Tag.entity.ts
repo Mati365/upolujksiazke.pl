@@ -3,6 +3,7 @@ import {
   BeforeInsert, BeforeUpdate,
 } from 'typeorm';
 
+import {parameterize} from '@shared/helpers/parameterize';
 import {DatedRecordEntity} from '../database/DatedRecord.entity';
 
 @Entity(
@@ -11,8 +12,11 @@ import {DatedRecordEntity} from '../database/DatedRecord.entity';
   },
 )
 export class TagEntity extends DatedRecordEntity {
-  @Column('citext', {unique: true})
+  @Column('citext')
   name: string;
+
+  @Column('text', {unique: true})
+  parameterizedName: string;
 
   constructor(partial: Partial<TagEntity>) {
     super();
@@ -23,7 +27,9 @@ export class TagEntity extends DatedRecordEntity {
   @BeforeUpdate()
   transformFields() {
     const {name} = this;
-    if (name)
+    if (name) {
       this.name = name.toLowerCase();
+      this.parameterizedName ??= parameterize(name);
+    }
   }
 }

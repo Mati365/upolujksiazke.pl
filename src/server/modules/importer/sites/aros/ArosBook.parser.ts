@@ -36,10 +36,12 @@ export class ArosBookParser
           new CreateBookAvailabilityDto(
             {
               remoteId: $('input[type="hidden"][name="dodaj"]').attr('value'),
-              price: normalizePrice($('[itemprop="offerDetails"] [itemprop="price"]').attr('content'))?.price,
               avgRating: (Number.parseFloat($('[itemprop="ratingValue"]').text()) / 6) * 10 || null,
               totalRatings: Number.parseInt($('[itemprop="ratingCount"]').text(), 10) || null,
               url,
+              price: normalizePrice(
+                $('[itemtype="https://schema.org/Product"] [itemprop="price"]').attr('content'),
+              )?.price,
             },
           ),
         ],
@@ -56,8 +58,15 @@ export class ArosBookParser
       return null;
 
     const {$} = bookPage;
-    const basicProps = extractTableRowsMap($, 'span[itemprop="offerDetails"] > table > tbody > tr');
-    if (!basicProps['number isbn'])
+    const $details = $('[itemtype="https://schema.org/Product"]');
+    const basicProps = extractTableRowsMap(
+      $,
+      $details
+        .find('[itemtype="https://schema.org/Offer"] > table > tbody > tr meta[itemprop="url"] + table tbody tr')
+        .toArray(),
+    );
+
+    if (!basicProps['numer isbn'])
       return null;
 
     const title = $('h1').text();

@@ -44,6 +44,7 @@ import {ScrapperService} from '@scrapper/service/Scrapper.service';
 
 import {
   mergeBooks,
+  mergeReleases,
   normalizeBookTitle,
   normalizeHTML,
   normalizePublisherTitle,
@@ -216,30 +217,32 @@ export class BookDbLoaderService implements MetadataDbLoader {
     const volumes: Record<string, CreateBookDto[]> = {};
     normalizedReleasesBooks.forEach(({book, volumesReleases}) => {
       volumesReleases.forEach(([{volume, series}, release]) => {
-        (volumes[volume] ||= []).push(new CreateBookDto(
-          {
-            ...book,
-            defaultTitle: release.title,
-            releases: [release],
-            series: series && [
-              new CreateBookSeriesDto(
+        (volumes[volume] ||= []).push(
+          new CreateBookDto(
+            {
+              ...book,
+              defaultTitle: release.title,
+              releases: [release],
+              series: series && [
+                new CreateBookSeriesDto(
+                  {
+                    name: series,
+                  },
+                ),
+              ],
+              authors: (
+                book.authors?.length > 0
+                  ? book.authors
+                  : R.find(({authors}) => authors?.length > 0, books)?.authors
+              ),
+              volume: new CreateBookVolumeDto(
                 {
-                  name: series,
+                  name: volume,
                 },
               ),
-            ],
-            authors: (
-              book.authors?.length > 0
-                ? book.authors
-                : R.find(({authors}) => authors?.length > 0, books)?.authors
-            ),
-            volume: new CreateBookVolumeDto(
-              {
-                name: volume,
-              },
-            ),
-          },
-        ));
+            },
+          ),
+        );
       });
     });
 
@@ -266,7 +269,6 @@ export class BookDbLoaderService implements MetadataDbLoader {
    */
   private async mergeAndExtractBookToDb(books: CreateBookDto[], attrs: BookExtractorAttrs = {}) {
     const {
-      scrapperService,
       fuzzyBookSearchService,
       bookService,
     } = this;
@@ -283,6 +285,44 @@ export class BookDbLoaderService implements MetadataDbLoader {
         return cachedBook;
     }
 
+    const authors = pickLongestArrayItem(R.pluck('authors', books))?.map(
+      (author) => new CreateBookAuthorDto(
+        {
+          ...author,
+          description: normalizeHTML(author.description),
+          name: trimBorderSpecialCharacters(author.name),
+        },
+      ),
+    );
+
+    const normalizedReleases = await this.normalizeReleases(allReleases);
+    if (!normalizedReleases)
+      return null;
+
+    return bookService.upsert(
+      new CreateBookDto(
+        {
+          ...mergeBooks(books),
+          ...cachedBook && {
+            id: cachedBook.id,
+            parameterizedSlug: cachedBook.parameterizedSlug,
+          },
+          releases: await this.fixSimilarNamedReleasesPublishers(normalizedReleases),
+          authors,
+        },
+      ),
+    );
+  }
+
+  /**
+   * Merges releases with same isbn
+   *
+   * @async
+   * @param {CreateBookReleaseDto[]} allReleases
+   * @returns
+   */
+  private async normalizeReleases(allReleases: CreateBookReleaseDto[]) {
+    const {scrapperService} = this;
     const websites = await scrapperService.findOrCreateWebsitesByUrls(
       R.pluck(
         'url',
@@ -340,27 +380,16 @@ export class BookDbLoaderService implements MetadataDbLoader {
     if (R.isEmpty(releases))
       return null;
 
-    const authors = pickLongestArrayItem(R.pluck('authors', books)).map(
-      (author) => new CreateBookAuthorDto(
-        {
-          ...author,
-          description: normalizeHTML(author.description),
-          name: trimBorderSpecialCharacters(author.name),
-        },
+    const groupedReleases = R.values(
+      R.groupBy(
+        R.prop('isbn'),
+        releases,
       ),
     );
 
-    return bookService.upsert(
-      new CreateBookDto(
-        {
-          ...mergeBooks(books),
-          ...cachedBook && {
-            id: cachedBook.id,
-            parameterizedSlug: cachedBook.parameterizedSlug,
-          },
-          releases: await this.fixSimilarNamedReleasesPublishers(releases),
-          authors,
-        },
+    return groupedReleases.map(
+      (items) => new CreateBookReleaseDto(
+        mergeReleases(items),
       ),
     );
   }

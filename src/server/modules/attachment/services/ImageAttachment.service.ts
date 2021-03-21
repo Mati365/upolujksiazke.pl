@@ -290,7 +290,11 @@ export class ImageAttachmentService {
     }
 
     // drop file meta info
-    await asyncExec(`exiv2 rm "${resultFile.outputFile}"`);
+    try {
+      await asyncExec(`exiv2 rm "${resultFile.outputFile}"`);
+    } catch (e) {
+      logger.warn(e);
+    }
 
     const convertResult = await convert(
       {

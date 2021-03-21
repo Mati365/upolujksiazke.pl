@@ -1,4 +1,12 @@
-.c-description-box {
-  line-height: 1.55rem;
-  white-space: pre-line;
+.c {
+  &-description-box {
+    line-height: 1.55rem;
+    white-space: pre-line;
+  }
+
+  &-layer-box {
+    padding: 1.2rem 1.5rem;
+    background: color(layer-box);
+    border-radius: 5px;
+  }
 }

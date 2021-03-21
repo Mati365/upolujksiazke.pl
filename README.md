@@ -43,6 +43,7 @@ OpenSource book reviews aggregator, something like Metacritic / Digg for books. 
 - [ ] Automatic blog posts
 - [ ] SEOLinks on blog posts / reviews
 - [ ] Tinder alternative but for books
+- [ ] Wykop charts in comment
 
 ## Resources
 

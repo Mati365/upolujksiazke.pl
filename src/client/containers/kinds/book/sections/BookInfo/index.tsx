@@ -4,13 +4,13 @@ import {useI18n} from '@client/i18n';
 import {formatBookTitle} from '@client/helpers/logic';
 
 import {BookFullInfoRecord} from '@api/types';
-import {BookAuthorsRow} from '@client/containers/cards/BookCard/BookAuthorsRow';
-import {BookCover} from '@client/containers/cards/BookCard/BookCover';
 import {
   ExpandableDescriptionBox,
   Section,
 } from '@client/components/ui';
 
+import {BookAuthorsRow} from '../../cards/BookCard/BookAuthorsRow';
+import {BookCover} from '../../cards/BookCard/BookCover';
 import {BookPriceBox} from './BookPriceBox';
 
 type BookInfoProps = {

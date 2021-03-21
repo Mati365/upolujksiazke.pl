@@ -21,18 +21,22 @@ export const Price = (
   }: PriceProps,
 ) => {
   const t = useI18n();
-  if (R.isNil(value))
-    return null;
+  const blank = R.isNil(value);
 
   return (
     <Tag
       {...props}
       className={c(
         'c-price',
+        blank && 'is-blank',
         className,
       )}
     >
-      {`${normalizeFloatingNumber(value)} ${t(`shared.price.${currency}`)}`}
+      {(
+        blank
+          ? t('shared.titles.no_data')
+          : `${normalizeFloatingNumber(value)} ${t(`shared.price.${currency}`)}`
+      )}
     </Tag>
   );
 };

@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {useI18n} from '@client/i18n';
-import {Price} from '../../Price';
+import {Price} from '@client/containers/Price';
 
 type BookPriceRowProps = {
   lowestPrice: number,

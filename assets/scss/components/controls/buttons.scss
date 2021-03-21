@@ -62,6 +62,12 @@
     border: 1px solid var(--btn-border);
     transition: background 250ms ease-in-out;
 
+    &[disabled] {
+      opacity: .55;
+      cursor: default;
+      pointer-events: none;
+    }
+
     &.is {
       &-primary {
         --btn-background: #{color(button-primary)};

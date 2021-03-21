@@ -8,8 +8,8 @@ import {formatBookTitle} from '@client/helpers/logic';
 import {BookCardRecord} from '@api/types';
 import {BookLink} from '@client/routes/Links';
 import {BookCtaButton} from '@client/containers/controls/BookCtaButton';
+import {RatingsRow} from '@client/containers/parts/RatingsRow';
 
-import {RatingsRow} from '../../parts/RatingsRow';
 import {BookTypesRow} from './BookTypesRow';
 import {BookPriceRow} from './BookPriceRow';
 import {BookCover} from './BookCover';

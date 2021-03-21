@@ -8,6 +8,7 @@ export type ButtonProps = BasicWrapperProps & {
   outlined?: boolean,
   expanded?: boolean,
   iconSuffix?: boolean,
+  disabled?: boolean,
   htmlType?: JSX.IntrinsicElements['button']['type'],
 };
 

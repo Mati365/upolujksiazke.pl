@@ -7,6 +7,9 @@ export const PL_LANG_PACK = {
     },
   },
   shared: {
+    titles: {
+      no_data: 'Brak danych',
+    },
     book: {
       volume: 'Tom',
       price: 'Cena',

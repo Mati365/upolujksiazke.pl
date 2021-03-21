@@ -16,7 +16,7 @@ import {
 import {
   RecentBooksSection,
   CategoriesGroupsBooksSection,
-} from '@client/containers/sections';
+} from '@client/containers/kinds/book';
 
 import {LazyHydrate} from '@client/components/ui/LazyHydrate';
 import {HOME_PATH} from '../Links';

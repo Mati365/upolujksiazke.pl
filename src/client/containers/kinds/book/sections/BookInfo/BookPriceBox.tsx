@@ -1,5 +1,6 @@
 import React from 'react';
 import c from 'classnames';
+import * as R from 'ramda';
 
 import {useI18n} from '@client/i18n';
 
@@ -55,6 +56,9 @@ export const BookPriceBox = ({className, book}: BookPriceBoxProps) => {
         size='big'
         title={
           t('buy_cta')
+        }
+        disabled={
+          R.isNil(book.highestPrice)
         }
         expanded
       />

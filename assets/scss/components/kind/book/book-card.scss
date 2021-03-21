@@ -37,7 +37,7 @@
     }
 
     &__info {
-      min-height: 85px;
+      min-height: 80px;
     }
 
     &__types {
@@ -51,14 +51,17 @@
     }
 
     &__title {
-      @include limit-text-lines(3);
+      @include limit-text-lines(2);
 
       margin-top: 0;
       margin-bottom: .5rem;
     }
 
     &__author {
+      @include limit-text-lines(2);
+
       font-size: .8rem;
+      line-height: 1.15rem;
     }
 
     &__cta {

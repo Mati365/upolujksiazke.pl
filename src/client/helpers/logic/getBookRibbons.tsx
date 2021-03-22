@@ -1,5 +1,5 @@
 import {BookCardRecord} from '@api/types/BookCard.record';
-import {BookRibbonDescription} from '@client/containers/cards/BookCard/BookRibbons';
+import {BookRibbonDescription} from '@client/containers/kinds/book/cards/BookCard/BookRibbons';
 import {LangTranslateFn} from '@client/i18n/utils/createLangPack';
 
 import {getDiscountPercentage} from './getDiscountPercentage';

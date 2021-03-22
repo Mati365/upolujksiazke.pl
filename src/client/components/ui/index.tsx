@@ -9,3 +9,5 @@ export * from './TextButton';
 export * from './Link';
 export * from './DescriptionBox';
 export * from './ExpandableDescriptionBox';
+export * from './Divider';
+export * from './IconPropertiesList';

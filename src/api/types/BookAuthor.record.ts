@@ -1,7 +1,5 @@
-import {APIRecord} from '../APIRecord';
+import {APINamedRecord} from '../APIRecord';
 
-export interface BookAuthorRecord extends APIRecord {
-  name: string;
-  parameterizedName: string;
+export interface BookAuthorRecord extends APINamedRecord {
   description?: string;
 }

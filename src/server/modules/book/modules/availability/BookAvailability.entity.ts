@@ -1,4 +1,6 @@
+import * as R from 'ramda';
 import {
+  BeforeInsert,
   Column, Index, JoinColumn,
   ManyToOne, RelationId, Unique,
 } from 'typeorm';
@@ -75,5 +77,11 @@ export class BookAvailabilityEntity extends RemoteRecordFields {
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(partial: Partial<BookAvailabilityEntity>) {
     super(partial);
+  }
+
+  @BeforeInsert()
+  transformFields() {
+    if (R.isNil(this.price))
+      this.inStock = false;
   }
 }

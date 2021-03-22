@@ -15,6 +15,29 @@ export class BookCategoryService {
   ) {}
 
   /**
+   * Find categories for books
+   *
+   * @param {number} bookId
+   * @returns
+   * @memberof BookCategoryService
+   */
+  findBookCategories(bookId: number) {
+    return (
+      BookCategoryEntity
+        .createQueryBuilder('c')
+        .innerJoin(
+          'book_categories_book_category',
+          'bc', 'bc.bookId = :bookId and bc.bookCategoryId = c.id',
+          {
+            bookId,
+          },
+        )
+        .select(['c.id', 'c.name', 'c.parameterizedName'])
+        .getMany()
+    );
+  }
+
+  /**
    * Creates signle book category
    *
    * @param {CreateBookCategoryDto} dto

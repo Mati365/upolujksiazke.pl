@@ -7,3 +7,6 @@ export * from './BookCategoryGroup.serializer';
 export * from './BookFullInfo.serializer';
 export * from './BookFullInfoRelease.serializer';
 export * from './BookVolume.serializer';
+export * from './BookPublisher.serializer';
+export * from './BookPrize.serializer';
+export * from './Website.serializer';

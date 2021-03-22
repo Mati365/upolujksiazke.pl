@@ -6,12 +6,14 @@ import {formatBookTitle} from '@client/helpers/logic';
 import {BookFullInfoRecord} from '@api/types';
 import {
   ExpandableDescriptionBox,
+  Divider,
   Section,
 } from '@client/components/ui';
 
 import {BookAuthorsRow} from '../../cards/BookCard/BookAuthorsRow';
 import {BookCover} from '../../cards/BookCard/BookCover';
 import {BookPriceBox} from './BookPriceBox';
+import {BookProperties} from './BookProperties';
 
 type BookInfoProps = {
   book: BookFullInfoRecord,
@@ -65,6 +67,10 @@ export const BookInfo = ({book}: BookInfoProps) => {
             primaryRelease.description || t('book.no_description')
           }
         />
+
+        <Divider />
+
+        <BookProperties book={book} />
       </div>
 
       <BookPriceBox book={book} />

@@ -12,6 +12,34 @@ export class BookPrizeService {
   ) {}
 
   /**
+   * Find prizes for books
+   *
+   * @param {number} bookId
+   * @returns
+   * @memberof BookPrizeService
+   */
+  findBookPrizes(bookId: number) {
+    return (
+      BookPrizeEntity
+        .createQueryBuilder('b')
+        .innerJoin(
+          'book_prizes_book_prize',
+          'bp', 'bp.bookId = :bookId and bp.bookPrizeId = b.id',
+          {
+            bookId,
+          },
+        )
+        .select(
+          [
+            'b.id', 'b.name',
+            'b.parameterizedName', 'b.wikiUrl',
+          ],
+        )
+        .getMany()
+    );
+  }
+
+  /**
    * Creates signle book category
    *
    * @param {CreateBookPrizeDto} dto

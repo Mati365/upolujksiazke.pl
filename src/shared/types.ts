@@ -22,6 +22,12 @@ export type Overwrite<T, U> = Pick<T, Exclude<keyof T, keyof U>> & U;
 
 export type ArrayElement<ArrayType extends readonly unknown[]> = ArrayType[number];
 
+export type Awaited<T> = T extends PromiseLike<infer U> ? Awaited<U> : T;
+
+export type AwaitedObject<T> = {
+  [key in keyof T]: Awaited<T[key]>
+};
+
 export type ListItem = {
   id?: ID,
   name: string | number,

@@ -18,6 +18,10 @@
     &__author {
       margin-bottom: 1.75rem;
       color: color(muted-text);
+
+      a {
+        color: color(primary);
+      }
     }
   }
 

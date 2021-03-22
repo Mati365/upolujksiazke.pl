@@ -2,8 +2,11 @@ import React, {ReactNode} from 'react';
 import c from 'classnames';
 
 import {CleanList} from '@client/components/ui';
-import {ChevronRightIcon, HomeIcon} from '@client/components/svg/Icons';
 import {HomeLink} from '@client/routes/Links';
+import {
+  ChevronRightIcon,
+  HomeIcon,
+} from '@client/components/svg/Icons';
 
 type BreadcrumbInfo = {
   id: string,

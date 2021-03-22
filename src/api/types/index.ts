@@ -7,3 +7,5 @@ export * from './ImageAttachment.record';
 export * from './CategoryBooksGroup.record';
 export * from './BookFullInfo.record';
 export * from './BookVolume.record';
+export * from './BookAvailability.record';
+export * from './Website.record';

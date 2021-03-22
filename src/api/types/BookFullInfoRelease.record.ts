@@ -6,12 +6,14 @@ import {
 } from '@shared/enums';
 
 import {BookCardReleaseRecord} from './BookCardRelease.record';
+import {BookPublisherRecord} from './BookPublisher.record';
 
 export interface BookFullInfoReleaseRecord extends BookCardReleaseRecord {
   title: string;
   binding: BookBindingKind;
   type: BookType;
   protection: BookProtection;
+  publisher: BookPublisherRecord,
   lang: Language;
   place: string;
   format: string;

@@ -21,6 +21,16 @@ export const PL_LANG_PACK = {
         [BookType.EBOOK]: 'e-book',
         [BookType.PAPER]: 'papier',
       },
+      props: {
+        total_pages: 'Strony',
+        prizes: 'Nagrody',
+        rating: 'Ocena',
+        ratings: 'Głosy',
+        publisher: 'Wydawca',
+        original_publish_date: 'Wydano',
+        availability: 'Sklepy',
+        recording_length: 'Długość (min)',
+      },
     },
     price: {
       pln: 'zł',

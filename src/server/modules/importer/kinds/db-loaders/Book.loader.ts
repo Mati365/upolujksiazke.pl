@@ -440,7 +440,7 @@ export class BookDbLoaderService implements MetadataDbLoader {
       {} as Record<string, CreateBookReleaseDto[]>,
     );
 
-    const similarNames = await objPropsToPromise<string>(
+    const similarNames = await objPropsToPromise(
       R.mapObjIndexed(
         (groupedReleases) => (
           publisherService

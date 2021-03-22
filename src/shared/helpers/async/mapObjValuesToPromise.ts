@@ -1,4 +1,5 @@
 import * as R from 'ramda';
+import {AwaitedObject} from '@shared/types';
 
 type PromiseMapperFn<R = any> = (val: any, key: string) => Promise<R>;
 
@@ -59,6 +60,6 @@ export function mapObjValuesToPromise<R>(
  * @param {*} obj
  * @returns {Promise<Record<string, R>>}
  */
-export function objPropsToPromise<R>(obj: any): Promise<Record<string, R>> {
-  return mapObjValuesToPromise(R.identity, obj);
+export function objPropsToPromise<T>(obj: T): Promise<AwaitedObject<T>> {
+  return mapObjValuesToPromise(R.identity, obj) as any;
 }

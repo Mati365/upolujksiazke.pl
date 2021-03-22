@@ -11,11 +11,10 @@ import {
 
 import {ImageVersion} from '@shared/enums';
 
-import {TagEntity} from '@server/modules/tag/Tag.entity';
 import {TagService} from '../../tag/Tag.service';
 import {BookAuthorService} from '../modules/author/BookAuthor.service';
 import {BookReleaseService} from '../modules/release/BookRelease.service';
-import {BookCategoryEntity, BookCategoryService} from '../modules/category';
+import {BookCategoryService} from '../modules/category';
 import {BookVolumeService} from '../modules/volume/BookVolume.service';
 import {BookSeriesService} from '../modules/series/BookSeries.service';
 import {BookPrizeService} from '../modules/prize/BookPrize.service';
@@ -51,13 +50,8 @@ export class BookService {
 
   public static readonly BOOK_FULL_CARD_FIELDS = [
     ...BookService.BOOK_CARD_FIELDS,
-    'primaryRelease.description',
-    // 'tag.id', 'tag.name',
-    // 'category.id', 'category.name', 'category.parameterizedName',
-    // 'release.title', 'release.binding', 'release.type', 'release.protection',
-    // 'release.lang', 'release.place', 'release.format', 'release.publishDate',
-    // 'release.totalPages', 'release.edition', 'release.translator', 'release.defaultPrice',
-    // 'release.isbn', 'release.weight', 'release.recordingLength', 'release.parameterizedSlug',
+    'book.originalPublishDate',
+    'primaryRelease',
   ];
 
   constructor(
@@ -98,7 +92,7 @@ export class BookService {
       query
         .select(selectFields)
         .innerJoinAndSelect('book.volume', 'volume')
-        .leftJoin('book.authors', 'author')
+        .innerJoin('book.authors', 'author')
         .innerJoin('book.primaryRelease', 'primaryRelease')
         .innerJoin('primaryRelease.cover', 'cover', `cover.version = '${ImageVersion.PREVIEW}'`)
         .innerJoin('cover.attachment', 'attachment')
@@ -129,12 +123,20 @@ export class BookService {
    * @memberof BookService
    */
   async findFullCard(id: number) {
+    const {
+      categoryService,
+      prizeService,
+      tagService,
+      releaseService,
+    } = this;
+
     const entity = new BookEntity;
-    const {card, tags, categories} = await objPropsToPromise(
+    const {card, tags, categories, prizes, releases} = await objPropsToPromise(
       {
         card: (
           this
             .createCardsQuery(BookService.BOOK_FULL_CARD_FIELDS)
+            .innerJoinAndSelect('primaryRelease.publisher', 'publisher')
             .where(
               {
                 id,
@@ -143,26 +145,17 @@ export class BookService {
             .getOne()
         ),
 
-        tags: (
-          TagEntity
-            .createQueryBuilder('t')
-            .innerJoin('book_tags_tag', 'bt', 'bt.bookId = :bookId and bt.tagId = t.id', {bookId: id})
-            .select(['t.id', 't.name', 't.parameterizedName'])
-            .getMany()
-        ),
-
-        categories: (
-          BookCategoryEntity
-            .createQueryBuilder('c')
-            .innerJoin(
-              'book_categories_book_category',
-              'bc', 'bc.bookId = :bookId and bc.bookCategoryId = c.id',
-              {
-                bookId: id,
-              },
-            )
-            .select(['c.id', 'c.name', 'c.parameterizedName'])
-            .getMany()
+        tags: tagService.findBookTags(id),
+        categories: categoryService.findBookCategories(id),
+        prizes: prizeService.findBookPrizes(id),
+        releases: releaseService.findBookReleases(
+          {
+            bookId: id,
+            selection: [
+              'r.id', 'r.publishDate', 'r.recordingLength',
+              'r.lang', 'r.isbn', 'r.binding', 'r.format', 'r.type',
+            ],
+          },
         ),
       },
     );
@@ -176,6 +169,8 @@ export class BookService {
       {
         tags,
         categories,
+        prizes,
+        releases,
       },
     );
 

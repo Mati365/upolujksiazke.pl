@@ -1,29 +1,68 @@
-.c-clean-list {
-  @include clean-list;
+.c {
+  &-clean-list {
+    @include clean-list;
 
-  &.is-inline {
-    @extend .c-flex-row;
+    &.is-inline {
+      @extend .c-flex-row;
 
-    &:not(.is-block) {
-      display: inline-flex
+      &:not(.is-block) {
+        display: inline-flex
+      }
+
+      &.is-aligned-top {
+        align-items: flex-start
+      }
+    }
+
+    &.is-spaced {
+      @for $i from 1 through 7 {
+        $spacing: $i * 5;
+
+        &-#{$i}.is-inline > li:not(:last-child) {
+          margin-right: #{$spacing}px;
+        }
+
+        &-#{$i}:not(.is-inline) > li:not(:last-child) {
+          margin-bottom: #{$spacing}px;
+        }
+      }
+    }
+
+    &.is-wrapped {
+      flex-wrap: wrap;
     }
   }
 
-  &.is-spaced {
-    @for $i from 1 through 7 {
-      $spacing: $i * 5;
-
-      &-#{$i}.is-inline > li:not(:last-child) {
-        margin-right: #{$spacing}px;
-      }
-
-      &-#{$i}:not(.is-inline) > li:not(:last-child) {
-        margin-bottom: #{$spacing}px;
-      }
+  &-icon-props-list {
+    &__item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      width: 55px;
     }
-  }
 
-  &.is-wrapped {
-    flex-wrap: wrap;
+    &__title,
+    &__icon {
+      margin-bottom: .85rem;
+    }
+
+    &__title {
+      margin-top: 0;
+      font-size: $text-tiny;
+      font-weight: 500;
+    }
+
+    &__icon {
+      margin-bottom: .65rem;
+      font-size: 24px;
+    }
+
+    &__value {
+      color: color(primary);
+      font-size: $text-small;
+      line-height: $text-small-line-height;
+      font-weight: 600;
+    }
   }
 }

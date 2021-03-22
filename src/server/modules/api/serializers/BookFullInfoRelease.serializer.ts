@@ -1,4 +1,4 @@
-import {Expose} from 'class-transformer';
+import {Expose, Type} from 'class-transformer';
 
 import {
   BookBindingKind,
@@ -9,6 +9,9 @@ import {
 
 import {BookFullInfoReleaseRecord} from '@api/types/BookFullInfoRelease.record';
 import {BookCardReleaseSerializer} from './BookCardRelease.serializer';
+import {BookPublisherSerializer} from './BookPublisher.serializer';
+import {BookAvailabilitySerializer} from './BookAvailability.serializer';
+import {WebsiteSerializer} from './Website.serializer';
 
 export class BookFullInfoReleaseSerializer extends BookCardReleaseSerializer implements BookFullInfoReleaseRecord {
   @Expose() title: string;
@@ -28,4 +31,16 @@ export class BookFullInfoReleaseSerializer extends BookCardReleaseSerializer imp
   @Expose() weight: number;
   @Expose() recordingLength: number;
   @Expose() parameterizedSlug: string;
+
+  @Expose()
+  @Type(() => BookPublisherSerializer)
+  publisher: BookPublisherSerializer;
+
+  @Expose()
+  @Type(() => BookAvailabilitySerializer)
+  availability: BookAvailabilitySerializer[];
+
+  @Expose()
+  @Type(() => WebsiteSerializer)
+  website: WebsiteSerializer;
 }

@@ -3,12 +3,19 @@ import {Connection, EntityManager} from 'typeorm';
 import pMap from 'p-map';
 
 import {
+  uniqFlatHashByProp,
+  objPropsToPromise,
+} from '@shared/helpers';
+
+import {
   forwardTransaction,
   upsert,
   UpsertResourceAttrs,
 } from '@server/common/helpers/db';
 
 import {ImageResizeSize} from '@shared/types';
+import {ImageVersion} from '@shared/enums';
+
 import {ImageAttachmentService, ImageResizeConfig} from '@server/modules/attachment/services';
 import {CreateBookReleaseDto} from './dto/CreateBookRelease.dto';
 import {CreateBookAvailabilityDto} from '../availability/dto/CreateBookAvailability.dto';
@@ -17,6 +24,7 @@ import {BookReleaseEntity} from './BookRelease.entity';
 import {BookPublisherService} from '../publisher/BookPublisher.service';
 import {BookAvailabilityService} from '../availability/BookAvailability.service';
 import {BookReviewService} from '../review/BookReview.service';
+import {BookAvailabilityEntity} from '../availability/BookAvailability.entity';
 
 @Injectable()
 export class BookReleaseService {
@@ -36,6 +44,68 @@ export class BookReleaseService {
     private readonly reviewsService: BookReviewService,
     private readonly imageAttachmentService: ImageAttachmentService,
   ) {}
+
+  /**
+   * Find prizes for books
+   *
+   * @param {number} bookId
+   * @param {Object} attrs
+   * @returns
+   * @memberof BookCategoryService
+   */
+  async findBookReleases(
+    {
+      bookId,
+      selection,
+    }: {
+      bookId: number,
+      selection?: string[],
+    },
+  ) {
+    const {releases, availability} = await objPropsToPromise(
+      {
+        releases: (
+          BookReleaseEntity
+            .createQueryBuilder('r')
+            .select(selection)
+            .where(
+              {
+                bookId,
+              },
+            )
+            .getMany()
+        ),
+        availability: (
+          BookAvailabilityEntity
+            .createQueryBuilder('a')
+            .select(
+              [
+                'a.id', 'a.releaseId',
+                'a.prevPrice', 'a.price', 'a.inStock',
+                'a.totalRatings', 'a.avgRating',
+                'attachment.file', 'logo.version',
+              ],
+            )
+            .innerJoinAndSelect('a.website', 'website')
+            .innerJoin('website.logo', 'logo', `logo.version = '${ImageVersion.SMALL_THUMB}'`)
+            .innerJoin('logo.attachment', 'attachment')
+            .where(
+              {
+                bookId,
+              },
+            )
+            .getMany()
+        ),
+      },
+    );
+
+    const releasesMap = uniqFlatHashByProp('id', releases);
+    availability.forEach((item) => {
+      (releasesMap[item.releaseId].availability ??= []).push(item);
+    });
+
+    return releases;
+  }
 
   /**
    * Remove multiple book releases

@@ -7,7 +7,12 @@ import {useI18n} from '@client/i18n';
 import {BookFullInfoRecord} from '@api/types';
 import {AsyncRoute} from '@client/components/utils/asyncRouteUtils';
 import {Breadcrumbs} from '@client/containers/Breadcrumbs';
-import {BookInfo} from '@client/containers/kinds/book';
+
+import {
+  BookAvailabilitySection,
+  BookInfo,
+} from '@client/containers/kinds/book';
+
 import {
   Layout,
   Container,
@@ -47,7 +52,9 @@ export const BookRoute: AsyncRoute = ({book}: BookRouteProps) => {
             },
           ]}
         />
-        <BookInfo book={book} />
+        <BookInfo book={book}>
+          <BookAvailabilitySection book={book} />
+        </BookInfo>
       </Container>
     </Layout>
   );

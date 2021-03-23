@@ -11,3 +11,5 @@ export * from './DescriptionBox';
 export * from './ExpandableDescriptionBox';
 export * from './Divider';
 export * from './IconPropertiesList';
+export * from './Badge';
+export * from './Table';

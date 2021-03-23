@@ -12,8 +12,8 @@
   justify-content: center;
 }
 
-@mixin flex-list {
-  display: flex;
+@mixin flex-list($display: flex) {
+  display: $display;
   align-items: center;
   flex-direction: row;
 }
@@ -22,6 +22,17 @@
   list-style-type: none;
   padding: 0;
   margin: 0;
+}
+
+@mixin reset-text-size {
+  font-size: 1rem;
+  line-height: 1rem;
+}
+
+@mixin text-ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 @mixin limit-text-lines($lines) {

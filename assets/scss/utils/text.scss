@@ -14,6 +14,10 @@
     &-inactive { opacity: 0.35; }
     &-truncated { overflow: hidden; }
 
+    &-ellipsis {
+      @include text-ellipsis;
+    }
+
     &-strike    { text-decoration: line-through; }
     &-underline { text-decoration: underline; }
 

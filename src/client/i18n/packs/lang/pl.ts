@@ -57,6 +57,12 @@ export const PL_LANG_PACK = {
       lowest_price: 'Najniższa cena:',
       buy_cta: 'Kup książkę',
     },
+    availability: {
+      title: 'Porównaj ceny wydań w księgarniach',
+      type: 'Typ',
+      release: 'Nazwa wydania',
+      isbn: 'ISBN',
+    },
   },
   sections: {
     recent_books: {

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {ReactNode} from 'react';
 
 import {useI18n} from '@client/i18n';
 import {formatBookTitle} from '@client/helpers/logic';
@@ -19,9 +19,10 @@ import {BookHeaderAttribute} from './BookHeaderAttribute';
 
 type BookInfoProps = {
   book: BookFullInfoRecord,
+  children?: ReactNode,
 };
 
-export const BookInfo = ({book}: BookInfoProps) => {
+export const BookInfo = ({book, children}: BookInfoProps) => {
   const t = useI18n();
   const {
     primaryRelease, authors,
@@ -93,6 +94,8 @@ export const BookInfo = ({book}: BookInfoProps) => {
         <Divider />
 
         <BookProperties book={book} />
+
+        {children}
       </div>
 
       <BookPriceBox book={book} />

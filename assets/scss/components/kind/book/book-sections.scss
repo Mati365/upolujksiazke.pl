@@ -124,4 +124,30 @@
       font-weight: 800;
     }
   }
+
+  &-book-prices {
+    th {
+      font-size: $text-small;
+    }
+
+    &__release {
+      padding: 1rem 0;
+
+      &:not(:last-child) {
+        border-bottom: 1px solid color(divider);
+      }
+
+      &-title {
+        position: relative;
+        top: -2px; // why?
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 500;
+      }
+
+      &-isbn {
+        font-weight: 700;
+      }
+    }
+  }
 }

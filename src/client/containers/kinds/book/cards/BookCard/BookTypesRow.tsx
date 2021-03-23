@@ -12,13 +12,13 @@ import {
   BookIcon,
 } from '@client/components/svg';
 
-const BookTypesIcons: [BookType, ComponentType<any>][] = R.toPairs(
-  {
-    [BookType.EBOOK]: DevicesIcon,
-    [BookType.AUDIOBOOK]: HeadphoneIcon,
-    [BookType.PAPER]: BookIcon,
-  } as Record<BookType, ComponentType<any>>,
-);
+export const BookTypesIconsMap: Record<BookType, ComponentType<any>> = {
+  [BookType.EBOOK]: DevicesIcon,
+  [BookType.AUDIOBOOK]: HeadphoneIcon,
+  [BookType.PAPER]: BookIcon,
+};
+
+export const BookTypesIcons: [BookType, ComponentType<any>][] = R.toPairs(BookTypesIconsMap);
 
 type BookTypesRowProps = {
   types: BookType[],

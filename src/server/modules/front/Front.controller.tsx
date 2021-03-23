@@ -7,6 +7,7 @@ import {Response, Request} from 'express';
 import {Accepts} from '@server/common/decorators/Accepts.decorator';
 import {Controller, Get, Res, Req} from '@nestjs/common';
 
+import {UA} from '@client/modules/ua';
 import {MemoizeMethod} from '@shared/helpers/decorators/MemoizeMethod';
 import {APP_ROUTES_LIST, PageRoot} from '@client/routes/Root';
 
@@ -55,7 +56,15 @@ export class FrontController {
       },
     );
 
+    const {useragent} = req;
+    const ua: UA = {
+      mobile: useragent.isMobile,
+      tablet: useragent.isTablet,
+      desktop: useragent.isDesktop,
+    };
+
     const viewData = {
+      ua,
       lang: {
         current: i18n.lang,
         translations: {

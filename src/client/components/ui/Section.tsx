@@ -7,6 +7,7 @@ type SectionProps = BasicWrapperProps & {
   title?: ReactNode,
   spaced?: number,
   bordered?: boolean,
+  subsection?: boolean,
   noContentSpacing?: boolean,
   contentClassName?: string,
   headerClassName?: string,
@@ -18,6 +19,7 @@ export const Section = (
     spaced = 4,
     bordered = true,
     className,
+    subsection,
     contentClassName,
     noContentSpacing,
     headerClassName,
@@ -29,6 +31,7 @@ export const Section = (
       'c-section',
       spaced && `is-spaced-${spaced}`,
       bordered && 'is-divided',
+      subsection && 'is-subsection',
       className,
     )}
   >

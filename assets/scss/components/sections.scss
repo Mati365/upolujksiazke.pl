@@ -1,4 +1,16 @@
 .c-section {
+  $self: &;
+
+  &.is-subsection {
+    #{$self}__header {
+      margin-bottom: 1.2rem;
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
   &.is-spaced {
     @for $i from 1 through 4 {
       &-#{$i} {

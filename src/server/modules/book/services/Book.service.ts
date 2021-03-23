@@ -154,6 +154,7 @@ export class BookService {
             selection: [
               'r.id', 'r.publishDate', 'r.recordingLength',
               'r.lang', 'r.isbn', 'r.binding', 'r.format', 'r.type',
+              'r.title',
             ],
           },
         ),

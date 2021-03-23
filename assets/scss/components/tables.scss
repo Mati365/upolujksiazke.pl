@@ -1,0 +1,40 @@
+.c-table {
+  border-collapse: collapse;
+
+  &.is-expanded {
+    width: 100%;
+  }
+
+  td, th {
+    padding: .65rem .65rem;
+
+    &:first-child {
+      padding-left: 0;
+    }
+
+    &:last-child {
+      padding-right: 0;
+    }
+
+    &.is-autofit {
+      width: 1px;
+      white-space: nowrap;
+    }
+
+    &.has-ellipsis {
+      position: relative;
+
+      > * {
+        padding: .65rem .65rem;
+
+        @include layer;
+        @include text-ellipsis;
+      }
+    }
+  }
+
+  th {
+    font-weight: 600;
+    text-align: left;
+  }
+}

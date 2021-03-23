@@ -5,6 +5,14 @@
         margin: #{$i}rem 0;
       }
     }
+
+    @include mobile {
+      @for $i from 1 through 4 {
+        &-#{$i} {
+          margin: #{$i / 2}rem 0;
+        }
+      }
+    }
   }
 
   &.is-divided > &__header {

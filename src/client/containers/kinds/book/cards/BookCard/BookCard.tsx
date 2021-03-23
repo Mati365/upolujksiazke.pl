@@ -88,7 +88,7 @@ export const BookCard = (
       <BookCtaButton
         className='c-book-card__cta'
         title={
-          t('shared.book.compare')
+          t('shared.book.check')
         }
       />
     </article>

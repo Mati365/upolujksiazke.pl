@@ -75,13 +75,24 @@
         flex-wrap: wrap;
       }
 
-      &__price {
+      &__price,
+      &__types {
         display: flex;
         flex-direction: column;
+        align-items: flex-start;
 
-        > span {
+        > span,
+        > ul {
           margin-left: 0;
         }
+      }
+
+      &__types {
+        margin-bottom: .5rem;
+      }
+
+      &__cta > .c-book-cta__prefix-icon {
+        display: none;
       }
     }
   }

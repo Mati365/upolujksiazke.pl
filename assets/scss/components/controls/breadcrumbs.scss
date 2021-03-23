@@ -1,10 +1,11 @@
 .c-breadcrumbs {
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
   color: color(muted-text);
   font-size: $text-small;
 
   &__item {
     @include flex-centered;
+    margin-bottom: .5rem;
 
     > a {
       display: inline-flex;

@@ -14,7 +14,7 @@ export const PL_LANG_PACK = {
     book: {
       volume: 'Tom',
       price: 'Cena',
-      compare: 'Porównaj',
+      check: 'Sprawdź',
       total_ratings: 'Ocen',
       available_types: 'Formaty:',
       types: {

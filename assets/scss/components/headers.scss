@@ -8,3 +8,13 @@
   }
 }
 
+
+@include mobile {
+  @for $i from 1 through length($mobile-headers-sizes) {
+    $size: nth($mobile-headers-sizes, $i);
+
+    h#{$i} {
+      font-size: $size;
+    }
+  }
+}

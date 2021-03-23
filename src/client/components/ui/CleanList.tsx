@@ -14,8 +14,8 @@ export type CleanListProps = BasicWrapperProps & {
 export const CleanList = (
   {
     block = true,
+    inline = true,
     wrap,
-    inline,
     spaced,
     align,
     className,

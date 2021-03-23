@@ -27,6 +27,7 @@ export const BookRibons = ({items}: BookRibonsProps) => {
     <CleanList
       className='c-book-ribbons'
       spaced={1}
+      inline={false}
     >
       {filteredItems.map((ribbon, index) => (
         <BookRibbon

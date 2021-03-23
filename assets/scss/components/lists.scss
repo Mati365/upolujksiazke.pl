@@ -1,6 +1,7 @@
 .c {
   &-clean-list {
     @include clean-list;
+    flex-wrap: wrap;
 
     &.is-inline {
       @extend .c-flex-row;
@@ -66,6 +67,20 @@
       font-size: $text-small;
       line-height: $text-small-line-height;
       font-weight: 600;
+    }
+
+    @include mobile {
+      display: grid !important;
+      grid-template-columns: repeat(3, 1fr);
+      align-items: center;
+      gap: 20px;
+      place-content: center;
+      place-items: center center;
+
+      &__item {
+        width: 100%;
+        margin: 0 !important;
+      }
     }
   }
 }

@@ -3,7 +3,7 @@
     > .c-section__content {
       display: grid;
       grid-template-columns: 210px 1fr 210px;
-      grid-gap: 50px;
+      gap: 50px;
     }
 
     &__cover img {
@@ -40,6 +40,32 @@
 
     &__ratings {
       margin: .8rem 0 1.8rem;
+    }
+
+    @include mobile {
+      > .c-section__content {
+        grid-template-columns: 1fr;
+        gap: 30px;
+      }
+
+      &__cover {
+        max-width: 150px;
+        margin: 0 auto;
+      }
+
+      &__header-attr {
+        flex-direction: column;
+        align-items: flex-start;
+
+        &-value {
+          margin-top: 5px;
+          margin-left: 0;
+        }
+      }
+
+      &__ratings {
+        margin: 1rem 0 1.5rem;
+      }
     }
   }
 

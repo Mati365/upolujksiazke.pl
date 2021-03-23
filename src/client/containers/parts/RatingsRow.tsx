@@ -14,7 +14,7 @@ import {
 type RatingsRowProps = {
   className?: string,
   totalStars?: number,
-  totalReviews?: number,
+  totalRatings?: number,
   size?: string,
   value: number,
 };
@@ -23,7 +23,7 @@ export const RatingsRow = (
   {
     className,
     value,
-    totalReviews,
+    totalRatings,
     size = 'normal',
     totalStars = 5,
   }: RatingsRowProps,
@@ -37,12 +37,12 @@ export const RatingsRow = (
       let starClassName = null;
 
       if (normalizedValue > 0) {
-        if (score <= normalizedValue) {
-          Component = StarFilledIcon;
-          starClassName = 'is-filled';
-        } else if (score === Math.floor(normalizedValue) && score !== normalizedValue) {
+        if (score === Math.floor(normalizedValue) && score !== normalizedValue) {
           Component = StarHalfIcon;
           starClassName = 'is-half';
+        } else if (score <= normalizedValue) {
+          Component = StarFilledIcon;
+          starClassName = 'is-filled';
         }
       }
 
@@ -68,9 +68,11 @@ export const RatingsRow = (
       )}
     >
       {stars}
-      <span className='c-ratings-row__total'>
-        {`(${totalReviews || 0} ${t('shared.book.total_ratings')})`}
-      </span>
+      {!R.isNil(totalRatings) && (
+        <span className='c-ratings-row__total'>
+          {`(${totalRatings || 0} ${t('shared.book.total_ratings')})`}
+        </span>
+      )}
     </CleanList>
   );
 };

@@ -7,6 +7,7 @@ import {CleanList} from '@client/components/ui';
 export type IconPropertyInfo = {
   name: string,
   value?: ReactNode,
+  autoWidth?: boolean,
   icon: ComponentType<{
     className?: string,
   }>,
@@ -30,13 +31,16 @@ export const IconPropertiesList = ({items, className}: IconPropertiesListProps) 
     wrap
   >
     {items.map(
-      ({name, value, icon: Icon}) => (
+      ({name, value, autoWidth, icon: Icon}) => (
         R.isNil(value)
           ? null
           : (
             <li
               key={name}
-              className='c-icon-props-list__item'
+              className={c(
+                'c-icon-props-list__item',
+                autoWidth && 'has-auto-width',
+              )}
             >
               <h4 className='c-icon-props-list__title'>
                 {name}

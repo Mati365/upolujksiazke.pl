@@ -3,6 +3,7 @@ import React from 'react';
 import {useI18n} from '@client/i18n';
 import {formatBookTitle} from '@client/helpers/logic';
 
+import {RatingsRow} from '@client/containers/parts/RatingsRow';
 import {BookFullInfoRecord} from '@api/types';
 import {
   ExpandableDescriptionBox,
@@ -14,6 +15,7 @@ import {BookAuthorsRow} from '../../cards/BookCard/BookAuthorsRow';
 import {BookCover} from '../../cards/BookCard/BookCover';
 import {BookPriceBox} from './BookPriceBox';
 import {BookProperties} from './BookProperties';
+import {BookHeaderAttribute} from './BookHeaderAttribute';
 
 type BookInfoProps = {
   book: BookFullInfoRecord,
@@ -21,7 +23,10 @@ type BookInfoProps = {
 
 export const BookInfo = ({book}: BookInfoProps) => {
   const t = useI18n();
-  const {primaryRelease, authors} = book;
+  const {
+    primaryRelease, authors,
+    avgRating, totalRatings,
+  } = book;
 
   const formattedTitle = formatBookTitle(
     {
@@ -48,10 +53,13 @@ export const BookInfo = ({book}: BookInfoProps) => {
           {formattedTitle}
         </h1>
 
-        <div className='c-book-info-section__author'>
-          {`${t('book.created_by')}:`}
+        <BookHeaderAttribute
+          className='c-book-info-section__author'
+          label={
+            `${t('book.created_by')}:`
+          }
+        >
           <BookAuthorsRow
-            className='ml-1'
             authors={authors}
             linkProps={{
               underline: true,
@@ -59,7 +67,21 @@ export const BookInfo = ({book}: BookInfoProps) => {
             block={false}
             separated
           />
-        </div>
+        </BookHeaderAttribute>
+
+        <BookHeaderAttribute
+          className='c-book-info-section__ratings'
+          label={
+            `${t('shared.titles.rating')}:`
+          }
+        >
+          <RatingsRow
+            size='big'
+            value={avgRating / 10}
+            totalStars={10}
+            totalRatings={totalRatings}
+          />
+        </BookHeaderAttribute>
 
         <ExpandableDescriptionBox
           maxCharactersCount={900}

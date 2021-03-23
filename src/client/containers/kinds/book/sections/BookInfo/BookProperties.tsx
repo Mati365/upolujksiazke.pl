@@ -1,4 +1,5 @@
-import React, {useMemo} from 'react';
+import React, {memo, useMemo} from 'react';
+import * as R from 'ramda';
 
 import {useI18n} from '@client/i18n';
 
@@ -23,7 +24,7 @@ type BookPropertiesProps = {
   book: BookFullInfoRecord,
 };
 
-export const BookProperties = ({book}: BookPropertiesProps) => {
+export const BookProperties = memo(({book}: BookPropertiesProps) => {
   const {
     primaryRelease, prizes,
     avgRating, totalRatings,
@@ -45,6 +46,7 @@ export const BookProperties = ({book}: BookPropertiesProps) => {
         name: t('publisher'),
         icon: BuildingsIcon,
         value: primaryRelease.publisher?.name,
+        autoWidth: true,
       },
       {
         name: t('prizes'),
@@ -59,7 +61,8 @@ export const BookProperties = ({book}: BookPropertiesProps) => {
       {
         name: t('original_publish_date'),
         icon: CalendarIcon,
-        value: publishDate && new Date(publishDate).getFullYear(),
+        value: publishDate && (new Date(publishDate).getFullYear() || publishDate),
+        autoWidth: true,
       },
       {
         name: t('rating'),
@@ -74,7 +77,11 @@ export const BookProperties = ({book}: BookPropertiesProps) => {
       {
         name: t('availability'),
         icon: StoreIcon,
-        value: 1111,
+        value: R.reduce(
+          (acc, item) => acc + (item.availability?.length || 0),
+          0,
+          book.releases,
+        ),
       },
     ],
     [book.id],
@@ -83,6 +90,6 @@ export const BookProperties = ({book}: BookPropertiesProps) => {
   return (
     <IconPropertiesList items={items} />
   );
-};
+});
 
 BookProperties.displayName = 'BookProperties';

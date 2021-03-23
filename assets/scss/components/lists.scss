@@ -39,7 +39,10 @@
       flex-direction: column;
       align-items: center;
       text-align: center;
-      width: 55px;
+
+      &:not(.has-auto-width) {
+        width: 55px;
+      }
     }
 
     &__title,

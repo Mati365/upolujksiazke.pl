@@ -12,16 +12,34 @@
 
     &__header {
       margin-top: 0;
-      margin-bottom: .75rem;
+      margin-bottom: 1.2rem;
+    }
+
+    &__header-attr {
+      @include flex-list;
+
+      margin-bottom: .5rem;
+      color: color(muted-text);
+
+      &-label {
+        font-size: $text-small;
+      }
+
+      &-value {
+        margin-left: 7px;
+      }
     }
 
     &__author {
-      margin-bottom: 1.75rem;
-      color: color(muted-text);
+      align-items: flex-end;
 
       a {
         color: color(primary);
       }
+    }
+
+    &__ratings {
+      margin: .8rem 0 1.8rem;
     }
   }
 

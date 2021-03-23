@@ -61,7 +61,7 @@ export const BookCard = (
       <RatingsRow
         className='c-book-card__ratings'
         value={avgRating / 10}
-        totalReviews={totalRatings}
+        totalRatings={totalRatings}
       />
 
       <div className='c-book-card__info'>

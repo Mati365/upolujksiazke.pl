@@ -5,6 +5,7 @@ import {
   Language,
 } from '@shared/enums';
 
+import {BookAvailabilityRecord} from './BookAvailability.record';
 import {BookCardReleaseRecord} from './BookCardRelease.record';
 import {BookPublisherRecord} from './BookPublisher.record';
 
@@ -27,4 +28,5 @@ export interface BookFullInfoReleaseRecord extends BookCardReleaseRecord {
   weight: number;
   recordingLength: number;
   parameterizedSlug: string;
+  availability: BookAvailabilityRecord[],
 }

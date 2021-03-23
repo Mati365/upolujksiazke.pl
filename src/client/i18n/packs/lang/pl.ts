@@ -9,6 +9,7 @@ export const PL_LANG_PACK = {
   shared: {
     titles: {
       no_data: 'Brak danych',
+      rating: 'Ocena',
     },
     book: {
       volume: 'Tom',

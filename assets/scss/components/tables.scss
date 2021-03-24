@@ -1,6 +1,10 @@
 .c-table {
   border-collapse: collapse;
 
+  &.is-fixed-layout {
+    table-layout: fixed;
+  }
+
   &.is-expanded {
     width: 100%;
   }
@@ -22,12 +26,9 @@
     }
 
     &.has-ellipsis {
-      position: relative;
+      display: block;
 
       > * {
-        padding: .65rem .65rem;
-
-        @include layer;
         @include text-ellipsis;
       }
     }

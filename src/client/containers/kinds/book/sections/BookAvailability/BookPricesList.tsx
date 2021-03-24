@@ -53,12 +53,13 @@ export const BookPricesList = ({className, book}: BookPricesListProps) => {
         'c-book-prices',
         className,
       )}
+      layout='fixed'
     >
       <thead>
         <tr>
-          <th>{t('type')}</th>
-          <th>{t('isbn')}</th>
-          <th style={{width: '65%'}}>{t('release')}</th>
+          <th style={{width: 110}}>{t('type')}</th>
+          <th style={{width: 160}}>{t('isbn')}</th>
+          <th>{t('release')}</th>
         </tr>
       </thead>
       <tbody>

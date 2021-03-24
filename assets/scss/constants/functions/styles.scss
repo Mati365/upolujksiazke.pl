@@ -42,3 +42,11 @@
   -webkit-box-orient: vertical;
   -webkit-line-clamp: $lines;
 }
+
+@mixin capitalize {
+  text-transform: lowercase;
+
+  &::first-letter {
+    text-transform: capitalize;
+  }
+}

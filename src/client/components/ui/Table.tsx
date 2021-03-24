@@ -2,12 +2,14 @@ import React from 'react';
 import c from 'classnames';
 
 type TableProps = JSX.IntrinsicElements['table'] & {
-  expanded?: boolean
+  expanded?: boolean,
+  layout?: string,
 };
 
 export const Table = (
   {
     expanded = true,
+    layout = 'fixed',
     children,
     className,
     ...props
@@ -17,6 +19,7 @@ export const Table = (
     className={c(
       'c-table',
       expanded && 'is-expanded',
+      layout && `is-${layout}-layout`,
       className,
     )}
     {...props}

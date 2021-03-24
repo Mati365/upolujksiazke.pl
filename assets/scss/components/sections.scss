@@ -33,14 +33,11 @@
   }
 
   &__header {
+    @include capitalize;
+
     position: relative;
     margin-top: 0;
     margin-bottom: 2rem;
-    text-transform: lowercase;
-
-    &::first-letter {
-      text-transform: capitalize;
-    }
 
     &-underline {
       position: absolute;

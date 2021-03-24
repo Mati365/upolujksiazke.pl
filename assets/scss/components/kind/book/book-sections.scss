@@ -138,6 +138,8 @@
       }
 
       &-title {
+        @include capitalize;
+
         position: relative;
         top: -2px; // why?
         margin: 0;

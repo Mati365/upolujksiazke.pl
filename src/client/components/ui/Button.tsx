@@ -3,6 +3,7 @@ import c from 'classnames';
 import {BasicWrapperProps} from './Container';
 
 export type ButtonProps = BasicWrapperProps & {
+  tag?: any,
   type?: string,
   size?: string,
   outlined?: boolean,
@@ -21,10 +22,11 @@ export const Button = (
     expanded,
     iconSuffix,
     htmlType = 'button',
+    tag: Tag = 'button',
     ...props
   }: ButtonProps,
 ) => (
-  <button
+  <Tag
     // eslint-disable-next-line react/button-has-type
     type={htmlType}
     className={c(

@@ -62,6 +62,19 @@ export const PL_LANG_PACK = {
       type: 'Typ',
       release: 'Nazwa wydania',
       isbn: 'ISBN',
+      website: 'Księgarnia',
+      prev_price: 'Poprzednia cena',
+      price: 'Cena',
+      action: 'Akcja',
+      buy: 'Idź do sklepu',
+
+      groups: {
+        all: 'Wszystkie',
+        paper: 'Papierowe',
+        audiobooks: 'Audiobooki',
+        ebooks: 'E-Booki',
+        by_release: 'Wydania',
+      },
     },
   },
   sections: {

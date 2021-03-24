@@ -1,0 +1,47 @@
+.c-tabs {
+  $self: &;
+
+  &__nav {
+    @include clean-list;
+    @include flex-list;
+
+    &.is-right-aligned {
+      justify-content: flex-end;
+    }
+  }
+
+  &__tab {
+    cursor: pointer;
+  }
+
+  &.is-text-only {
+    #{$self}__nav {
+      margin: 1.5rem 0 1.75rem 0;
+    }
+
+    #{$self}__tab {
+      &:not(:last-child) {
+        position: relative;
+        margin-right: 20px;
+
+        &::after {
+          content: '|';
+          position: absolute;
+          top: 2px;
+          right: -13px;
+          font-size: .75rem;
+          opacity: 0.45;
+        }
+      }
+
+      &:hover {
+        text-decoration: underline;
+      }
+
+      &.is-active {
+        color: color(primary);
+        font-weight: 700;
+      }
+    }
+  }
+}

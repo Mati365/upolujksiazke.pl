@@ -1,51 +1,25 @@
-import React from 'react';
+import React, {useMemo} from 'react';
 import c from 'classnames';
 
 import {useI18n} from '@client/i18n';
 
-import {
-  BookFullInfoRecord,
-  BookFullInfoReleaseRecord,
-} from '@api/types';
+import {BookFullInfoRecord} from '@api/types';
+import {Table} from '@client/components/ui';
+import {BookPricesReleaseRow} from './BookPricesReleaseRow';
 
-import {Badge, Table} from '@client/components/ui';
-import {BookTypesIconsMap} from '../../cards/BookCard/BookTypesRow';
+import {sortReleasesByPrice} from './helpers';
 
 type BookPricesListProps = {
   book: BookFullInfoRecord,
   className?: string,
 };
 
-const BookPricesReleaseRow = ({release}: {release: BookFullInfoReleaseRecord}) => {
-  const t = useI18n('book.availability');
-  const releaseTypeName = t(`shared.book.types.${release.type}`);
-  const Icon = BookTypesIconsMap[release.type];
-
-  return (
-    <tr className='c-book-prices__release'>
-      <td className='c-book-prices__release-type'>
-        <Badge>
-          <Icon title={releaseTypeName} />
-          {releaseTypeName}
-        </Badge>
-      </td>
-
-      <td className='c-book-prices__release-isbn'>
-        {release.isbn}
-      </td>
-
-      <td className='has-ellipsis'>
-        <h3 className='c-book-prices__release-title'>
-          {release.title}
-        </h3>
-      </td>
-    </tr>
-  );
-};
-
 export const BookPricesList = ({className, book}: BookPricesListProps) => {
-  const {releases} = book;
   const t = useI18n('book.availability');
+  const sortedReleases = useMemo(
+    () => sortReleasesByPrice(book.releases),
+    [book],
+  );
 
   return (
     <Table
@@ -63,7 +37,7 @@ export const BookPricesList = ({className, book}: BookPricesListProps) => {
         </tr>
       </thead>
       <tbody>
-        {releases.map(
+        {sortedReleases.map(
           (release) => (
             <BookPricesReleaseRow
               key={release.id}

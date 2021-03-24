@@ -7,11 +7,7 @@ import {BookAuthorSerializer} from './BookAuthor.serializer';
 import {BookCardReleaseSerializer} from './BookCardRelease.serializer';
 import {BookVolumeSerializer} from './BookVolume.serializer';
 
-const safeParsePrice = (value: string) => (
-  value
-    ? Number.parseFloat(value)
-    : null
-);
+import {safeParsePrice} from '../helpers';
 
 export class BookCardSerializer extends BaseSerializer implements BookCardRecord {
   @Expose() defaultTitle: string;

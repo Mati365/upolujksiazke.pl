@@ -9,9 +9,10 @@ import {
 
 type BookCtaButtonProps = ButtonProps & {
   title: string,
+  href?: string,
 };
 
-export const BookCtaButton = ({title, className, children, ...props}: BookCtaButtonProps) => (
+export const BookCtaButton = ({href, title, className, children, ...props}: BookCtaButtonProps) => (
   <Button
     className={c(
       'c-book-cta',

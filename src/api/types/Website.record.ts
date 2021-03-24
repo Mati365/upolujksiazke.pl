@@ -5,5 +5,6 @@ export interface WebsiteRecord extends APIRecord {
   url: string;
   description: string;
   title: string;
+  hostname: string;
   logo: ImageVersionedRecord;
 }

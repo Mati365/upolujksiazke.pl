@@ -9,6 +9,16 @@
     width: 100%;
   }
 
+  &.is-nested {
+    margin-left: 40px;
+    font-size: $text-small;
+  }
+
+  thead > tr,
+  tr:not(:last-child):not(.has-no-outer-border) {
+    border-bottom: 1px solid color(divider);
+  }
+
   td, th {
     padding: .65rem .65rem;
 

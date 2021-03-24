@@ -1,13 +1,17 @@
 import * as R from 'ramda';
 
-export function extractHostname(url: string) {
+export function extractHostname(url: string, allowWWW: boolean = true) {
   if (!url)
     return null;
 
   if (!url.startsWith('http'))
     url = `https://${url}`;
 
-  return new URL(url).hostname;
+  let {hostname} = new URL(url);
+  if (!allowWWW && hostname && R.startsWith('www.', hostname))
+    hostname = hostname.substr(4);
+
+  return hostname;
 }
 
 export function extractPathname(url: string) {

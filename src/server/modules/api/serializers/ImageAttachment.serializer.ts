@@ -46,7 +46,7 @@ export function toImageVersionedRecord(attachments: ImageAttachmentDbResult[]): 
   return {
     thumb: grouped[ImageVersion.THUMB],
     preview: grouped[ImageVersion.PREVIEW],
-    smallTumb: grouped[ImageVersion.SMALL_THUMB],
+    smallThumb: grouped[ImageVersion.SMALL_THUMB],
     big: grouped[ImageVersion.BIG],
   };
 }

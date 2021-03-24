@@ -131,12 +131,6 @@
     }
 
     &__release {
-      padding: 1rem 0;
-
-      &:not(:last-child) {
-        border-bottom: 1px solid color(divider);
-      }
-
       &-title {
         @include capitalize;
 
@@ -148,8 +142,12 @@
       }
 
       &-isbn {
-        font-weight: 700;
+        font-weight: 600;
       }
+    }
+
+    &__availability:not(:last-child) .c-book-release-prices {
+      margin-bottom: 1.35rem;
     }
   }
 }

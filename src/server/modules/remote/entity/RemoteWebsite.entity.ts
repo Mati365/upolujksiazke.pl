@@ -4,6 +4,8 @@ import {
   Column, Entity, JoinTable, ManyToMany,
 } from 'typeorm';
 
+import {extractHostname} from '@shared/helpers';
+
 import {DatedRecordEntity} from '@server/modules/database/DatedRecord.entity';
 import {ImageAttachmentEntity} from '@server/modules/attachment/entity/ImageAttachment.entity';
 
@@ -23,6 +25,9 @@ export class RemoteWebsiteEntity extends DatedRecordEntity {
 
   @Column('text', {nullable: true})
   title: string;
+
+  @Column('text', {nullable: true})
+  hostname: string;
 
   @ManyToMany(
     () => ImageAttachmentEntity,
@@ -46,12 +51,15 @@ export class RemoteWebsiteEntity extends DatedRecordEntity {
   @BeforeInsert()
   @BeforeUpdate()
   transformFields() {
-    const {description, title} = this;
+    const {description, title, url} = this;
 
     if (!R.trim(description || ''))
       this.description = null;
 
     if (!R.trim(title || ''))
       this.title = null;
+
+    if (url)
+      this.hostname = extractHostname(url);
   }
 }

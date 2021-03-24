@@ -9,6 +9,7 @@ import repl from 'pretty-repl';
 
 import {DB_ENTITIES} from '@server/modules/database/config/dbConfig';
 import * as AppModules from '@server/modules';
+import * as Helpers from '@shared/helpers';
 
 const LOGGER_OPTIONS = {
   indent: 2,
@@ -32,6 +33,7 @@ const LOGGER_OPTIONS = {
     server.context,
     {
       R,
+      Helpers,
       app: context,
       ...AppModules,
       ...DB_ENTITIES,

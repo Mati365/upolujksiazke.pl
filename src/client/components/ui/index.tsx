@@ -15,3 +15,4 @@ export * from './Badge';
 export * from './Table';
 export * from './Favicon';
 export * from './Tabs';
+export * from './LinksRow';

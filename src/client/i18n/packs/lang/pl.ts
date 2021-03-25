@@ -10,6 +10,7 @@ export const PL_LANG_PACK = {
     titles: {
       no_data: 'Brak danych',
       rating: 'Ocena',
+      categories: 'Kategorie',
       group_by: 'Grupuj wg.:',
     },
     book: {

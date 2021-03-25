@@ -2,7 +2,7 @@
   &-book-info-section {
     > .c-section__content {
       display: grid;
-      grid-template-columns: 210px 1fr 210px;
+      grid-template-columns: 260px 1fr 210px;
       gap: 50px;
     }
 
@@ -18,7 +18,7 @@
     &__header-attr {
       @include flex-list;
 
-      margin-bottom: .5rem;
+      margin-bottom: .85rem;
       color: color(muted-text);
 
       &-label {
@@ -39,7 +39,17 @@
     }
 
     &__ratings {
-      margin: .8rem 0 1.8rem;
+      margin-bottom: 1.85rem;
+    }
+
+    &__categories {
+      align-items: flex-start;
+      margin-top: 2.2rem;
+      margin-bottom: 0;
+
+      .c-book-info-section__header-attr-label {
+        line-height: 20px;
+      }
     }
 
     @include mobile {

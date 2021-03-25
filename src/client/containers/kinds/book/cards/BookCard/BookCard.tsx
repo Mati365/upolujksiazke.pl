@@ -6,14 +6,17 @@ import {useI18n} from '@client/i18n';
 import {formatBookTitle} from '@client/helpers/logic';
 
 import {BookCardRecord} from '@api/types';
-import {BookLink} from '@client/routes/Links';
 import {BookCtaButton} from '@client/containers/controls/BookCtaButton';
 import {RatingsRow} from '@client/containers/parts/RatingsRow';
+import {LinksRow} from '@client/components/ui';
+import {
+  AuthorLink,
+  BookLink,
+} from '@client/routes/Links';
 
 import {BookTypesRow} from './BookTypesRow';
 import {BookPriceRow} from './BookPriceRow';
 import {BookCover} from './BookCover';
-import {BookAuthorsRow} from './BookAuthorsRow';
 
 type BookCardProps = {
   item: BookCardRecord,
@@ -71,9 +74,10 @@ export const BookCard = (
           </h3>
         </BookLink>
 
-        <BookAuthorsRow
+        <LinksRow
           className='c-book-card__author'
-          authors={
+          linkComponent={AuthorLink}
+          items={
             R.take(2, authors)
           }
         />

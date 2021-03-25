@@ -3,16 +3,20 @@ import c from 'classnames';
 import * as R from 'ramda';
 
 import {useI18n} from '@client/i18n';
+import {buildURL} from '@shared/helpers/urlEncoder';
 
-import {Table, TableProps, Favicon, UndecoratedLink} from '@client/components/ui';
+import {
+  Table, TableProps,
+  Favicon, TextButton,
+} from '@client/components/ui';
+
 import {Price} from '@client/containers/Price';
-import {BookType} from '@shared/enums';
-import {BookAvailabilityRecord} from '@api/types';
 import {BookCtaButton} from '@client/containers/controls/BookCtaButton';
+import {TypedBookAvailabilityRecord} from '@client/containers/kinds/book/helpers';
 import {BookReleaseTypeBadge} from './BooReleaseTypeBadge';
 
-export type TypedBookAvailabilityRecord = BookAvailabilityRecord & {
-  bookType?: BookType,
+export {
+  TypedBookAvailabilityRecord,
 };
 
 type BookWebsitesAvailabilityTableProps = {
@@ -52,13 +56,26 @@ export const BookWebsitesAvailabilityTable = (
           const {website, price, prevPrice, url} = item;
           const {smallThumb} = website.logo;
 
+          const onOpen = () => {
+            window.open(
+              buildURL(
+                url,
+                {
+                  utm_source: document.location.hostname,
+                  utm_medium: 'site',
+                  utm_campaign: 'compare button',
+                },
+              ),
+              '_blank',
+            );
+          };
+
           return (
             <tr key={item.id}>
               <td>
-                <UndecoratedLink
+                <TextButton
                   className='c-flex-row is-text-semibold is-text-primary is-undecorated-link has-double-link-chevron'
-                  href={url}
-                  rel='noopener noreferrer nofollow'
+                  onClick={onOpen}
                 >
                   {smallThumb?.file && (
                     <Favicon
@@ -69,7 +86,7 @@ export const BookWebsitesAvailabilityTable = (
                     />
                   )}
                   {website.hostname}
-                </UndecoratedLink>
+                </TextButton>
               </td>
 
               {withType && (
@@ -100,11 +117,7 @@ export const BookWebsitesAvailabilityTable = (
                   title={t('buy')}
                   size='small'
                   outlined
-                  onClick={
-                    () => {
-                      window.open(url, '_blank');
-                    }
-                  }
+                  onClick={onOpen}
                 />
               </td>
             </tr>

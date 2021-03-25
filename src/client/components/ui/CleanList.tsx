@@ -9,6 +9,7 @@ export type CleanListProps = BasicWrapperProps & {
   wrap?: boolean,
   spaced?: number,
   align?: string,
+  justify?: string,
 };
 
 export const CleanList = (
@@ -18,6 +19,7 @@ export const CleanList = (
     wrap,
     spaced,
     align,
+    justify,
     className,
     ...props
   }: CleanListProps,
@@ -30,6 +32,7 @@ export const CleanList = (
       wrap && 'is-wrapped',
       spaced && `is-spaced-${spaced}`,
       align && `is-aligned-${align}`,
+      justify && `is-justified-${justify}`,
       className,
     )}
     {...props}

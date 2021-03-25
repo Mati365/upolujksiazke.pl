@@ -3,6 +3,10 @@ import * as R from 'ramda';
 import {$enum} from 'ts-enum-util';
 
 import {useI18n} from '@client/i18n';
+import {
+  sortAvailabilityByPrice,
+  pickAllBookTypedReleases,
+} from '@client/containers/kinds/book/helpers';
 
 import {BookType} from '@shared/enums';
 import {BookFullInfoRecord} from '@api/types';
@@ -16,8 +20,6 @@ import {
   ReleasePricesGroups,
 } from './groups';
 
-import {sortAvailabilityByPrice} from './helpers';
-
 type BookPricesTabsProps = {
   book: BookFullInfoRecord,
 };
@@ -26,17 +28,8 @@ export const BookPricesTabs = ({book}: BookPricesTabsProps) => {
   const t = useI18n('book.availability');
   const {all, ...groups} = useMemo<Partial<Record<BookType | 'all', TypedBookAvailabilityRecord[]>>>(
     () => {
-      const mappedReleases = book.releases.map(
-        (release) => (release.availability || []).map<TypedBookAvailabilityRecord>(
-          (item) => ({
-            ...item,
-            bookType: release.type,
-          }),
-        ),
-      );
-
       const availability: TypedBookAvailabilityRecord[] = sortAvailabilityByPrice(
-        R.unnest(mappedReleases),
+        pickAllBookTypedReleases(book),
       );
 
       return {

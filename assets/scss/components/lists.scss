@@ -32,6 +32,10 @@
     &.is-wrapped {
       flex-wrap: wrap;
     }
+
+    &.is-justified-center {
+      justify-content: center !important;
+    }
   }
 
   &-icon-props-list {
@@ -80,6 +84,21 @@
       &__item {
         width: 100%;
         margin: 0 !important;
+      }
+    }
+  }
+
+  &-links-row.is-separated {
+    > li:not(:last-child) {
+      position: relative;
+
+      &::after {
+        content: '|';
+        position: absolute;
+        top: 2px;
+        right: -11px;
+        font-size: .75rem;
+        opacity: 0.45;
       }
     }
   }

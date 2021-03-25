@@ -1,5 +1,9 @@
-import {BookAuthorRecord, BookCardRecord} from '@api/types';
 import {UndecoratedLink} from '@client/components/ui';
+import {
+  BookAuthorRecord,
+  BookCardRecord,
+  BookCategoryRecord,
+} from '@api/types';
 
 export const HOME_PATH = '/';
 export const HomeLink = UndecoratedLink.create(HOME_PATH);
@@ -12,4 +16,9 @@ export const BookLink = UndecoratedLink.create<Pick<BookCardRecord, 'parameteriz
 export const AUTHOR_PATH = '/autor/:slug,:id';
 export const AuthorLink = UndecoratedLink.create<Pick<BookAuthorRecord, 'parameterizedName'|'id'>>(
   ({id, parameterizedName}) => `/autor/${parameterizedName},${id}`,
+);
+
+export const CATEGORY_PATH = '/kategoria/:slug,:id';
+export const CategoryLink = UndecoratedLink.create<Pick<BookCategoryRecord, 'parameterizedName'|'id'>>(
+  ({id, parameterizedName}) => `/kategoria/${parameterizedName},${id}`,
 );

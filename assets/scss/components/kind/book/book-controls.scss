@@ -14,19 +14,4 @@
       margin-right: 10px;
     }
   }
-
-  &-book-authors-row.is-separated {
-    > li:not(:last-child) {
-      position: relative;
-
-      &::after {
-        content: '|';
-        position: absolute;
-        top: 2px;
-        right: -11px;
-        font-size: .75rem;
-        opacity: 0.45;
-      }
-    }
-  }
 }

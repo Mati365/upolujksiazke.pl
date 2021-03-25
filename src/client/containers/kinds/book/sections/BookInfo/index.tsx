@@ -5,13 +5,14 @@ import {formatBookTitle} from '@client/helpers/logic';
 
 import {RatingsRow} from '@client/containers/parts/RatingsRow';
 import {BookFullInfoRecord} from '@api/types';
+import {AuthorLink, CategoryLink} from '@client/routes/Links';
 import {
   ExpandableDescriptionBox,
   Divider,
   Section,
+  LinksRow,
 } from '@client/components/ui';
 
-import {BookAuthorsRow} from '../../cards/BookCard/BookAuthorsRow';
 import {BookCover} from '../../cards/BookCard/BookCover';
 import {BookPriceBox} from './BookPriceBox';
 import {BookProperties} from './BookProperties';
@@ -25,7 +26,7 @@ type BookInfoProps = {
 export const BookInfo = ({book, children}: BookInfoProps) => {
   const t = useI18n();
   const {
-    primaryRelease, authors,
+    primaryRelease, authors, categories,
     avgRating, totalRatings,
   } = book;
 
@@ -60,8 +61,9 @@ export const BookInfo = ({book, children}: BookInfoProps) => {
             `${t('book.created_by')}:`
           }
         >
-          <BookAuthorsRow
-            authors={authors}
+          <LinksRow
+            items={authors}
+            linkComponent={AuthorLink}
             linkProps={{
               underline: true,
             }}
@@ -94,6 +96,23 @@ export const BookInfo = ({book, children}: BookInfoProps) => {
         <Divider />
 
         <BookProperties book={book} />
+
+        <BookHeaderAttribute
+          className='c-book-info-section__categories'
+          label={
+            `${t('shared.titles.categories')}:`
+          }
+        >
+          <LinksRow
+            items={categories}
+            linkComponent={CategoryLink}
+            linkProps={{
+              underline: true,
+            }}
+            block={false}
+            separated
+          />
+        </BookHeaderAttribute>
 
         {children}
       </div>

@@ -2,12 +2,11 @@ import React, {useMemo} from 'react';
 import c from 'classnames';
 
 import {useI18n} from '@client/i18n';
+import {sortReleasesByPrice} from '@client/containers/kinds/book/helpers';
 
 import {BookFullInfoRecord} from '@api/types';
 import {Table} from '@client/components/ui';
 import {BookPricesReleaseRow} from './BookPricesReleaseRow';
-
-import {sortReleasesByPrice} from '../../helpers';
 
 type BookPricesListProps = {
   book: BookFullInfoRecord,

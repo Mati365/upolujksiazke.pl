@@ -2,10 +2,10 @@ import {Expose} from 'class-transformer';
 
 import {parameterize} from '@shared/helpers/parameterize';
 
-import {BookTagRecord} from '@api/types/BookTag.record';
+import {TagRecord} from '@api/types/Tag.record';
 import {BaseSerializer} from './Base.serializer';
 
-export class BookTagSerializer extends BaseSerializer implements BookTagRecord {
+export class TagSerializer extends BaseSerializer implements TagRecord {
   @Expose() name: string;
 
   @Expose()

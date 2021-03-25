@@ -10,6 +10,7 @@ export const PL_LANG_PACK = {
     titles: {
       no_data: 'Brak danych',
       rating: 'Ocena',
+      keywords: 'Słowa kluczowe',
       categories: 'Kategorie',
       group_by: 'Grupuj wg.:',
     },
@@ -54,6 +55,7 @@ export const PL_LANG_PACK = {
   book: {
     created_by: 'Autor',
     no_description: 'Brak opisu :(',
+    book_description: 'Opis książki',
     price_box: {
       header: 'Ceny książki:',
       highest_price: 'Najwyższa cena:',

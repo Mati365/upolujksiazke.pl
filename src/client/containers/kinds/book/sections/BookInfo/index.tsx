@@ -3,9 +3,15 @@ import React, {ReactNode} from 'react';
 import {useI18n} from '@client/i18n';
 import {formatBookTitle} from '@client/helpers/logic';
 
-import {RatingsRow} from '@client/containers/parts/RatingsRow';
 import {BookFullInfoRecord} from '@api/types';
-import {AuthorLink, CategoryLink} from '@client/routes/Links';
+import {AnchorIcon} from '@client/components/svg';
+import {RatingsRow} from '@client/containers/parts/RatingsRow';
+import {
+  AuthorLink,
+  CategoryLink,
+} from '@client/routes/Links';
+
+import {TagsList} from '@client/containers/controls/TagsList';
 import {
   ExpandableDescriptionBox,
   Divider,
@@ -27,7 +33,7 @@ export const BookInfo = ({book, children}: BookInfoProps) => {
   const t = useI18n();
   const {
     primaryRelease, authors, categories,
-    avgRating, totalRatings,
+    avgRating, totalRatings, tags,
   } = book;
 
   const formattedTitle = formatBookTitle(
@@ -86,6 +92,10 @@ export const BookInfo = ({book, children}: BookInfoProps) => {
           />
         </BookHeaderAttribute>
 
+        <h2 className='c-book-info-section__description-header'>
+          {t('book.book_description')}
+        </h2>
+
         <ExpandableDescriptionBox
           maxCharactersCount={900}
           text={
@@ -104,6 +114,7 @@ export const BookInfo = ({book, children}: BookInfoProps) => {
           }
         >
           <LinksRow
+            className='is-text-small'
             items={categories}
             linkComponent={CategoryLink}
             linkProps={{
@@ -117,7 +128,16 @@ export const BookInfo = ({book, children}: BookInfoProps) => {
         {children}
       </div>
 
-      <BookPriceBox book={book} />
+      <BookPriceBox book={book}>
+        <div className='c-book-info-section__tags'>
+          <div className='c-book-info-section__tags-title is-text-muted is-text-small'>
+            <AnchorIcon className='mr-2' />
+            {`${t('shared.titles.keywords')}:`}
+          </div>
+
+          <TagsList items={tags} />
+        </div>
+      </BookPriceBox>
     </Section>
   );
 };

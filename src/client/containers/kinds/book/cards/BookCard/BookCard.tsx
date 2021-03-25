@@ -6,7 +6,7 @@ import {useI18n} from '@client/i18n';
 import {formatBookTitle} from '@client/helpers/logic';
 
 import {BookCardRecord} from '@api/types';
-import {BookCtaButton} from '@client/containers/controls/BookCtaButton';
+import {BookCtaButton} from '@client/containers/kinds/book/controls/BookCtaButton';
 import {RatingsRow} from '@client/containers/parts/RatingsRow';
 import {LinksRow} from '@client/components/ui';
 import {

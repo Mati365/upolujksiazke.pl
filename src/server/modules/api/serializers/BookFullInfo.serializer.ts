@@ -2,10 +2,10 @@ import {Expose, Type} from 'class-transformer';
 
 import {BookFullInfoRecord} from '@api/types';
 import {BookCardSerializer} from './BookCard.serializer';
-import {BookTagSerializer} from './BookTag.serializer';
 import {BookCategorySerializer} from './BookCategory.serializer';
 import {BookFullInfoReleaseSerializer} from './BookFullInfoRelease.serializer';
 import {BookPrizeSerializer} from './BookPrize.serializer';
+import {TagSerializer} from './Tag.serializer';
 
 export class BookFullInfoSerializer extends BookCardSerializer implements BookFullInfoRecord {
   @Expose()
@@ -16,8 +16,8 @@ export class BookFullInfoSerializer extends BookCardSerializer implements BookFu
   primaryRelease: BookFullInfoReleaseSerializer;
 
   @Expose()
-  @Type(() => BookTagSerializer)
-  tags: BookTagSerializer[];
+  @Type(() => TagSerializer)
+  tags: TagSerializer[];
 
   @Expose()
   @Type(() => BookCategorySerializer)

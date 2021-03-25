@@ -29,9 +29,9 @@ export const LinksRow = (
 ) => (
   <CleanList
     className={c(
-      className,
       'c-links-row',
       separated && 'is-separated',
+      className,
     )}
     spaced={(
       separated

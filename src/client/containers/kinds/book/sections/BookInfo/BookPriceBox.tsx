@@ -1,20 +1,21 @@
-import React from 'react';
+import React, {ReactNode} from 'react';
 import c from 'classnames';
 import * as R from 'ramda';
 
 import {useI18n} from '@client/i18n';
 
-import {PurchaseIcon} from '@client/components/svg/Icons';
 import {BookFullInfoRecord} from '@api/types';
-import {BookCtaButton} from '@client/containers/controls/BookCtaButton';
+import {PurchaseIcon} from '@client/components/svg/Icons';
+import {BookCtaButton} from '@client/containers/kinds/book/controls/BookCtaButton';
 import {BookPriceGroup} from './BookPriceGroup';
 
 type BookPriceBoxProps = {
-  className?: string,
   book: BookFullInfoRecord,
+  className?: string,
+  children?: ReactNode,
 };
 
-export const BookPriceBox = ({className, book}: BookPriceBoxProps) => {
+export const BookPriceBox = ({className, book, children}: BookPriceBoxProps) => {
   const t = useI18n('book.price_box');
   const isPromotion = book.highestPrice !== book.lowestPrice;
 
@@ -62,6 +63,8 @@ export const BookPriceBox = ({className, book}: BookPriceBoxProps) => {
         }
         expanded
       />
+
+      {children}
     </div>
   );
 };

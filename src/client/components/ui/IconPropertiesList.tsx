@@ -25,7 +25,6 @@ export const IconPropertiesList = ({items, className}: IconPropertiesListProps) 
       className,
     )}
     align='top'
-    justify='center'
     spaced={6}
     block
     inline

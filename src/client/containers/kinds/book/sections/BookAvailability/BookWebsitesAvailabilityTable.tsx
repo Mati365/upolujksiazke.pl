@@ -11,7 +11,7 @@ import {
 } from '@client/components/ui';
 
 import {Price} from '@client/containers/Price';
-import {BookCtaButton} from '@client/containers/controls/BookCtaButton';
+import {BookCtaButton} from '@client/containers/kinds/book/controls/BookCtaButton';
 import {TypedBookAvailabilityRecord} from '@client/containers/kinds/book/helpers';
 import {BookReleaseTypeBadge} from './BooReleaseTypeBadge';
 

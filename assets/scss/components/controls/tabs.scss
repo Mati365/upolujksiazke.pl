@@ -20,6 +20,10 @@
     }
 
     #{$self}__tab {
+      > a {
+        @include flex-list;
+      }
+
       &:not(:last-child) {
         position: relative;
         margin-right: 20px;
@@ -31,6 +35,7 @@
           right: -13px;
           font-size: .75rem;
           opacity: 0.45;
+          color: color(default-text);
         }
       }
 
@@ -38,9 +43,13 @@
         text-decoration: underline;
       }
 
-      &.is-active {
+      &.is-active > a {
         color: color(primary);
         font-weight: 700;
+      }
+
+      &-icon {
+        margin-right: 5px;
       }
     }
   }

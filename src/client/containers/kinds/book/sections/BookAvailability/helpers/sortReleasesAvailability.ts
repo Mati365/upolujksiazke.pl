@@ -1,15 +1,15 @@
 import * as R from 'ramda';
+
 import {BookFullInfoReleaseRecord} from '@api/types';
+import {sortAvailabilityByPrice} from './sortAvailabilityByPrice';
 
 export function sortReleasesAvailability(releases: BookFullInfoReleaseRecord[]) {
   return R.map(
-    (release) => ({
-      ...release,
-      availability: R.sortBy(
-        ({price}) => price ?? Infinity,
-        release.availability || [],
-      ),
-    }),
+    R.evolve(
+      {
+        availability: sortAvailabilityByPrice,
+      },
+    ),
     releases,
   );
 }

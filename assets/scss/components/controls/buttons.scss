@@ -128,6 +128,19 @@
       @include mobile {
         justify-content: flex-start;
       }
+
+      &.is-outlined {
+        padding-right: calc(#{$suffix-width / 2} + var(--btn-x-padding) + 2px);
+
+        > .c-icon:last-of-type {
+          background: initial;
+
+          svg {
+            position: relative;
+            top: 1px;
+          }
+        }
+      }
     }
   }
 }

@@ -10,6 +10,7 @@ export const PL_LANG_PACK = {
     titles: {
       no_data: 'Brak danych',
       rating: 'Ocena',
+      group_by: 'Grupuj wg.:',
     },
     book: {
       volume: 'Tom',
@@ -21,6 +22,7 @@ export const PL_LANG_PACK = {
         [BookType.AUDIOBOOK]: 'audiobook',
         [BookType.EBOOK]: 'e-book',
         [BookType.PAPER]: 'papier',
+        default: 'brak danych',
       },
       props: {
         total_pages: 'Strony',
@@ -70,9 +72,9 @@ export const PL_LANG_PACK = {
 
       groups: {
         all: 'Wszystkie',
-        paper: 'Papierowe',
-        audiobooks: 'Audiobooki',
-        ebooks: 'E-Booki',
+        [BookType.AUDIOBOOK]: 'Audiobooki',
+        [BookType.EBOOK]: 'E-Booki',
+        [BookType.PAPER]: 'Papierowe',
         by_release: 'Wydania',
       },
     },

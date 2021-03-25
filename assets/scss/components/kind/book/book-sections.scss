@@ -125,11 +125,14 @@
     }
   }
 
-  &-book-prices {
-    th {
+  &-book-prices,
+  &-book-availability {
+    th, tr {
       font-size: $text-small;
     }
+  }
 
+  &-book-prices {
     &__release {
       &-title {
         @include capitalize;
@@ -137,7 +140,7 @@
         position: relative;
         top: -2px; // why?
         margin: 0;
-        font-size: 1rem;
+        font-size: inherit;
         font-weight: 500;
       }
 
@@ -146,8 +149,8 @@
       }
     }
 
-    &__availability:not(:last-child) .c-book-release-prices {
-      margin-bottom: 1.35rem;
+    &__availability:not(:last-child) .c-book-availability {
+      margin-bottom: 1.15rem;
     }
   }
 }

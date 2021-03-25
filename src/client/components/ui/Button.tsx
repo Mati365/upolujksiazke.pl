@@ -11,6 +11,7 @@ export type ButtonProps = BasicWrapperProps & {
   iconSuffix?: boolean,
   disabled?: boolean,
   htmlType?: JSX.IntrinsicElements['button']['type'],
+  onClick?: JSX.IntrinsicElements['button']['onClick'],
 };
 
 export const Button = (

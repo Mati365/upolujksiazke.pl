@@ -7,7 +7,7 @@ export function sortReleasesByPrice(releases: BookFullInfoReleaseRecord[]) {
   const sortedAvailability = sortReleasesAvailability(releases);
 
   return R.sortBy(
-    ({availability}) => availability[0]?.price ?? Infinity,
+    ({availability}) => availability?.[0]?.price ?? Infinity,
     sortedAvailability,
   );
 }

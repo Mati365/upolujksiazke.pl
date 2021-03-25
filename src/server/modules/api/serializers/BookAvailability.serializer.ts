@@ -18,6 +18,7 @@ export class BookAvailabilitySerializer extends BaseSerializer implements BookAv
   @Expose() avgRating: number;
   @Expose() totalRatings: number;
   @Expose() inStock: boolean;
+  @Expose() url: string;
 
   @Expose()
   @Type(() => WebsiteSerializer)

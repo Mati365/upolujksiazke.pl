@@ -1,18 +1,28 @@
-import React, {useState, MouseEventHandler, ReactNode, useEffect} from 'react';
+import React, {useEffect, useState, MouseEventHandler, ReactNode, ComponentType} from 'react';
 import c from 'classnames';
 import * as R from 'ramda';
 
-import {uniqFlatHashBy} from '@shared/helpers';
+import {
+  findObjectNonCasedKey,
+  uniqFlatHashBy,
+} from '@shared/helpers';
 
 type TabProps = {
   title: string,
   id: any,
+  icon?: ComponentType<{className?: string}>,
   active?: boolean,
   children?: () => React.ReactNode,
   onClick?: MouseEventHandler,
 };
 
-export const Tab = ({id, title, active, onClick}: TabProps) => (
+export const Tab = (
+  {
+    icon: Icon,
+    id, title,
+    active, onClick,
+  }: TabProps,
+) => (
   <li
     className={c(
       'c-tabs__tab',
@@ -22,9 +32,12 @@ export const Tab = ({id, title, active, onClick}: TabProps) => (
     <a
       className='is-undecorated-link'
       title={title}
-      href={`#${id}`}
+      href={`#${R.toLower(id)}`}
       onClick={onClick}
     >
+      {Icon && (
+        <Icon className='c-tabs__tab-icon' />
+      )}
       {title}
     </a>
   </li>
@@ -35,12 +48,14 @@ type TabsProps = {
   textOnly?: boolean,
   initialTab?: any,
   align?: string,
+  prependNav?: ReactNode,
   children: ReactNode,
 };
 
 export const Tabs = (
   {
     initialTab,
+    prependNav,
     textOnly,
     className,
     align,
@@ -48,7 +63,7 @@ export const Tabs = (
   }: TabsProps,
 ) => {
   const childrenMap: any = uniqFlatHashBy<any>(
-    ({props}) => props.id,
+    (item) => item?.props.id,
     React.Children.toArray(children),
   );
 
@@ -64,9 +79,13 @@ export const Tabs = (
         align && `is-${align}-aligned`,
       )}
     >
+      {prependNav}
       {React.Children.map(
         children,
         (child) => {
+          if (!child)
+            return null;
+
           const {id} = (child as any).props;
           const active = id === activeTabId;
 
@@ -97,9 +116,9 @@ export const Tabs = (
       if (!hash)
         return;
 
-      const hashID = hash.substr(1);
-      if (childrenMap[hashID])
-        setActiveTab(hashID);
+      const key = findObjectNonCasedKey(hash.substr(1), childrenMap);
+      if (key)
+        setActiveTab(key);
     },
     [],
   );

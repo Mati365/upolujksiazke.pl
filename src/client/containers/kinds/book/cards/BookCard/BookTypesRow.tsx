@@ -10,15 +10,19 @@ import {
   HeadphoneIcon,
   DevicesIcon,
   BookIcon,
+  QuestionMarkIcon,
 } from '@client/components/svg';
 
-export const BookTypesIconsMap: Record<BookType, ComponentType<any>> = {
+export const BookTypesIconsMap: Record<BookType | 'default', ComponentType<any>> = {
   [BookType.EBOOK]: DevicesIcon,
   [BookType.AUDIOBOOK]: HeadphoneIcon,
   [BookType.PAPER]: BookIcon,
+  default: QuestionMarkIcon,
 };
 
-export const BookTypesIcons: [BookType, ComponentType<any>][] = R.toPairs(BookTypesIconsMap);
+export const BookTypesIcons: [BookType, ComponentType<any>][] = R.toPairs(
+  R.omit(['default'], BookTypesIconsMap),
+);
 
 type BookTypesRowProps = {
   types: BookType[],

@@ -82,7 +82,7 @@ export class BookReleaseService {
               [
                 'a.id', 'a.releaseId',
                 'a.prevPrice', 'a.price', 'a.inStock',
-                'a.totalRatings', 'a.avgRating',
+                'a.totalRatings', 'a.avgRating', 'a.url',
                 'attachment.file', 'logo.version',
               ],
             )

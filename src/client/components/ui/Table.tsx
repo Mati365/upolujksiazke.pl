@@ -1,7 +1,7 @@
 import React from 'react';
 import c from 'classnames';
 
-type TableProps = JSX.IntrinsicElements['table'] & {
+export type TableProps = JSX.IntrinsicElements['table'] & {
   expanded?: boolean,
   nested?: boolean,
   layout?: string,

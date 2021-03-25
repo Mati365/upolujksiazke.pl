@@ -7,18 +7,18 @@ import {BookFullInfoRecord} from '@api/types';
 import {Table} from '@client/components/ui';
 import {BookPricesReleaseRow} from './BookPricesReleaseRow';
 
-import {sortReleasesByPrice} from './helpers';
+import {sortReleasesByPrice} from '../../helpers';
 
 type BookPricesListProps = {
   book: BookFullInfoRecord,
   className?: string,
 };
 
-export const BookPricesList = ({className, book}: BookPricesListProps) => {
+export const ReleasePricesGroups = ({className, book}: BookPricesListProps) => {
   const t = useI18n('book.availability');
   const sortedReleases = useMemo(
     () => sortReleasesByPrice(book.releases),
-    [book],
+    [book.id],
   );
 
   return (
@@ -50,4 +50,4 @@ export const BookPricesList = ({className, book}: BookPricesListProps) => {
   );
 };
 
-BookPricesList.displayName = 'BookPricesList';
+ReleasePricesGroups.displayName = 'ReleasePricesGroups';

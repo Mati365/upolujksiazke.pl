@@ -18,6 +18,8 @@ import TrophySVG from '@assets/icons/svg/trophy.svg';
 import TimeSVG from '@assets/icons/svg/time.svg';
 import BookReaderSVG from '@assets/icons/svg/book-reader.svg';
 import StoreSVG from '@assets/icons/svg/store.svg';
+import SpreadsheetSVG from '@assets/icons/svg/spreadsheet.svg';
+import QuestionMarkSVG from '@assets/icons/svg/question-mark.svg';
 
 import {Icon} from '../ui/Icon';
 
@@ -41,3 +43,5 @@ export const TrophyIcon = Icon.createFromSVG(TrophySVG);
 export const TimeIcon = Icon.createFromSVG(TimeSVG);
 export const BookReaderIcon = Icon.createFromSVG(BookReaderSVG);
 export const StoreIcon = Icon.createFromSVG(StoreSVG);
+export const SpreadsheetIcon = Icon.createFromSVG(SpreadsheetSVG);
+export const QuestionMarkIcon = Icon.createFromSVG(QuestionMarkSVG);

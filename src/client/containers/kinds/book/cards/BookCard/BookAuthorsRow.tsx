@@ -6,13 +6,13 @@ import {AuthorLink} from '@client/routes/Links';
 import {
   CleanList,
   CleanListProps,
-  ContainerLinkProps,
+  UndecoratedLinkProps,
 } from '@client/components/ui';
 
 type BookAuthorsRowProps = CleanListProps & {
   className?: string,
   separated?: boolean,
-  linkProps?: Partial<ContainerLinkProps<any, {}>>,
+  linkProps?: Partial<UndecoratedLinkProps<any, {}>>,
   authors: BookAuthorRecord[],
 };
 

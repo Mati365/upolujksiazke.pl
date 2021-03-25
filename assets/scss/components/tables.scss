@@ -10,7 +10,10 @@
   }
 
   &.is-nested {
-    margin-left: 40px;
+    $nested-margin: 40px;
+
+    margin-left: #{$nested-margin};
+    max-width: calc(100% - #{$nested-margin});
     font-size: $text-small;
   }
 

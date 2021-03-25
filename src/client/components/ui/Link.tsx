@@ -7,8 +7,8 @@ type LinkItem<I> = I & {
   url?: string,
 };
 
-export type ContainerLinkProps<I = {}, P = {}> = P & {
-  urlGenerator: string | LinkURLGeneratorFn<I, P>,
+export type UndecoratedLinkProps<I = {}, P = {}> = P & {
+  urlGenerator?: string | LinkURLGeneratorFn<I, P>,
   children?: ReactNode,
   className?: string,
   item?: LinkItem<I>,
@@ -18,6 +18,7 @@ export type ContainerLinkProps<I = {}, P = {}> = P & {
   underline?: boolean,
   href?: string,
   hash?: string,
+  rel?: string,
   utm?: object,
   action?: string,
   spaMode?: boolean,
@@ -26,13 +27,13 @@ export type ContainerLinkProps<I = {}, P = {}> = P & {
 
 type LinkURLGeneratorFn<I, P> = (item: LinkItem<I>, props: P, action: string) => string;
 
-export function ContainerLink<I = {}, P = {}>(
+export function UndecoratedLink<I = {}, P = {}>(
   {
     urlGenerator, underline,
     searchParams, state, absolute, action,
     href, hash, utm, item, className, spaMode,
     ...props
-  }: ContainerLinkProps<I, P>,
+  }: UndecoratedLinkProps<I, P>,
 ) {
   const urlGeneratorFn = (
     R.is(String, urlGenerator)
@@ -41,7 +42,7 @@ export function ContainerLink<I = {}, P = {}>(
   ) as LinkURLGeneratorFn<I, P>;
 
   let url = href || item?.url;
-  if (!url)
+  if (!url && urlGeneratorFn)
     url = urlGeneratorFn(item, props as P, action);
 
   if (utm) {
@@ -97,11 +98,11 @@ export function ContainerLink<I = {}, P = {}>(
   );
 }
 
-ContainerLink.displayName = 'ContainerLink';
+UndecoratedLink.displayName = 'UndecoratedLink';
 
-ContainerLink.create = function createContainerLink<I = {}, P = {}>(urlGenerator: string | LinkURLGeneratorFn<I, P>) {
-  const GeneratedLink = (props: Omit<ContainerLinkProps<I, P>, 'urlGenerator'>) => (
-    <ContainerLink<I, P>
+UndecoratedLink.create = function createContainerLink<I = {}, P = {}>(urlGenerator: string | LinkURLGeneratorFn<I, P>) {
+  const GeneratedLink = (props: Omit<UndecoratedLinkProps<I, P>, 'urlGenerator'>) => (
+    <UndecoratedLink<I, P>
       {...props as any}
       urlGenerator={urlGenerator}
     />

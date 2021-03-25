@@ -4,40 +4,62 @@ import * as R from 'ramda';
 
 import {useI18n} from '@client/i18n';
 
-import {Table, Favicon} from '@client/components/ui';
+import {Table, TableProps, Favicon, UndecoratedLink} from '@client/components/ui';
 import {Price} from '@client/containers/Price';
+import {BookType} from '@shared/enums';
 import {BookAvailabilityRecord} from '@api/types';
 import {BookCtaButton} from '@client/containers/controls/BookCtaButton';
+import {BookReleaseTypeBadge} from './BooReleaseTypeBadge';
 
-type BookWebsitesAvailabilityTableProps = {
-  availability: BookAvailabilityRecord[],
+export type TypedBookAvailabilityRecord = BookAvailabilityRecord & {
+  bookType?: BookType,
 };
 
-export const BookWebsitesAvailabilityTable = ({availability}: BookWebsitesAvailabilityTableProps) => {
+type BookWebsitesAvailabilityTableProps = {
+  withType?: boolean,
+  tableProps?: TableProps,
+  availability: Array<TypedBookAvailabilityRecord>,
+};
+
+export const BookWebsitesAvailabilityTable = (
+  {
+    availability,
+    tableProps,
+    withType,
+  }: BookWebsitesAvailabilityTableProps,
+) => {
   const t = useI18n('book.availability');
 
   return (
     <Table
-      className='c-book-release-prices'
-      nested
+      className='c-book-availability'
+      layout='fixed'
+      {...tableProps}
     >
       <thead>
         <tr>
           <th>{t('website')}</th>
+          {withType && (
+            <th>{t('type')}</th>
+          )}
           <th>{t('prev_price')}</th>
           <th>{t('price')}</th>
-          <th>{t('action')}</th>
+          <th style={{width: 155}}>{t('action')}</th>
         </tr>
       </thead>
       <tbody>
         {availability.map((item) => {
-          const {website, price, prevPrice} = item;
+          const {website, price, prevPrice, url} = item;
           const {smallThumb} = website.logo;
 
           return (
             <tr key={item.id}>
               <td>
-                <span className='c-flex-row is-text-semibold'>
+                <UndecoratedLink
+                  className='c-flex-row is-text-semibold is-text-primary is-undecorated-link has-double-link-chevron'
+                  href={url}
+                  rel='noopener noreferrer nofollow'
+                >
                   {smallThumb?.file && (
                     <Favicon
                       className='mr-2'
@@ -47,8 +69,14 @@ export const BookWebsitesAvailabilityTable = ({availability}: BookWebsitesAvaila
                     />
                   )}
                   {website.hostname}
-                </span>
+                </UndecoratedLink>
               </td>
+
+              {withType && (
+                <td>
+                  <BookReleaseTypeBadge type={item.bookType} />
+                </td>
+              )}
 
               <td
                 className={c(
@@ -71,6 +99,12 @@ export const BookWebsitesAvailabilityTable = ({availability}: BookWebsitesAvaila
                 <BookCtaButton
                   title={t('buy')}
                   size='small'
+                  outlined
+                  onClick={
+                    () => {
+                      window.open(url, '_blank');
+                    }
+                  }
                 />
               </td>
             </tr>

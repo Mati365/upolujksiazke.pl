@@ -1,16 +1,15 @@
-import {Inject, Injectable, forwardRef} from '@nestjs/common';
+import {Injectable} from '@nestjs/common';
 import {Cron, CronExpression} from '@nestjs/schedule';
 import {EntityManager} from 'typeorm';
 import * as R from 'ramda';
 
 import {paginatedAsyncIterator} from '@server/common/helpers/db';
-import {BookStatsService} from '@server/modules/book/services/BookStats.service';
+import {BookStatsService} from '../../stats/services';
 import {BookCategoryEntity} from '../BookCategory.entity';
 
 @Injectable()
 export class BookCategoryRankingService {
   constructor(
-    @Inject(forwardRef(() => BookStatsService))
     private readonly bookStats: BookStatsService,
     private readonly entityManager: EntityManager,
   ) {}

@@ -1,23 +1,20 @@
 import {isDevMode} from '@shared/helpers';
 
 import {WrapMethod} from '@shared/helpers/decorators/WrapMethod';
+import {ExpirableMemoizeCallAttrs} from '@shared/helpers/decorators/ExpirableMemoizeMethod';
+
 import {APIClientChild} from '@api/APIClient';
 import {ServerAPIClient} from '../client/ServerAPIClient';
 
-type RedisCacheCallAttrs = (...args: any[]) => {
-  key: string,
-  expire: number,
-};
-
-export function RedisMemoize(keyFn: RedisCacheCallAttrs) {
-  const disabled = isDevMode();
+export function RedisMemoize(keyFn: ExpirableMemoizeCallAttrs['keyFn']) {
+  const devMode = isDevMode();
 
   return WrapMethod(
     (decoratedFn) => async function wrapped(this: APIClientChild<ServerAPIClient>, ...args: any[]) {
       const {cacheManager} = this.api.services;
-      const {key, expire} = keyFn(...args);
+      const {key, expire, disabled} = keyFn(...args);
 
-      if (!disabled) {
+      if (!devMode && !disabled) {
         const cached = await cacheManager.get<string>(key);
         if (cached)
           return JSON.parse(cached).result;
@@ -25,7 +22,7 @@ export function RedisMemoize(keyFn: RedisCacheCallAttrs) {
 
       const result = await decoratedFn(...args);
 
-      if (!disabled) {
+      if (!devMode && !disabled) {
         await cacheManager.set<string>(
           key,
           JSON.stringify({result}),

@@ -12,10 +12,11 @@ import {BookAvailabilityModule} from './modules/availability';
 import {BookVolumeModule} from './modules/volume';
 import {BookPrizeModule} from './modules/prize';
 import {BookSeriesModule} from './modules/series';
+import {BookStatsModule} from './modules/stats';
+import {BookSEOModule} from './modules/seo';
 
 import {
   BookService,
-  BookStatsService,
   FuzzyBookSearchService,
 } from './services';
 
@@ -33,18 +34,19 @@ import {
       BookKindModule,
       BookPrizeModule,
       BookSeriesModule,
+      BookStatsModule,
+      BookSEOModule,
       TagModule,
     ],
     providers: [
       BookService,
       FuzzyBookSearchService,
-      BookStatsService,
     ],
     exports: [
       FuzzyBookSearchService,
       BookService,
-      BookStatsService,
       BookAvailabilityModule,
+      BookStatsModule,
       BookPublisherModule,
       BookReleaseModule,
       BookAuthorModule,
@@ -55,6 +57,7 @@ import {
       BookKindModule,
       BookPrizeModule,
       BookSeriesModule,
+      BookSEOModule,
     ],
   },
 )

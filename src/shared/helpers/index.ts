@@ -36,3 +36,4 @@ export * from './uniqFlatHashByProp';
 export * from './parameterize';
 export * from './time/conversion';
 export * from './findObjNonCasedKey';
+export * from './filterAndMap';

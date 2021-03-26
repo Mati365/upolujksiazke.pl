@@ -24,7 +24,12 @@ export const CategoryLink = UndecoratedLink.create<Pick<BookCategoryRecord, 'par
   ({id, parameterizedName}) => `/kategoria/${parameterizedName},${id}`,
 );
 
-export const TAG_PATH = '/kategoria/:slug,:id';
-export const TagLink = UndecoratedLink.create<Pick<TagRecord, 'parameterizedName'|'id'>>(
-  ({id, parameterizedName}) => `/tag/${parameterizedName},${id}`,
-);
+export const TAG_PATH = '/tag/:slug,:id';
+export const genTagLink = (
+  {
+    id,
+    parameterizedName,
+  }: Pick<TagRecord, 'parameterizedName'|'id'>,
+) => `/tag/${parameterizedName},${id}`;
+
+export const TagLink = UndecoratedLink.create<Pick<TagRecord, 'parameterizedName'|'id'>>(genTagLink);

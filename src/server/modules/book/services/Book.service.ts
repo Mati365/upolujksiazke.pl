@@ -26,7 +26,7 @@ import {BookEntity} from '../Book.entity';
 import {BookVolumeEntity} from '../modules/volume/BookVolume.entity';
 import {BookReviewEntity} from '../modules/review/BookReview.entity';
 import {BookReleaseEntity} from '../modules/release/BookRelease.entity';
-import {BookStatsService} from './BookStats.service';
+import {BookStatsService} from '../modules/stats/services/BookStats.service';
 
 /**
  * @see

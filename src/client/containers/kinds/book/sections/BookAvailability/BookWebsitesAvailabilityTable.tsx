@@ -74,7 +74,8 @@ export const BookWebsitesAvailabilityTable = (
             <tr key={item.id}>
               <td>
                 <TextButton
-                  className='c-flex-row is-text-semibold is-text-primary is-undecorated-link has-double-link-chevron'
+                  className='c-flex-row is-text-semibold is-undecorated-link
+                             has-hover-underline has-double-link-chevron'
                   onClick={onOpen}
                 >
                   {smallThumb?.file && (

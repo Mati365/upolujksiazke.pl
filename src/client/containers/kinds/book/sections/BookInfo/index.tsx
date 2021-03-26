@@ -101,6 +101,7 @@ export const BookInfo = ({book, children}: BookInfoProps) => {
           text={
             primaryRelease.description || t('book.no_description')
           }
+          html
         />
 
         <Divider />

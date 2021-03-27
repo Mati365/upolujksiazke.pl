@@ -67,6 +67,9 @@
     }
 
     &__value {
+      @include text-ellipsis;
+
+      max-width: 130px;
       color: color(primary);
       font-size: $text-small;
       line-height: $text-small-line-height;

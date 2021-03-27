@@ -5,7 +5,7 @@ test('hydrate text with links', () => {
   expect(hydrateTextWithLinks(
     {
       text: 'grzegrzółka Kota ala ma kota i psa i coś tam jeszcze mniej interesującego BLa blA bla test',
-      items: [
+      tags: [
         {
           id: 1,
           name: 'kotaa',
@@ -32,7 +32,7 @@ test('hydrate text with links', () => {
   expect(hydrateTextWithLinks(
     {
       text: '<a href="https://interia.pl">hrabonszcz</a> <div>hrabonszcz</div> hrabonszcz dupa dupa',
-      items: [
+      tags: [
         {
           id: 3,
           name: 'dupa',
@@ -51,7 +51,7 @@ test('hydrate text with links', () => {
   expect(hydrateTextWithLinks(
     {
       text: 'dupa. test "iksde"',
-      items: [
+      tags: [
         {
           id: 3,
           name: 'dupa',
@@ -70,7 +70,7 @@ test('hydrate text with links', () => {
   expect(hydrateTextWithLinks(
     {
       text: '<a href="dupa">dupa</a> test abc',
-      items: [
+      tags: [
         {
           id: 3,
           name: 'dupa',
@@ -93,7 +93,7 @@ test('hydrate text with links', () => {
   expect(hydrateTextWithLinks(
     {
       text: 'literatury science-fiction.Kim jest Pirx? science-fiction',
-      items: [
+      tags: [
         {
           id: 3,
           name: 'science fiction',

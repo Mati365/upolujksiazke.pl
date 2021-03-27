@@ -48,7 +48,12 @@ export const IconPropertiesList = ({items, className}: IconPropertiesListProps) 
 
               <Icon className='c-icon-props-list__icon' />
 
-              <div className='c-icon-props-list__value'>
+              <div
+                className='c-icon-props-list__value'
+                {...R.is(String, value) && {
+                  title: value as string,
+                }}
+              >
                 {value}
               </div>
             </li>

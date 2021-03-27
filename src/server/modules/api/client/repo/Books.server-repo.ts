@@ -3,7 +3,6 @@ import {SelectQueryBuilder} from 'typeorm';
 
 import {ID} from '@shared/types';
 
-import {genTagLink} from '@client/routes/Links';
 import {
   convertMinutesToSeconds,
   convertHoursToSeconds,
@@ -86,29 +85,15 @@ export class BooksServerRepo extends ServerAPIClientChild implements BooksRepo {
     }),
   )
   async findOne(id: ID) {
-    const {bookService, bookTextHydratorSeoService} = this.api.services;
+    const {bookService} = this.api.services;
 
     const book = await bookService.findFullCard(+id);
-    const serialized = plainToClass(
+    return plainToClass(
       BookFullInfoSerializer,
       book,
       {
         excludeExtraneousValues: true,
       },
     );
-
-    const {primaryRelease} = serialized;
-    primaryRelease.description = await bookTextHydratorSeoService.hydrateTextWithPopularTags(
-      {
-        text: primaryRelease.description,
-        linkGeneratorFn: (item) => ({
-          href: genTagLink(item),
-          class: 'c-promo-tag-link',
-          target: '_blank',
-        }),
-      },
-    );
-
-    return serialized;
   }
 }

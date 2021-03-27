@@ -1,5 +1,7 @@
 import {Module} from '@nestjs/common';
 import {BookStatsModule} from '../stats';
+
+import {BookCategoryCron} from './cron/BookCategory.cron';
 import {
   BookCategoryService,
   BookCategoryRankingService,
@@ -13,6 +15,7 @@ import {
     providers: [
       BookCategoryService,
       BookCategoryRankingService,
+      BookCategoryCron,
     ],
     exports: [
       BookCategoryService,

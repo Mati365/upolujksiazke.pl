@@ -32,6 +32,7 @@ type BookInfoProps = {
 export const BookInfo = ({book, children}: BookInfoProps) => {
   const t = useI18n();
   const {
+    taggedDescription, description,
     primaryRelease, authors, categories,
     avgRating, totalRatings, tags,
   } = book;
@@ -98,9 +99,12 @@ export const BookInfo = ({book, children}: BookInfoProps) => {
 
         <ExpandableDescriptionBox
           maxCharactersCount={900}
-          text={
-            primaryRelease.description || t('book.no_description')
-          }
+          text={(
+            taggedDescription
+              || description
+              || primaryRelease.description
+              || t('book.no_description')
+          )}
           html
         />
 

@@ -104,7 +104,6 @@
     "@sentry/integrations": "^6.2.0",
     "@sentry/node": "^6.2.0",
     "@sentry/tracing": "^6.2.0",
-    "add": "^2.0.6",
     "await-outside": "^3.0.0",
     "bull": "^3.20.0",
     "cache-manager": "^3.4.0",

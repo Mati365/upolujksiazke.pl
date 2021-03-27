@@ -46,6 +46,12 @@ export class BookEntity extends DatedRecordEntity {
   @Column('text', {nullable: true})
   originalPublishDate: string;
 
+  @Column('text', {nullable: true})
+  description: string;
+
+  @Column('text', {nullable: true})
+  taggedDescription: string;
+
   @JoinTable()
   @ManyToMany(() => BookAuthorEntity, (author) => author.books)
   authors: BookAuthorEntity[];

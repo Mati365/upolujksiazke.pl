@@ -2,6 +2,8 @@ export type ValueOf<T> = T[keyof T];
 
 export type AnyCallback = (...args: any[]) => any;
 
+export type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>;
+
 export type ID = string | number;
 
 export type RemoteID = string;

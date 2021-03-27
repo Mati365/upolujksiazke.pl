@@ -32,8 +32,6 @@ export const BookProperties = memo(({book}: BookPropertiesProps) => {
 
   const publishDate = book.originalPublishDate || primaryRelease.publishDate;
 
-  console.info(book);
-
   const t = useI18n('shared.book.props');
   const items = useMemo<IconPropertyInfo[]>(
     () => [

@@ -1,8 +1,18 @@
 import {Injectable} from '@nestjs/common';
+import * as R from 'ramda';
 
-import {hydrateTextWithLinks, LinkHydrateAttrs} from '../helpers/hydrateTextWithLinks';
+import {Optional} from '@shared/types';
+
+import {genTagLink} from '@client/routes/Links';
+import {normalizeHTML} from '@server/modules/importer/kinds/scrappers/helpers';
+import {paginatedAsyncIterator} from '@server/common/helpers/db';
+
+import {LinkHydrateAttrs, hydrateTextWithLinks} from '../helpers/hydrateTextWithLinks';
+import {BookEntity} from '../../../Book.entity';
 import {BookTagsStatsService} from '../../stats/services';
 import {BookTagStatDAO} from '../../stats/dao/BookTagStat.dao';
+
+type BookTagHydratorAttrs = Optional<Omit<LinkHydrateAttrs<BookTagStatDAO>, 'linkGeneratorFn'>, 'tags'>;
 
 @Injectable()
 export class BookTagsTextHydratorService {
@@ -13,22 +23,108 @@ export class BookTagsTextHydratorService {
   /**
    * Injects popular tags into text
    *
-   * @param {Omit<LinkHydrateAttrs<BookTagStatDAO>, 'items'>} attrs
+   * @param {BookTagHydratorAttrs} attrs
    * @returns
    * @memberof BookTagsTextHydratorService
    */
-  async hydrateTextWithPopularTags(attrs: Omit<LinkHydrateAttrs<BookTagStatDAO>, 'items'>) {
+  async hydrateTextWithPopularTags({tags, ...attrs}: BookTagHydratorAttrs) {
     if (!attrs.text)
       return attrs.text;
 
     const {bookTagsStats} = this;
-    const popularTags = await bookTagsStats.findMostPopularTags();
+    const popularTags = tags ?? (await bookTagsStats.findMostPopularTags());
 
     return hydrateTextWithLinks(
       {
-        items: popularTags,
+        tags: popularTags,
+        linkGeneratorFn: (item) => ({
+          href: genTagLink(item),
+          class: 'c-promo-tag-link',
+          target: '_blank',
+        }),
         ...attrs,
       },
     );
+  }
+
+  /**
+   * Reloads books descriptions
+   *
+   * @todo
+   *  Maybe add multithread hydration?
+   *
+   * @param {number[]} ids
+   * @memberof BookTagsTextHydratorService
+   */
+  async refreshBooksHydratedTags(ids: number[]) {
+    const {bookTagsStats} = this;
+
+    const popularTags = await bookTagsStats.findMostPopularTags();
+    const books = await (
+      BookEntity
+        .createQueryBuilder('b')
+        .select(
+          [
+            'b.id', 'b.primaryReleaseId', 'b.description',
+            'r.id', 'r.description',
+          ],
+        )
+        .leftJoin('b.primaryRelease', 'r', 'b.primaryReleaseId = r.id')
+        .whereInIds(ids)
+        .getMany()
+    );
+
+    // do not exec it in parallel, node is single threaded
+    for await (const book of books) {
+      const description = normalizeHTML(book.description ?? book.primaryRelease.description);
+
+      Object.assign(
+        book,
+        {
+          description,
+          taggedDescription: await this.hydrateTextWithPopularTags(
+            {
+              tags: popularTags,
+              text: description,
+            },
+          ),
+        },
+      );
+    }
+
+    await BookEntity.save(
+      books.map(({id, description, taggedDescription}) => new BookEntity(
+        {
+          id,
+          description,
+          taggedDescription,
+        },
+      )),
+    );
+  }
+
+  /**
+   * Rewrites descriptions of all books
+   *
+   * @memberof BookTagsTextHydratorService
+   */
+  async refreshAllBooksHydratedTags() {
+    const booksIterator = paginatedAsyncIterator(
+      {
+        limit: 30,
+        queryExecutor: ({limit, offset}) => (
+          BookEntity
+            .createQueryBuilder('b')
+            .select('b.id')
+            .offset(offset)
+            .limit(limit)
+            .getMany()
+        ),
+      },
+    );
+
+    for await (const [, page] of booksIterator) {
+      await this.refreshBooksHydratedTags(R.pluck('id', page));
+    }
   }
 }

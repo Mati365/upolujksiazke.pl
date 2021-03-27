@@ -12,7 +12,7 @@ import {
 
 export type LinkHydrateAttrs<T = any> = {
   text: string,
-  items: Array<T & {name: string}>,
+  tags: Array<T & {name: string}>,
   linkGeneratorFn(item: T): {
     href: string,
     rel?: string,
@@ -39,7 +39,7 @@ export type TextSimilarKeywordInfo<T> = {
  * @returns {Record<string, TextSimilarKeywordInfo<T>[]>}
  */
 export function pickTextSimilarKeywords<T>(
-  items: LinkHydrateAttrs<T>['items'],
+  items: LinkHydrateAttrs<T>['tags'],
   text: string,
 ): Record<string, TextSimilarKeywordInfo<T>[]> {
   const words = extractTextWords(
@@ -108,20 +108,20 @@ export function pickTextSimilarKeywords<T>(
 export function hydrateTextWithLinks<T>(
   {
     text,
-    items,
+    tags,
     linkGeneratorFn,
   }: LinkHydrateAttrs<T>,
 ) {
-  if (!items.length || !text)
+  if (!tags.length || !text)
     return text;
 
   // prevent for matching shortest sentences inside longest sentences
-  items = items.sort(
+  tags = tags.sort(
     (a, b) => b.name.length - a.name.length,
   );
 
   const similarWords = pickTextSimilarKeywords(
-    items,
+    tags,
     getHTMLInnerText(text),
   );
 

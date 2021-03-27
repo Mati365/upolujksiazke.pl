@@ -56,7 +56,7 @@ export class WoblinkBookParser
               totalRatings: aggregateRating?.ratingCount || null,
               avgRating: aggregateRating?.ratingValue || null,
               prevPrice: normalizePrice(offers.highPrice)?.price,
-              price: normalizePrice(offers.lowPrice)?.price,
+              price: normalizePrice(offers.lowPrice ?? offers.price)?.price,
             },
           ),
         ],

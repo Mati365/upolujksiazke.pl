@@ -5,6 +5,8 @@ import {BookPrizeRecord} from './BookPrize.record';
 import {TagRecord} from './Tag.record';
 
 export interface BookFullInfoRecord extends BookCardRecord {
+  description: string;
+  taggedDescription: string;
   originalPublishDate: string;
   primaryRelease: BookFullInfoReleaseRecord;
   tags: TagRecord[],

@@ -27,6 +27,7 @@ import {BookVolumeEntity} from '../modules/volume/BookVolume.entity';
 import {BookReviewEntity} from '../modules/review/BookReview.entity';
 import {BookReleaseEntity} from '../modules/release/BookRelease.entity';
 import {BookStatsService} from '../modules/stats/services/BookStats.service';
+import {BookTagsTextHydratorService} from '../modules/seo/service/BookTagsTextHydrator.service';
 
 /**
  * @see
@@ -50,7 +51,7 @@ export class BookService {
 
   public static readonly BOOK_FULL_CARD_FIELDS = [
     ...BookService.BOOK_CARD_FIELDS,
-    'book.originalPublishDate',
+    'book.originalPublishDate', 'book.taggedDescription', 'book.description',
     'primaryRelease',
   ];
 
@@ -65,6 +66,7 @@ export class BookService {
     private readonly prizeService: BookPrizeService,
     private readonly kindService: BookKindService,
     private readonly bookStatsService: BookStatsService,
+    private readonly bookSeoTagsService: BookTagsTextHydratorService,
   ) {}
 
   /**
@@ -262,7 +264,7 @@ export class BookService {
         volumeService, releaseService,
         categoryService, seriesService,
         prizeService, kindService,
-        bookStatsService,
+        bookStatsService, bookSeoTagsService,
       } = this;
 
       const alreadyInDB = !R.isNil(dto.id);
@@ -331,16 +333,26 @@ export class BookService {
       );
 
       // get most popular release
-      const primaryReleaseId = dto.primaryReleaseId ?? book.primaryReleaseId ?? (
-        R.reduce(
-          (acc, item) => (
-            (acc?.availability?.length || 0) < (item.availability?.length || 0)
-              ? item
-              : acc
-          ),
-          null as BookReleaseEntity,
-          upsertedReleases,
-        )?.id
+      const primaryRelease = R.reduce(
+        (acc, item) => (
+          (acc?.availability?.length || 0) < (item.availability?.length || 0)
+            ? item
+            : acc
+        ),
+        null as BookReleaseEntity,
+        upsertedReleases,
+      );
+
+      const primaryReleaseId = (
+        dto.primaryReleaseId
+          ?? book.primaryReleaseId
+          ?? primaryRelease?.id
+      );
+
+      const description = (
+        dto.description
+          ?? book.description
+          ?? primaryRelease.description
       );
 
       const mergedBook: BookEntity = Object.assign(
@@ -353,7 +365,15 @@ export class BookService {
           authors,
           tags,
           categories,
-          ...!R.isNil(primaryReleaseId) && {
+          ...!R.isNil(description) && {
+            description,
+            taggedDescription: await bookSeoTagsService.hydrateTextWithPopularTags(
+              {
+                text: description,
+              },
+            ),
+          },
+          ...!R.isNil(primaryRelease) && {
             primaryReleaseId,
           },
         },

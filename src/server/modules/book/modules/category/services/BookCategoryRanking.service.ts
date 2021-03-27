@@ -1,5 +1,4 @@
 import {Injectable} from '@nestjs/common';
-import {Cron, CronExpression} from '@nestjs/schedule';
 import {EntityManager} from 'typeorm';
 import * as R from 'ramda';
 
@@ -21,7 +20,6 @@ export class BookCategoryRankingService {
    *
    * @memberof BookCategoryRankingService
    */
-  @Cron(CronExpression.EVERY_DAY_AT_4AM)
   async refreshCategoryRanking() {
     const {bookStats, entityManager} = this;
 

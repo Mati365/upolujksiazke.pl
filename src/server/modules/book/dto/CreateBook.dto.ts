@@ -33,6 +33,14 @@ export class CreateBookDto {
   @IsString()
   readonly parameterizedSlug: string;
 
+  @IsOptional()
+  @IsString()
+  readonly description: string;
+
+  @IsOptional()
+  @IsString()
+  readonly taggedDescription: string;
+
   @IsEnum(Language)
   @IsOptional()
   readonly originalLang: Language;

@@ -158,6 +158,10 @@ export class BookService {
               'r.lang', 'r.isbn', 'r.binding', 'r.format', 'r.type',
               'r.title',
             ],
+            coversSizes: [
+              ImageVersion.THUMB,
+              ImageVersion.PREVIEW,
+            ],
           },
         ),
       },

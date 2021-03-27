@@ -1,6 +1,7 @@
 import {Injectable} from '@nestjs/common';
-import {Connection, EntityManager} from 'typeorm';
+import {Connection, EntityManager, In} from 'typeorm';
 import pMap from 'p-map';
+import * as R from 'ramda';
 
 import {
   uniqFlatHashByProp,
@@ -15,6 +16,11 @@ import {
 
 import {ImageResizeSize} from '@shared/types';
 import {ImageVersion} from '@shared/enums';
+
+import {
+  AttachmentEntity,
+  ImageAttachmentEntity,
+} from '@server/modules/attachment/entity';
 
 import {ImageAttachmentService, ImageResizeConfig} from '@server/modules/attachment/services';
 import {CreateBookReleaseDto} from './dto/CreateBookRelease.dto';
@@ -57,9 +63,11 @@ export class BookReleaseService {
     {
       bookId,
       selection,
+      coversSizes,
     }: {
       bookId: number,
       selection?: string[],
+      coversSizes?: ImageVersion[],
     },
   ) {
     const {releases, availability} = await objPropsToPromise(
@@ -99,7 +107,52 @@ export class BookReleaseService {
       },
     );
 
+    const covers = await (
+      coversSizes
+        ? (
+          ImageAttachmentEntity
+            .createQueryBuilder('image')
+            .select([
+              'image.version as "version"', 'attachment.file as "file"',
+              'rc.bookReleaseId as "releaseId"',
+            ])
+            .innerJoin(
+              BookReleaseEntity.coverTableName,
+              'rc',
+              'rc."bookReleaseId" IN (:...releasesIds) and "rc"."imageAttachmentsId" = "image"."id"',
+              {
+                releasesIds: R.pluck('id', releases),
+              },
+            )
+            .innerJoin('image.attachment', 'attachment')
+            .where(
+              {
+                version: In(coversSizes),
+              },
+            )
+            .getRawMany<{version: ImageVersion, file: string, releaseId: number}>()
+        )
+        : null
+    );
+
     const releasesMap = uniqFlatHashByProp('id', releases);
+    if (covers) {
+      covers.forEach(({releaseId, file, version}) => {
+        (releasesMap[releaseId].cover ||= []).push(
+          new ImageAttachmentEntity(
+            {
+              version,
+              attachment: new AttachmentEntity(
+                {
+                  file,
+                },
+              ),
+            },
+          ),
+        );
+      });
+    }
+
     availability.forEach((item) => {
       (releasesMap[item.releaseId].availability ??= []).push(item);
     });

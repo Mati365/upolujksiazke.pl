@@ -5,7 +5,7 @@
     @include clean-list;
     @include flex-list;
 
-    &.is-right-aligned {
+    &.is-aligned-right {
       justify-content: flex-end;
     }
   }

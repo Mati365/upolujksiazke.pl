@@ -43,6 +43,11 @@
     &:hover {
       text-decoration: underline;
     }
+
+    &.is-direction-vertical {
+      flex-direction: column;
+      justify-content: center;
+    }
   }
 
   &-button {

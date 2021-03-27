@@ -22,6 +22,11 @@
         max-height: 100%;
       }
     }
+
+    &.is-aligned-top > img {
+      top: 0;
+      bottom: initial;
+    }
   }
 
   &-card {
@@ -101,6 +106,11 @@
     position: absolute;
     right: -5px;
     bottom: 10px;
+
+    &.is-aligned-top {
+      top: 10px;
+      bottom: initial;
+    }
   }
 
   &-ribbon {

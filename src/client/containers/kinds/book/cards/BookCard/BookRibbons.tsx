@@ -1,4 +1,6 @@
 import React from 'react';
+import c from 'classnames';
+
 import {CleanList} from '@client/components/ui/CleanList';
 import {
   BookRibbon,
@@ -13,9 +15,10 @@ export type BookRibbonDescription = {
 
 type BookRibonsProps = {
   items: BookRibbonDescription[],
+  align?: string,
 };
 
-export const BookRibons = ({items}: BookRibonsProps) => {
+export const BookRibons = ({items, align}: BookRibonsProps) => {
   if (!items?.length)
     return null;
 
@@ -25,7 +28,10 @@ export const BookRibons = ({items}: BookRibonsProps) => {
 
   return (
     <CleanList
-      className='c-book-ribbons'
+      className={c(
+        'c-book-ribbons',
+        align && `is-aligned-${align}`,
+      )}
       spaced={1}
       inline={false}
     >

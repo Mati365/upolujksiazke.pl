@@ -21,6 +21,7 @@ import StoreSVG from '@assets/icons/svg/store.svg';
 import SpreadsheetSVG from '@assets/icons/svg/spreadsheet.svg';
 import QuestionMarkSVG from '@assets/icons/svg/question-mark.svg';
 import AnchorSVG from '@assets/icons/svg/anchor.svg';
+import DotsHorizontalRoundedSVG from '@assets/icons/svg/dots-horizontal-rounded.svg';
 
 import {Icon} from '../ui/Icon';
 
@@ -47,3 +48,4 @@ export const StoreIcon = Icon.createFromSVG(StoreSVG);
 export const SpreadsheetIcon = Icon.createFromSVG(SpreadsheetSVG);
 export const QuestionMarkIcon = Icon.createFromSVG(QuestionMarkSVG);
 export const AnchorIcon = Icon.createFromSVG(AnchorSVG);
+export const DotsHorizontalRoundedIcon = Icon.createFromSVG(DotsHorizontalRoundedSVG);

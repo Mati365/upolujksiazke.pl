@@ -76,7 +76,7 @@ export const Tabs = (
     <ul
       className={c(
         'c-tabs__nav',
-        align && `is-${align}-aligned`,
+        align && `is-aligned-${align}`,
       )}
     >
       {prependNav}

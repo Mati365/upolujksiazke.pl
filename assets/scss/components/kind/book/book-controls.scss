@@ -14,4 +14,80 @@
       margin-right: 10px;
     }
   }
+
+  &-book-gallery {
+    position: relative;
+
+    &__thumb {
+      $self: &;
+
+      position: relative;
+      width: 54px;
+      height: 0;
+      padding-bottom: percentage($book-ratio);
+      cursor: pointer;
+
+      > * {
+        @include layer(absolute);
+      }
+
+      &:not(:last-child) {
+        margin-bottom: .65rem;
+      }
+
+      &.is-active #{$self}-image {
+        border-color: color(primary);
+        border-width: 2px;
+      }
+
+      &.is-hidden {
+        display: none;
+      }
+
+      &-image {
+        border: 1px solid color(divider);
+        border-radius: 5px;
+        padding: 3px;
+        transition: transform 150ms ease-in-out;
+
+        &:hover {
+          transform: scale(1.02, 1.02);
+        }
+
+        &, > img {
+          display: block;
+        }
+
+        img {
+          width: 100%;
+          height: 100%;
+          border-radius: inherit;
+          overflow: hidden;
+        }
+      }
+    }
+
+    &__thumbs {
+      position: absolute;
+      top: 0;
+      right: 100%;
+      margin-right: 1.35rem;
+    }
+
+    &__more,
+    &__less {
+      width: 100%;
+      text-align: center;
+
+      > .c-text-button {
+        font-weight: 800;
+        font-size: $text-tiny;
+      }
+
+      .c-icon {
+        margin: 0 auto;
+        font-size: 2rem;
+      }
+    }
+  }
 }

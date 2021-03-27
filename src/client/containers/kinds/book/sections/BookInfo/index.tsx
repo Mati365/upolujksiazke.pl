@@ -19,10 +19,10 @@ import {
   LinksRow,
 } from '@client/components/ui';
 
-import {BookCover} from '../../cards/BookCard/BookCover';
 import {BookPriceBox} from './BookPriceBox';
 import {BookProperties} from './BookProperties';
 import {BookHeaderAttribute} from './BookHeaderAttribute';
+import {BookCoverGallery} from './BookCoverGallery';
 
 type BookInfoProps = {
   book: BookFullInfoRecord,
@@ -44,18 +44,16 @@ export const BookInfo = ({book, children}: BookInfoProps) => {
     },
   );
 
-  console.info(book);
-
   return (
     <Section
       spaced={3}
       className='c-book-info-section'
     >
-      <div className='c-book-info-section__cover'>
-        <BookCover
-          alt={formattedTitle}
+      <div className='c-book-info-section__sidebar'>
+        <BookCoverGallery
+          className='c-book-info-section__cover'
+          primaryAlt={formattedTitle}
           book={book}
-          forceRatio={false}
         />
       </div>
 

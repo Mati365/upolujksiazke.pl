@@ -42,13 +42,15 @@ export const BookWebsitesAvailabilityTable = (
     >
       <thead>
         <tr>
-          <th>{t('website')}</th>
+          <th>{t('store')}</th>
           {withType && (
-            <th>{t('type')}</th>
+            <th>{t('shared.book.type')}</th>
           )}
           <th>{t('prev_price')}</th>
           <th>{t('price')}</th>
-          <th style={{width: 155}}>{t('action')}</th>
+          <th style={{width: 155}}>
+            {t('shared.titles.action')}
+          </th>
         </tr>
       </thead>
       <tbody>

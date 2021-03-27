@@ -14,7 +14,7 @@ type BookPricesListProps = {
 };
 
 export const ReleasePricesGroups = ({className, book}: BookPricesListProps) => {
-  const t = useI18n('book.availability');
+  const t = useI18n('shared.book');
   const sortedReleases = useMemo(
     () => sortReleasesByPrice(book.releases),
     [book.id],

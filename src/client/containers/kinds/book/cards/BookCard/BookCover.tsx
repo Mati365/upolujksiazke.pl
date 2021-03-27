@@ -13,6 +13,8 @@ type BookCoverProps = {
   className?: string,
   forceRatio?: boolean,
   alt?: string,
+  src?: string,
+  align?: string,
   version?: ImageVersionField,
 };
 
@@ -20,7 +22,9 @@ export const BookCover = (
   {
     className,
     alt,
+    src,
     book,
+    align,
     forceRatio = true,
     version = 'preview',
   }: BookCoverProps,
@@ -32,12 +36,16 @@ export const BookCover = (
       className={c(
         'c-book-cover',
         forceRatio && 'has-forced-ratio',
+        align && `is-aligned-${align}`,
         className,
       )}
       alt={alt}
-      src={book.primaryRelease.cover[version].file}
+      src={(
+        src ?? book.primaryRelease.cover[version].file
+      )}
       layer={(
         <BookRibons
+          align={align}
           items={getBookRibbons(
             {
               t,

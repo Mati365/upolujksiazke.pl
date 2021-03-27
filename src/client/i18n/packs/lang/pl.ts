@@ -13,10 +13,16 @@ export const PL_LANG_PACK = {
       keywords: 'Słowa kluczowe',
       categories: 'Kategorie',
       group_by: 'Grupuj wg.:',
+      action: 'Akcja',
+      more: 'Więcej',
+      less: 'Mniej',
     },
     book: {
+      isbn: 'ISBN',
       volume: 'Tom',
       price: 'Cena',
+      type: 'Typ',
+      release: 'Nazwa wydania',
       check: 'Sprawdź',
       total_ratings: 'Ocen',
       available_types: 'Formaty:',
@@ -34,7 +40,7 @@ export const PL_LANG_PACK = {
         publisher: 'Wydawca',
         original_publish_date: 'Wydano',
         availability: 'Sklepy',
-        recording_length: 'Długość (min)',
+        recording_length: 'Nagranie (min)',
       },
     },
     price: {
@@ -64,13 +70,9 @@ export const PL_LANG_PACK = {
     },
     availability: {
       title: 'Porównaj ceny wydań w księgarniach',
-      type: 'Typ',
-      release: 'Nazwa wydania',
-      isbn: 'ISBN',
-      website: 'Księgarnia',
+      store: 'Księgarnia',
       prev_price: 'Poprzednia cena',
       price: 'Cena',
-      action: 'Akcja',
       buy: 'Idź do sklepu',
 
       groups: {

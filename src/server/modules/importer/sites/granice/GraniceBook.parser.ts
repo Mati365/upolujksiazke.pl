@@ -79,6 +79,10 @@ export class GraniceBookParser
     );
 
     const publisher = normalizeParsedText($details.find('[itemprop="publisher"]').text());
+    let cover = $('[itemtype="http://schema.org/Book"] .coverbig').find('[itemprop="image"]').attr('src');
+    if (cover?.includes('tym.jpg'))
+      cover = null;
+
     const release = new CreateBookReleaseDto(
       {
         title,
@@ -95,11 +99,9 @@ export class GraniceBookParser
             name: publisher,
           },
         ),
-        cover: new CreateImageAttachmentDto(
+        cover: cover && new CreateImageAttachmentDto(
           {
-            originalUrl: normalizeURL(
-              $('[itemtype="http://schema.org/Book"] .coverbig').find('[itemprop="image"]').attr('src'),
-            ),
+            originalUrl: normalizeURL(cover),
           },
         ),
       },

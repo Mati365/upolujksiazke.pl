@@ -130,14 +130,16 @@ export const BookInfo = ({book, children}: BookInfoProps) => {
       </div>
 
       <BookPriceBox book={book}>
-        <div className='c-book-info-section__tags'>
-          <div className='c-book-info-section__tags-title is-text-muted is-text-small'>
-            <AnchorIcon className='mr-2' />
-            {`${t('shared.titles.keywords')}:`}
-          </div>
+        {tags.length > 0 && (
+          <div className='c-book-info-section__tags'>
+            <div className='c-book-info-section__tags-title is-text-muted is-text-small'>
+              <AnchorIcon className='mr-2' />
+              {`${t('shared.titles.keywords')}:`}
+            </div>
 
-          <TagsList items={tags} />
-        </div>
+            <TagsList items={tags} />
+          </div>
+        )}
       </BookPriceBox>
     </Section>
   );

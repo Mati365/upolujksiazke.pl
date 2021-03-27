@@ -2,7 +2,7 @@ import React, {ReactNode, useState} from 'react';
 import c from 'classnames';
 
 import {useI18n} from '@client/i18n';
-import {getHTMLTextLength, splitHTMLAt} from '@client/helpers/html';
+import {getHTMLTextLength, splitHTMLAt} from '@client/helpers/parsers/html';
 
 import {DescriptionBox, DescriptionBoxProps} from './DescriptionBox';
 import {TextButton} from './TextButton';

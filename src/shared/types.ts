@@ -1,3 +1,5 @@
+export type ValueOf<T> = T[keyof T];
+
 export type AnyCallback = (...args: any[]) => any;
 
 export type ID = string | number;

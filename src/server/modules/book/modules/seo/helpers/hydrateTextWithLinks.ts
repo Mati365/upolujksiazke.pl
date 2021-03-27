@@ -1,9 +1,14 @@
-import stringSimilarity from 'string-similarity';
 import * as R from 'ramda';
+
+import stringSimilarity from 'string-similarity';
 
 import {createHTMLTag} from '@server/common/helpers/html/createHTMLTag';
 import {filterAndMap} from '@shared/helpers';
-import {isWordCharacter} from '@client/helpers/html';
+import {
+  extractTextWords,
+  getHTMLInnerText,
+  isWordCharacter,
+} from '@client/helpers/parsers';
 
 export type LinkHydrateAttrs<T = any> = {
   text: string,
@@ -16,36 +21,84 @@ export type LinkHydrateAttrs<T = any> = {
   },
 };
 
+export type TextSimilarKeywordInfo<T> = {
+  words: string[],
+  item: T & {name: string},
+};
+
 /**
- * Picks keywords that exists in text
+ * Picks similar list of sentences that are present in description
+ *
+ * @see
+ *  It is very slow! Do not run it in request handler!
  *
  * @export
  * @template T
  * @param {LinkHydrateAttrs<T>['items']} items
  * @param {string} text
- * @returns
+ * @returns {Record<string, TextSimilarKeywordInfo<T>[]>}
  */
-export function pickTextSimilarKeywords<T>(items: LinkHydrateAttrs<T>['items'], text: string) {
-  const words = R.uniq(text.toLowerCase().split(' '));
-  const similarKeywords: [string, typeof items[0]][] = filterAndMap(
+export function pickTextSimilarKeywords<T>(
+  items: LinkHydrateAttrs<T>['items'],
+  text: string,
+): Record<string, TextSimilarKeywordInfo<T>[]> {
+  const words = extractTextWords(
+    text.toLowerCase(),
+  );
+
+  const similarKeywords: [string, TextSimilarKeywordInfo<T>][] = filterAndMap(
     (item) => {
-      const matches = stringSimilarity.findBestMatch(item.name.toLowerCase(), words);
-      if (matches.bestMatch.rating > 0.7)
-        return [matches.bestMatch.target, item];
+      const parts = extractTextWords(item.name.toLowerCase());
+
+      for (let startWordIndex = 0; startWordIndex < words.length; ++startWordIndex) {
+        let matchedParts: string[] = null;
+
+        for (
+          let offset = 0;
+          offset < parts.length && startWordIndex + offset < words.length;
+          ++offset
+        ) {
+          const part = parts[offset];
+          const matchedWord = words[startWordIndex + offset];
+
+          const rating = stringSimilarity.compareTwoStrings(part, matchedWord);
+          if (rating < 0.7) {
+            matchedParts = null;
+            break;
+          } else
+            (matchedParts ||= []).push(matchedWord);
+        }
+
+        if (matchedParts) {
+          return [
+            words[startWordIndex],
+            {
+              words: matchedParts,
+              item,
+            },
+          ];
+        }
+      }
 
       return null;
     },
     items,
   );
 
-  return R.fromPairs(similarKeywords);
+  return similarKeywords.reduce(
+    (acc, item) => {
+      (acc[item[0]] ||= []).push(item[1]);
+      return acc;
+    },
+    {},
+  );
 }
 
 /**
  * Injects anchors into description
  *
  * @warn
- *  Do not nest for each!
+ *  Handle spaces!
  *
  * @export
  * @template T
@@ -62,60 +115,130 @@ export function hydrateTextWithLinks<T>(
   if (!items.length || !text)
     return text;
 
-  const similarWords = pickTextSimilarKeywords(items, text);
+  // prevent for matching shortest sentences inside longest sentences
+  items = items.sort(
+    (a, b) => b.name.length - a.name.length,
+  );
+
+  const similarWords = pickTextSimilarKeywords(
+    items,
+    getHTMLInnerText(text),
+  );
+
+  if (R.isEmpty(similarWords))
+    return text;
+
   const nesting: string[] = [];
   let wordAcc = '', output = '';
+
+  const eatWords = (startIndex: number, count: number) => {
+    const words: string[] = [];
+    let i = startIndex, acc = '';
+
+    for (; i < text.length && words.length < count; ++i) {
+      const c = text[i];
+      const wordCharacter = isWordCharacter(c);
+
+      if (wordCharacter)
+        acc += c;
+
+      if (acc && (!wordCharacter || i + 1 >= text.length)) {
+        words.push(acc);
+        acc = '';
+      }
+    }
+
+    return {
+      words,
+      totalCharacters: i - startIndex,
+    };
+  };
+
+  const flushWordAcc = (i: number) => {
+    if (!wordAcc)
+      return 0;
+
+    let anchor = false;
+    for (let j = 0; j < nesting.length; ++j) {
+      if (nesting[j] === 'a') {
+        anchor = true;
+        break;
+      }
+    }
+
+    let parsedWord = wordAcc;
+    let ignoredNextCharacters = 0;
+
+    if (!anchor) {
+      const matchedSentences = similarWords[wordAcc.toLowerCase()];
+
+      if (matchedSentences) {
+        const longestSentence = matchedSentences.reduce(
+          (acc, {words}) => Math.max(acc, words.length),
+          0,
+        );
+
+        const longestSentenceWords = eatWords(i, longestSentence).words;
+        const longestLowerSentenceWords = longestSentenceWords.map((w) => w.toLowerCase());
+
+        const sentence = matchedSentences.find(({words}) => {
+          for (let k = 1; k < words.length; ++k) {
+            if (words[k] !== longestLowerSentenceWords[k - 1])
+              return false;
+          }
+
+          return true;
+        });
+
+        if (sentence) {
+          const newTag = createHTMLTag(
+            'a',
+            linkGeneratorFn(sentence.item),
+            [
+              wordAcc,
+              ...longestSentenceWords.slice(0, sentence.words.length - 1),
+            ].join(' '),
+          );
+
+          ignoredNextCharacters = sentence.words.join(' ').length - wordAcc.length - 1;
+          parsedWord = newTag;
+        }
+      }
+    }
+
+    output += parsedWord;
+    wordAcc = '';
+    return ignoredNextCharacters;
+  };
 
   for (let i = 0; i < text.length; ++i) {
     const c = text[i];
     const wordCharacter = isWordCharacter(c);
     if (wordCharacter)
       wordAcc += c;
+    else {
+      if (wordAcc)
+        i += flushWordAcc(i);
 
-    // flush word queue
-    if (wordAcc && (!wordCharacter || i + 1 >= text.length)) {
-      // search if there is any anchor in nesting group
-      let anchor = false;
-      for (let j = 0; j < nesting.length; ++j) {
-        if (nesting[j] === 'a') {
-          anchor = true;
-          break;
-        }
+      if (text[i] === c)
+        output += c;
+
+      // eat tags
+      if (c === '<') {
+        const pop = text[i + 1] === '/';
+        if (pop)
+          nesting.pop();
+
+        let tagContent = '';
+        for (; i < text.length && text[i + 1] !== '>'; ++i, tagContent += text[i]);
+
+        output += tagContent;
+        if (!pop)
+          nesting.push(tagContent.split(' ')[0]);
       }
-
-      // perform analyze
-      if (!anchor) {
-        const matchedWord = similarWords[wordAcc.toLowerCase()];
-        if (matchedWord) {
-          wordAcc = createHTMLTag(
-            'a',
-            linkGeneratorFn(matchedWord),
-            wordAcc,
-          );
-        }
-      }
-
-      output += wordAcc;
-      wordAcc = '';
-    }
-
-    if (!wordCharacter)
-      output += c;
-
-    // eat tags
-    if (c === '<') {
-      const pop = text[i + 1] === '/';
-      if (pop)
-        nesting.pop();
-
-      let tagName = '';
-      for (; i < text.length && text[i + 1] !== '>'; ++i, tagName += text[i]);
-
-      output += tagName;
-      if (!pop)
-        nesting.push(tagName);
     }
   }
 
+  flushWordAcc(text.length);
   return output;
 }

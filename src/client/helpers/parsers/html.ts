@@ -1,16 +1,4 @@
-/**
- * Check if is in word character
- *
- * @export
- * @param {string} c
- * @returns
- */
-export function isWordCharacter(c: string) {
-  if (!c)
-    return false;
-
-  return /[\wżźćńółęąś]/.test(c);
-}
+import {isWordCharacter} from './text';
 
 /**
  * Splits HTML into two pars after certain length
@@ -57,6 +45,31 @@ export function splitHTMLAt(
 }
 
 /**
+ * Get HTML text between tags
+ *
+ * @export
+ * @param {string} text
+ * @returns
+ */
+export function getHTMLInnerText(text: string) {
+  if (!text)
+    return '';
+
+  let acc = '';
+  for (let i = 0; i < text.length; ++i) {
+    const c = text[i];
+
+    if (c === '<') {
+      for (; i < text.length && text[i] !== '>'; ++i);
+      continue;
+    } else
+      acc += c;
+  }
+
+  return acc;
+}
+
+/**
  * Counts all characters in HTML
  *
  * @export
@@ -64,18 +77,5 @@ export function splitHTMLAt(
  * @returns
  */
 export function getHTMLTextLength(text: string) {
-  if (!text)
-    return 0;
-
-  let textCharacters = 0;
-  for (let i = 0; i < text.length; ++i, ++textCharacters) {
-    const c = text[i];
-
-    if (c === '<') {
-      for (; i < text.length && text[i] !== '>'; ++i);
-      continue;
-    }
-  }
-
-  return textCharacters;
+  return getHTMLInnerText(text).length;
 }

@@ -65,7 +65,7 @@ export const BookWebsitesAvailabilityTable = (
                 {
                   utm_source: document.location.hostname,
                   utm_medium: 'site',
-                  utm_campaign: 'compare button',
+                  utm_campaign: 'compare table',
                 },
               ),
               '_blank',

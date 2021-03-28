@@ -2,12 +2,15 @@ import React, {ReactNode} from 'react';
 import c from 'classnames';
 import * as R from 'ramda';
 
+import {buildURL} from '@shared/helpers';
 import {useI18n} from '@client/i18n';
 
 import {BookFullInfoRecord} from '@api/types';
 import {PurchaseIcon} from '@client/components/svg/Icons';
 import {BookCtaButton} from '@client/containers/kinds/book/controls/BookCtaButton';
 import {BookPriceGroup} from './BookPriceGroup';
+
+import {sortReleasesAvailability} from '../../helpers';
 
 type BookPriceBoxProps = {
   book: BookFullInfoRecord,
@@ -18,6 +21,22 @@ type BookPriceBoxProps = {
 export const BookPriceBox = ({className, book, children}: BookPriceBoxProps) => {
   const t = useI18n('book.price_box');
   const isPromotion = book.highestPrice !== book.lowestPrice;
+
+  const onBuy = () => {
+    const releases = sortReleasesAvailability(book.releases);
+
+    window.open(
+      buildURL(
+        releases[0].availability[0].url,
+        {
+          utm_source: document.location.hostname,
+          utm_medium: 'site',
+          utm_campaign: 'primary button',
+        },
+      ),
+      '_blank',
+    );
+  };
 
   return (
     <div
@@ -62,6 +81,7 @@ export const BookPriceBox = ({className, book, children}: BookPriceBoxProps) => 
           R.isNil(book.highestPrice)
         }
         expanded
+        onClick={onBuy}
       />
 
       {children}

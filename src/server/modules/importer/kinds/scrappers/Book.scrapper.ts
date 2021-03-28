@@ -1,7 +1,12 @@
-import {Language} from '@shared/enums/language';
+import {
+  BookType,
+  BookProtection,
+  BookBindingKind,
+  Language,
+} from '@shared/enums';
+
 import {CreateBookDto} from '@server/modules/book/dto/CreateBook.dto';
 import {CreateBookAvailabilityDto} from '@server/modules/book/modules/availability/dto/CreateBookAvailability.dto';
-import {BookBindingKind, BookProtection, BookType} from '@server/modules/book/modules/release/BookRelease.entity';
 import {ScrapperMetadataKind} from '@scrapper/entity';
 import {
   ScrapperResult,

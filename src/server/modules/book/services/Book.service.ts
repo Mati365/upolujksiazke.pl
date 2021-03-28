@@ -1,5 +1,6 @@
 import {Injectable} from '@nestjs/common';
 import {Connection, EntityManager, EntityTarget, In} from 'typeorm';
+import pMap from 'p-map';
 import * as R from 'ramda';
 
 import {objPropsToPromise} from '@shared/helpers';
@@ -250,6 +251,39 @@ export class BookService {
   }
 
   /**
+   * Performs only update without any other logic
+   *
+   * @param {BookEntity[]} entities
+   * @param {EntityManager} entityManager
+   * @returns
+   */
+  async shallowUpdate(
+    entities: BookEntity[],
+    entityManager: EntityManager = <any> BookEntity,
+  ) {
+    await pMap(
+      entities,
+      async (entity) => {
+        await (
+          entityManager
+            .createQueryBuilder()
+            .update(BookEntity)
+            .set(entity)
+            .where(
+              {
+                id: entity.id,
+              },
+            )
+            .execute()
+        );
+      },
+      {
+        concurrency: 2,
+      },
+    );
+  }
+
+  /**
    * Creates or updates single book
    *
    * @todo
@@ -272,13 +306,13 @@ export class BookService {
       } = this;
 
       const alreadyInDB = !R.isNil(dto.id);
+      let tags = await tagService.upsert(dto.tags, transaction);
       const [
         kind,
         volume,
         series,
         prizes,
         authors,
-        tags,
         categories,
       ] = (
         [
@@ -287,7 +321,6 @@ export class BookService {
           dto.series && await seriesService.upsert(dto.series, transaction),
           dto.prizes && await prizeService.upsert(dto.prizes, transaction),
           await authorService.upsert(dto.authors, transaction),
-          await tagService.upsert(dto.tags, transaction),
           await categoryService.upsert(dto.categories, transaction),
         ]
       );
@@ -359,6 +392,30 @@ export class BookService {
           ?? primaryRelease.description
       );
 
+      // insert seo tags
+      let taggedDescription: string = null;
+      if (!R.isNil(description)) {
+        const result = await bookSeoTagsService.hydrateTextWithPopularTags(
+          {
+            text: description,
+          },
+        );
+
+        if (result) {
+          taggedDescription = result.text;
+
+          if (result.tags?.length) {
+            tags = R.uniqBy(
+              R.prop('id'),
+              [
+                ...tags,
+                ...result.tags,
+              ],
+            );
+          }
+        }
+      }
+
       const mergedBook: BookEntity = Object.assign(
         book,
         {
@@ -369,13 +426,9 @@ export class BookService {
           authors,
           tags,
           categories,
-          ...!R.isNil(description) && {
+          ...!R.isNil(taggedDescription) && {
             description,
-            taggedDescription: await bookSeoTagsService.hydrateTextWithPopularTags(
-              {
-                text: description,
-              },
-            ),
+            taggedDescription,
           },
           ...!R.isNil(primaryRelease) && {
             primaryReleaseId,

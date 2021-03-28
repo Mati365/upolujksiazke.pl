@@ -17,6 +17,7 @@ import {BookSEOModule} from './modules/seo';
 
 import {
   BookService,
+  BookTagsService,
   FuzzyBookSearchService,
 } from './services';
 
@@ -40,11 +41,13 @@ import {
     ],
     providers: [
       BookService,
+      BookTagsService,
       FuzzyBookSearchService,
     ],
     exports: [
       FuzzyBookSearchService,
       BookService,
+      BookTagsService,
       BookAvailabilityModule,
       BookStatsModule,
       BookPublisherModule,

@@ -1,12 +1,14 @@
-import {Injectable} from '@nestjs/common';
+import {Inject, Injectable, forwardRef} from '@nestjs/common';
 import * as R from 'ramda';
 
 import {Optional} from '@shared/types';
 
 import {genTagLink} from '@client/routes/Links';
-import {normalizeHTML} from '@server/modules/importer/kinds/scrappers/helpers';
 import {paginatedAsyncIterator} from '@server/common/helpers/db';
+import {objPropsToPromise} from '@shared/helpers';
 
+import {BookService, BookTagsService} from '@server/modules/book/services';
+import {TagEntity} from '@server/modules/tag/Tag.entity';
 import {LinkHydrateAttrs, hydrateTextWithLinks} from '../helpers/hydrateTextWithLinks';
 import {BookEntity} from '../../../Book.entity';
 import {BookTagsStatsService} from '../../stats/services';
@@ -18,6 +20,12 @@ type BookTagHydratorAttrs = Optional<Omit<LinkHydrateAttrs<BookTagStatDAO>, 'lin
 export class BookTagsTextHydratorService {
   constructor(
     private readonly bookTagsStats: BookTagsStatsService,
+
+    @Inject(forwardRef(() => BookTagsService))
+    private readonly bookTags: BookTagsService,
+
+    @Inject(forwardRef(() => BookService))
+    private readonly bookService: BookService,
   ) {}
 
   /**
@@ -29,12 +37,12 @@ export class BookTagsTextHydratorService {
    */
   async hydrateTextWithPopularTags({tags, ...attrs}: BookTagHydratorAttrs) {
     if (!attrs.text)
-      return attrs.text;
+      return null;
 
     const {bookTagsStats} = this;
     const popularTags = tags ?? (await bookTagsStats.findMostPopularTags());
 
-    return hydrateTextWithLinks(
+    const hydration = hydrateTextWithLinks(
       {
         tags: popularTags,
         linkGeneratorFn: (item) => ({
@@ -45,6 +53,21 @@ export class BookTagsTextHydratorService {
         ...attrs,
       },
     );
+
+    if (!hydration)
+      return null;
+
+    return {
+      text: hydration.text,
+      tags: (hydration.tags || []).map(
+        ({name, id}) => new TagEntity(
+          {
+            id,
+            name,
+          },
+        ),
+      ),
+    };
   }
 
   /**
@@ -57,49 +80,90 @@ export class BookTagsTextHydratorService {
    * @memberof BookTagsTextHydratorService
    */
   async refreshBooksHydratedTags(ids: number[]) {
-    const {bookTagsStats} = this;
+    const {
+      bookTagsStats,
+      bookTags,
+      bookService,
+    } = this;
 
     const popularTags = await bookTagsStats.findMostPopularTags();
-    const books = await (
-      BookEntity
-        .createQueryBuilder('b')
-        .select(
-          [
-            'b.id', 'b.primaryReleaseId', 'b.description',
-            'r.id', 'r.description',
-          ],
-        )
-        .leftJoin('b.primaryRelease', 'r', 'b.primaryReleaseId = r.id')
-        .whereInIds(ids)
-        .getMany()
+    const {booksTags, books} = await objPropsToPromise(
+      {
+        booksTags: (async () => {
+          const tags = await bookTags.getTagsForBooks(
+            ids,
+            ['t."id"', 'btt."bookId"'],
+          );
+
+          return R.mapObjIndexed(
+            R.pluck('id'),
+            tags,
+          );
+        })(),
+
+        books: (
+          BookEntity
+            .createQueryBuilder('b')
+            .select(
+              [
+                'b.id', 'b.primaryReleaseId', 'b.description',
+                'r.id', 'r.description',
+              ],
+            )
+            .leftJoin('b.primaryRelease', 'r', 'b.primaryReleaseId = r.id')
+            .whereInIds(ids)
+            .getMany()
+        ),
+      },
     );
 
     // do not exec it in parallel, node is single threaded
-    for await (const book of books) {
-      const description = normalizeHTML(book.description ?? book.primaryRelease.description);
+    const updatedBooks: Record<string, {
+      id: number,
+      description: string,
+      taggedDescription: string,
+      newTags: TagEntity[],
+    }> = {};
 
-      Object.assign(
-        book,
+    for await (const book of books) {
+      const description = book.description ?? book.primaryRelease.description;
+      const hydration = await this.hydrateTextWithPopularTags(
         {
-          description,
-          taggedDescription: await this.hydrateTextWithPopularTags(
-            {
-              tags: popularTags,
-              text: description,
-            },
-          ),
+          tags: popularTags,
+          text: description,
         },
       );
+
+      if (hydration) {
+        const cachedTags = booksTags[book.id];
+        updatedBooks[book.id] = {
+          id: book.id,
+          description,
+          taggedDescription: hydration.text,
+          newTags: (hydration.tags || []).filter(({id}) => !cachedTags || !cachedTags.includes(id)),
+        };
+      }
     }
 
-    await BookEntity.save(
-      books.map(({id, description, taggedDescription}) => new BookEntity(
-        {
-          id,
-          description,
-          taggedDescription,
-        },
-      )),
+    await Promise.all(
+      [
+        bookService.shallowUpdate(
+          R.values(updatedBooks).map(({description, taggedDescription, id}) => new BookEntity(
+            {
+              id,
+              description,
+              taggedDescription,
+            },
+          )),
+        ),
+
+        bookTags.appendTagsForBooks(
+          R.mapObjIndexed(
+            ({newTags}) => R.pluck('id', newTags),
+            updatedBooks,
+          ),
+        ),
+      ],
     );
   }
 

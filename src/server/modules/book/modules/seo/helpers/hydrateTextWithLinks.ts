@@ -21,6 +21,11 @@ export type LinkHydrateAttrs<T = any> = {
   },
 };
 
+export type LinkHydrateOutput<T> = {
+  text: string,
+  tags: LinkHydrateAttrs<T>['tags'],
+};
+
 export type TextSimilarKeywordInfo<T> = {
   words: string[],
   item: T & {name: string},
@@ -103,7 +108,7 @@ export function pickTextSimilarKeywords<T>(
  * @export
  * @template T
  * @param {LinkHydrateAttrs<T>} attrs
- * @returns
+ * @returns {LinkHydrateOutput<T>}
  */
 export function hydrateTextWithLinks<T>(
   {
@@ -111,9 +116,13 @@ export function hydrateTextWithLinks<T>(
     tags,
     linkGeneratorFn,
   }: LinkHydrateAttrs<T>,
-) {
-  if (!tags.length || !text)
-    return text;
+): LinkHydrateOutput<T> {
+  if (!tags.length || !text) {
+    return {
+      text,
+      tags: [],
+    };
+  }
 
   // prevent for matching shortest sentences inside longest sentences
   tags = tags.sort(
@@ -125,8 +134,12 @@ export function hydrateTextWithLinks<T>(
     getHTMLInnerText(text),
   );
 
-  if (R.isEmpty(similarWords))
-    return text;
+  if (R.isEmpty(similarWords)) {
+    return {
+      text,
+      tags: [],
+    };
+  }
 
   const nesting: string[] = [];
   let wordAcc = '', output = '';
@@ -240,5 +253,9 @@ export function hydrateTextWithLinks<T>(
   }
 
   flushWordAcc(text.length);
-  return output;
+
+  return {
+    text: output,
+    tags: R.unnest(R.map(R.pluck('item'), R.values(similarWords))),
+  };
 }

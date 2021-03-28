@@ -27,7 +27,7 @@ test('hydrate text with links', () => {
         href: `https://interia.pl/${id}`,
       }),
     },
-  )).toBe('grzegrzółka <a href="https://interia.pl/1">Kota</a> ala ma <a href="https://interia.pl/2">kota i psa</a> i coś tam jeszcze mniej interesującego <a href="https://interia.pl/4">BLa blA</a> <a href="https://interia.pl/3">bla</a> test');
+  ).text).toBe('grzegrzółka <a href="https://interia.pl/1">Kota</a> ala ma <a href="https://interia.pl/2">kota i psa</a> i coś tam jeszcze mniej interesującego <a href="https://interia.pl/4">BLa blA</a> <a href="https://interia.pl/3">bla</a> test');
 
   expect(hydrateTextWithLinks(
     {
@@ -46,7 +46,7 @@ test('hydrate text with links', () => {
         href: `https://interia.pl/${id}`,
       }),
     },
-  )).toBe('<a href="https://interia.pl">hrabonszcz</a> <div>hrabonszcz</div> <a href="https://interia.pl/2">hrabonszcz dupa</a> <a href="https://interia.pl/3">dupa</a>');
+  ).text).toBe('<a href="https://interia.pl">hrabonszcz</a> <div>hrabonszcz</div> <a href="https://interia.pl/2">hrabonszcz dupa</a> <a href="https://interia.pl/3">dupa</a>');
 
   expect(hydrateTextWithLinks(
     {
@@ -65,7 +65,7 @@ test('hydrate text with links', () => {
         href: `https://interia.pl/${id}`,
       }),
     },
-  )).toBe('<a href="https://interia.pl/3">dupa</a>. test "<a href="https://interia.pl/2">iksde</a>"');
+  ).text).toBe('<a href="https://interia.pl/3">dupa</a>. test "<a href="https://interia.pl/2">iksde</a>"');
 
   expect(hydrateTextWithLinks(
     {
@@ -88,7 +88,7 @@ test('hydrate text with links', () => {
         href: `https://interia.pl/${id}`,
       }),
     },
-  )).toBe('<a href="dupa">dupa</a> <a href="https://interia.pl/3">test</a> <a href="https://interia.pl/2">abc</a>');
+  ).text).toBe('<a href="dupa">dupa</a> <a href="https://interia.pl/3">test</a> <a href="https://interia.pl/2">abc</a>');
 
   expect(hydrateTextWithLinks(
     {
@@ -103,5 +103,5 @@ test('hydrate text with links', () => {
         href: `https://interia.pl/${id}`,
       }),
     },
-  )).toBe('literatury <a href="https://interia.pl/3">science fiction</a>.Kim jest Pirx? <a href="https://interia.pl/3">science fiction</a>');
+  ).text).toBe('literatury <a href="https://interia.pl/3">science fiction</a>.Kim jest Pirx? <a href="https://interia.pl/3">science fiction</a>');
 });

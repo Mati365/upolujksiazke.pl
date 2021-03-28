@@ -108,7 +108,7 @@ export class BookReleaseService {
     );
 
     const covers = await (
-      coversSizes
+      coversSizes && releases?.length > 0
         ? (
           ImageAttachmentEntity
             .createQueryBuilder('image')
@@ -153,9 +153,11 @@ export class BookReleaseService {
       });
     }
 
-    availability.forEach((item) => {
-      (releasesMap[item.releaseId].availability ??= []).push(item);
-    });
+    availability.forEach(
+      (item) => {
+        (releasesMap[item.releaseId].availability ??= []).push(item);
+      },
+    );
 
     return releases;
   }

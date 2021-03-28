@@ -9,7 +9,7 @@ import {
 } from '@shared/helpers';
 
 import {BookEntity, BookService} from '@server/modules/book';
-import {BooksRepo} from '@api/repo';
+import {BooksRepo, SingleBookSearchAttrs} from '@api/repo';
 import {BasicAPIPagination} from '@api/shared/types';
 
 import {RedisMemoize} from '../../helpers';
@@ -74,6 +74,7 @@ export class BooksServerRepo extends ServerAPIClientChild implements BooksRepo {
    * Finds one book
    *
    * @param {ID} id
+   * @param {Object} attrs
    * @returns
    * @memberof BooksServerRepo
    */
@@ -84,10 +85,20 @@ export class BooksServerRepo extends ServerAPIClientChild implements BooksRepo {
       expire: convertHoursToSeconds(0.5),
     }),
   )
-  async findOne(id: ID) {
+  async findOne(
+    id: ID,
+    {
+      reviewsCount,
+    }: SingleBookSearchAttrs = {},
+  ) {
     const {bookService} = this.api.services;
+    const book = await bookService.findFullCard(
+      {
+        id: +id,
+        reviewsCount,
+      },
+    );
 
-    const book = await bookService.findFullCard(+id);
     return plainToClass(
       BookFullInfoSerializer,
       book,

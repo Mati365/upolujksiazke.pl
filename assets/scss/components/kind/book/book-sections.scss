@@ -184,4 +184,41 @@
       margin-bottom: 1.15rem;
     }
   }
+
+  &-book-review {
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    gap: 30px;
+
+    &:not(:last-child) {
+      border-bottom: 1px solid color(divider);
+      padding-bottom: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    &__user {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      &-avatar {
+        display: block;
+
+        > img {
+          display: inline-block;
+          width: 64px;
+          height: 64px;
+          border-radius: 100%;
+        }
+      }
+    }
+
+    &__toolbar {
+      position: relative;
+      top: -1px;
+      margin-bottom: .25rem;
+      font-size: $text-small;
+      color: color(primary)
+    }
+  }
 }

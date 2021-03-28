@@ -1,10 +1,16 @@
 import {
   Column, ManyToOne,
-  JoinColumn, RelationId, Index, Check,
+  JoinColumn, RelationId, Index,
+  Check, BeforeUpdate, BeforeInsert,
 } from 'typeorm';
 
-import {RemoteRecordEntity, RemoteRecordFields} from '@server/modules/remote/entity/RemoteRecord.entity';
+import {normalizeHTML} from '@server/modules/importer/kinds/scrappers/helpers';
+
 import {VotingStatsEmbeddable} from '@server/modules/shared/VotingStats.embeddable';
+import {
+  RemoteRecordEntity,
+  RemoteRecordFields,
+} from '@server/modules/remote/entity/RemoteRecord.entity';
 
 import {BookReviewerEntity} from '../reviewer/BookReviewer.entity';
 import {BookEntity} from '../../Book.entity';
@@ -60,5 +66,14 @@ export class BookReviewEntity extends RemoteRecordFields {
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(partial: Partial<BookReviewEntity>) {
     super(partial);
+  }
+
+  @BeforeInsert()
+  @BeforeUpdate()
+  transformFields() {
+    const {description} = this;
+
+    if (description)
+      this.description = normalizeHTML(description);
   }
 }

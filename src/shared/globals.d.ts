@@ -1,5 +1,6 @@
 /* eslint-disable import/no-default-export */
 declare module '*.png';
+declare module '*.jpg';
 declare module '*.svg';
 declare module '*.jade';
 

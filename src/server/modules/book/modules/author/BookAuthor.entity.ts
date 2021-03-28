@@ -5,6 +5,7 @@ import {
 } from 'typeorm';
 
 import {parameterize} from '@shared/helpers/parameterize';
+import {normalizeHTML} from '@server/modules/importer/kinds/scrappers/helpers';
 
 import {DatedRecordEntity} from '@server/modules/database/DatedRecord.entity';
 import {BookEntity} from '../../Book.entity';
@@ -40,7 +41,10 @@ export class BookAuthorEntity extends DatedRecordEntity {
   @BeforeInsert()
   @BeforeUpdate()
   transformFields() {
-    const {parameterizedName, name} = this;
+    const {parameterizedName, name, description} = this;
+
+    if (description)
+      this.description = normalizeHTML(description);
 
     if (name)
       this.name = name.trim();

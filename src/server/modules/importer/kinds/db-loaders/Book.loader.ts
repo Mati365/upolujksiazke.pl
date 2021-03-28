@@ -46,7 +46,6 @@ import {
   mergeBooks,
   mergeReleases,
   normalizeBookTitle,
-  normalizeHTML,
   normalizePublisherTitle,
 } from '../scrappers/helpers';
 
@@ -289,7 +288,6 @@ export class BookDbLoaderService implements MetadataDbLoader {
       (author) => new CreateBookAuthorDto(
         {
           ...author,
-          description: normalizeHTML(author.description),
           name: trimBorderSpecialCharacters(author.name),
         },
       ),
@@ -345,7 +343,6 @@ export class BookDbLoaderService implements MetadataDbLoader {
         return new CreateBookReleaseDto(
           {
             ...release,
-            description: normalizeHTML(release.description),
             publisher: publisher && new CreateBookPublisherDto(
               {
                 ...publisher,
@@ -460,7 +457,6 @@ export class BookDbLoaderService implements MetadataDbLoader {
           (publisher) => new CreateBookPublisherDto(
             {
               ...publisher,
-              description: normalizeHTML(publisher.description),
               name: similarNames[parametrizedKey] ?? groupedReleases[0].publisher.name ?? publisher.name,
               parameterizedName: null,
             },

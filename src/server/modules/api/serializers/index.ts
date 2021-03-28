@@ -8,5 +8,8 @@ export * from './BookFullInfoRelease.serializer';
 export * from './BookVolume.serializer';
 export * from './BookPublisher.serializer';
 export * from './BookPrize.serializer';
+export * from './BookReview.serializer';
+export * from './BookReviewer.serializer';
 export * from './Website.serializer';
 export * from './Tag.serializer';
+export * from './VoteStats.serializer';

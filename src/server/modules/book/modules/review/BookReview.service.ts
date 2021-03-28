@@ -8,12 +8,19 @@ import {
   UpsertResourceAttrs,
 } from '@server/common/helpers/db';
 
+import {ImageVersion} from '@shared/enums';
 import {CreateBookReviewDto} from './dto/CreateBookReview.dto';
 import {BookReviewEntity} from './BookReview.entity';
 import {BookReviewerService} from '../reviewer/BookReviewer.service';
 
 @Injectable()
 export class BookReviewService {
+  public static readonly REVIEW_CARD_FIELDS = [
+    'review',
+    'reviewer.name', 'reviewer.gender',
+    'avatar.version', 'attachment.file',
+  ];
+
   constructor(
     private readonly connection: Connection,
     private readonly bookReviewerService: BookReviewerService,
@@ -43,6 +50,38 @@ export class BookReviewService {
           )),
         );
       },
+    );
+  }
+
+  /**
+   * Fetches N comments for book
+   *
+   * @param {Object} attrs
+   * @memberof BookReviewService
+   */
+  async findBookReviews(
+    {
+      bookId,
+      limit,
+    }: {
+      bookId: number,
+      limit: number,
+    },
+  ) {
+    return (
+      BookReviewEntity
+        .createQueryBuilder('review')
+        .select(BookReviewService.REVIEW_CARD_FIELDS)
+        .where(
+          {
+            bookId,
+          },
+        )
+        .leftJoin('review.reviewer', 'reviewer')
+        .leftJoin('reviewer.avatar', 'avatar', `avatar.version = '${ImageVersion.SMALL_THUMB}'`)
+        .leftJoin('avatar.attachment', 'attachment')
+        .limit(limit)
+        .getMany()
     );
   }
 

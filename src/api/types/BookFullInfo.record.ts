@@ -1,3 +1,4 @@
+import {BookReviewRecord} from './BookReview.record';
 import {BookCardRecord} from './BookCard.record';
 import {BookCategoryRecord} from './BookCategory.record';
 import {BookFullInfoReleaseRecord} from './BookFullInfoRelease.record';
@@ -9,8 +10,9 @@ export interface BookFullInfoRecord extends BookCardRecord {
   taggedDescription: string;
   originalPublishDate: string;
   primaryRelease: BookFullInfoReleaseRecord;
-  tags: TagRecord[],
-  categories: BookCategoryRecord[],
-  releases: BookFullInfoReleaseRecord[],
-  prizes: BookPrizeRecord[],
+  tags: TagRecord[];
+  categories: BookCategoryRecord[];
+  releases: BookFullInfoReleaseRecord[];
+  prizes: BookPrizeRecord[];
+  reviews: BookReviewRecord[];
 }

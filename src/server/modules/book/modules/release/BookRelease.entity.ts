@@ -6,6 +6,8 @@ import {
 } from 'typeorm';
 
 import {parameterize} from '@shared/helpers/parameterize';
+import {normalizeHTML} from '@server/modules/importer/kinds/scrappers/helpers';
+
 import {
   BookProtection,
   BookBindingKind,
@@ -170,6 +172,7 @@ export class BookReleaseEntity extends DatedRecordEntity {
   @BeforeUpdate()
   transformFields() {
     const {isbn, title, description, translator, type} = this;
+
     if (isbn)
       this.isbn = isbn.replaceAll('-', '');
 
@@ -179,7 +182,7 @@ export class BookReleaseEntity extends DatedRecordEntity {
     }
 
     if (description)
-      this.description = description.trim();
+      this.description = normalizeHTML(description.trim());
 
     if (R.isEmpty(translator))
       this.translator = null;

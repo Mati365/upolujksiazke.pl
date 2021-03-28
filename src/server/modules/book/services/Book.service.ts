@@ -29,6 +29,7 @@ import {BookReviewEntity} from '../modules/review/BookReview.entity';
 import {BookReleaseEntity} from '../modules/release/BookRelease.entity';
 import {BookStatsService} from '../modules/stats/services/BookStats.service';
 import {BookTagsTextHydratorService} from '../modules/seo/service/BookTagsTextHydrator.service';
+import {BookReviewService} from '../modules/review/BookReview.service';
 
 /**
  * @see
@@ -66,8 +67,9 @@ export class BookService {
     private readonly seriesService: BookSeriesService,
     private readonly prizeService: BookPrizeService,
     private readonly kindService: BookKindService,
-    private readonly bookStatsService: BookStatsService,
-    private readonly bookSeoTagsService: BookTagsTextHydratorService,
+    private readonly statsService: BookStatsService,
+    private readonly seoTagsService: BookTagsTextHydratorService,
+    private readonly reviewsService: BookReviewService,
   ) {}
 
   /**
@@ -121,20 +123,32 @@ export class BookService {
   /**
    * Create query with all fields for single book
    *
-   * @param {number} id
+   * @param {Object} attrs
    * @returns
    * @memberof BookService
    */
-  async findFullCard(id: number) {
+  async findFullCard(
+    {
+      id,
+      reviewsCount,
+    }: {
+      id: number,
+      reviewsCount?: number,
+    },
+  ) {
     const {
       categoryService,
       prizeService,
       tagService,
       releaseService,
+      reviewsService,
     } = this;
 
     const entity = new BookEntity;
-    const {card, tags, categories, prizes, releases} = await objPropsToPromise(
+    const {
+      card, tags, categories,
+      prizes, releases, reviews,
+    } = await objPropsToPromise(
       {
         card: (
           this
@@ -165,6 +179,16 @@ export class BookService {
             ],
           },
         ),
+        reviews: (
+          reviewsCount > 0
+            ? reviewsService.findBookReviews(
+              {
+                bookId: id,
+                limit: reviewsCount,
+              },
+            )
+            : null
+        ),
       },
     );
 
@@ -179,6 +203,7 @@ export class BookService {
         categories,
         prizes,
         releases,
+        reviews,
       },
     );
 
@@ -302,7 +327,7 @@ export class BookService {
         volumeService, releaseService,
         categoryService, seriesService,
         prizeService, kindService,
-        bookStatsService, bookSeoTagsService,
+        statsService, seoTagsService,
       } = this;
 
       const alreadyInDB = !R.isNil(dto.id);
@@ -395,7 +420,7 @@ export class BookService {
       // insert seo tags
       let taggedDescription: string = null;
       if (!R.isNil(description)) {
-        const result = await bookSeoTagsService.hydrateTextWithPopularTags(
+        const result = await seoTagsService.hydrateTextWithPopularTags(
           {
             text: description,
           },
@@ -440,7 +465,7 @@ export class BookService {
       if (!alreadyInDB) {
         Object.assign(
           mergedBook,
-          bookStatsService.getLoadedEntityStats(mergedBook),
+          statsService.getLoadedEntityStats(mergedBook),
         );
       }
 
@@ -451,7 +476,7 @@ export class BookService {
       );
 
       if (alreadyInDB)
-        await bookStatsService.refreshBookStats(book.id);
+        await statsService.refreshBookStats(book.id);
 
       return mergedBook;
     });

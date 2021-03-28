@@ -5,6 +5,7 @@ import {
 } from 'typeorm';
 
 import {parameterize} from '@shared/helpers/parameterize';
+import {normalizeHTML} from '@server/modules/importer/kinds/scrappers/helpers';
 
 import {ImageAttachmentEntity} from '@server/modules/attachment/entity';
 import {DatedRecordEntity} from '../../../database/DatedRecord.entity';
@@ -62,6 +63,7 @@ export class BookPublisherEntity extends DatedRecordEntity {
     if (name)
       this.parameterizedName = parameterize(name);
 
-    this.description = description?.trim() || null;
+    if (description)
+      this.description = normalizeHTML(description.trim());
   }
 }

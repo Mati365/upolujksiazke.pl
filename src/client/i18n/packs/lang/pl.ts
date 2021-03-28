@@ -83,6 +83,9 @@ export const PL_LANG_PACK = {
         by_release: 'Wydania',
       },
     },
+    reviews: {
+      title: 'Recenzje książki',
+    },
   },
   sections: {
     recent_books: {

@@ -8,6 +8,7 @@ import {BookFullInfoRecord} from '@api/types';
 import {AsyncRoute} from '@client/components/utils/asyncRouteUtils';
 import {Breadcrumbs} from '@client/containers/Breadcrumbs';
 
+import {BookReviewsSection} from '@client/containers/kinds/book/sections/BookReviews';
 import {
   BookAvailabilitySection,
   BookInfo,
@@ -54,6 +55,7 @@ export const BookRoute: AsyncRoute = ({book}: BookRouteProps) => {
         />
         <BookInfo book={book}>
           <BookAvailabilitySection book={book} />
+          <BookReviewsSection book={book} />
         </BookInfo>
       </Container>
     </Layout>
@@ -67,5 +69,10 @@ BookRoute.route = {
 };
 
 BookRoute.getInitialProps = async ({api, match}) => ({
-  book: await api.repo.books.findOne(match.params.id),
+  book: await api.repo.books.findOne(
+    match.params.id,
+    {
+      reviewsCount: 5,
+    },
+  ),
 });

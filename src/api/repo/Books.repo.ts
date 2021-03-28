@@ -5,6 +5,10 @@ import {BookCardRecord} from '@api/types';
 import {APIRepo} from '../APIRepo';
 import {BookFullInfoRecord} from '../types/BookFullInfo.record';
 
-export interface BooksRepo extends APIRepo<BookFullInfoRecord> {
+export type SingleBookSearchAttrs = {
+  reviewsCount?: number,
+};
+
+export interface BooksRepo extends APIRepo<BookFullInfoRecord, SingleBookSearchAttrs> {
   findRecentBooks(filters?: BasicAPIPagination): CanBePromise<BookCardRecord[]>;
 }

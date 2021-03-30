@@ -46,6 +46,7 @@ OpenSource book reviews aggregator, something like Metacritic / Digg for books. 
 - [ ] Wykop charts in comment
 - [ ] Add trending stats
 - [ ] Books summaries
+- [ ] Dynamic create e-leaflets from books grouped by shop
 
 ## Resources
 

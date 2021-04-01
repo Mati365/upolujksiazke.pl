@@ -6,8 +6,14 @@
       gap: 30px;
     }
 
-    &__cover:last-child > picture > img {
-      -webkit-box-reflect: below 10px -webkit-gradient(linear, left top, left bottom, from(transparent), color-stop(70%, transparent) , to(rgba(250, 250, 250, 0.1)));
+    &__cover {
+      &:not(:last-child) {
+        margin-bottom: 1.75rem;
+      }
+
+      &:last-child > picture > img {
+        -webkit-box-reflect: below 10px -webkit-gradient(linear, left top, left bottom, from(transparent), color-stop(70%, transparent) , to(rgba(250, 250, 250, 0.1)));
+      }
     }
 
     &__info {
@@ -71,10 +77,6 @@
 
         margin-bottom: .85rem;
       }
-    }
-
-    &__volumes {
-      margin-top: 1.75rem;
     }
 
     @include mobile {
@@ -223,6 +225,27 @@
       margin-bottom: .25rem;
       font-size: $text-small;
       color: color(primary)
+    }
+  }
+
+  &-releases-tree {
+    &__item {
+      &:not(:last-child) {
+        padding-bottom: 0.3rem;
+      }
+
+      .c-expandable__header {
+        align-items: center;
+      }
+    }
+
+    .c-book-release-info {
+      margin: 0 20px 10px;
+      width: auto;
+
+      td, th {
+        padding: .35rem .35rem !important
+      }
     }
   }
 }

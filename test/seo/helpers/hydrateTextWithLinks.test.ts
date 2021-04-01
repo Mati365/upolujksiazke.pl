@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-import {hydrateTextWithLinks} from '@server/modules/book/modules/seo';
+import {hydrateTextWithLinks} from '@server/modules/book/modules/seo/helpers/hydrateTextWithLinks';
 
 test('hydrate text with links', () => {
   expect(hydrateTextWithLinks(

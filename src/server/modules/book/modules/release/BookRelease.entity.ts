@@ -61,7 +61,7 @@ export class BookReleaseEntity extends DatedRecordEntity {
   @Column('citext', {nullable: true})
   edition: string;
 
-  @Column('citext', {nullable: true, array: true})
+  @Column('text', {nullable: true, array: true})
   translator: string[];
 
   @Column('int', {nullable: true})

@@ -175,11 +175,6 @@ export class BookService {
         releases: releaseService.findBookReleases(
           {
             bookId: id,
-            selection: [
-              'r.id', 'r.publishDate', 'r.recordingLength',
-              'r.lang', 'r.isbn', 'r.binding', 'r.format', 'r.type',
-              'r.title',
-            ],
             coversSizes: [
               ImageVersion.THUMB,
               ImageVersion.PREVIEW,

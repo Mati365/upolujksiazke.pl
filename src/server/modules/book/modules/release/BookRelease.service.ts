@@ -58,18 +58,25 @@ export class BookReleaseService {
   async findBookReleases(
     {
       bookId,
-      selection,
       coversSizes,
     }: {
       bookId: number,
-      selection?: string[],
       coversSizes?: ImageVersion[],
     },
   ) {
     const releases = await (
       BookReleaseEntity
         .createQueryBuilder('r')
-        .select(selection)
+        .select(
+          [
+            'r.id', 'r.publishDate', 'r.recordingLength',
+            'r.lang', 'r.isbn', 'r.binding', 'r.format', 'r.type',
+            'r.title', 'r.totalPages', 'r.protection', 'r.translator',
+            'r.edition', 'r.weight',
+            'p.id', 'p.name', 'p.parameterizedName',
+          ],
+        )
+        .innerJoinAndSelect('r.publisher', 'p')
         .where(
           {
             bookId,
@@ -223,6 +230,7 @@ export class BookReleaseService {
         entityManager: transaction,
       };
 
+      console.info(dto.translator);
       const releaseEntity = await upsert(
         {
           connection,

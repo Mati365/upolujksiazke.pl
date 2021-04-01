@@ -1,0 +1,19 @@
+.c-expandable {
+  $self: &;
+
+  &__chevron {
+    margin-left: 2px;
+    font-size: 1.2em;
+    transition: transform 150ms ease-in-out;
+  }
+
+  &.is-toggled {
+    #{$self}__header {
+      font-weight: 600;
+    }
+
+    #{$self}__chevron {
+      transform: rotateZ(180deg);
+    }
+  }
+}

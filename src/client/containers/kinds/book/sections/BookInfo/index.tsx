@@ -17,6 +17,7 @@ import {
   Divider,
   Section,
   LinksRow,
+  SidebarSection,
 } from '@client/components/ui';
 
 import {BookPriceBox} from './BookPriceBox';
@@ -24,6 +25,7 @@ import {BookProperties} from './BookProperties';
 import {BookHeaderAttribute} from './BookHeaderAttribute';
 import {BookCoverGallery} from './BookCoverGallery';
 import {BookSeriesTree} from './BookSeriesTree';
+import {BookReleasesList} from './BookReleasesList';
 
 type BookInfoProps = {
   book: BookFullInfoRecord,
@@ -57,14 +59,30 @@ export const BookInfo = ({book, children}: BookInfoProps) => {
           book={book}
         />
 
-        <BookSeriesTree
-          className='c-book-info-section__volumes'
-          activeBookId={id}
-          items={book.hierarchy}
-          title={
-            `${t('book.volumes')}:`
-          }
-        />
+        {book.hierarchy?.length > 0 && (
+          <SidebarSection
+            className='c-book-info-section__volumes'
+            title={
+              `${t('book.volumes')}:`
+            }
+          >
+            <BookSeriesTree
+              activeBookId={id}
+              items={book.hierarchy}
+            />
+          </SidebarSection>
+        )}
+
+        {book.releases?.length > 0 && (
+          <SidebarSection
+            className='c-book-info-section__releases'
+            title={
+              `${t('book.releases')}:`
+            }
+          >
+            <BookReleasesList book={book} />
+          </SidebarSection>
+        )}
       </div>
 
       <div className='c-book-info-section__info'>

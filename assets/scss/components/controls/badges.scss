@@ -8,7 +8,7 @@
     border: 1px solid color(divider);
     border-radius: 5px;
 
-    > i:first-child {
+    > i:first-child:not(:last-child) {
       margin-right: 5px;
     }
   }

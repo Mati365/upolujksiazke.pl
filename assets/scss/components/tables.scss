@@ -5,6 +5,10 @@
     table-layout: fixed;
   }
 
+  &.is-auto-layout {
+    table-layout: auto;
+  }
+
   &.is-expanded {
     width: 100%;
   }

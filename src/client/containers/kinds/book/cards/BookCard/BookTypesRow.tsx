@@ -49,7 +49,7 @@ export const BookTypesRow = ({types}: BookTypesRowProps) => {
   return (
     <div className='c-book-card__types'>
       <span className='is-text-muted is-text-small'>
-        {t('shared.book.available_types')}
+        {`${t('shared.book.available_types')}:`}
       </span>
 
       <CleanList

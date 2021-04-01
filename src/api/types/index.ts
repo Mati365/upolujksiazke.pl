@@ -8,6 +8,7 @@ export * from './BookAvailability.record';
 export * from './BookFullInfoRelease.record';
 export * from './BookReview.record';
 export * from './BookReviewer.record';
+export * from './BookPublisher.record';
 export * from './Tag.record';
 export * from './Website.record';
 export * from './ImageAttachment.record';

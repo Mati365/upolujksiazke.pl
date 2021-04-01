@@ -1,4 +1,8 @@
-import {BookType} from '@shared/enums';
+import {
+  BookBindingKind,
+  BookProtection,
+  BookType,
+} from '@shared/enums';
 
 export const PL_LANG_PACK = {
   home: {
@@ -25,21 +29,38 @@ export const PL_LANG_PACK = {
       release: 'Nazwa wydania',
       check: 'Sprawdź',
       total_ratings: 'Ocen',
-      available_types: 'Formaty:',
+      available_types: 'Formaty',
       types: {
         [BookType.AUDIOBOOK]: 'audiobook',
         [BookType.EBOOK]: 'e-book',
         [BookType.PAPER]: 'papier',
         default: 'brak danych',
       },
+      protection: {
+        [BookProtection.WATERMARK]: 'znak wodny',
+      },
+      binding: {
+        [BookBindingKind.HARDCOVER]: 'twarda okładka',
+        [BookBindingKind.NOTEBOOK]: 'miękka okładka',
+        [BookBindingKind.PAPERBACK]: 'papierowa okładka',
+        [BookBindingKind.SPIRAL]: 'spiralna okładka',
+      },
       props: {
         total_pages: 'Strony',
+        type: 'Rodzaj',
+        lang: 'Język',
+        format: 'Format',
+        binding: 'Oprawa',
+        edition: 'Edycja',
+        weight: 'Waga (g)',
         prizes: 'Nagrody',
         rating: 'Ocena',
         ratings: 'Głosy',
         publisher: 'Wydawca',
-        original_publish_date: 'Wydano',
+        protection: 'Ochrona',
+        original_publish_date: 'Rok wydania',
         availability: 'Sklepy',
+        translator: 'Tłumacz',
         recording_length: 'Nagranie (min)',
       },
     },
@@ -63,6 +84,7 @@ export const PL_LANG_PACK = {
     no_description: 'Brak opisu :(',
     book_description: 'Opis książki',
     volumes: 'Tomy książki',
+    releases: 'Wydania książki',
     price_box: {
       header: 'Ceny książki:',
       highest_price: 'Najwyższa cena:',

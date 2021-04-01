@@ -1,60 +1,91 @@
-.c-section {
-  $self: &;
+.c {
+  &-section {
+    $self: &;
 
-  &.is-subsection {
-    #{$self}__header {
-      margin-bottom: 1.2rem;
-    }
+    &.is-subsection {
+      #{$self}__header {
+        margin-bottom: 1.2rem;
+      }
 
-    &:last-child {
-      margin-bottom: 0;
-    }
-  }
-
-  &.is-spaced {
-    @for $i from 1 through 4 {
-      &-#{$i} {
-        margin: #{$i}rem 0;
+      &:last-child {
+        margin-bottom: 0;
       }
     }
 
-    @include mobile {
+    &.is-spaced {
       @for $i from 1 through 4 {
         &-#{$i} {
-          margin: #{$i / 2}rem 0;
+          margin: #{$i}rem 0;
+        }
+      }
+
+      @include mobile {
+        @for $i from 1 through 4 {
+          &-#{$i} {
+            margin: #{$i / 2}rem 0;
+          }
         }
       }
     }
-  }
 
-  &.is-divided > &__header {
-    padding-bottom: 1.15rem;
-    border-bottom: 1px solid color(section-header-border);
-  }
+    &.is-divided > &__header {
+      padding-bottom: 1.15rem;
+      border-bottom: 1px solid color(section-header-border);
+    }
 
-  &__header {
-    @include capitalize;
+    &__header {
+      @include capitalize;
 
-    position: relative;
-    margin-top: 0;
-    margin-bottom: 2rem;
+      position: relative;
+      margin-top: 0;
+      margin-bottom: 2rem;
 
-    &-underline {
-      position: absolute;
-      left: 0;
-      bottom: -1px;
-      width: 64px;
-      height: 3px;
-      background: color(primary);
+      &-underline {
+        position: absolute;
+        left: 0;
+        bottom: -1px;
+        width: 64px;
+        height: 3px;
+        background: color(primary);
+      }
+    }
+
+    &__content:not(.has-no-spacing) {
+      padding: 0 1.75rem;
+
+      @include mobile {
+        padding-left: 0;
+        padding-right: 0;
+      }
     }
   }
 
-  &__content:not(.has-no-spacing) {
-    padding: 0 1.75rem;
+  &-sidebar-section {
+    &:not(:last-child) {
+      margin-bottom: 1.5rem;
+    }
 
-    @include mobile {
-      padding-left: 0;
-      padding-right: 0;
+    &__title {
+      font-size: $text-small;
+      line-height: 1.15rem;
+
+      margin-top: 0;
+      margin-bottom: 1.15rem;
+
+      &.is-bold {
+        font-weight: 700;
+      }
+    }
+
+    .c-tree li {
+      @include text-ellipsis;
+
+      font-size: $text-small;
+
+      &.is-active {
+        font-weight: 700;
+        color: color(primary);
+      }
     }
   }
 }

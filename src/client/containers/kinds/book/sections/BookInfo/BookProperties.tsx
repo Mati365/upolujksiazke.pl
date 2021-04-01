@@ -9,6 +9,7 @@ import {
   IconPropertyInfo,
 } from '@client/components/ui';
 
+import {PublisherLink} from '@client/routes/Links';
 import {StarIcon} from '@client/components/svg';
 import {
   BookOpenIcon,
@@ -43,8 +44,15 @@ export const BookProperties = memo(({book}: BookPropertiesProps) => {
       {
         name: t('publisher'),
         icon: BuildingsIcon,
-        value: primaryRelease.publisher?.name,
         autoWidth: true,
+        value: primaryRelease.publisher && (
+          <PublisherLink
+            item={primaryRelease.publisher}
+            className='is-undecorated-link has-double-link-chevron'
+          >
+            {primaryRelease.publisher.name}
+          </PublisherLink>
+        ),
       },
       {
         name: t('prizes'),

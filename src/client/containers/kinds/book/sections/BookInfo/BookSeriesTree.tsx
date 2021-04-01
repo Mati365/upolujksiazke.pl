@@ -1,17 +1,16 @@
-import React, {ReactNode} from 'react';
+import React from 'react';
 import c from 'classnames';
 
 import {useI18n} from '@client/i18n';
 import {formatBookTitle} from '@client/helpers/logic';
 
-import {TitledTree} from '@client/components/ui';
+import {Tree} from '@client/components/ui';
 import {SeriesBookRecord} from '@api/types';
 import {BookLink} from '@client/routes/Links';
 
 type BookSeriesTreeProps = {
   activeBookId?: number,
   className?: string,
-  title?: ReactNode,
   items: SeriesBookRecord[],
 };
 
@@ -19,7 +18,6 @@ export const BookSeriesTree = (
   {
     activeBookId,
     className,
-    title,
     items,
   }: BookSeriesTreeProps,
 ) => {
@@ -28,8 +26,7 @@ export const BookSeriesTree = (
     return null;
 
   return (
-    <TitledTree
-      title={title}
+    <Tree
       className={c(
         'c-book-series-tree',
         className,
@@ -59,7 +56,7 @@ export const BookSeriesTree = (
           </li>
         ),
       )}
-    </TitledTree>
+    </Tree>
   );
 };
 

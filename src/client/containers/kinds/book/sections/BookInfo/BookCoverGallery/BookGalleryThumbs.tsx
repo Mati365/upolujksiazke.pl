@@ -30,7 +30,7 @@ export const BookGalleryThumbs = (
   {
     active,
     items,
-    showPerPage = 4,
+    showPerPage = 3,
     minRemainCount = 1,
     onClick,
   }: BookGalleryThumbsProps,

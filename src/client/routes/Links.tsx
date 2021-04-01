@@ -3,6 +3,7 @@ import {
   BookAuthorRecord,
   BookCardRecord,
   BookCategoryRecord,
+  BookPublisherRecord,
   TagRecord,
 } from '@api/types';
 
@@ -12,6 +13,11 @@ export const HomeLink = UndecoratedLink.create(HOME_PATH);
 export const BOOK_PATH = '/ksiazka/:slug,:id';
 export const BookLink = UndecoratedLink.create<Pick<BookCardRecord, 'parameterizedSlug'|'id'>>(
   ({id, parameterizedSlug}) => `/ksiazka/${parameterizedSlug},${id}`,
+);
+
+export const PUBLISHER_PATH = '/wydawca/:slug,:id';
+export const PublisherLink = UndecoratedLink.create<Pick<BookPublisherRecord, 'parameterizedName'|'id'>>(
+  ({id, parameterizedName}) => `/wydawca/${parameterizedName},${id}`,
 );
 
 export const AUTHOR_PATH = '/autor/:slug,:id';

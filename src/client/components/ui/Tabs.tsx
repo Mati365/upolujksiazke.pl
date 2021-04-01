@@ -7,6 +7,8 @@ import {
   uniqFlatHashBy,
 } from '@shared/helpers';
 
+import {CleanList} from './CleanList';
+
 type TabProps = {
   title: string,
   id: any,
@@ -73,7 +75,11 @@ export const Tabs = (
 
   const tabElement: any = childrenMap[activeTabId];
   const list = (
-    <ul
+    <CleanList
+      block
+      inline
+      separated
+      spaced={4}
       className={c(
         'c-tabs__nav',
         align && `is-aligned-${align}`,
@@ -100,7 +106,7 @@ export const Tabs = (
           );
         },
       )}
-    </ul>
+    </CleanList>
   );
 
   const content = tabElement?.props.children(

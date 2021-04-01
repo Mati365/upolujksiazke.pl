@@ -24,21 +24,6 @@
         @include flex-list;
       }
 
-      &:not(:last-child) {
-        position: relative;
-        margin-right: 20px;
-
-        &::after {
-          content: '|';
-          position: absolute;
-          top: 2px;
-          right: -13px;
-          font-size: .75rem;
-          opacity: 0.45;
-          color: color(default-text);
-        }
-      }
-
       &:hover {
         text-decoration: underline;
       }

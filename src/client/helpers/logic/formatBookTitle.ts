@@ -1,11 +1,27 @@
 import {BookCardRecord} from '@api/types/BookCard.record';
-import {BookFullInfoReleaseRecord} from '@api/types';
 import {LangTranslateFn} from '@client/i18n/utils/createLangPack';
+import {
+  BookFullInfoReleaseRecord,
+  BookVolumeRecord,
+} from '@api/types';
+
+export function formatBookVolume(
+  {
+    t,
+    volume,
+  }: {
+    t: LangTranslateFn,
+    volume: BookVolumeRecord,
+  },
+) {
+  return `${t('shared.book.volume')} ${volume.name}`;
+}
 
 export function formatBookTitle(
   {
     t,
     withDefaultVolumeName,
+    volumeFirst,
     book: {
       defaultTitle,
       volume,
@@ -13,13 +29,27 @@ export function formatBookTitle(
   }: {
     t: LangTranslateFn,
     book: Pick<BookCardRecord, 'defaultTitle'|'volume'>,
+    volumeFirst?: boolean,
     withDefaultVolumeName?: boolean,
   },
 ) {
   if (!volume || (!withDefaultVolumeName && volume.name === '1'))
     return defaultTitle;
 
-  return `${defaultTitle} - ${t('shared.book.volume')} ${volume.name}`;
+  const parts: string[] = [defaultTitle];
+  const volumeTitle = formatBookVolume(
+    {
+      t,
+      volume,
+    },
+  );
+
+  if (volumeFirst)
+    parts.unshift(volumeTitle);
+  else
+    parts.push(volumeTitle);
+
+  return parts.join(' - ');
 }
 
 export function formatReleaseTitle(

@@ -56,7 +56,7 @@ export const BookPricesTabs = ({book}: BookPricesTabsProps) => {
       textOnly
       align='right'
       prependNav={(
-        <li className='mr-2 is-text-muted is-text-small'>
+        <li className='mr-2 is-text-muted is-text-small has-no-separator'>
           {t('shared.titles.group_by')}
         </li>
       )}

@@ -16,16 +16,32 @@ export class FuzzyBookSearchService {
    *
    * @param {CreateBookDto[]} books
    * @param {CreateBookReleaseDto[]} [allReleases]
-   * @param {number} [similarity=2]
+   * @param {number} similarity
    * @returns
    * @memberof FuzzyBookSearchService
    */
   async findAlreadyCachedSimilarToBooks(
     books: CreateBookDto[],
     allReleases?: CreateBookReleaseDto[],
-    similarity: number = 4,
+    similarity?: number,
   ) {
     allReleases ??= R.unnest(R.pluck('releases', books)) || [];
+
+    if (!similarity) {
+      similarity = (
+        R
+          .pluck('defaultTitle', books)
+          .filter(Boolean)
+          .reduce(
+            (acc, item) => Math.max(
+              Math.ceil(item.length * 0.3),
+              acc,
+            ),
+            0,
+          )
+      );
+    }
+
     const [bookIds, volumes, isbns, releasesIds] = [
       R.pluck('id', books),
       R.pluck('volume', books),

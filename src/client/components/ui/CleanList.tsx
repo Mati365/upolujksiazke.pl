@@ -10,12 +10,14 @@ export type CleanListProps = BasicWrapperProps & {
   spaced?: number,
   align?: string,
   justify?: string,
+  separated?: boolean,
 };
 
 export const CleanList = (
   {
     block = true,
     inline = true,
+    separated,
     wrap,
     spaced,
     align,
@@ -33,6 +35,7 @@ export const CleanList = (
       spaced && `is-spaced-${spaced}`,
       align && `is-aligned-${align}`,
       justify && `is-justified-${justify}`,
+      separated && 'is-separated',
       className,
     )}
     {...props}

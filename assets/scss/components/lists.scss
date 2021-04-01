@@ -4,7 +4,8 @@
     flex-wrap: wrap;
 
     &.is-inline {
-      @extend .c-flex-row;
+      @include flex-list;
+      justify-content: flex-start;
 
       &:not(.is-block) {
         display: inline-flex
@@ -15,12 +16,35 @@
       }
     }
 
+    &.is-separated {
+      > li:not(:last-child):not(.has-no-separator) {
+        position: relative;
+
+        &::after {
+          content: ' ';
+          position: absolute;
+          top: 50%;
+          height: 1em;
+          transform: translateY(-50%);
+          font-size: .75rem;
+          opacity: 0.45;
+          border-right: 1px solid color(default-text);
+        }
+      }
+    }
+
     &.is-spaced {
       @for $i from 1 through 7 {
         $spacing: $i * 5;
 
-        &-#{$i}.is-inline > li:not(:last-child) {
-          margin-right: #{$spacing}px;
+        &-#{$i}.is-inline {
+          > li:not(:last-child) {
+            margin-right: #{$spacing}px;
+          }
+
+          &.is-separated > li:not(:last-child):not(.has-no-separator)::after {
+            right: -#{$spacing / 2}px;
+          }
         }
 
         &-#{$i}:not(.is-inline) > li:not(:last-child) {
@@ -63,7 +87,7 @@
 
     &__icon {
       margin-bottom: .65rem;
-      font-size: 24px;
+      font-size: 1.2rem;
     }
 
     &__value {

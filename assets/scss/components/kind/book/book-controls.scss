@@ -91,19 +91,4 @@
       }
     }
   }
-
-  &-book-series-tree {
-    &__title {
-      @include reset-text-size;
-
-      font-weight: 700;
-      margin-top: 0;
-      margin-bottom: $text-small;
-    }
-
-    &__item.is-active {
-      font-weight: 700;
-      color: color(primary);
-    }
-  }
 }

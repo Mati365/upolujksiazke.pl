@@ -4,7 +4,7 @@ import c from 'classnames';
 import {useI18n} from '@client/i18n';
 import {formatBookTitle} from '@client/helpers/logic';
 
-import {CleanList} from '@client/components/ui';
+import {TitledTree} from '@client/components/ui';
 import {SeriesBookRecord} from '@api/types';
 import {BookLink} from '@client/routes/Links';
 
@@ -28,43 +28,38 @@ export const BookSeriesTree = (
     return null;
 
   return (
-    <div
+    <TitledTree
+      title={title}
       className={c(
         'c-book-series-tree',
         className,
       )}
     >
-      <h2 className='c-book-series-tree__title'>
-        {title}
-      </h2>
-
-      <CleanList className='c-book-series-tree__list c-tree'>
-        {items.map(
-          (item) => (
-            <li
-              key={item.id}
-              className={c(
-                'c-book-series-tree__item',
-                activeBookId === item.id && 'is-active',
-              )}
+      {items.map(
+        (item) => (
+          <li
+            key={item.id}
+            className={c(
+              activeBookId === item.id && 'is-active',
+            )}
+          >
+            <BookLink
+              item={item}
+              className='is-undecorated-link has-hover-underline has-double-link-chevron'
             >
-              <BookLink
-                item={item}
-                className='is-undecorated-link has-hover-underline has-double-link-chevron'
-              >
-                {formatBookTitle(
-                  {
-                    t,
-                    book: item,
-                    withDefaultVolumeName: true,
-                  },
-                )}
-              </BookLink>
-            </li>
-          ),
-        )}
-      </CleanList>
-    </div>
+              {formatBookTitle(
+                {
+                  t,
+                  book: item,
+                  withDefaultVolumeName: true,
+                  volumeFirst: true,
+                },
+              )}
+            </BookLink>
+          </li>
+        ),
+      )}
+    </TitledTree>
   );
 };
 

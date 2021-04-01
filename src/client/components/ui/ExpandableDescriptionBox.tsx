@@ -52,7 +52,7 @@ export const ExpandableDescriptionBox = (
             : chunks[0]
         )}
 
-        {toggled && (
+        {!toggled && (
           <span>...</span>
         )}
 

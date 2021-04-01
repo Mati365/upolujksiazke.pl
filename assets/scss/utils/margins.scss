@@ -1,16 +1,16 @@
 .m {
   &t {
-    &-2    { margin-top: 10px; }
+    &-2    { margin-top: 10px !important; }
   }
 
   &l {
-    &-1    { margin-left: 5px; }
-    &-auto { margin-left: auto; }
+    &-1    { margin-left: 5px !important; }
+    &-auto { margin-left: auto !important; }
   }
 
   &r {
-    &-1    { margin-right: 5px; }
-    &-2    { margin-right: 10px; }
-    &-3    { margin-right: 15px; }
+    &-1    { margin-right: 5px !important; }
+    &-2    { margin-right: 10px !important; }
+    &-3    { margin-right: 15px !important; }
   }
 }

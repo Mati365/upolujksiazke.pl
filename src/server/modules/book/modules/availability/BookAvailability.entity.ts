@@ -6,7 +6,6 @@ import {
 } from 'typeorm';
 
 import {RemoteRecordEntity, RemoteRecordFields} from '@server/modules/remote/entity/RemoteRecord.entity';
-import {BookEntity} from '../../Book.entity';
 import {BookReleaseEntity} from '../release/BookRelease.entity';
 
 /**
@@ -22,11 +21,10 @@ import {BookReleaseEntity} from '../release/BookRelease.entity';
     withUniqConstraint: false,
   },
 )
-@Index(['book'])
-@Index(['book', 'releaseId'])
+@Index(['releaseId'])
 @Unique(
-  'book_availability_unique_book_remote_website',
-  ['book', 'website', 'remoteId', 'release'],
+  'book_availability_unique_remote_website',
+  ['website', 'remoteId', 'release'],
 )
 export class BookAvailabilityEntity extends RemoteRecordFields {
   @Column(
@@ -58,20 +56,12 @@ export class BookAvailabilityEntity extends RemoteRecordFields {
   @Column('boolean', {default: true, nullable: true})
   inStock: boolean;
 
-  @ManyToOne(() => BookEntity, (entity) => entity.availability, {onDelete: 'CASCADE'})
-  @JoinColumn({name: 'bookId'})
-  book: BookEntity;
-
-  @Column()
-  @RelationId((entity: BookAvailabilityEntity) => entity.book)
-  bookId: number;
-
   @ManyToOne(() => BookReleaseEntity, (entity) => entity.availability, {onDelete: 'CASCADE'})
   @JoinColumn({name: 'releaseId'})
   release: BookReleaseEntity;
 
   @Column()
-  @RelationId((entity: BookAvailabilityEntity) => entity.book)
+  @RelationId((entity: BookAvailabilityEntity) => entity.release)
   releaseId: number;
 
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor

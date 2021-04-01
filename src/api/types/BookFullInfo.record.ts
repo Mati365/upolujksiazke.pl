@@ -4,6 +4,7 @@ import {BookCategoryRecord} from './BookCategory.record';
 import {BookFullInfoReleaseRecord} from './BookFullInfoRelease.record';
 import {BookPrizeRecord} from './BookPrize.record';
 import {TagRecord} from './Tag.record';
+import {SeriesBookRecord} from './SeriesBook.record';
 
 export interface BookFullInfoRecord extends BookCardRecord {
   description: string;
@@ -15,4 +16,5 @@ export interface BookFullInfoRecord extends BookCardRecord {
   releases: BookFullInfoReleaseRecord[];
   prizes: BookPrizeRecord[];
   reviews: BookReviewRecord[];
+  hierarchy: SeriesBookRecord[];
 }

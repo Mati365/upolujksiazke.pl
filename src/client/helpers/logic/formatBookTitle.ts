@@ -5,16 +5,18 @@ import {LangTranslateFn} from '@client/i18n/utils/createLangPack';
 export function formatBookTitle(
   {
     t,
+    withDefaultVolumeName,
     book: {
       defaultTitle,
       volume,
     },
   }: {
     t: LangTranslateFn,
-    book: BookCardRecord,
+    book: Pick<BookCardRecord, 'defaultTitle'|'volume'>,
+    withDefaultVolumeName?: boolean,
   },
 ) {
-  if (!volume || volume.name === '1')
+  if (!volume || (!withDefaultVolumeName && volume.name === '1'))
     return defaultTitle;
 
   return `${defaultTitle} - ${t('shared.book.volume')} ${volume.name}`;

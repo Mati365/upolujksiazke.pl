@@ -20,6 +20,9 @@ export class BookSeriesEntity extends DatedRecordEntity {
   @Column('text', {unique: true})
   parameterizedName: string;
 
+  @Column('boolean', {default: false, nullable: true})
+  hierarchic: boolean;
+
   constructor(partial: Partial<BookReleaseEntity>) {
     super();
     Object.assign(this, partial);

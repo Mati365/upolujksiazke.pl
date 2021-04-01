@@ -59,11 +59,6 @@ export const BOOK_TYPE_TRANSLATION_MAPPINGS = Object.freeze(
   },
 );
 
-export const BOOK_TYPE_TITLE_REGEX = new RegExp(
-  '(?<left>.*)?(?:[\\s.,(]|^)*(?<type>cd(?:\\s*mp3)?|ebook|audiobook)(?:[\\s.,)]|$)(?<right>.*)?',
-  'i',
-);
-
 export type BookScrappedPropsMap = Record<string, [string, cheerio.Cheerio]>;
 
 export type BookScrapperInfo = WebsiteScrapperItemInfo<CreateBookDto> & {

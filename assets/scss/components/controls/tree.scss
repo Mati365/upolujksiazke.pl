@@ -1,0 +1,38 @@
+ul.c-tree {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+
+	ul {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		margin-left: 10px;
+	}
+
+	li {
+		margin: 0;
+		padding: 0 7px;
+		line-height: 1.55rem;
+		border-left: 1px solid color(tree-divider);
+
+		&:last-child {
+			border-left: none;
+			&:before {
+				border-left: 1px solid color(tree-divider);
+			}
+		}
+
+		&:before {
+			content: "";
+      position: relative;
+			top: -0.3em;
+			left: -7px;
+			height: 1em;
+			width: 12px;
+			color: #fff;
+			border-bottom: 1px solid color(tree-divider);
+			display: inline-block;
+		}
+	}
+}

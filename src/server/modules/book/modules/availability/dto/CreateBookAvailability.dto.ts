@@ -4,10 +4,6 @@ import {CreateRemoteRecordDto} from '@server/modules/remote/dto/CreateRemoteReco
 export class CreateBookAvailabilityDto extends CreateRemoteRecordDto {
   @IsOptional()
   @IsNumber()
-  readonly bookId: number;
-
-  @IsOptional()
-  @IsNumber()
   readonly releaseId: number;
 
   @IsOptional()

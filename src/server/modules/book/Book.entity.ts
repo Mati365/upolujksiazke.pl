@@ -3,7 +3,7 @@ import {Transform} from 'class-transformer';
 import {
   Entity, Column, OneToOne,
   ManyToMany, OneToMany, JoinTable,
-  JoinColumn, ManyToOne, RelationId,
+  JoinColumn, ManyToOne, RelationId, Index,
 } from 'typeorm';
 
 import {Language} from '@shared/enums/language';
@@ -14,7 +14,6 @@ import {BookCategoryEntity} from './modules/category/BookCategory.entity';
 import {BookReviewEntity} from './modules/review/BookReview.entity';
 import {BookReleaseEntity, BookType} from './modules/release/BookRelease.entity';
 import {BookVolumeEntity} from './modules/volume/BookVolume.entity';
-import {BookAvailabilityEntity} from './modules/availability/BookAvailability.entity';
 import {BookSeriesEntity} from './modules/series/BookSeries.entity';
 import {BookPrizeEntity} from './modules/prize/BookPrize.entity';
 import {BookKindEntity} from './modules/kind/BookKind.entity';
@@ -24,6 +23,7 @@ import {BookKindEntity} from './modules/kind/BookKind.entity';
     name: 'book',
   },
 )
+@Index(['hierarchicSeries'])
 export class BookEntity extends DatedRecordEntity {
   @Column('text', {unique: true, nullable: true})
   parameterizedSlug: string;
@@ -96,8 +96,13 @@ export class BookEntity extends DatedRecordEntity {
   )
   releases: BookReleaseEntity[];
 
-  @OneToMany(() => BookAvailabilityEntity, (entity) => entity.book)
-  availability: BookAvailabilityEntity[];
+  @ManyToOne(() => BookSeriesEntity, {onDelete: 'SET NULL'})
+  @JoinColumn({name: 'hierarchicSeriesId'})
+  hierarchicSeries: BookSeriesEntity;
+
+  @Column({nullable: true})
+  @RelationId((entity: BookEntity) => entity.hierarchicSeries)
+  hierarchicSeriesId: number;
 
   @ManyToOne(() => BookVolumeEntity, {onDelete: 'CASCADE'})
   @JoinColumn({name: 'volumeId'})

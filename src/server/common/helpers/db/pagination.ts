@@ -105,10 +105,10 @@ export async function paginateQueryBuilder<T>(
       .orderBy(order);
 
     if (excludeIds)
-      builder.andWhere(`${builder.alias}.id NOT IN (:...excludeIds)`, {excludeIds});
+      builder.andWhere(`${builder.alias}.id not in (:...excludeIds)`, {excludeIds});
 
     if (!R.isNil(phrase) && options.unsafe?.phraseColumn)
-      builder.andWhere(`LOWER(${options.unsafe.phraseColumn}) LIKE LOWER(:phrase)`, {phrase: `%${phrase}%`});
+      builder.andWhere(`LOWER(${options.unsafe.phraseColumn}) like lower(:phrase)`, {phrase: `%${phrase}%`});
 
     return builder.getManyAndCount();
   })();

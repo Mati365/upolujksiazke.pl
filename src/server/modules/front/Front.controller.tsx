@@ -8,7 +8,6 @@ import {Accepts} from '@server/common/decorators/Accepts.decorator';
 import {Controller, Get, Res, Req} from '@nestjs/common';
 
 import {UA} from '@client/modules/ua';
-import {MemoizeMethod} from '@shared/helpers/decorators/MemoizeMethod';
 import {APP_ROUTES_LIST, PageRoot} from '@client/routes/Root';
 
 import {preloadAsyncRouteProps} from '@client/components/utils/asyncRouteUtils';
@@ -24,15 +23,12 @@ import htmlSkelTemplate from './templates/DefaultHTMLSkeleton.jade';
 
 @Controller()
 export class FrontController {
+  private baseHTMLTemplate = pug.compile(htmlSkelTemplate);
+
   constructor(
     private readonly manifestService: ManifestService,
     private readonly apiClientService: APIClientService,
   ) {}
-
-  @MemoizeMethod
-  getDefaultHTMLSkel() {
-    return pug.compile(htmlSkelTemplate);
-  }
 
   @Get('*')
   @Accepts('html')
@@ -42,6 +38,7 @@ export class FrontController {
     @I18n() i18n: I18nContext,
   ) {
     const {
+      baseHTMLTemplate,
       manifestService: {files},
       apiClientService: {client},
     } = this;
@@ -96,7 +93,7 @@ export class FrontController {
     }
 
     res.send(
-      this.getDefaultHTMLSkel()(
+      baseHTMLTemplate(
         {
           lang: i18n.lang,
           viewData: JSON.stringify(viewData),

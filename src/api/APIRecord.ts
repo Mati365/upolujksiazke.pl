@@ -1,7 +1,5 @@
-import {ID} from '@shared/types';
-
 export abstract class APIRecord {
-  id: ID;
+  id: number;
 }
 
 export abstract class APINamedRecord extends APIRecord {

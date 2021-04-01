@@ -12,10 +12,7 @@ import {
   DEFAULT_BOOK_VOLUME_NAME,
 } from '@server/modules/book/modules/volume/dto/CreateBookVolume.dto';
 
-import {
-  BOOK_TYPE_TRANSLATION_MAPPINGS,
-  BOOK_TYPE_TITLE_REGEX,
-} from '../Book.scrapper';
+import {BOOK_TYPE_TRANSLATION_MAPPINGS} from '../Book.scrapper';
 
 export type NormalizedBookTitleInfo = {
   title: string,
@@ -38,7 +35,10 @@ export function dropBookType(name: string): {
   if (!name)
     return null;
 
-  const result = name.match(BOOK_TYPE_TITLE_REGEX);
+  const result = name.match(
+    /(?<left>.*)?(?:[\\s.,(]|^)*(?<type>cd(?:\\s*mp3)?|ebook|audiobook)(?:[\\s.,)]|$)(?<right>.*)?/i,
+  );
+
   if (!result) {
     return {
       title: name,

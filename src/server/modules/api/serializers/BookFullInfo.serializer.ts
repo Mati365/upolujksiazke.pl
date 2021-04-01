@@ -5,8 +5,9 @@ import {BookCardSerializer} from './BookCard.serializer';
 import {BookCategorySerializer} from './BookCategory.serializer';
 import {BookFullInfoReleaseSerializer} from './BookFullInfoRelease.serializer';
 import {BookPrizeSerializer} from './BookPrize.serializer';
-import {TagSerializer} from './Tag.serializer';
 import {BookReviewSerializer} from './BookReview.serializer';
+import {SeriesBookSerializer} from './SeriesBook.serializer';
+import {TagSerializer} from './Tag.serializer';
 
 export class BookFullInfoSerializer extends BookCardSerializer implements BookFullInfoRecord {
   @Expose() description: string;
@@ -38,4 +39,8 @@ export class BookFullInfoSerializer extends BookCardSerializer implements BookFu
   @Expose()
   @Type(() => BookReviewSerializer)
   reviews: BookReviewSerializer[];
+
+  @Expose()
+  @Type(() => SeriesBookSerializer)
+  hierarchy: SeriesBookSerializer[];
 }

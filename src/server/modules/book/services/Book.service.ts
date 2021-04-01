@@ -17,9 +17,12 @@ import {BookAuthorService} from '../modules/author/BookAuthor.service';
 import {BookReleaseService} from '../modules/release/BookRelease.service';
 import {BookCategoryService} from '../modules/category';
 import {BookVolumeService} from '../modules/volume/BookVolume.service';
-import {BookSeriesService} from '../modules/series/BookSeries.service';
 import {BookPrizeService} from '../modules/prize/BookPrize.service';
 import {BookKindService} from '../modules/kind/BookKind.service';
+import {
+  BookHierarchySeriesService,
+  BookSeriesService,
+} from '../modules/series/services';
 
 import {CreateBookDto} from '../dto/CreateBook.dto';
 import {CreateBookReleaseDto} from '../modules/release/dto/CreateBookRelease.dto';
@@ -70,6 +73,7 @@ export class BookService {
     private readonly statsService: BookStatsService,
     private readonly seoTagsService: BookTagsTextHydratorService,
     private readonly reviewsService: BookReviewService,
+    private readonly hierarchyService: BookHierarchySeriesService,
   ) {}
 
   /**
@@ -142,12 +146,14 @@ export class BookService {
       tagService,
       releaseService,
       reviewsService,
+      hierarchyService,
     } = this;
 
     const entity = new BookEntity;
     const {
       card, tags, categories,
       prizes, releases, reviews,
+      hierarchy,
     } = await objPropsToPromise(
       {
         card: (
@@ -159,6 +165,7 @@ export class BookService {
                 id,
               },
             )
+            .limit(1)
             .getOne()
         ),
 
@@ -189,25 +196,23 @@ export class BookService {
             )
             : null
         ),
+        hierarchy: hierarchyService.findBookHierarchyBooks(id),
       },
     );
 
     if (!card)
       return null;
 
-    Object.assign(
-      entity,
-      card,
-      {
-        tags,
-        categories,
-        prizes,
-        releases,
-        reviews,
-      },
-    );
-
-    return entity;
+    return {
+      ...entity,
+      ...card,
+      tags,
+      categories,
+      prizes,
+      releases,
+      reviews,
+      hierarchy,
+    };
   }
 
   /**
@@ -219,9 +224,27 @@ export class BookService {
    */
   async delete(ids: number[], entityManager?: EntityManager) {
     const {
+      seriesService,
       connection,
       releaseService,
     } = this;
+
+    const seriesIds = R.pluck(
+      'bookSeriesId',
+      await (
+        connection
+          .createQueryBuilder()
+          .select('bs."bookSeriesId"')
+          .from('book_series_book_series', 'bs')
+          .where(
+            'bs."bookId" in (:...ids)',
+            {
+              ids,
+            },
+          )
+          .getRawMany()
+      ),
+    );
 
     const entities = await BookEntity.findByIds(
       ids,
@@ -273,6 +296,9 @@ export class BookService {
       },
       executor,
     );
+
+    if (seriesIds.length > 0)
+      await seriesService.deleteOrphanedSeries(seriesIds);
   }
 
   /**
@@ -328,6 +354,7 @@ export class BookService {
         categoryService, seriesService,
         prizeService, kindService,
         statsService, seoTagsService,
+        hierarchyService,
       } = this;
 
       const alreadyInDB = !R.isNil(dto.id);
@@ -478,6 +505,7 @@ export class BookService {
       if (alreadyInDB)
         await statsService.refreshBookStats(book.id);
 
+      await hierarchyService.findAndCreateBookHierarchy(book.id);
       return mergedBook;
     });
   }

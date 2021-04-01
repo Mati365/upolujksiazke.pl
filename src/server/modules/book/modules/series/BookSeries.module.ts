@@ -1,13 +1,18 @@
 import {Module} from '@nestjs/common';
-import {BookSeriesService} from './BookSeries.service';
+import {
+  BookHierarchySeriesService,
+  BookSeriesService,
+} from './services';
 
 @Module(
   {
     providers: [
       BookSeriesService,
+      BookHierarchySeriesService,
     ],
     exports: [
       BookSeriesService,
+      BookHierarchySeriesService,
     ],
   },
 )

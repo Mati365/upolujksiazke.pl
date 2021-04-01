@@ -118,6 +118,7 @@ export class FuzzyBookSearchService {
       query
         .innerJoinAndSelect('book.releases', 'release')
         .select(['release.id', 'release.isbn', 'book.id'])
+        .limit(1)
         .getOne()
     );
   }

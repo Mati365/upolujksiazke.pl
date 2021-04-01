@@ -4,14 +4,44 @@ import * as R from 'ramda';
 
 import {upsert} from '@server/common/helpers/db';
 
-import {BookSeriesEntity} from './BookSeries.entity';
-import {CreateBookSeriesDto} from './dto/CreateBookSeries.dto';
+import {BookSeriesEntity} from '../BookSeries.entity';
+import {CreateBookSeriesDto} from '../dto/CreateBookSeries.dto';
 
 @Injectable()
 export class BookSeriesService {
   constructor(
+    private readonly entityManager: EntityManager,
     private readonly connection: Connection,
   ) {}
+
+  /**
+   * Removes series without any book
+   *
+   * @param {number[]} ids
+   * @param {EntityManager} entityManager
+   * @memberof BookSeriesService
+   */
+  async deleteOrphanedSeries(
+    ids: number[],
+    entityManager: EntityManager = this.entityManager,
+  ) {
+    await entityManager.query(
+      /* sql */ `
+        select bs."id"
+        from book_series as "bs"
+        where
+          bs."id" = any(string_to_array($1, ',')::int[])
+          and  (
+            select count("bookId")
+            from book_series_book_series as "bss"
+            where bss."bookId" = bs."id"
+          ) = 0
+      `,
+      [
+        ids.join(','),
+      ],
+    );
+  }
 
   /**
    * Creates signle book volume

@@ -3,11 +3,7 @@ import {Connection, EntityManager, In} from 'typeorm';
 import pMap from 'p-map';
 import * as R from 'ramda';
 
-import {
-  uniqFlatHashByProp,
-  objPropsToPromise,
-} from '@shared/helpers';
-
+import {objPropsToPromise, uniqFlatHashByProp} from '@shared/helpers';
 import {
   forwardTransaction,
   upsert,
@@ -70,19 +66,20 @@ export class BookReleaseService {
       coversSizes?: ImageVersion[],
     },
   ) {
-    const {releases, availability} = await objPropsToPromise(
+    const releases = await (
+      BookReleaseEntity
+        .createQueryBuilder('r')
+        .select(selection)
+        .where(
+          {
+            bookId,
+          },
+        )
+        .getMany()
+    );
+
+    const {covers, availability} = await objPropsToPromise(
       {
-        releases: (
-          BookReleaseEntity
-            .createQueryBuilder('r')
-            .select(selection)
-            .where(
-              {
-                bookId,
-              },
-            )
-            .getMany()
-        ),
         availability: (
           BookAvailabilityEntity
             .createQueryBuilder('a')
@@ -99,40 +96,39 @@ export class BookReleaseService {
             .innerJoin('logo.attachment', 'attachment')
             .where(
               {
-                bookId,
+                releaseId: In(R.pluck('id', releases)),
               },
             )
             .getMany()
         ),
+        covers: (
+          coversSizes && releases?.length > 0
+            ? (
+              ImageAttachmentEntity
+                .createQueryBuilder('image')
+                .select([
+                  'image.version as "version"', 'attachment.file as "file"',
+                  'rc.bookReleaseId as "releaseId"',
+                ])
+                .innerJoin(
+                  BookReleaseEntity.coverTableName,
+                  'rc',
+                  'rc."bookReleaseId" IN (:...releasesIds) and "rc"."imageAttachmentsId" = "image"."id"',
+                  {
+                    releasesIds: R.pluck('id', releases),
+                  },
+                )
+                .innerJoin('image.attachment', 'attachment')
+                .where(
+                  {
+                    version: In(coversSizes),
+                  },
+                )
+                .getRawMany<{version: ImageVersion, file: string, releaseId: number}>()
+            )
+            : null
+        ),
       },
-    );
-
-    const covers = await (
-      coversSizes && releases?.length > 0
-        ? (
-          ImageAttachmentEntity
-            .createQueryBuilder('image')
-            .select([
-              'image.version as "version"', 'attachment.file as "file"',
-              'rc.bookReleaseId as "releaseId"',
-            ])
-            .innerJoin(
-              BookReleaseEntity.coverTableName,
-              'rc',
-              'rc."bookReleaseId" IN (:...releasesIds) and "rc"."imageAttachmentsId" = "image"."id"',
-              {
-                releasesIds: R.pluck('id', releases),
-              },
-            )
-            .innerJoin('image.attachment', 'attachment')
-            .where(
-              {
-                version: In(coversSizes),
-              },
-            )
-            .getRawMany<{version: ImageVersion, file: string, releaseId: number}>()
-        )
-        : null
     );
 
     const releasesMap = uniqFlatHashByProp('id', releases);
@@ -264,7 +260,6 @@ export class BookReleaseService {
             (item) => new CreateBookAvailabilityDto(
               {
                 ...item,
-                bookId: releaseEntity.bookId,
                 releaseId: releaseEntity.id,
               },
             ),

@@ -13,3 +13,4 @@ export * from './Website.record';
 export * from './ImageAttachment.record';
 export * from './CategoryBooksGroup.record';
 export * from './VoteStatsRecord.record';
+export * from './SeriesBook.record';

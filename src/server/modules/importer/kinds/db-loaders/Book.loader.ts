@@ -87,7 +87,7 @@ export class BookDbLoaderService implements MetadataDbLoader {
       return null;
     }
 
-    return this.parseTitlesAndExtractBooksToDb(
+    return this.extractVolumeGroupedBooks(
       [
         book,
       ],
@@ -140,7 +140,7 @@ export class BookDbLoaderService implements MetadataDbLoader {
       return null;
     }
 
-    const extractedBooks = await this.parseTitlesAndExtractBooksToDb(matchedBooks, attrs);
+    const extractedBooks = await this.extractVolumeGroupedBooks(matchedBooks, attrs);
     const searchSlug = book.genSlug();
 
     return R.reduce(
@@ -173,7 +173,7 @@ export class BookDbLoaderService implements MetadataDbLoader {
    * @param {BookExtractorAttrs} [attrs={}]
    * @memberof BookDbLoaderService
    */
-  async parseTitlesAndExtractBooksToDb(books: CreateBookDto[], attrs: BookExtractorAttrs = {}) {
+  async extractVolumeGroupedBooks(books: CreateBookDto[], attrs: BookExtractorAttrs = {}) {
     // extract volume info from all reelases titles, assign type based on title and edition
     const normalizedReleasesBooks = books.map((book) => ({
       book,
@@ -284,13 +284,17 @@ export class BookDbLoaderService implements MetadataDbLoader {
         return cachedBook;
     }
 
-    const authors = pickLongestArrayItem(R.pluck('authors', books))?.map(
-      (author) => new CreateBookAuthorDto(
-        {
-          ...author,
-          name: trimBorderSpecialCharacters(author.name),
-        },
-      ),
+    const authors = (
+      pickLongestArrayItem(R.pluck('authors', books))
+        ?.map(
+          (author) => new CreateBookAuthorDto(
+            {
+              ...author,
+              name: trimBorderSpecialCharacters(author.name),
+            },
+          ),
+        )
+        .filter(({name}) => name?.length > 0)
     );
 
     const normalizedReleases = await this.normalizeReleases(allReleases);

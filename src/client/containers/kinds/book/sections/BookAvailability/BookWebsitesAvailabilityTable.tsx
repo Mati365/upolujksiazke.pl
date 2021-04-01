@@ -5,10 +5,8 @@ import * as R from 'ramda';
 import {useI18n} from '@client/i18n';
 import {buildURL} from '@shared/helpers/urlEncoder';
 
-import {
-  Table, TableProps,
-  Favicon, TextButton,
-} from '@client/components/ui';
+import {Table, TableProps} from '@client/components/ui';
+import {TitledFavicon} from '@client/components/ui/TitledFavicon';
 
 import {Price} from '@client/containers/Price';
 import {BookCtaButton} from '@client/containers/kinds/book/controls/BookCtaButton';
@@ -75,21 +73,14 @@ export const BookWebsitesAvailabilityTable = (
           return (
             <tr key={item.id}>
               <td>
-                <TextButton
-                  className='c-flex-row is-text-semibold is-undecorated-link
-                             has-hover-underline has-double-link-chevron'
+                <TitledFavicon
+                  className='is-undecorated-link has-hover-underline has-double-link-chevron'
+                  src={smallThumb.file}
+                  title={website.title}
                   onClick={onOpen}
                 >
-                  {smallThumb?.file && (
-                    <Favicon
-                      className='mr-2'
-                      src={smallThumb.file}
-                      alt='Logo'
-                      title={website.title}
-                    />
-                  )}
                   {website.hostname}
-                </TextButton>
+                </TitledFavicon>
               </td>
 
               {withType && (

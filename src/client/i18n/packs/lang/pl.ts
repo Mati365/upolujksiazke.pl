@@ -62,6 +62,7 @@ export const PL_LANG_PACK = {
     created_by: 'Autor',
     no_description: 'Brak opisu :(',
     book_description: 'Opis książki',
+    volumes: 'Tomy książki',
     price_box: {
       header: 'Ceny książki:',
       highest_price: 'Najwyższa cena:',

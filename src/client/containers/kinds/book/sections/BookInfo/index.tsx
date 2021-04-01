@@ -23,6 +23,7 @@ import {BookPriceBox} from './BookPriceBox';
 import {BookProperties} from './BookProperties';
 import {BookHeaderAttribute} from './BookHeaderAttribute';
 import {BookCoverGallery} from './BookCoverGallery';
+import {BookSeriesTree} from './BookSeriesTree';
 
 type BookInfoProps = {
   book: BookFullInfoRecord,
@@ -32,7 +33,7 @@ type BookInfoProps = {
 export const BookInfo = ({book, children}: BookInfoProps) => {
   const t = useI18n();
   const {
-    taggedDescription, description,
+    id, taggedDescription, description,
     primaryRelease, authors, categories,
     avgRating, totalRatings, tags,
   } = book;
@@ -54,6 +55,15 @@ export const BookInfo = ({book, children}: BookInfoProps) => {
           className='c-book-info-section__cover'
           primaryAlt={formattedTitle}
           book={book}
+        />
+
+        <BookSeriesTree
+          className='c-book-info-section__volumes'
+          activeBookId={id}
+          items={book.hierarchy}
+          title={
+            `${t('book.volumes')}:`
+          }
         />
       </div>
 

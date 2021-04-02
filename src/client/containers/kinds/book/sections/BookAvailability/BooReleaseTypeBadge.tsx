@@ -26,7 +26,11 @@ export const BookReleaseTypeBadge = (
   return (
     <Badge className={className}>
       <Icon title={releaseTypeName || undefined} />
-      {releaseTypeName}
+      {releaseTypeName && (
+        <span>
+          {releaseTypeName}
+        </span>
+      )}
     </Badge>
   );
 };

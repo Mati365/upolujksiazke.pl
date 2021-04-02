@@ -1,11 +1,15 @@
 import React from 'react';
 import * as R from 'ramda';
 
+import {buildURL} from '@shared/helpers';
 import {useI18n} from '@client/i18n';
 
 import {BookFullInfoReleaseRecord} from '@api/types';
 import {Table} from '@client/components/ui';
 import {PublisherLink} from '@client/routes/Links';
+import {BookCtaButton} from '@client/containers/kinds/book/controls/BookCtaButton';
+
+import {sortReleasesAvailability} from '../../../helpers';
 
 type BookReleaseInfoProps = {
   release: BookFullInfoReleaseRecord,
@@ -80,38 +84,66 @@ export const BookReleaseInfo = ({release}: BookReleaseInfoProps) => {
     ],
   ].filter(Boolean);
 
-  return (
-    <Table className='c-book-release-info'>
-      <tbody>
-        {attrs.map(
-          ([key, value]) => (
-            <tr key={key as string}>
-              <th
-                style={{
-                  width: 90,
-                }}
-              >
-                {key}
-              </th>
+  const onOpen = () => {
+    const [{availability}] = sortReleasesAvailability([release]);
 
-              <td
-                className='has-ellipsis'
-                style={{
-                  width: 120,
-                }}
-                {...R.is(String, value) && {
-                  title: value as string,
-                }}
-              >
-                <div>
-                  {value}
-                </div>
-              </td>
-            </tr>
-          ),
-        )}
-      </tbody>
-    </Table>
+    window.open(
+      buildURL(
+        availability[0].url,
+        {
+          utm_source: document.location.hostname,
+          utm_medium: 'site',
+          utm_campaign: 'primary button',
+        },
+      ),
+      '_blank',
+    );
+  };
+
+  return (
+    <div className='c-book-release-info'>
+      <Table>
+        <tbody>
+          {attrs.map(
+            ([key, value]) => (
+              <tr key={key as string}>
+                <th
+                  style={{
+                    width: 90,
+                  }}
+                >
+                  {key}
+                </th>
+
+                <td
+                  className='has-ellipsis'
+                  style={{
+                    width: 120,
+                  }}
+                  {...R.is(String, value) && {
+                    title: value as string,
+                  }}
+                >
+                  <div>
+                    {value}
+                  </div>
+                </td>
+              </tr>
+            ),
+          )}
+        </tbody>
+      </Table>
+
+      <BookCtaButton
+        className='mx-auto mt-2 mb-3'
+        title={
+          t('book.availability.buy')
+        }
+        size='small'
+        outlined
+        onClick={onOpen}
+      />
+    </div>
   );
 };
 

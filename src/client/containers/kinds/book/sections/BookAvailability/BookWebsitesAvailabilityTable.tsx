@@ -108,7 +108,9 @@ export const BookWebsitesAvailabilityTable = (
 
               <td>
                 <BookCtaButton
-                  title={t('buy')}
+                  title={
+                    t('buy')
+                  }
                   size='small'
                   outlined
                   onClick={onOpen}

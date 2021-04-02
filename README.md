@@ -47,6 +47,7 @@ OpenSource book reviews aggregator, something like Metacritic / Digg for books. 
 - [ ] Add trending stats
 - [ ] Books summaries
 - [ ] Dynamic create e-leaflets from books grouped by shop
+- [ ] Add button on availability table with "add store link" and if user adds try to parse
 
 ## Resources
 

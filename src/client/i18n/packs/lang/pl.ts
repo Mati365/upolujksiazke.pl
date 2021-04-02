@@ -79,6 +79,9 @@ export const PL_LANG_PACK = {
       books: 'Książki',
     },
   },
+  author: {
+    other_books: 'Inne książki autora',
+  },
   book: {
     created_by: 'Autor',
     no_description: 'Brak opisu :(',

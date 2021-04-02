@@ -61,6 +61,7 @@ export const RatingsRow = (
 
   return (
     <CleanList
+      tag='div'
       className={c(
         'c-ratings-row is-inline',
         size && `is-text-${size}`,

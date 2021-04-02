@@ -23,14 +23,14 @@ export const SidebarSection = (
     {...props}
   >
     {title && (
-      <div
+      <h3
         className={c(
           'c-sidebar-section__title',
           bold && 'is-bold',
         )}
       >
         {title}
-      </div>
+      </h3>
     )}
 
     {children}

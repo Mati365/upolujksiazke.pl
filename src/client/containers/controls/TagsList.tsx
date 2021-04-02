@@ -24,7 +24,7 @@ export const TagsList = ({items, className}: TagsListProps) => (
       (item) => (
         <li key={item.id}>
           <TagLink item={item}>
-            {item.name}
+            {`#${item.name}`}
           </TagLink>
         </li>
       ),

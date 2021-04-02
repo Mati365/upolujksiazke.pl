@@ -10,7 +10,7 @@ import {
 
 import {BookEntity, BookService} from '@server/modules/book';
 import {BooksRepo, SingleBookSearchAttrs} from '@api/repo';
-import {BasicAPIPagination} from '@api/shared/types';
+import {BasicAPIPagination} from '@api/APIClient';
 
 import {RedisMemoize} from '../../helpers';
 import {MeasureCallDuration} from '../../helpers/MeasureCallDuration';

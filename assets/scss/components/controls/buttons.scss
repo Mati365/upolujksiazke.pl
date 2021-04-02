@@ -82,16 +82,6 @@
         }
       }
 
-      &-green {
-        --btn-background: #567d46;
-        --btn-border: #567d46;
-        --btn-color: #567d46;
-
-        &:hover {
-          background: color(button-primary-hover);
-        }
-      }
-
       &-small {
         font-size: .75rem;
       }

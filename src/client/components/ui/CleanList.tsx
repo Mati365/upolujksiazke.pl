@@ -4,6 +4,7 @@ import c from 'classnames';
 import {BasicWrapperProps} from '@client/components/ui';
 
 export type CleanListProps = BasicWrapperProps & {
+  tag?: any,
   inline?: boolean,
   block?: boolean,
   wrap?: boolean,
@@ -15,6 +16,7 @@ export type CleanListProps = BasicWrapperProps & {
 
 export const CleanList = (
   {
+    tag: Tag = 'ul',
     block = true,
     inline = true,
     separated,
@@ -26,7 +28,7 @@ export const CleanList = (
     ...props
   }: CleanListProps,
 ) => (
-  <ul
+  <Tag
     className={c(
       'c-clean-list',
       block && 'is-block',

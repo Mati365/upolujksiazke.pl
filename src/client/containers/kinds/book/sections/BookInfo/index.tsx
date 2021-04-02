@@ -4,14 +4,12 @@ import {useI18n} from '@client/i18n';
 import {formatBookTitle} from '@client/helpers/logic';
 
 import {BookFullInfoRecord} from '@api/types';
-import {AnchorIcon} from '@client/components/svg';
 import {RatingsRow} from '@client/containers/parts/RatingsRow';
 import {
   AuthorLink,
   CategoryLink,
 } from '@client/routes/Links';
 
-import {TagsList} from '@client/containers/controls/TagsList';
 import {
   ExpandableDescriptionBox,
   Divider,
@@ -26,6 +24,8 @@ import {BookHeaderAttribute} from './BookHeaderAttribute';
 import {BookCoverGallery} from './BookCoverGallery';
 import {BookSeriesTree} from './BookSeriesTree';
 import {BookReleasesList} from './BookReleasesList';
+import {BookTags} from './BookTags';
+import {OtherAuthorBooks} from './OtherAuthorBooks';
 
 type BookInfoProps = {
   book: BookFullInfoRecord,
@@ -74,14 +74,20 @@ export const BookInfo = ({book, children}: BookInfoProps) => {
         )}
 
         {book.releases?.length > 0 && (
-          <SidebarSection
-            className='c-book-info-section__releases'
-            title={
-              `${t('book.releases')}:`
-            }
-          >
-            <BookReleasesList book={book} />
-          </SidebarSection>
+          <>
+            {book.hierarchy?.length > 0 && (
+              <Divider />
+            )}
+
+            <SidebarSection
+              className='c-book-info-section__releases'
+              title={
+                `${t('book.releases')}:`
+              }
+            >
+              <BookReleasesList book={book} />
+            </SidebarSection>
+          </>
         )}
       </div>
 
@@ -163,15 +169,13 @@ export const BookInfo = ({book, children}: BookInfoProps) => {
 
       <BookPriceBox book={book}>
         {tags.length > 0 && (
-          <div className='c-book-info-section__tags'>
-            <div className='c-book-info-section__tags-title is-text-muted is-text-small'>
-              <AnchorIcon className='mr-2' />
-              {`${t('shared.titles.keywords')}:`}
-            </div>
-
-            <TagsList items={tags} />
-          </div>
+          <>
+            <BookTags tags={book.tags} />
+            <Divider />
+          </>
         )}
+
+        <OtherAuthorBooks />
       </BookPriceBox>
     </Section>
   );

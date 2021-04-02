@@ -6,10 +6,13 @@ import {SortKeys} from '@shared/types';
 import {RecentBooksRepo} from './repo/RecentBooks.repo';
 import {BooksRepo} from './repo/Books.repo';
 
-export type APIPaginationFilters<F = {}> = F & {
-  phrase?: string,
+export type BasicAPIPagination = {
+  offset?: number,
   limit?: number,
-  page?: number,
+};
+
+export type APIPaginationFilters<F = {}> = BasicAPIPagination & F & {
+  phrase?: string,
   totalPages?: number,
   totalItems?: number,
   sort?: SortKeys,

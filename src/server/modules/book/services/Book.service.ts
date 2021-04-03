@@ -373,7 +373,7 @@ export class BookService {
         await statsService.refreshBookStats(mergedBook.id);
 
       await hierarchyService.findAndCreateBookHierarchy(mergedBook.id);
-      await bookEsIndex.reindexRecord(mergedBook.id);
+      await bookEsIndex.reindexEntity(mergedBook.id);
     }
 
     return transactionResult.mergedBook;

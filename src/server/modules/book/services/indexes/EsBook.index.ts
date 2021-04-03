@@ -20,7 +20,8 @@ import {BookSeriesService} from '../../modules/series/services';
 export interface BookIndexEntity {
   id: number;
   titles: string[];
-  volume: EsIdNamePair;
+  volumeId: number,
+  volumeName: string,
   series: EsIdNamePair[];
   categories: EsIdNamePair[];
   authors: EsIdNamePair[];
@@ -56,10 +57,11 @@ export class EsBookIndex extends EntityIndex<BookEntity, BookIndexEntity> {
         index: indexName,
         body: {
           mappings: {
-            properties: {
+            properties: <Record<keyof BookIndexEntity, any>> {
               id: {type: 'long'},
               titles: {type: 'keyword'},
-              volume: PredefinedProperties.idNamePair,
+              volumeId: {type: 'long'},
+              volumeName: {type: 'keyword'},
               series: PredefinedProperties.idNamePair,
               authors: PredefinedProperties.idNamePair,
               tags: PredefinedProperties.idNamePair,
@@ -138,14 +140,20 @@ export class EsBookIndex extends EntityIndex<BookEntity, BookIndexEntity> {
    * @inheritdoc
    */
   mapRecord(entity: BookEntity): BookIndexEntity {
+    const {
+      volume, releases, series,
+      authors, tags, categories,
+    } = entity;
+
     return {
       id: entity.id,
-      titles: R.uniq(R.pluck('title', entity.releases)),
-      volume: pickIdName(entity.volume),
-      series: pickIdName(entity.series),
-      categories: pickIdName(entity.categories),
-      authors: pickIdName(entity.authors),
-      tags: pickIdName(entity.tags),
+      titles: R.uniq(R.pluck('title', releases)),
+      volumeId: volume?.id,
+      volumeName: volume?.name,
+      series: pickIdName(series),
+      categories: pickIdName(categories),
+      authors: pickIdName(authors),
+      tags: pickIdName(tags),
     };
   }
 }

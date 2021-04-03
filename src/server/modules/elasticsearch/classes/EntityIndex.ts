@@ -63,7 +63,7 @@ export abstract class EntityIndex<E extends {id: number}, I = any> implements On
 
     if (!exists) {
       logger.log(`Index ${chalk.bold(indexName)} does not exists! Creating index!`);
-      await this.reindexAllRecords();
+      await this.reindexAllEntities();
     }
   }
 
@@ -79,7 +79,7 @@ export abstract class EntityIndex<E extends {id: number}, I = any> implements On
    * @param {number} id
    * @memberof EntityIndex
    */
-  async reindexRecord(id: number) {
+  async reindexEntity(id: number) {
     const {es, logger} = this;
     logger.log(`Indexing ${id} record!`);
 
@@ -100,7 +100,7 @@ export abstract class EntityIndex<E extends {id: number}, I = any> implements On
    * @returns {Promise<void>}
    * @memberof EntityIndex
    */
-  async reindexAllRecords(): Promise<void> {
+  async reindexAllEntities(): Promise<void> {
     const {es, indexName} = this;
     const idMapper = async (id: number) => this.mapRecord(
       await this.findEntity(id),

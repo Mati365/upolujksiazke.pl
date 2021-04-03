@@ -51,6 +51,7 @@ import {
       CardBookSearchService,
     ],
     exports: [
+      EsBookIndex,
       FuzzyBookSearchService,
       BookService,
       BookTagsService,

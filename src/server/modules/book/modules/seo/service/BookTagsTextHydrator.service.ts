@@ -90,7 +90,7 @@ export class BookTagsTextHydratorService {
     const {booksTags, books} = await objPropsToPromise(
       {
         booksTags: (async () => {
-          const tags = await bookTags.getTagsForBooks(
+          const tags = await bookTags.findBooksTags(
             ids,
             ['t."id"', 'btt."bookId"'],
           );

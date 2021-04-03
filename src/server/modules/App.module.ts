@@ -21,6 +21,7 @@ import {TmpDirModule} from './tmp-dir';
 import {SentryModule} from './sentry';
 import {RedisCacheModule} from './cache';
 import {APIModule} from './api';
+import {ElasticsearchConnectionModule} from './elasticsearch';
 
 @Module(
   {
@@ -31,6 +32,7 @@ import {APIModule} from './api';
           ? []
           : [
             RedisCacheModule,
+            ElasticsearchConnectionModule,
             BullModule.forRoot(
               {
                 redis: SERVER_ENV.redisConfig,

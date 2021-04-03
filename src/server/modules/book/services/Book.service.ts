@@ -29,6 +29,7 @@ import {BookReviewEntity} from '../modules/review/BookReview.entity';
 import {BookReleaseEntity} from '../modules/release/BookRelease.entity';
 import {BookStatsService} from '../modules/stats/services/BookStats.service';
 import {BookTagsTextHydratorService} from '../modules/seo/service/BookTagsTextHydrator.service';
+import {EsBookIndex} from './indexes/EsBook.index';
 
 /**
  * @see
@@ -69,6 +70,7 @@ export class BookService {
     private readonly statsService: BookStatsService,
     private readonly seoTagsService: BookTagsTextHydratorService,
     private readonly hierarchyService: BookHierarchySeriesService,
+    private readonly bookEsIndex: EsBookIndex,
   ) {}
 
   /**
@@ -201,18 +203,17 @@ export class BookService {
    * @memberof BookService
    */
   async upsert(dto: CreateBookDto): Promise<BookEntity> {
-    const {connection} = this;
+    const {
+      connection,
+      tagService, authorService,
+      volumeService, releaseService,
+      categoryService, seriesService,
+      prizeService, kindService,
+      statsService, seoTagsService,
+      hierarchyService, bookEsIndex,
+    } = this;
 
-    return runTransactionWithPostHooks(connection, async (transaction) => {
-      const {
-        tagService, authorService,
-        volumeService, releaseService,
-        categoryService, seriesService,
-        prizeService, kindService,
-        statsService, seoTagsService,
-        hierarchyService,
-      } = this;
-
+    const transactionResult = await runTransactionWithPostHooks(connection, async (transaction) => {
       const alreadyInDB = !R.isNil(dto.id);
       let tags = await tagService.upsert(dto.tags, transaction);
       const [
@@ -358,11 +359,23 @@ export class BookService {
         ),
       );
 
-      if (alreadyInDB)
-        await statsService.refreshBookStats(book.id);
-
-      await hierarchyService.findAndCreateBookHierarchy(book.id);
-      return mergedBook;
+      return {
+        alreadyInDB,
+        mergedBook,
+      };
     });
+
+    // post hooks
+    if (transactionResult) {
+      const {alreadyInDB, mergedBook} = transactionResult;
+
+      if (alreadyInDB)
+        await statsService.refreshBookStats(mergedBook.id);
+
+      await hierarchyService.findAndCreateBookHierarchy(mergedBook.id);
+      await bookEsIndex.reindexRecord(mergedBook.id);
+    }
+
+    return transactionResult.mergedBook;
   }
 }

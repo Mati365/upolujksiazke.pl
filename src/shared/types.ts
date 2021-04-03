@@ -33,8 +33,8 @@ export type AwaitedObject<T> = {
 };
 
 export type ListItem = {
-  id?: ID,
-  name: string | number,
+  id: number,
+  name: string,
 };
 
 export type DatedItem = {

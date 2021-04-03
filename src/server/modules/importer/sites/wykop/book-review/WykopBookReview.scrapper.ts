@@ -48,7 +48,7 @@ export type WykopBookReviewScrapperConfig = {
  * https://www.wykop.pl/wpis/11633869/8-185-5-8-180-8185-1-8184-tytul-nowa-rebelia-autor/
  */
 export class WykopBookReviewScrapper extends AsyncScrapper<BookReviewScrapperInfo[]> {
-  protected readonly logger = new Logger(WykopBookReviewScrapper.name);
+  private readonly logger = new Logger(WykopBookReviewScrapper.name);
   protected readonly api: WykopAPI;
 
   static readonly contentParsers: Readonly<WykopEntryContentParser[]> = Object.freeze(

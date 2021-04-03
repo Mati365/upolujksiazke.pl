@@ -7,3 +7,4 @@ export * from './normalizeText';
 export * from './mimeType';
 export * from './downloadFile';
 export * from './asyncExec';
+export * from './getCurrentTimestampSuffix';

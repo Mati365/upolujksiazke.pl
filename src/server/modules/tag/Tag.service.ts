@@ -19,29 +19,6 @@ export class TagService {
   ) {}
 
   /**
-   * Returns all tags for specific book
-   *
-   * @param {number} bookId
-   * @returns
-   * @memberof TagService
-   */
-  findBookTags(bookId: number) {
-    return (
-      TagEntity
-        .createQueryBuilder('t')
-        .innerJoin(
-          'book_tags_tag',
-          'bt', 'bt.bookId = :bookId and bt.tagId = t.id',
-          {
-            bookId,
-          },
-        )
-        .select(['t.id', 't.name', 't.parameterizedName'])
-        .getMany()
-    );
-  }
-
-  /**
    * Creates single tag
    *
    * @param {CreateTagDto} dto

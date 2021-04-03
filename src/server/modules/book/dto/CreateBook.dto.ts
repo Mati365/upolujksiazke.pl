@@ -155,7 +155,7 @@ export class CreateBookDto {
       overrideTitle ?? defaultTitle ?? title,
       // do not reorder by name - primary author should be always first!
       reorderAuthorName(
-        overrideAuthor || R.sortBy(R.prop('name'), authors)[0]?.name || 'anonym',
+        overrideAuthor || R.sortBy(R.prop('name'), authors || [])[0]?.name || 'anonym',
       ),
       volume
         ? volume.name

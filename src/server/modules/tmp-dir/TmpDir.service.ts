@@ -1,7 +1,7 @@
 import path from 'path';
 import mkdirp from 'mkdirp';
 import {Observable} from 'rxjs';
-import {Inject, Injectable} from '@nestjs/common';
+import {Inject, Injectable, OnModuleInit} from '@nestjs/common';
 
 import {
   removeAndCreateDirAsync,
@@ -56,7 +56,7 @@ export function isTmpScopeObservable<T extends Observable<any>>(obj: T): obj is 
  * @class TmpDirService
  */
 @Injectable()
-export class TmpDirService {
+export class TmpDirService implements OnModuleInit {
   constructor(
     @Inject(TMP_DIR_OPTIONS) private readonly options: TmpDirServiceOptions,
   ) {}

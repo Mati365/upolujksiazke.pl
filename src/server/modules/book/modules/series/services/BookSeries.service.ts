@@ -15,6 +15,29 @@ export class BookSeriesService {
   ) {}
 
   /**
+   * Returns all series for specific book
+   *
+   * @param {number} bookId
+   * @returns
+   * @memberof BookSeriesService
+   */
+  findBookSeries(bookId: number) {
+    return (
+      BookSeriesEntity
+        .createQueryBuilder('s')
+        .innerJoin(
+          'book_series_book_series',
+          'bs', 'bs.bookId = :bookId and bs.bookSeriesId = s.id',
+          {
+            bookId,
+          },
+        )
+        .select(['s.id', 's.name'])
+        .getMany()
+    );
+  }
+
+  /**
    * Removes series without any book
    *
    * @param {number[]} ids

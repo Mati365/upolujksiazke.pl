@@ -8,6 +8,29 @@ import {TagEntity} from '../../tag/Tag.entity';
 @Injectable()
 export class BookTagsService {
   /**
+   * Returns all tags for specific book
+   *
+   * @param {number} bookId
+   * @returns
+   * @memberof TagService
+   */
+  findBookTags(bookId: number) {
+    return (
+      TagEntity
+        .createQueryBuilder('t')
+        .innerJoin(
+          'book_tags_tag',
+          'bt', 'bt.bookId = :bookId and bt.tagId = t.id',
+          {
+            bookId,
+          },
+        )
+        .select(['t.id', 't.name', 't.parameterizedName'])
+        .getMany()
+    );
+  }
+
+  /**
    * Returns array of tags for books
    *
    * @param {number[]} ids
@@ -15,7 +38,7 @@ export class BookTagsService {
    * @returns {Promise<Record<string, TagEntity[]>>}
    * @memberof BookService
    */
-  async getTagsForBooks(
+  async findBooksTags(
     ids: number[],
     select: string[] = ['t."id"', 't."name"', 'btt."bookId"'],
   ): Promise<Record<string, TagEntity[]>> {

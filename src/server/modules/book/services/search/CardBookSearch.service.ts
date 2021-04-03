@@ -15,14 +15,14 @@ import {BasicAPIPagination} from '@api/APIClient';
 import {BooksGroupsFilters} from '@api/repo/RecentBooks.repo';
 
 import {ImageVersion} from '@shared/enums';
-import {TagService} from '../../tag/Tag.service';
-import {BookReleaseService} from '../modules/release/BookRelease.service';
-import {BookCategoryEntity, BookCategoryService} from '../modules/category';
-import {BookPrizeService} from '../modules/prize/BookPrize.service';
-import {BookHierarchySeriesService} from '../modules/series/services';
+import {BookReleaseService} from '../../modules/release/BookRelease.service';
+import {BookCategoryEntity, BookCategoryService} from '../../modules/category';
+import {BookPrizeService} from '../../modules/prize/BookPrize.service';
+import {BookHierarchySeriesService} from '../../modules/series/services';
 
-import {BookEntity} from '../Book.entity';
-import {BookReviewService} from '../modules/review/BookReview.service';
+import {BookEntity} from '../../Book.entity';
+import {BookReviewService} from '../../modules/review/BookReview.service';
+import {BookTagsService} from '../BookTags.service';
 
 @Injectable()
 export class CardBookSearchService {
@@ -44,7 +44,7 @@ export class CardBookSearchService {
   constructor(
     private readonly connection: Connection,
     private readonly entityManager: EntityManager,
-    private readonly tagService: TagService,
+    private readonly bookTagService: BookTagsService,
     private readonly releaseService: BookReleaseService,
     private readonly categoryService: BookCategoryService,
     private readonly prizeService: BookPrizeService,
@@ -85,13 +85,13 @@ export class CardBookSearchService {
   }
 
   /**
-   * Find multiple cards
+   * Find multiple cards, it is simple method
    *
    * @param {number[]} ids
    * @returns
    * @memberof CardBookSearchService
    */
-  findBooks(ids: number[]) {
+  findBooksByIds(ids: number[]) {
     return (
       this
         .createCardsQuery()
@@ -159,7 +159,7 @@ export class CardBookSearchService {
 
     const booksEntities = uniqFlatHashByProp(
       'id',
-      await this.findBooks(bookIds),
+      await this.findBooksByIds(bookIds),
     );
 
     return (
@@ -231,7 +231,7 @@ export class CardBookSearchService {
     const {
       categoryService,
       prizeService,
-      tagService,
+      bookTagService,
       releaseService,
       reviewsService,
       hierarchyService,
@@ -257,7 +257,7 @@ export class CardBookSearchService {
             .getOne()
         ),
 
-        tags: tagService.findBookTags(id),
+        tags: bookTagService.findBookTags(id),
         categories: categoryService.findBookCategories(id),
         prizes: prizeService.findBookPrizes(id),
         releases: releaseService.findBookReleases(

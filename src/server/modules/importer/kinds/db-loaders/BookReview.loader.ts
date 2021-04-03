@@ -6,7 +6,7 @@ import {BookEntity} from '@server/modules/book/Book.entity';
 import {CreateBookReviewDto} from '@server/modules/book/modules/review/dto/CreateBookReview.dto';
 import {ScrapperMetadataEntity} from '@scrapper/entity/ScrapperMetadata.entity';
 import {MetadataDbLoader} from '@db-loader/MetadataDbLoader.interface';
-import {FuzzyBookSearchService} from '@server/modules/book/services/FuzzyBookSearch.service';
+import {FuzzyBookSearchService} from '@server/modules/book/services/search';
 import {BookReviewService} from '@server/modules/book/modules/review/BookReview.service';
 import {ScrapperService} from '../../modules/scrapper/service/Scrapper.service';
 import {BookDbLoaderService} from './Book.loader';

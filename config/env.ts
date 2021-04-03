@@ -30,6 +30,9 @@ export type AppEnv = Partial<{
       port: number,
       address: string,
     },
+    elasticsearchConfig: {
+      node: string,
+    },
     redisConfig: {
       port: number,
       host: string,
@@ -116,6 +119,9 @@ export const GLOBAL_CONFIG: Record<string, AppEnv> = {
       listen: {
         port: +APP_PORT,
         address: APP_LISTEN_ADDRESS,
+      },
+      elasticsearchConfig: {
+        node: 'http://localhost:9200',
       },
       redisConfig: {
         port: +REDIS_PORT,

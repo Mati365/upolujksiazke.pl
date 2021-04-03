@@ -2,12 +2,12 @@ import {Injectable} from '@nestjs/common';
 import {Brackets, SelectQueryBuilder} from 'typeorm';
 import * as R from 'ramda';
 
-import {BookEntity} from '../Book.entity';
-import {BookVolumeEntity} from '../modules/volume/BookVolume.entity';
+import {BookEntity} from '../../Book.entity';
+import {BookVolumeEntity} from '../../modules/volume/BookVolume.entity';
 
-import {CreateBookDto} from '../dto/CreateBook.dto';
-import {CreateBookReviewDto} from '../modules/review/dto/CreateBookReview.dto';
-import {CreateBookReleaseDto} from '../modules/release/dto/CreateBookRelease.dto';
+import {CreateBookDto} from '../../dto/CreateBook.dto';
+import {CreateBookReviewDto} from '../../modules/review/dto/CreateBookReview.dto';
+import {CreateBookReleaseDto} from '../../modules/release/dto/CreateBookRelease.dto';
 
 @Injectable()
 export class FuzzyBookSearchService {

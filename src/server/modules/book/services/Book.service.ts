@@ -1,16 +1,13 @@
 import {Injectable} from '@nestjs/common';
-import {Connection, EntityManager, EntityTarget, In} from 'typeorm';
+import {Connection, EntityManager, In} from 'typeorm';
 import pMap from 'p-map';
 import * as R from 'ramda';
 
-import {objPropsToPromise} from '@shared/helpers';
 import {
   forwardTransaction,
   runTransactionWithPostHooks,
   upsert,
 } from '@server/common/helpers/db';
-
-import {ImageVersion} from '@shared/enums';
 
 import {TagService} from '../../tag/Tag.service';
 import {BookAuthorService} from '../modules/author/BookAuthor.service';
@@ -32,7 +29,6 @@ import {BookReviewEntity} from '../modules/review/BookReview.entity';
 import {BookReleaseEntity} from '../modules/release/BookRelease.entity';
 import {BookStatsService} from '../modules/stats/services/BookStats.service';
 import {BookTagsTextHydratorService} from '../modules/seo/service/BookTagsTextHydrator.service';
-import {BookReviewService} from '../modules/review/BookReview.service';
 
 /**
  * @see
@@ -72,143 +68,8 @@ export class BookService {
     private readonly kindService: BookKindService,
     private readonly statsService: BookStatsService,
     private readonly seoTagsService: BookTagsTextHydratorService,
-    private readonly reviewsService: BookReviewService,
     private readonly hierarchyService: BookHierarchySeriesService,
   ) {}
-
-  /**
-   * Creates query used to generate book cards
-   *
-   * @param {string[]} [selectFields=BookService.BOOK_CARD_FIELDS]
-   * @param {EntityTarget<BookEntity>} [from=BookEntity]
-   * @returns
-   * @memberof BookService
-   */
-  createCardsQuery(
-    selectFields: string[] = BookService.BOOK_CARD_FIELDS,
-    from: EntityTarget<BookEntity> = BookEntity,
-  ) {
-    const query = (
-      this
-        .connection
-        .createQueryBuilder()
-        .from(from, 'book')
-    );
-
-    query.expressionMap.mainAlias.metadata = query.connection.getMetadata(BookEntity);
-
-    return (
-      query
-        .select(selectFields)
-        .innerJoinAndSelect('book.volume', 'volume')
-        .innerJoin('book.authors', 'author')
-        .innerJoin('book.primaryRelease', 'primaryRelease')
-        .innerJoin('primaryRelease.cover', 'cover', `cover.version = '${ImageVersion.PREVIEW}'`)
-        .innerJoin('cover.attachment', 'attachment')
-    );
-  }
-
-  /**
-   * Find multiple cards
-   *
-   * @param {number[]} ids
-   * @returns
-   * @memberof BookService
-   */
-  findCards(ids: number[]) {
-    return (
-      this
-        .createCardsQuery()
-        .whereInIds(ids)
-        .getMany()
-    );
-  }
-
-  /**
-   * Create query with all fields for single book
-   *
-   * @param {Object} attrs
-   * @returns
-   * @memberof BookService
-   */
-  async findFullCard(
-    {
-      id,
-      reviewsCount,
-    }: {
-      id: number,
-      reviewsCount?: number,
-    },
-  ) {
-    const {
-      categoryService,
-      prizeService,
-      tagService,
-      releaseService,
-      reviewsService,
-      hierarchyService,
-    } = this;
-
-    const entity = new BookEntity;
-    const {
-      card, tags, categories,
-      prizes, releases, reviews,
-      hierarchy,
-    } = await objPropsToPromise(
-      {
-        card: (
-          this
-            .createCardsQuery(BookService.BOOK_FULL_CARD_FIELDS)
-            .innerJoinAndSelect('primaryRelease.publisher', 'publisher')
-            .where(
-              {
-                id,
-              },
-            )
-            .limit(1)
-            .getOne()
-        ),
-
-        tags: tagService.findBookTags(id),
-        categories: categoryService.findBookCategories(id),
-        prizes: prizeService.findBookPrizes(id),
-        releases: releaseService.findBookReleases(
-          {
-            bookId: id,
-            coversSizes: [
-              ImageVersion.THUMB,
-              ImageVersion.PREVIEW,
-            ],
-          },
-        ),
-        reviews: (
-          reviewsCount > 0
-            ? reviewsService.findBookReviews(
-              {
-                bookId: id,
-                limit: reviewsCount,
-              },
-            )
-            : null
-        ),
-        hierarchy: hierarchyService.findBookHierarchyBooks(id),
-      },
-    );
-
-    if (!card)
-      return null;
-
-    return {
-      ...entity,
-      ...card,
-      tags,
-      categories,
-      prizes,
-      releases,
-      reviews,
-      hierarchy,
-    };
-  }
 
   /**
    * Remove single book release

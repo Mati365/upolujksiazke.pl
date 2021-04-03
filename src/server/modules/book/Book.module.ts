@@ -16,6 +16,7 @@ import {BookStatsModule} from './modules/stats';
 import {BookSEOModule} from './modules/seo';
 
 import {
+  CardBookSearchService,
   BookService,
   BookTagsService,
   FuzzyBookSearchService,
@@ -43,6 +44,7 @@ import {
       BookService,
       BookTagsService,
       FuzzyBookSearchService,
+      CardBookSearchService,
     ],
     exports: [
       FuzzyBookSearchService,
@@ -61,6 +63,7 @@ import {
       BookPrizeModule,
       BookSeriesModule,
       BookSEOModule,
+      CardBookSearchService,
     ],
   },
 )

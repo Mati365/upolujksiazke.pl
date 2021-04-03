@@ -1,14 +1,11 @@
 import {plainToClass} from 'class-transformer';
-import {SelectQueryBuilder} from 'typeorm';
-
-import {ID} from '@shared/types';
 
 import {
   convertMinutesToSeconds,
   convertHoursToSeconds,
 } from '@shared/helpers';
 
-import {BookEntity, BookService} from '@server/modules/book';
+import {ID} from '@shared/types';
 import {BooksRepo, SingleBookSearchAttrs} from '@api/repo';
 import {BasicAPIPagination} from '@api/APIClient';
 
@@ -36,30 +33,9 @@ export class BooksServerRepo extends ServerAPIClientChild implements BooksRepo {
       expire: convertMinutesToSeconds(35),
     }),
   )
-  async findRecentBooks(
-    {
-      offset = 0,
-      limit = 6,
-    }: BasicAPIPagination = {},
-  ) {
-    const {services: {bookService}} = this;
-    const books = await (
-      bookService
-        .createCardsQuery(
-          BookService.BOOK_CARD_FIELDS,
-          (qb: SelectQueryBuilder<BookEntity>) => (
-            qb
-              .subQuery()
-              .from(BookEntity, 'book')
-              .select('*')
-              .offset(offset)
-              .limit(limit)
-              .orderBy('book.createdAt', 'DESC')
-          ),
-        )
-        .orderBy('book.createdAt', 'DESC')
-        .getMany()
-    );
+  async findRecentBooks(attrs: BasicAPIPagination = {}) {
+    const {services: {cardBookSearchService}} = this;
+    const books = await cardBookSearchService.findRecentBooks(attrs);
 
     return plainToClass(
       BookCardSerializer,
@@ -91,8 +67,8 @@ export class BooksServerRepo extends ServerAPIClientChild implements BooksRepo {
       reviewsCount,
     }: SingleBookSearchAttrs = {},
   ) {
-    const {bookService} = this.api.services;
-    const book = await bookService.findFullCard(
+    const {cardBookSearchService} = this.api.services;
+    const book = await cardBookSearchService.findFullCard(
       {
         id: +id,
         reviewsCount,

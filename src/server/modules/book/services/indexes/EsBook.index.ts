@@ -8,6 +8,7 @@ import {objPropsToPromise, pickIdName} from '@shared/helpers';
 import {
   EntityIndex,
   EsIdNamePair,
+  EsMappedDoc,
   PredefinedProperties,
 } from '@server/modules/elasticsearch/classes/EntityIndex';
 
@@ -18,10 +19,9 @@ import {BookReleaseEntity} from '../../modules/release/BookRelease.entity';
 import {BookSeriesService} from '../../modules/series/services';
 
 export interface BookIndexEntity {
-  id: number;
-  titles: string[];
-  volumeId: number,
-  volumeName: string,
+  title: string;
+  volumeId: number;
+  volumeName: string;
   series: EsIdNamePair[];
   categories: EsIdNamePair[];
   authors: EsIdNamePair[];
@@ -58,8 +58,7 @@ export class EsBookIndex extends EntityIndex<BookEntity, BookIndexEntity> {
         body: {
           mappings: {
             properties: <Record<keyof BookIndexEntity, any>> {
-              id: {type: 'long'},
-              titles: {type: 'keyword'},
+              title: {type: 'text'},
               volumeId: {type: 'long'},
               volumeName: {type: 'keyword'},
               series: PredefinedProperties.idNamePair,
@@ -139,15 +138,20 @@ export class EsBookIndex extends EntityIndex<BookEntity, BookIndexEntity> {
   /**
    * @inheritdoc
    */
-  mapRecord(entity: BookEntity): BookIndexEntity {
+  mapRecord(entity: BookEntity): EsMappedDoc<BookIndexEntity> {
     const {
       volume, releases, series,
       authors, tags, categories,
+      id,
     } = entity;
 
     return {
-      id: entity.id,
-      titles: R.uniq(R.pluck('title', releases)),
+      _id: id,
+      title: (
+        R
+          .pluck('title', releases)
+          .reduce((a, b) => (a.length > b.length ? a : b), '')
+      ),
       volumeId: volume?.id,
       volumeName: volume?.name,
       series: pickIdName(series),

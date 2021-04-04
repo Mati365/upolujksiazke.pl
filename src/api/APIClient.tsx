@@ -7,6 +7,7 @@ import {RecentBooksRepo} from './repo/RecentBooks.repo';
 import {BooksRepo} from './repo/Books.repo';
 
 export type BasicAPIPagination = {
+  excludeIds?: number[],
   offset?: number,
   limit?: number,
 };

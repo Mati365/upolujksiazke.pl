@@ -1,3 +1,4 @@
+import esb from 'elastic-builder';
 import {Injectable} from '@nestjs/common';
 import {
   Connection, EntityManager,
@@ -11,8 +12,9 @@ import {
   uniqFlatHashByProp,
 } from '@shared/helpers';
 
-import {BasicAPIPagination} from '@api/APIClient';
+import {APIPaginationResult, BasicAPIPagination} from '@api/APIClient';
 import {BooksGroupsFilters} from '@api/repo/RecentBooks.repo';
+import {BooksFilters} from '@api/repo';
 
 import {ImageVersion} from '@shared/enums';
 import {BookReleaseService} from '../../modules/release/BookRelease.service';
@@ -23,6 +25,7 @@ import {BookHierarchySeriesService} from '../../modules/series/services';
 import {BookEntity} from '../../Book.entity';
 import {BookReviewService} from '../../modules/review/BookReview.service';
 import {BookTagsService} from '../BookTags.service';
+import {EsBookIndex} from '../indexes/EsBook.index';
 
 @Injectable()
 export class CardBookSearchService {
@@ -50,6 +53,7 @@ export class CardBookSearchService {
     private readonly prizeService: BookPrizeService,
     private readonly reviewsService: BookReviewService,
     private readonly hierarchyService: BookHierarchySeriesService,
+    private readonly bookEsIndex: EsBookIndex,
   ) {}
 
   /**
@@ -87,17 +91,75 @@ export class CardBookSearchService {
   /**
    * Find multiple cards, it is simple method
    *
-   * @param {number[]} ids
+   * @param {any[]} ids
    * @returns
    * @memberof CardBookSearchService
    */
-  findBooksByIds(ids: number[]) {
+  findBooksByIds(ids: any[]) {
     return (
       this
         .createCardsQuery()
         .whereInIds(ids)
         .getMany()
     );
+  }
+
+  /**
+   * Advanced search
+   *
+   * @async
+   * @param {BooksFilters} filters
+   * @returns {Promise<APIPaginationResult<BookEntity>>}
+   * @memberof CardBookSearchService
+   */
+  async findFilteredBooks(filters: BooksFilters): Promise<APIPaginationResult<BookEntity>> {
+    const {bookEsIndex} = this;
+    const {authorsIds, excludeIds} = filters;
+
+    let esQuery: esb.Query = null;
+
+    if (authorsIds || excludeIds) {
+      esQuery = esb.boolQuery();
+
+      if (authorsIds) {
+        esQuery = (<esb.BoolQuery> esQuery).must(
+          [
+            esb.nestedQuery(
+              esb.termsQuery('authors.id', filters.authorsIds),
+              'authors',
+            ),
+          ],
+        );
+      }
+
+      if (excludeIds) {
+        esQuery = (<esb.BoolQuery> esQuery).mustNot(
+          [
+            esb.termsQuery('_id', excludeIds),
+          ],
+        );
+      }
+    }
+
+    if (!esQuery)
+      return null;
+
+    const ids = await bookEsIndex.searchIds(
+      esb
+        .requestBodySearch()
+        .source([])
+        .query(esQuery)
+        .docvalueFields(['_id'])
+        .toJSON(),
+    );
+
+    return {
+      items: await this.findBooksByIds(ids),
+      meta: {
+        limit: filters.limit,
+        offset: filters.offset,
+      },
+    };
   }
 
   /**

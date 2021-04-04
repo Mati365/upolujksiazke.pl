@@ -27,6 +27,10 @@ export type EsIndexIdentifier = {
   name: string,
 };
 
+export type EsMappedDoc<I> = I & {
+  _id: number,
+};
+
 /**
  * Maps single database entity into ES index
  *
@@ -68,10 +72,66 @@ export abstract class EntityIndex<E extends {id: number}, I = any> implements On
   }
 
   abstract createIndex(): Promise<void>;
-  abstract mapRecord(entity: E): CanBePromise<I>;
+  abstract mapRecord(entity: E): CanBePromise<EsMappedDoc<I>>;
 
   abstract findEntity(id: number): CanBePromise<E>;
   abstract findEntitiesIds(): AsyncGenerator<number[]>;
+
+  /**
+   * Performs ES search
+   *
+   * @param {*} body
+   * @returns
+   * @memberof EntityIndex
+   */
+  async search(body: any) {
+    const {es, indexName} = this;
+    const response = await es.search(
+      {
+        index: indexName,
+        body,
+      },
+    );
+
+    return response?.body?.hits;
+  }
+
+  /**
+   * Returns array of found ids
+   *
+   * @param {*} body
+   * @returns {string[]}
+   * @memberof EntityIndex
+   */
+  async searchIds(body: any): Promise<string[]> {
+    const result = await this.search(body);
+
+    return R.pluck('_id' as any, result?.hits || []);
+  }
+
+  /**
+   * Removes entities from ES
+   *
+   * @param {number[]} esIds
+   * @memberof EntityIndex
+   */
+  async deleteEntities(esIds: number[]) {
+    const {logger, es} = this;
+
+    logger.log(`Deleting records with esIDs: ${chalk.bold(esIds.join(','))}!`);
+    await es.deleteByQuery(
+      {
+        index: this.indexName,
+        body: {
+          query: {
+            terms: {
+              _id: esIds,
+            },
+          },
+        },
+      },
+    );
+  }
 
   /**
    * Reindex single record
@@ -81,15 +141,16 @@ export abstract class EntityIndex<E extends {id: number}, I = any> implements On
    */
   async reindexEntity(id: number) {
     const {es, logger} = this;
-    logger.log(`Indexing ${id} record!`);
+    const {_id: esId, ...body} = await this.mapRecord(
+      await this.findEntity(id),
+    );
 
+    logger.log(`Indexing ${chalk.bold(id)} (esID: ${chalk.bold(esId)}) record!`);
     await es.index(
       {
-        id: safeToString(id),
+        id: safeToString(esId),
         index: this.indexName,
-        body: await this.mapRecord(
-          await this.findEntity(id),
-        ),
+        body,
       },
     );
   }
@@ -123,11 +184,11 @@ export abstract class EntityIndex<E extends {id: number}, I = any> implements On
         {
           refresh: true,
           body: mapped.flatMap(
-            (doc) => [
+            ({_id, ...doc}) => [
               {
                 index: {
                   _index: clonedIndex.indexName,
-                  _id: (<any> doc).id,
+                  _id,
                 },
               },
               doc,

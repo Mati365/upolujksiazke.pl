@@ -69,9 +69,11 @@
       }
     }
 
-    &__tags {
-      margin-top: 3rem;
+    &__price-box .c-book-price-box__buy-cta + * {
+      margin-top: 2.5rem;
+    }
 
+    &__tags {
       &-title {
         @include flex-list;
 

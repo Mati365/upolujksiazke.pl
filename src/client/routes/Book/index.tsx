@@ -1,10 +1,11 @@
 import React from 'react';
 import {Redirect} from 'react-router';
+import * as R from 'ramda';
 
 import {formatBookTitle} from '@client/helpers/logic';
 import {useI18n} from '@client/i18n';
 
-import {BookFullInfoRecord} from '@api/types';
+import {BookCardRecord, BookFullInfoRecord} from '@api/types';
 import {AsyncRoute} from '@client/components/utils/asyncRouteUtils';
 import {Breadcrumbs} from '@client/containers/Breadcrumbs';
 
@@ -26,9 +27,10 @@ import {
 
 type BookRouteProps = {
   book: BookFullInfoRecord,
+  authorsBooks: BookCardRecord[],
 };
 
-export const BookRoute: AsyncRoute = ({book}: BookRouteProps) => {
+export const BookRoute: AsyncRoute = ({book, authorsBooks}: BookRouteProps) => {
   const t = useI18n();
   if (!book)
     return <Redirect to={HOME_PATH} />;
@@ -53,7 +55,10 @@ export const BookRoute: AsyncRoute = ({book}: BookRouteProps) => {
             },
           ]}
         />
-        <BookInfo book={book}>
+        <BookInfo
+          book={book}
+          authorsBooks={authorsBooks}
+        >
           <BookAvailabilitySection book={book} />
           <BookReviewsSection book={book} />
         </BookInfo>
@@ -68,11 +73,27 @@ BookRoute.route = {
   path: BOOK_PATH,
 };
 
-BookRoute.getInitialProps = async ({api, match}) => ({
-  book: await api.repo.books.findOne(
+BookRoute.getInitialProps = async ({api: {repo}, match}) => {
+  const book = await repo.books.findOne(
     match.params.id,
     {
       reviewsCount: 5,
     },
-  ),
-});
+  );
+
+  if (!book)
+    return {};
+
+  const {items: authorsBooks} = await repo.books.findAuthorsBooks(
+    {
+      excludeIds: [book.id],
+      limit: 4,
+      authorsIds: R.pluck('id', book.authors),
+    },
+  );
+
+  return {
+    book,
+    authorsBooks,
+  };
+};

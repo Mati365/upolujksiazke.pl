@@ -141,6 +141,12 @@ Remove book:
 app.select(ScrapperModule).get('BookService').delete([13])
 ```
 
+Reindex all record (after index structure change or something):
+
+```bash
+app.select(ScrapperModule).get('EsBookIndex').reindexAllEntities();
+```
+
 ### Tasks
 
 Fetchers:

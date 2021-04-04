@@ -1,13 +1,22 @@
 import React from 'react';
+import c from 'classnames';
+
+import {Grid, GridProps} from '@client/components/ui';
 import {BookCardRecord} from '@api/types';
 import {BookCard} from '../cards/BookCard';
 
-type BooksGridProps = {
+type BooksGridProps = GridProps & {
   items: BookCardRecord[],
 };
 
-export const BooksGrid = ({items}: BooksGridProps) => (
-  <section className='c-books-grid'>
+export const BooksGrid = ({items, className, ...props}: BooksGridProps) => (
+  <Grid
+    {...props}
+    className={c(
+      'c-books-grid',
+      className,
+    )}
+  >
     {items.map(
       (book) => (
         <BookCard
@@ -16,7 +25,7 @@ export const BooksGrid = ({items}: BooksGridProps) => (
         />
       ),
     )}
-  </section>
+  </Grid>
 );
 
 BooksGrid.displayName = 'BooksGrid';

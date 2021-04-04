@@ -18,10 +18,12 @@ export const BookCtaButton = ({href, title, className, children, ...props}: Book
       'c-book-cta',
       className,
     )}
-    type='primary'
     size='medium-small'
     aria-label={title}
     iconSuffix
+    {...!props.disabled && {
+      type: 'primary',
+    }}
     {...props}
   >
     <BasketIcon className='c-book-cta__prefix-icon' />

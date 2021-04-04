@@ -33,14 +33,6 @@
     padding-bottom: 1.5rem;
     border-bottom: 1px solid color(grid-items-border);
 
-    &__cover {
-      transition: transform 250ms ease-in-out;
-
-      &:hover {
-        transform: scale3d(1.02, 1.02, 1);
-      }
-    }
-
     &__info {
       min-height: 80px;
     }
@@ -147,5 +139,26 @@
 
     @include define-color('green', 'green-ribbon');
     @include define-color('red', 'red-ribbon');
+  }
+}
+
+.c-book-thumb-card {
+  &__cover {
+    margin-bottom: 8px;
+  }
+
+  &__ratings,
+  &__title {
+    margin-top: 4px;
+    font-size: $text-tiny;
+  }
+
+  &__title {
+    @include limit-text-lines(2);
+  }
+
+  .c-book-ribbons {
+    transform: scale(.75);
+    transform-origin: right;
   }
 }

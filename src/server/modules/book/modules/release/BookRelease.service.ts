@@ -99,8 +99,8 @@ export class BookReleaseService {
               ],
             )
             .innerJoinAndSelect('a.website', 'website')
-            .innerJoin('website.logo', 'logo', `logo.version = '${ImageVersion.SMALL_THUMB}'`)
-            .innerJoin('logo.attachment', 'attachment')
+            .leftJoin('website.logo', 'logo', `logo.version = '${ImageVersion.SMALL_THUMB}'`)
+            .leftJoin('logo.attachment', 'attachment')
             .where(
               {
                 releaseId: In(R.pluck('id', releases)),

@@ -3,7 +3,7 @@ import React, {ReactNode} from 'react';
 import {useI18n} from '@client/i18n';
 import {formatBookTitle} from '@client/helpers/logic';
 
-import {BookFullInfoRecord} from '@api/types';
+import {BookCardRecord, BookFullInfoRecord} from '@api/types';
 import {RatingsRow} from '@client/containers/parts/RatingsRow';
 import {
   AuthorLink,
@@ -25,14 +25,15 @@ import {BookCoverGallery} from './BookCoverGallery';
 import {BookSeriesTree} from './BookSeriesTree';
 import {BookReleasesList} from './BookReleasesList';
 import {BookTags} from './BookTags';
-import {OtherAuthorBooks} from './OtherAuthorBooks';
+import {AuthorOtherBooks} from './AuthorOtherBooks';
 
 type BookInfoProps = {
   book: BookFullInfoRecord,
+  authorsBooks?: BookCardRecord[],
   children?: ReactNode,
 };
 
-export const BookInfo = ({book, children}: BookInfoProps) => {
+export const BookInfo = ({book, authorsBooks, children}: BookInfoProps) => {
   const t = useI18n();
   const {
     id, taggedDescription, description,
@@ -167,15 +168,20 @@ export const BookInfo = ({book, children}: BookInfoProps) => {
         {children}
       </div>
 
-      <BookPriceBox book={book}>
-        {tags.length > 0 && (
+      <BookPriceBox
+        className='c-book-info-section__price-box'
+        book={book}
+      >
+        {authorsBooks?.length > 0 && (
           <>
-            <BookTags tags={book.tags} />
+            <AuthorOtherBooks books={authorsBooks} />
             <Divider />
           </>
         )}
 
-        <OtherAuthorBooks />
+        {tags.length > 0 && (
+          <BookTags tags={book.tags} />
+        )}
       </BookPriceBox>
     </Section>
   );

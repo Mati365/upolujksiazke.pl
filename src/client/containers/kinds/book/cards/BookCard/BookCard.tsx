@@ -18,7 +18,7 @@ import {BookTypesRow} from './BookTypesRow';
 import {BookPriceRow} from './BookPriceRow';
 import {BookCover} from './BookCover';
 
-type BookCardProps = {
+export type BookCardProps = {
   item: BookCardRecord,
   withDescription?: boolean,
 };
@@ -55,7 +55,7 @@ export const BookCard = (
     >
       <BookLink item={item}>
         <BookCover
-          className='c-book-card__cover'
+          className='c-book-card__cover is-hover-scale'
           alt={formattedTitle}
           book={item}
         />

@@ -85,6 +85,7 @@ export class BookService {
       seriesService,
       connection,
       releaseService,
+      bookEsIndex,
     } = this;
 
     const seriesIds = R.pluck(
@@ -154,6 +155,8 @@ export class BookService {
       },
       executor,
     );
+
+    await bookEsIndex.deleteEntities(ids);
 
     if (seriesIds.length > 0)
       await seriesService.deleteOrphanedSeries(seriesIds);

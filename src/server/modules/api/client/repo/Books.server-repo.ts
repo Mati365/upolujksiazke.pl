@@ -6,8 +6,11 @@ import {
 } from '@shared/helpers';
 
 import {ID} from '@shared/types';
-import {BooksRepo, SingleBookSearchAttrs} from '@api/repo';
 import {BasicAPIPagination} from '@api/APIClient';
+import {
+  AuthorsBooksFilters, BooksFilters,
+  BooksRepo, SingleBookSearchAttrs,
+} from '@api/repo';
 
 import {RedisMemoize} from '../../helpers';
 import {MeasureCallDuration} from '../../helpers/MeasureCallDuration';
@@ -19,6 +22,46 @@ import {
 import {ServerAPIClientChild} from '../ServerAPIClientChild';
 
 export class BooksServerRepo extends ServerAPIClientChild implements BooksRepo {
+  /**
+   * Returns all books for specified authos
+   *
+   * @param {AuthorsBooksFilters} filters
+   * @returns
+   * @memberof BooksServerRepo
+   */
+  @MeasureCallDuration('findAuthorsBooks')
+  @RedisMemoize(
+    ({limit, offset, authorsIds}) => ({
+      key: `authors-books-${offset}-${limit}-${authorsIds.join(',')}`,
+      expire: convertMinutesToSeconds(35),
+    }),
+  )
+  findAuthorsBooks(filters: AuthorsBooksFilters) {
+    return this.findAll(filters);
+  }
+
+  /**
+   * Find all books that matches filters
+   *
+   * @param {BooksFilters} filters
+   * @memberof BooksServerRepo
+   */
+  async findAll(filters: BooksFilters) {
+    const {services: {cardBookSearchService}} = this;
+    const {meta, items} = await cardBookSearchService.findFilteredBooks(filters);
+
+    return {
+      meta,
+      items: plainToClass(
+        BookCardSerializer,
+        items,
+        {
+          excludeExtraneousValues: true,
+        },
+      ),
+    };
+  }
+
   /**
    * Picks newest books
    *

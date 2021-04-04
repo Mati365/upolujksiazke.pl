@@ -26,11 +26,11 @@ export type PaginationDangerousOptions = PaginationOptions & {
 export type PaginationResult<T> = {
   items: (Record<string, any> | T)[],
   meta: {
-    offset: number,
-    page: number,
     limit: number,
-    totalItems: number,
-    totalPages: number,
+    offset: number,
+    page?: number,
+    totalItems?: number,
+    totalPages?: number,
   },
 };
 

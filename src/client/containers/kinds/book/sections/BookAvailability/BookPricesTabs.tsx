@@ -61,18 +61,20 @@ export const BookPricesTabs = ({book}: BookPricesTabsProps) => {
         </li>
       )}
     >
-      <Tabs.Tab
-        id={
-          t('groups.all')
-        }
-        title={
-          t('groups.all')
-        }
-      >
-        {() => (
-          <PlainAvailabilityList availability={all} />
-        )}
-      </Tabs.Tab>
+      {all.length > 0 && (
+        <Tabs.Tab
+          id={
+            t('groups.all')
+          }
+          title={
+            t('groups.all')
+          }
+        >
+          {() => (
+            <PlainAvailabilityList availability={all} />
+          )}
+        </Tabs.Tab>
+      )}
 
       {groupsPairs.length > 1 && groupsPairs.map(
         ([type, items]) => {

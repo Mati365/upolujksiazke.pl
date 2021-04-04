@@ -75,7 +75,7 @@ export const BookWebsitesAvailabilityTable = (
               <td>
                 <TitledFavicon
                   className='is-undecorated-link has-hover-underline has-double-link-chevron'
-                  src={smallThumb.file}
+                  src={smallThumb?.file}
                   title={website.title}
                   onClick={onOpen}
                 >

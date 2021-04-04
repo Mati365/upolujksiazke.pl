@@ -1,6 +1,7 @@
 import React from 'react';
 import c from 'classnames';
 
+import noImagePlaceholderUrl from '@assets/img/no-image-placeholder.png';
 import {Favicon} from './Favicon';
 
 type TitledFaviconProps = JSX.IntrinsicElements['span'] & {
@@ -23,14 +24,12 @@ export const TitledFavicon = (
     )}
     {...props}
   >
-    {src && (
-      <Favicon
-        className='mr-2'
-        src={src}
-        title={title}
-        alt='Logo'
-      />
-    )}
+    <Favicon
+      className='mr-2'
+      src={src || noImagePlaceholderUrl}
+      title={title}
+      alt='Logo'
+    />
     {children}
   </Tag>
 );

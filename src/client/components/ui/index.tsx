@@ -19,3 +19,4 @@ export * from './Favicon';
 export * from './Tabs';
 export * from './LinksRow';
 export * from './Tree';
+export * from './Grid';

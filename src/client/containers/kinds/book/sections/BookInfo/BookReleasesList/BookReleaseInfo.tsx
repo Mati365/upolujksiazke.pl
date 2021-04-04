@@ -134,15 +134,17 @@ export const BookReleaseInfo = ({release}: BookReleaseInfoProps) => {
         </tbody>
       </Table>
 
-      <BookCtaButton
-        className='mx-auto mt-2 mb-3'
-        title={
-          t('book.availability.buy')
-        }
-        size='small'
-        outlined
-        onClick={onOpen}
-      />
+      {release.availability?.length > 0 && (
+        <BookCtaButton
+          className='mx-auto mt-2 mb-3'
+          title={
+            t('book.availability.buy')
+          }
+          size='small'
+          outlined
+          onClick={onOpen}
+        />
+      )}
     </div>
   );
 };

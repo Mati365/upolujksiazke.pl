@@ -5,8 +5,13 @@ $gray-3: #c1c1c1;
 $gray-4: #8f8f8f;
 $gray-6: #5a5a5a;
 
+$dark-box: #1e1f23;
+$dark-box-muted-border: #9a9da1;
+$dark-box-muted-text: #cecece;
+
 $primary-red: #d90429;
 $primary-secondary-red: #ef233c;
+$primary-light: #f44336;
 
 :root {
   --c-gray-0: #{$gray-0};
@@ -19,7 +24,10 @@ $primary-secondary-red: #ef233c;
   --c-divider: #{$gray-1};
   --c-section-header-border: #{$gray-1};
   --c-grid-items-border: #{$gray-1};
+
   --c-primary: #{$primary-red};
+  --c-primary-secondary: #{$primary-secondary-red};
+  --c-primary-light: #{$primary-light};
 
   --c-muted-text: #{$gray-6};
   --c-default-text: #1f1f1f;
@@ -41,4 +49,8 @@ $primary-secondary-red: #ef233c;
 
   --c-layer-box: #{$gray-0};
   --c-tree-divider: #{$gray-3};
+
+  --c-dark-box: #{$dark-box};
+  --c-dark-box-muted-text: #{$dark-box-muted-text};
+  --c-dark-box-muted-border: #{$dark-box-muted-border};
 }

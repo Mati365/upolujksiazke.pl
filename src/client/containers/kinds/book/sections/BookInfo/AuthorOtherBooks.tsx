@@ -20,7 +20,9 @@ export const AuthorOtherBooks = ({books}: AuthorOtherBooksProps) => {
       }
     >
       <Grid
-        columns={2}
+        columns={{
+          default: 2,
+        }}
         gap={3}
       >
         {books.map(

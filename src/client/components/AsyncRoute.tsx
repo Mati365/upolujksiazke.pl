@@ -8,7 +8,7 @@ import {AsyncRoute, isAsyncRoute} from './utils/asyncRouteUtils';
 
 type AsyncRoutePreloaderProps = {
   id: string,
-  component: AsyncRoute<any, any>,
+  component: AsyncRoute<any>,
   loaderComponent?: React.ComponentType,
 };
 
@@ -32,7 +32,7 @@ export const AsyncRoutePreloader = (
           api: null,
           match,
         },
-      ),
+      ) as any,
       preserveContentOnReload: false,
       keys: [],
     },

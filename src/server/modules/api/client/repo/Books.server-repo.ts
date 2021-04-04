@@ -47,7 +47,7 @@ export class BooksServerRepo extends ServerAPIClientChild implements BooksRepo {
    * @memberof BooksServerRepo
    */
   async findAll(filters: BooksFilters) {
-    const {services: {cardBookSearchService}} = this;
+    const {cardBookSearchService} = this.services;
     const {meta, items} = await cardBookSearchService.findFilteredBooks(filters);
 
     return {
@@ -77,7 +77,7 @@ export class BooksServerRepo extends ServerAPIClientChild implements BooksRepo {
     }),
   )
   async findRecentBooks(attrs: BasicAPIPagination = {}) {
-    const {services: {cardBookSearchService}} = this;
+    const {cardBookSearchService} = this.services;
     const books = await cardBookSearchService.findRecentBooks(attrs);
 
     return plainToClass(
@@ -110,7 +110,7 @@ export class BooksServerRepo extends ServerAPIClientChild implements BooksRepo {
       reviewsCount,
     }: SingleBookSearchAttrs = {},
   ) {
-    const {cardBookSearchService} = this.api.services;
+    const {cardBookSearchService} = this.services;
     const book = await cardBookSearchService.findFullCard(
       {
         id: +id,

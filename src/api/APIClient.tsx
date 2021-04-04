@@ -3,8 +3,11 @@ import * as R from 'ramda';
 import type {PaginationResult} from '@server/common/helpers/db';
 
 import {SortKeys} from '@shared/types';
-import {RecentBooksRepo} from './repo/RecentBooks.repo';
-import {BooksRepo} from './repo/Books.repo';
+import {
+  RecentBooksRepo,
+  BooksRepo,
+  BooksCategoriesRepo,
+} from './repo';
 
 export type BasicAPIPagination = {
   excludeIds?: number[],
@@ -38,6 +41,7 @@ export abstract class APIClient {
     public readonly repo: {
       recentBooks: RecentBooksRepo,
       books: BooksRepo,
+      booksCategories: BooksCategoriesRepo,
     },
   ) {
     R.forEachObjIndexed(

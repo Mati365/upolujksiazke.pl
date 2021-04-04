@@ -1,0 +1,30 @@
+.c-footer {
+  width: 100%;
+  margin-top: 4.5rem;
+  padding: 40px 15px;
+  color: var(--c-dark-box-muted-text);
+  background: color(dark-box);
+  font-size: $text-tiny;
+
+  &__column > h3 {
+    margin-top: 0;
+    margin-bottom: 35px;
+    color: #fff;
+    font-size: 15px;
+    text-transform: uppercase;
+  }
+
+  &__link-btn {
+    @include text-ellipsis;
+
+    display: block;
+    padding: 9px 0;
+    color: color(dark-box-muted-text);
+    border: 3px solid color(dark-box-muted-border);
+    font-size: 0.65rem;
+    text-decoration: none;
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+}

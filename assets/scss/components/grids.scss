@@ -3,24 +3,17 @@
 
   display: grid;
 
-  @mixin generate-cols {
+  @mixin generate-cols($suffix) {
     @for $i from 1 through $max-columns {
-      &.has-#{$i}-columns {
+      &.has-#{$i}#{$suffix}-columns {
         grid-template-columns: repeat(#{$i}, 1fr);
       }
     }
   }
 
-  @include except-mobile {
-    @include generate-cols;
-  }
-
-  @include small-mobile {
-    @include generate-cols;
-  }
-
-  @include big-mobile {
-    @include generate-cols;
+  @include generate-cols('');
+  @include mobile {
+    @include generate-cols('-xs');
   }
 
   @for $i from 1 through $max-columns {

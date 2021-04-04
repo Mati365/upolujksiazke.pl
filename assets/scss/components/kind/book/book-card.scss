@@ -149,12 +149,16 @@
 
   &__ratings,
   &__title {
-    margin-top: 4px;
     font-size: $text-tiny;
+  }
+
+  &__ratings {
+    margin-top: 5px;
   }
 
   &__title {
     @include limit-text-lines(2);
+    margin-top: 8px;
   }
 
   .c-book-ribbons {

@@ -3,6 +3,7 @@ import {Redirect} from 'react-router';
 import * as R from 'ramda';
 
 import {formatBookTitle} from '@client/helpers/logic';
+import {objPropsToPromise} from '@shared/helpers';
 
 import {useUA} from '@client/modules/ua';
 import {useI18n} from '@client/i18n';
@@ -17,22 +18,27 @@ import {
   BookInfo,
 } from '@client/containers/kinds/book';
 
-import {
-  Layout,
-  Container,
-} from '@client/components/ui';
+import {Container} from '@client/components/ui';
+import {Layout, LayoutViewData} from '@client/containers/layout';
 
 import {
   BOOK_PATH,
   HOME_PATH,
 } from '../Links';
 
-type BookRouteProps = {
+type BookRouteViewData = {
+  layoutData: LayoutViewData,
   book: BookFullInfoRecord,
   authorsBooks: BookCardRecord[],
 };
 
-export const BookRoute: AsyncRoute = ({book, authorsBooks}: BookRouteProps) => {
+export const BookRoute: AsyncRoute<BookRouteViewData> = (
+  {
+    book,
+    authorsBooks,
+    layoutData,
+  },
+) => {
   const t = useI18n();
   const ua = useUA();
 
@@ -40,7 +46,7 @@ export const BookRoute: AsyncRoute = ({book, authorsBooks}: BookRouteProps) => {
     return <Redirect to={HOME_PATH} />;
 
   return (
-    <Layout>
+    <Layout {...layoutData}>
       <Container className='c-book-route'>
         <Breadcrumbs
           items={[
@@ -80,7 +86,8 @@ BookRoute.route = {
   path: BOOK_PATH,
 };
 
-BookRoute.getInitialProps = async ({api: {repo}, match}) => {
+BookRoute.getInitialProps = async (attrs) => {
+  const {api: {repo}, match} = attrs;
   const book = await repo.books.findOne(
     match.params.id,
     {
@@ -91,16 +98,25 @@ BookRoute.getInitialProps = async ({api: {repo}, match}) => {
   if (!book)
     return {};
 
-  const {items: authorsBooks} = await repo.books.findAuthorsBooks(
+  const {
+    authorsBooks,
+    layoutData,
+  } = await objPropsToPromise(
     {
-      excludeIds: [book.id],
-      limit: 4,
-      authorsIds: R.pluck('id', book.authors),
+      layoutData: await Layout.getInitialProps(attrs),
+      authorsBooks: repo.books.findAuthorsBooks(
+        {
+          excludeIds: [book.id],
+          limit: 4,
+          authorsIds: R.pluck('id', book.authors),
+        },
+      ),
     },
   );
 
   return {
+    authorsBooks: authorsBooks.items,
     book,
-    authorsBooks,
-  };
+    layoutData,
+  } as BookRouteViewData;
 };

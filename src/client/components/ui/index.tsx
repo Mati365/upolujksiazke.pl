@@ -1,6 +1,5 @@
 export * from './Container';
 export * from './Picture';
-export * from './Layout';
 export * from './Section';
 export * from './SidebarSection';
 export * from './CleanList';
@@ -20,3 +19,4 @@ export * from './Tabs';
 export * from './LinksRow';
 export * from './Tree';
 export * from './Grid';
+export * from './UnderlinedTitle';

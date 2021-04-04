@@ -8,10 +8,8 @@ import {
   CategoryBooksGroup,
 } from '@api/types';
 
-import {
-  Layout,
-  Container,
-} from '@client/components/ui';
+import {Container} from '@client/components/ui';
+import {Layout} from '@client/containers/layout';
 
 import {
   RecentBooksSection,

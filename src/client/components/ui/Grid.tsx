@@ -3,7 +3,10 @@ import c from 'classnames';
 
 export type GridProps = {
   className?: string,
-  columns?: number,
+  columns?: {
+    xs?: number,
+    default?: number,
+  },
   gap?: number,
   children?: ReactNode,
 };
@@ -15,7 +18,9 @@ export const Grid = ({columns, gap, className, children}: GridProps) => (
       gap && `has-${gap}-gap`,
       columns && [
         'has-fixed-columns-count',
-        `has-${columns}-columns`,
+
+        columns.xs && `has-${columns.xs}-xs-columns`,
+        columns.default && `has-${columns.default}-columns`,
       ],
       className,
     )}

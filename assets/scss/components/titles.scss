@@ -1,0 +1,16 @@
+.c-underlined-title {
+  display: inline-block;
+  position: relative;
+  padding-bottom: 1rem;
+
+  &::after {
+    content: '';
+    position: absolute;
+    width: 60px;
+    max-width: 100%;
+    height: 3px;
+    left: 0;
+    bottom: 0;
+    background: color(primary-light);
+  }
+}

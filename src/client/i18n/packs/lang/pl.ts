@@ -122,4 +122,16 @@ export const PL_LANG_PACK = {
       title: 'Ostatnio dodane książki',
     },
   },
+  footer: {
+    shortcuts: 'Na skróty',
+    categories: 'Popularne kategorie',
+  },
+  links: {
+    home: 'Strona główna',
+    categories: 'Kategorie',
+    authors: 'Autorzy',
+    series: 'Serie',
+    tags: 'Tagi',
+    top: 'TOP książki',
+  },
 };

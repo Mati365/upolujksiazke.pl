@@ -10,9 +10,31 @@ import {CreateBookCategoryDto} from '../dto/CreateBookCategory.dto';
 
 @Injectable()
 export class BookCategoryService {
+  public static readonly BOOK_CATEGORY_FIELDS = [
+    'c.id', 'c.name', 'c.parameterizedName',
+  ];
+
   constructor(
     private readonly connection: Connection,
   ) {}
+
+  /**
+   * Returns N most popular categories
+   *
+   * @param {number} limit
+   * @returns
+   * @memberof BookCategoryService
+   */
+  findMostPopularCategories(limit: number) {
+    return (
+      BookCategoryEntity
+        .createQueryBuilder('c')
+        .select(BookCategoryService.BOOK_CATEGORY_FIELDS)
+        .limit(limit)
+        .orderBy('c.promotion', 'DESC')
+        .getMany()
+    );
+  }
 
   /**
    * Find categories for books
@@ -32,7 +54,7 @@ export class BookCategoryService {
             bookId,
           },
         )
-        .select(['c.id', 'c.name', 'c.parameterizedName'])
+        .select(BookCategoryService.BOOK_CATEGORY_FIELDS)
         .getMany()
     );
   }

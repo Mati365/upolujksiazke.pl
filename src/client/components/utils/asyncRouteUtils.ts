@@ -9,7 +9,7 @@ import {
 import {APIClient} from '@api/APIClient';
 
 export type AsyncRouterRouteInfo = {
-  component: AsyncRoute<any, any>,
+  component: AsyncRoute<any>,
 };
 
 export type AsyncRouteContext = {
@@ -17,15 +17,18 @@ export type AsyncRouteContext = {
   api: APIClient,
 };
 
-export type AsyncRoute<Props = {}, AsyncProps extends Partial<Props> = Props> = {
+export type AsyncPropsComponent<Props = any, AsyncProps extends Partial<Props> = Partial<Props>> = {
   (props: Props): JSX.Element | null,
   defaultProps?: Partial<Props>,
   displayName?: string,
+  getInitialProps?(ctx?: AsyncRouteContext): CanBePromise<AsyncProps>,
+};
+
+export type AsyncRoute<Props = {}> = AsyncPropsComponent<Props> & {
   route: {
     path: string,
     exact?: boolean,
   },
-  getInitialProps?(ctx?: AsyncRouteContext): CanBePromise<AsyncProps>,
 };
 
 /**
@@ -48,9 +51,9 @@ export function genRouteID({path}: {path: CanBeArray<string>}) {
  *
  * @export
  * @param {*} obj
- * @returns {obj is AsyncRoute<any, any>}
+ * @returns {obj is AsyncRoute<any>}
  */
-export function isAsyncRoute(obj: any): obj is AsyncRoute<any, any> {
+export function isAsyncRoute(obj: any): obj is AsyncRoute<any> {
   return !!(obj && 'getInitialProps' in obj);
 }
 

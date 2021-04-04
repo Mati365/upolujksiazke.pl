@@ -4,10 +4,8 @@ import {useI18n} from '@client/i18n';
 
 import {AsyncRoute} from '@client/components/utils/asyncRouteUtils';
 import {Breadcrumbs} from '@client/containers/Breadcrumbs';
-import {
-  Layout,
-  Container,
-} from '@client/components/ui';
+import {Container} from '@client/components/ui';
+import {Layout} from '@client/containers/layout';
 
 import {AUTHOR_PATH} from '../Links';
 

@@ -20,17 +20,32 @@ export const PublisherLink = UndecoratedLink.create<Pick<BookPublisherRecord, 'p
   ({id, parameterizedName}) => `/wydawca/${parameterizedName},${id}`,
 );
 
+export const BOOK_SERIES_PATH = '/serie-ksiazek';
+export const BookSeriesLink = UndecoratedLink.create(BOOK_SERIES_PATH);
+
+export const TOP_BOOKS_PATH = '/top-ksiazki';
+export const TopBooksLink = UndecoratedLink.create(TOP_BOOKS_PATH);
+
 export const AUTHOR_PATH = '/autor/:slug,:id';
+export const AUTHORS_PATH = '/autorzy';
+
+export const AuthorsLink = UndecoratedLink.create(AUTHORS_PATH);
 export const AuthorLink = UndecoratedLink.create<Pick<BookAuthorRecord, 'parameterizedName'|'id'>>(
   ({id, parameterizedName}) => `/autor/${parameterizedName},${id}`,
 );
 
 export const CATEGORY_PATH = '/kategoria/:slug,:id';
+export const CATEGORIES_PATH = '/kategorie';
+
+export const CategoriesLink = UndecoratedLink.create(CATEGORIES_PATH);
 export const CategoryLink = UndecoratedLink.create<Pick<BookCategoryRecord, 'parameterizedName'|'id'>>(
   ({id, parameterizedName}) => `/kategoria/${parameterizedName},${id}`,
 );
 
 export const TAG_PATH = '/tag/:slug,:id';
+export const TAGS_PATH = '/tagi';
+
+export const TagsLink = UndecoratedLink.create(TAGS_PATH);
 export const genTagLink = (
   {
     id,

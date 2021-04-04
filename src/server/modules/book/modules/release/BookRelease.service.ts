@@ -95,10 +95,11 @@ export class BookReleaseService {
                 'a.id', 'a.releaseId',
                 'a.prevPrice', 'a.price', 'a.inStock',
                 'a.totalRatings', 'a.avgRating', 'a.url',
+                'website.id', 'website.hostname', 'website.url',
                 'attachment.file', 'logo.version',
               ],
             )
-            .innerJoinAndSelect('a.website', 'website')
+            .innerJoin('a.website', 'website')
             .leftJoin('website.logo', 'logo', `logo.version = '${ImageVersion.SMALL_THUMB}'`)
             .leftJoin('logo.attachment', 'attachment')
             .where(

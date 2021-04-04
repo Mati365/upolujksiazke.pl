@@ -2,11 +2,20 @@
   &-description-box {
     line-height: 1.55rem;
     white-space: pre-line;
+
+    @include mobile {
+      font-size: 0.86rem;
+      line-height: 1.3rem;
+    }
   }
 
   &-layer-box {
     padding: 1.2rem 1.5rem;
     background: color(layer-box);
     border-radius: 5px;
+
+    &.has-small-padding {
+      padding: .85rem 1rem;
+    }
   }
 }

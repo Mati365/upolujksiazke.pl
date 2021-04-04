@@ -4,6 +4,7 @@ import {BookReviewRecord} from '@api/types';
 import {BaseSerializer} from './Base.serializer';
 import {BookReviewerSerializer} from './BookReviewer.serializer';
 import {VoteStatsSerializer} from './VoteStats.serializer';
+import {WebsiteSerializer} from './Website.serializer';
 
 export class BookReviewSerializer extends BaseSerializer implements BookReviewRecord {
   @Expose()
@@ -23,4 +24,8 @@ export class BookReviewSerializer extends BaseSerializer implements BookReviewRe
   @Expose()
   @Type(() => BookReviewerSerializer)
   reviewer: BookReviewerSerializer;
+
+  @Expose()
+  @Type(() => WebsiteSerializer)
+  website: WebsiteSerializer;
 }

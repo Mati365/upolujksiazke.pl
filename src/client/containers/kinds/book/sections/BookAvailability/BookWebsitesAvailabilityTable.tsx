@@ -19,6 +19,7 @@ export {
 
 type BookWebsitesAvailabilityTableProps = {
   withType?: boolean,
+  shrink?: boolean,
   tableProps?: TableProps,
   availability: Array<TypedBookAvailabilityRecord>,
 };
@@ -28,6 +29,7 @@ export const BookWebsitesAvailabilityTable = (
     availability,
     tableProps,
     withType,
+    shrink,
   }: BookWebsitesAvailabilityTableProps,
 ) => {
   const t = useI18n('book.availability');
@@ -41,12 +43,20 @@ export const BookWebsitesAvailabilityTable = (
       <thead>
         <tr>
           <th>{t('store')}</th>
-          {withType && (
+          {!shrink && withType && (
             <th>{t('shared.book.type')}</th>
           )}
-          <th>{t('prev_price')}</th>
+          {!shrink && (
+            <th>{t('prev_price')}</th>
+          )}
           <th>{t('price')}</th>
-          <th style={{width: 155}}>
+          <th
+            {...!shrink && {
+              style: {
+                width: 155,
+              },
+            }}
+          >
             {t('shared.titles.action')}
           </th>
         </tr>
@@ -74,28 +84,30 @@ export const BookWebsitesAvailabilityTable = (
             <tr key={item.id}>
               <td>
                 <TitledFavicon
-                  className='is-undecorated-link has-hover-underline has-double-link-chevron'
+                  className={(
+                    shrink && 'is-text-tiny'
+                  )}
                   src={smallThumb?.file}
-                  title={website.title}
+                  title={website.hostname}
                   onClick={onOpen}
-                >
-                  {website.hostname}
-                </TitledFavicon>
+                />
               </td>
 
-              {withType && (
+              {!shrink && withType && (
                 <td>
                   <BookReleaseTypeBadge type={item.bookType} />
                 </td>
               )}
 
-              <td
-                className={c(
-                  prevPrice && 'is-text-strike',
-                )}
-              >
-                <Price value={prevPrice} />
-              </td>
+              {!shrink && (
+                <td
+                  className={c(
+                    prevPrice && 'is-text-strike',
+                  )}
+                >
+                  <Price value={prevPrice} />
+                </td>
+              )}
 
               <td>
                 <Price
@@ -109,7 +121,7 @@ export const BookWebsitesAvailabilityTable = (
               <td>
                 <BookCtaButton
                   title={
-                    t('buy')
+                    t(shrink ? 'shared.titles.open' : 'go_to_shop')
                   }
                   size='small'
                   outlined

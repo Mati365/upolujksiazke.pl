@@ -8,9 +8,10 @@ import {BookPricesTabs} from './BookPricesTabs';
 
 type BookAvailabilitySectionProps = {
   book: BookFullInfoRecord,
+  shrink?: boolean,
 };
 
-export const BookAvailabilitySection = ({book}: BookAvailabilitySectionProps) => {
+export const BookAvailabilitySection = ({book, shrink}: BookAvailabilitySectionProps) => {
   const t = useI18n('book.availability');
   if (!book.releases)
     return null;
@@ -24,7 +25,10 @@ export const BookAvailabilitySection = ({book}: BookAvailabilitySectionProps) =>
       subsection
       noContentSpacing
     >
-      <BookPricesTabs book={book} />
+      <BookPricesTabs
+        book={book}
+        shrink={shrink}
+      />
     </Section>
   );
 };

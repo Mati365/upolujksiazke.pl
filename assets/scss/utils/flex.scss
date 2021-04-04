@@ -6,10 +6,3 @@
   &.is-justify-center { justify-content: center; }
   &.is-align-center   { align-items: center; }
 }
-
-.c-flex-row {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-start;
-}

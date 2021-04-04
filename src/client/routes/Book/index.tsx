@@ -3,6 +3,8 @@ import {Redirect} from 'react-router';
 import * as R from 'ramda';
 
 import {formatBookTitle} from '@client/helpers/logic';
+
+import {useUA} from '@client/modules/ua';
 import {useI18n} from '@client/i18n';
 
 import {BookCardRecord, BookFullInfoRecord} from '@api/types';
@@ -32,6 +34,8 @@ type BookRouteProps = {
 
 export const BookRoute: AsyncRoute = ({book, authorsBooks}: BookRouteProps) => {
   const t = useI18n();
+  const ua = useUA();
+
   if (!book)
     return <Redirect to={HOME_PATH} />;
 
@@ -59,7 +63,10 @@ export const BookRoute: AsyncRoute = ({book, authorsBooks}: BookRouteProps) => {
           book={book}
           authorsBooks={authorsBooks}
         >
-          <BookAvailabilitySection book={book} />
+          <BookAvailabilitySection
+            book={book}
+            shrink={ua.mobile}
+          />
           <BookReviewsSection book={book} />
         </BookInfo>
       </Container>

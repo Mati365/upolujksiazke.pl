@@ -1,7 +1,9 @@
 import React, {ReactNode} from 'react';
 
-import {useI18n} from '@client/i18n';
 import {formatBookTitle} from '@client/helpers/logic';
+
+import {useUA} from '@client/modules/ua';
+import {useI18n} from '@client/i18n';
 
 import {BookCardRecord, BookFullInfoRecord} from '@api/types';
 import {RatingsRow} from '@client/containers/parts/RatingsRow';
@@ -15,16 +17,13 @@ import {
   Divider,
   Section,
   LinksRow,
-  SidebarSection,
 } from '@client/components/ui';
 
 import {BookPriceBox} from './BookPriceBox';
 import {BookProperties} from './BookProperties';
 import {BookHeaderAttribute} from './BookHeaderAttribute';
-import {BookCoverGallery} from './BookCoverGallery';
-import {BookSeriesTree} from './BookSeriesTree';
-import {BookReleasesList} from './BookReleasesList';
 import {BookTags} from './BookTags';
+import {BookSidebar} from './Desktop/BookSidebar';
 import {AuthorOtherBooks} from './AuthorOtherBooks';
 
 type BookInfoProps = {
@@ -35,8 +34,9 @@ type BookInfoProps = {
 
 export const BookInfo = ({book, authorsBooks, children}: BookInfoProps) => {
   const t = useI18n();
+  const ua = useUA();
   const {
-    id, taggedDescription, description,
+    taggedDescription, description,
     primaryRelease, authors, categories,
     avgRating, totalRatings, tags,
   } = book;
@@ -53,44 +53,12 @@ export const BookInfo = ({book, authorsBooks, children}: BookInfoProps) => {
       spaced={3}
       className='c-book-info-section'
     >
-      <div className='c-book-info-section__sidebar'>
-        <BookCoverGallery
-          className='c-book-info-section__cover'
-          primaryAlt={formattedTitle}
+      {ua.desktop && (
+        <BookSidebar
           book={book}
+          formattedTitle={formattedTitle}
         />
-
-        {book.hierarchy?.length > 0 && (
-          <SidebarSection
-            className='c-book-info-section__volumes'
-            title={
-              `${t('book.volumes')}:`
-            }
-          >
-            <BookSeriesTree
-              activeBookId={id}
-              items={book.hierarchy}
-            />
-          </SidebarSection>
-        )}
-
-        {book.releases?.length > 0 && (
-          <>
-            {book.hierarchy?.length > 0 && (
-              <Divider />
-            )}
-
-            <SidebarSection
-              className='c-book-info-section__releases'
-              title={
-                `${t('book.releases')}:`
-              }
-            >
-              <BookReleasesList book={book} />
-            </SidebarSection>
-          </>
-        )}
-      </div>
+      )}
 
       <div className='c-book-info-section__info'>
         <h1 className='c-book-info-section__header'>

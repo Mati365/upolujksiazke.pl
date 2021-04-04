@@ -20,6 +20,7 @@ export const PL_LANG_PACK = {
       action: 'Akcja',
       more: 'Więcej',
       less: 'Mniej',
+      open: 'Otwórz',
     },
     book: {
       isbn: 'ISBN',
@@ -99,7 +100,7 @@ export const PL_LANG_PACK = {
       store: 'Księgarnia',
       prev_price: 'Poprzednia cena',
       price: 'Cena',
-      buy: 'Idź do sklepu',
+      go_to_shop: 'Idź do sklepu',
 
       groups: {
         all: 'Wszystkie',
@@ -112,6 +113,9 @@ export const PL_LANG_PACK = {
     reviews: {
       title: 'Recenzje książki',
     },
+  },
+  review: {
+    published_for: 'Opublikowano na',
   },
   sections: {
     recent_books: {

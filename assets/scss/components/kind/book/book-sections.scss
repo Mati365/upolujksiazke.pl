@@ -115,7 +115,7 @@
 
   &-book-price-box {
     &__header {
-      @extend .c-flex-row;
+      @include flex-list;
 
       margin-bottom: 1.25rem;
       font-weight: 600;
@@ -194,10 +194,6 @@
   }
 
   &-book-review {
-    display: grid;
-    grid-template-columns: 64px 1fr;
-    gap: 30px;
-
     &:not(:last-child) {
       border-bottom: 1px solid color(divider);
       padding-bottom: 1.65rem;
@@ -210,23 +206,42 @@
       align-items: center;
 
       &-avatar {
-        display: block;
+        display: flex;
+        margin-right: 10px;
 
         > img {
           display: inline-block;
-          width: 64px;
-          height: 64px;
+          width: 1.5rem;
+          height: 1.5rem;
           border-radius: 100%;
         }
       }
     }
 
+    &__toolbar,
+    &__footer {
+      font-size: $text-small;
+    }
+
     &__toolbar {
       @include flex-list;
 
-      justify-content: space-between;
       margin-bottom: 1rem;
-      font-size: $text-small;
+    }
+
+    &__footer {
+      margin-top: .85rem;
+      justify-content: flex-end;
+    }
+
+    @include mobile {
+      &__user-rating {
+        align-self: flex-start;
+
+        .c-ratings-row__text-value {
+          font-size: $text-normal;
+        }
+      }
     }
   }
 

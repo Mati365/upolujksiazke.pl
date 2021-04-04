@@ -19,6 +19,8 @@ export class BookReviewService {
     'review',
     'reviewer.name', 'reviewer.gender',
     'avatar.version', 'attachment.file',
+    'websiteLogo.version', 'websiteAttachment.file',
+    'website.id', 'website.hostname', 'website.url',
   ];
 
   constructor(
@@ -80,6 +82,11 @@ export class BookReviewService {
         .leftJoin('review.reviewer', 'reviewer')
         .leftJoin('reviewer.avatar', 'avatar', `avatar.version = '${ImageVersion.SMALL_THUMB}'`)
         .leftJoin('avatar.attachment', 'attachment')
+
+        .innerJoin('review.website', 'website')
+        .leftJoin('website.logo', 'websiteLogo', `websiteLogo.version = '${ImageVersion.SMALL_THUMB}'`)
+        .leftJoin('websiteLogo.attachment', 'websiteAttachment')
+
         .limit(limit)
         .getMany()
     );

@@ -109,7 +109,7 @@ export const BookReleaseInfo = ({release}: BookReleaseInfoProps) => {
               <tr key={key as string}>
                 <th
                   style={{
-                    width: 90,
+                    width: 100,
                   }}
                 >
                   {key}
@@ -118,7 +118,7 @@ export const BookReleaseInfo = ({release}: BookReleaseInfoProps) => {
                 <td
                   className='has-ellipsis'
                   style={{
-                    width: 120,
+                    width: 110,
                   }}
                   {...R.is(String, value) && {
                     title: value as string,
@@ -138,7 +138,7 @@ export const BookReleaseInfo = ({release}: BookReleaseInfoProps) => {
         <BookCtaButton
           className='mx-auto mt-2 mb-3'
           title={
-            t('book.availability.buy')
+            t('book.availability.go_to_shop')
           }
           size='small'
           outlined

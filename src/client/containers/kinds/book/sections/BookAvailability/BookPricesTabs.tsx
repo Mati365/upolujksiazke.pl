@@ -22,9 +22,10 @@ import {
 
 type BookPricesTabsProps = {
   book: BookFullInfoRecord,
+  shrink?: boolean,
 };
 
-export const BookPricesTabs = ({book}: BookPricesTabsProps) => {
+export const BookPricesTabs = ({book, shrink}: BookPricesTabsProps) => {
   const t = useI18n('book.availability');
   const {all, ...groups} = useMemo<Partial<Record<BookType | 'all', TypedBookAvailabilityRecord[]>>>(
     () => {
@@ -71,7 +72,10 @@ export const BookPricesTabs = ({book}: BookPricesTabsProps) => {
           }
         >
           {() => (
-            <PlainAvailabilityList availability={all} />
+            <PlainAvailabilityList
+              availability={all}
+              shrink={shrink}
+            />
           )}
         </Tabs.Tab>
       )}
@@ -90,7 +94,10 @@ export const BookPricesTabs = ({book}: BookPricesTabsProps) => {
               title={title}
             >
               {() => (
-                <PlainAvailabilityList availability={items} />
+                <PlainAvailabilityList
+                  availability={items}
+                  shrink={shrink}
+                />
               )}
             </Tabs.Tab>
           );

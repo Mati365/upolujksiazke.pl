@@ -315,7 +315,6 @@ export class CardBookSearchService {
                 id,
               },
             )
-            .limit(1)
             .getOne()
         ),
 

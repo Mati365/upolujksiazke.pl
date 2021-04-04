@@ -1,4 +1,6 @@
 .c-ratings-row {
+  $self: &;
+
   &__star {
     display: inline-flex;
 
@@ -9,6 +11,15 @@
     &.is-empty svg {
       color: #ccc;
     }
+
+    & + #{$self}__text-value {
+      margin-left: 10px;
+    }
+  }
+
+  &__text-value {
+    font-weight: 700;
+    color: color(primary);
   }
 
   &__total {

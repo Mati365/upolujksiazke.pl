@@ -13,6 +13,8 @@ import {
 
 type RatingsRowProps = {
   className?: string,
+  textOnly?: boolean,
+  showTextValue?: boolean,
   totalStars?: number,
   totalRatings?: number,
   size?: string,
@@ -24,6 +26,8 @@ export const RatingsRow = (
     className,
     value,
     totalRatings,
+    textOnly,
+    showTextValue,
     size = 'normal',
     totalStars = 5,
   }: RatingsRowProps,
@@ -31,7 +35,7 @@ export const RatingsRow = (
   const t = useI18n();
 
   const normalizedValue = value * totalStars;
-  const stars = R.times(
+  const stars = !textOnly && R.times(
     (score) => {
       let Component = StarIcon;
       let starClassName = null;
@@ -69,6 +73,11 @@ export const RatingsRow = (
       )}
     >
       {stars}
+      {(textOnly || showTextValue) && (
+        <span className='c-ratings-row__text-value'>
+          {`${Math.floor(normalizedValue)} / ${totalStars}`}
+        </span>
+      )}
       {!R.isNil(totalRatings) && (
         <span className='c-ratings-row__total'>
           {`(${totalRatings || 0} ${t('shared.book.total_ratings')})`}

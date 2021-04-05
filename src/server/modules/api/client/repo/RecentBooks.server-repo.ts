@@ -24,8 +24,8 @@ export class RecentBooksServerRepo extends ServerAPIClientChild implements Recen
    */
   @MeasureCallDuration('findCategoriesPopularBooks')
   @RedisMemoize(
-    () => ({
-      key: 'popular-categories-books',
+    ({filters}) => ({
+      key: `popular-categories-books-${JSON.stringify(filters)}`,
       expire: convertHoursToSeconds(5),
     }),
   )

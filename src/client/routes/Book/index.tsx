@@ -11,14 +11,19 @@ import {
 import {useUA} from '@client/modules/ua';
 import {useI18n} from '@client/i18n';
 
-import {BookCardRecord, BookFullInfoRecord} from '@api/types';
 import {AsyncRoute} from '@client/components/utils/asyncRouteUtils';
 import {Breadcrumbs} from '@client/containers/Breadcrumbs';
+import {
+  BookCardRecord,
+  BookFullInfoRecord,
+  CategoryBooksGroup,
+} from '@api/types';
 
 import {BookReviewsSection} from '@client/containers/kinds/book/sections/BookReviews';
 import {
   BookAvailabilitySection,
   BookInfo,
+  CategoriesGroupsBooksSection,
 } from '@client/containers/kinds/book';
 
 import {Container} from '@client/components/ui';
@@ -34,6 +39,7 @@ type BookRouteViewData = {
   layoutData: LayoutViewData,
   book: BookFullInfoRecord,
   authorsBooks: BookCardRecord[],
+  popularCategoriesBooks: CategoryBooksGroup[],
 };
 
 export const BookRoute: AsyncRoute<BookRouteViewData> = (
@@ -41,6 +47,7 @@ export const BookRoute: AsyncRoute<BookRouteViewData> = (
     book,
     authorsBooks,
     layoutData,
+    popularCategoriesBooks,
   },
 ) => {
   const t = useI18n();
@@ -94,6 +101,7 @@ export const BookRoute: AsyncRoute<BookRouteViewData> = (
             ),
           ]}
         />
+
         <BookInfo
           book={book}
           authorsBooks={authorsBooks}
@@ -104,6 +112,10 @@ export const BookRoute: AsyncRoute<BookRouteViewData> = (
           />
           <BookReviewsSection book={book} />
         </BookInfo>
+
+        {popularCategoriesBooks?.length > 0 && (
+          <CategoriesGroupsBooksSection items={popularCategoriesBooks} />
+        )}
       </Container>
     </Layout>
   );
@@ -130,6 +142,7 @@ BookRoute.getInitialProps = async (attrs) => {
   const {
     authorsBooks,
     layoutData,
+    popularCategoriesBooks,
   } = await objPropsToPromise(
     {
       layoutData: await Layout.getInitialProps(attrs),
@@ -140,11 +153,25 @@ BookRoute.getInitialProps = async (attrs) => {
           authorsIds: R.pluck('id', book.authors),
         },
       ),
+      popularCategoriesBooks: repo.recentBooks.findCategoriesPopularBooks(
+        {
+          categoriesIds: R.take(3, R.pluck('id', book.categories || [])),
+          excludeBooksIds: R.pluck(
+            'id',
+            book.hierarchy?.length
+              ? book.hierarchy
+              : [book],
+          ),
+          limit: 2,
+          itemsPerGroup: 7,
+        },
+      ),
     },
   );
 
   return {
     authorsBooks: authorsBooks.items,
+    popularCategoriesBooks,
     book,
     layoutData,
   } as BookRouteViewData;

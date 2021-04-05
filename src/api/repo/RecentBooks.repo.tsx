@@ -6,6 +6,8 @@ import {APIRepo} from '../APIRepo';
 import {BookCardRecord} from '../types/BookCard.record';
 
 export type BooksGroupsFilters = BasicAPIPagination & {
+  categoriesIds?: number[],
+  excludeBooksIds?: number[],
   itemsPerGroup?: number,
 };
 

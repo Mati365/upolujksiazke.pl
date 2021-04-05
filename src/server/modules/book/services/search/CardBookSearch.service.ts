@@ -1,16 +1,9 @@
 import esb from 'elastic-builder';
-import {Injectable} from '@nestjs/common';
-import {
-  Connection, EntityManager,
-  EntityTarget, SelectQueryBuilder,
-} from 'typeorm';
-
 import * as R from 'ramda';
+import {Injectable} from '@nestjs/common';
+import {Connection, EntityTarget, SelectQueryBuilder} from 'typeorm';
 
-import {
-  objPropsToPromise,
-  uniqFlatHashByProp,
-} from '@shared/helpers';
+import {objPropsToPromise} from '@shared/helpers';
 
 import {APIPaginationResult, BasicAPIPagination} from '@api/APIClient';
 import {BooksGroupsFilters} from '@api/repo/RecentBooks.repo';
@@ -46,7 +39,6 @@ export class CardBookSearchService {
 
   constructor(
     private readonly connection: Connection,
-    private readonly entityManager: EntityManager,
     private readonly bookTagService: BookTagsService,
     private readonly releaseService: BookReleaseService,
     private readonly categoryService: BookCategoryService,
@@ -165,81 +157,85 @@ export class CardBookSearchService {
   /**
    * Returns grouped by category books
    *
+   * @see
+   *  It is slow! It makes N requests to DB due to uniq group books!
+   *
    * @param {BooksGroupsFilters} groups
    * @returns
    * @memberof CardBookSearchService
    */
   async findCategoriesPopularBooks(
     {
+      categoriesIds,
+      excludeBooksIds = [],
       itemsPerGroup = 12,
       offset = 0,
-      limit = 6,
+      limit = categoriesIds?.length || 6,
     }: BooksGroupsFilters = {},
   ) {
-    const {
-      entityManager,
-    } = this;
-
-    const categoryBooks: {
-      id: number,
-      name: string,
-      parameterizedName: string,
-      items: number[],
-    }[] = await entityManager.query(
-      /* sql */ `
-        select
-          category."id", category."name", category."parameterizedName",
-          books."items"
-        from book_category category
-        cross join lateral (
-          select array (
-            select book."id"
-              from book_categories_book_category as book_categories
-              left join book on book."id" = book_categories."bookId"
-              where book_categories."bookCategoryId" = category."id"
-              order by book."totalRatings" desc
-              limit $1
-          ) as items
-        ) as books
-        where category."promotion" > 0
-        order by category."promotion" desc
-        limit $2
-        offset $3
-      `,
-      [
-        itemsPerGroup,
-        limit,
+    const {categoryService} = this;
+    const popularCategories = await categoryService.findMostPopularCategories(
+      {
+        ids: categoriesIds,
         offset,
-      ],
+        limit,
+      },
     );
 
-    const bookIds = R.pipe(
-      R.pluck('items'),
-      R.unnest,
-      R.uniq,
-    )(categoryBooks);
+    const groups: {
+      category: BookCategoryEntity,
+      items: BookEntity[],
+    }[] = [];
 
-    const booksEntities = uniqFlatHashByProp(
-      'id',
-      await this.findBooksByIds(bookIds),
-    );
+    for await (const category of popularCategories) {
+      const items = await (
+        this
+          .createCardsQuery()
+          .where(
+            // eslint-disable-next-line @typescript-eslint/no-loop-func
+            (qb) => {
+              let query = (
+                qb
+                  .createQueryBuilder()
+                  .select('bcc."bookId"')
+                  .from('book_categories_book_category', 'bcc')
+                  .where('bcc."bookCategoryId" = :categoryId')
+                  .limit(itemsPerGroup)
+              );
 
-    return (
-      categoryBooks
-        .map(
-          ({id, name, parameterizedName, items}) => ({
-            items: items.map((bookId) => booksEntities[bookId]),
-            category: new BookCategoryEntity(
-              {
-                id,
-                name,
-                parameterizedName,
-              },
-            ),
-          }),
-        )
-        .filter(({items}) => !R.isEmpty(items))
-    );
+              if (excludeBooksIds.length > 0)
+                query = query.andWhere('bcc."bookId" not in (:...excludeBooksIds)');
+
+              return `book."id" IN (${query.getQuery()})`;
+            },
+          )
+          .setParameters(
+            {
+              categoryId: category.id,
+              excludeBooksIds,
+            },
+          )
+          .getMany()
+      );
+
+      if (items?.length > 0) {
+        excludeBooksIds = R.uniq(
+          [
+            ...excludeBooksIds,
+            ...R.pluck('id', items),
+          ],
+        );
+
+        groups.push(
+          {
+            category,
+            items,
+          },
+        );
+      }
+    }
+
+    return groups;
   }
 
   /**

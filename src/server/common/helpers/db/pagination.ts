@@ -6,7 +6,7 @@ import {ID} from '@shared/types';
 
 export type BasicLimitPaginationOptions = {
   offset?: number,
-  limit: number,
+  limit?: number,
 };
 
 export type PaginationOptions = BasicLimitPaginationOptions & {

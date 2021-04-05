@@ -21,7 +21,11 @@ export class BooksCategoriesServerRepo extends ServerAPIClientChild implements B
   )
   async findMostPopularCategories({limit}: MostPopularCategoriesFilters): Promise<BookCategoryRecord[]> {
     const {bookCategoryService} = this.services;
-    const categories = await bookCategoryService.findMostPopularCategories(limit);
+    const categories = await bookCategoryService.findMostPopularCategories(
+      {
+        limit,
+      },
+    );
 
     return plainToClass(
       BookCategorySerializer,

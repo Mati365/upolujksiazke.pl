@@ -2,7 +2,7 @@ import {Injectable} from '@nestjs/common';
 import {Connection, EntityManager} from 'typeorm';
 import * as R from 'ramda';
 
-import {upsert} from '@server/common/helpers/db';
+import {BasicLimitPaginationOptions, upsert} from '@server/common/helpers/db';
 import {parameterize} from '@shared/helpers/parameterize';
 
 import {BookCategoryEntity} from '../BookCategory.entity';
@@ -11,7 +11,7 @@ import {CreateBookCategoryDto} from '../dto/CreateBookCategory.dto';
 @Injectable()
 export class BookCategoryService {
   public static readonly BOOK_CATEGORY_FIELDS = [
-    'c.id', 'c.name', 'c.parameterizedName',
+    'c.id', 'c.name', 'c.parameterizedName', 'c.promotion',
   ];
 
   constructor(
@@ -21,19 +21,37 @@ export class BookCategoryService {
   /**
    * Returns N most popular categories
    *
-   * @param {number} limit
+   * @param {Object} attrs
    * @returns
    * @memberof BookCategoryService
    */
-  findMostPopularCategories(limit: number) {
-    return (
+  findMostPopularCategories(
+    {
+      limit,
+      offset,
+      ids,
+    }: BasicLimitPaginationOptions & {
+      ids?: number[],
+    },
+  ) {
+    let qb = (
       BookCategoryEntity
         .createQueryBuilder('c')
         .select(BookCategoryService.BOOK_CATEGORY_FIELDS)
-        .limit(limit)
+        .where('c.promotion is not null')
         .orderBy('c.promotion', 'DESC')
-        .getMany()
     );
+
+    if (offset)
+      qb = qb.offset(offset);
+
+    if (limit)
+      qb = qb.limit(limit);
+
+    if (ids)
+      qb = qb.whereInIds(ids);
+
+    return qb.getMany();
   }
 
   /**

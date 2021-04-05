@@ -50,7 +50,7 @@ export const BookInfo = ({book, authorsBooks, children}: BookInfoProps) => {
 
   return (
     <Section
-      spaced={3}
+      spaced={2}
       className='c-book-info-section'
     >
       {ua.desktop && (

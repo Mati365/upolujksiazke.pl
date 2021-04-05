@@ -14,8 +14,8 @@ import {
 export class BooksCategoriesServerRepo extends ServerAPIClientChild implements BooksCategoriesRepo {
   @MeasureCallDuration('findMostPopularCategories')
   @RedisMemoize(
-    () => ({
-      key: 'popular-books-categories',
+    ({limit}) => ({
+      key: `popular-books-categories-${limit}`,
       expire: convertHoursToSeconds(5),
     }),
   )

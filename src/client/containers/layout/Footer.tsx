@@ -1,4 +1,5 @@
 import React from 'react';
+import * as R from 'ramda';
 
 import {useI18n} from '@client/i18n';
 
@@ -91,7 +92,7 @@ export const Footer = ({popularCategories}: FooterProps) => {
               }}
               gap={3}
             >
-              {popularCategories?.map(
+              {R.take(9, popularCategories || []).map(
                 (category) => (
                   <CategoryLink
                     key={category.id}

@@ -3,9 +3,12 @@ import {Injectable, Inject, CACHE_MANAGER} from '@nestjs/common';
 import {Cache} from 'cache-manager';
 
 import {BookCategoryService} from '@server/modules/book/modules/category';
+import {TagService} from '@server/modules/tag/Tag.service';
+import {BookTagsStatsService} from '@server/modules/book/modules/stats/services/BookTagsStats.service';
 import {
   CardBookSearchService,
   BookService,
+  BookTagsService,
 } from '@server/modules/book';
 
 import {ServerAPIClient} from '../client/ServerAPIClient';
@@ -19,6 +22,9 @@ export class APIClientService {
     public readonly bookService: BookService,
     public readonly bookCategoryService: BookCategoryService,
     public readonly cardBookSearchService: CardBookSearchService,
+    public readonly tagsService: TagService,
+    public readonly bookTagsService: BookTagsService,
+    public readonly bookTagsStatsService: BookTagsStatsService,
     @Inject(CACHE_MANAGER) public readonly cacheManager: Cache,
   ) {}
 }

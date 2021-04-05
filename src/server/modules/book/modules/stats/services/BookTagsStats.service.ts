@@ -25,7 +25,7 @@ export class BookTagsStatsService {
   @ExpirableMemoize(
     {
       keyFn: (limit) => ({
-        key: `most-popular-tags-${limit}`,
+        key: !limit && 'most-popular-tags',
         expire: convertHoursToSeconds(4),
       }),
     },

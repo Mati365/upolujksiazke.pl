@@ -4,7 +4,12 @@
   width: 100%;
   margin-bottom: 2.5rem;
 
+  &.has-promo-bar {
+    margin-bottom: 4.5rem;
+  }
+
   > .c-container {
+    position: relative;
     padding: 20px;
     border-bottom: 1px solid color(divider);
   }
@@ -54,6 +59,23 @@
 
     &-text {
       font-weight: 300;
+    }
+  }
+
+  &__promo {
+    position: absolute;
+    top: 100%;
+    left: 0;
+
+    &-link {
+      padding: 8px 10px;
+      border: 1px solid color(divider);
+      border-top-color: #fff;
+      border-bottom-left-radius: 5px;
+      border-bottom-right-radius: 5px;
+      font-size: $text-small;
+      font-weight: 600;
+      border-bottom-width: 2px;
     }
   }
 }

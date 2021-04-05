@@ -28,14 +28,14 @@ export function ExpirableMemoize(
     (decoratedFn) => async function wrapped(...args: any[]) {
       const {key, expire, disabled} = keyFn(...args);
 
-      if (!disabled) {
+      if (key && !disabled) {
         const cached = cacheStore.get<string>(key);
         if (cached)
           return cached;
       }
 
       const result = decoratedFn(...args);
-      if (!disabled) {
+      if (key && !disabled) {
         const store = (data: any) => {
           cacheStore.setex(key, data, expire);
         };

@@ -6,7 +6,8 @@ import {objPropsToPromise} from '@shared/helpers';
 import {BasicWrapperProps} from '@client/components/ui';
 import {BookCategoryRecord} from '@api/types';
 import {AsyncPropsComponent} from '@client/components/utils/asyncRouteUtils';
-import {Footer} from '@client/containers/layout/Footer';
+import {Footer} from './Footer';
+import {Header} from './Header';
 
 export type LayoutViewData = {
   popularCategories: BookCategoryRecord[],
@@ -22,6 +23,8 @@ export const Layout: AsyncPropsComponent<LayoutProps> = (
   },
 ) => (
   <>
+    <Header />
+
     <main
       className={c(
         'c-layout',

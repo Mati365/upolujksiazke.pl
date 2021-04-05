@@ -29,12 +29,21 @@
   }
 
   &__logo {
-    font-size: $text-small;
+    font-size: 1rem;
     font-weight: 700;
     color: #fff;
 
     > i {
       margin-right: 5px;
+
+      svg {
+        width: 32px;
+        height: 32px;
+
+        g[stroke] {
+          stroke: #fff;
+        }
+      }
     }
   }
 

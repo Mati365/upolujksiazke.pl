@@ -26,10 +26,13 @@ import AnchorSVG from '@assets/icons/svg/anchor.svg';
 import DotsHorizontalRoundedSVG from '@assets/icons/svg/dots-horizontal-rounded.svg';
 import QuoteStartSVG from '@assets/icons/svg/quote-start.svg';
 import QuoteEndSVG from '@assets/icons/svg/quote-end.svg';
+import GroupSVG from '@assets/icons/svg/group.svg';
+import CategorySVG from '@assets/icons/svg/category.svg';
+import TagSVG from '@assets/icons/svg/tag.svg';
 
 import {Icon} from '../ui/Icon';
 
-export const WebsiteLogoIcon = Icon.createFromSVG(WebsiteLogoSVG, '0 0 448 512');
+export const WebsiteLogoIcon = Icon.createFromSVG(WebsiteLogoSVG, '0 0 1049.965 1510.7');
 export const ChevronRightIcon = Icon.createFromSVG(ChevronRightSVG);
 export const ChevronDownIcon = Icon.createFromSVG(ChevronDownSVG);
 export const HeadphoneIcon = Icon.createFromSVG(HeadphoneSVG);
@@ -57,3 +60,6 @@ export const AnchorIcon = Icon.createFromSVG(AnchorSVG);
 export const DotsHorizontalRoundedIcon = Icon.createFromSVG(DotsHorizontalRoundedSVG);
 export const QuoteStartIcon = Icon.createFromSVG(QuoteStartSVG);
 export const QuoteEndIcon = Icon.createFromSVG(QuoteEndSVG);
+export const GroupIcon = Icon.createFromSVG(GroupSVG);
+export const CategoryIcon = Icon.createFromSVG(CategorySVG);
+export const TagIcon = Icon.createFromSVG(TagSVG);

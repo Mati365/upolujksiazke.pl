@@ -2,8 +2,11 @@ import React from 'react';
 import {Redirect} from 'react-router';
 import * as R from 'ramda';
 
-import {formatBookTitle} from '@client/helpers/logic';
 import {objPropsToPromise} from '@shared/helpers';
+import {
+  formatBookTitle,
+  formatBookVolume,
+} from '@client/helpers/logic';
 
 import {useUA} from '@client/modules/ua';
 import {useI18n} from '@client/i18n';
@@ -22,6 +25,7 @@ import {Container} from '@client/components/ui';
 import {Layout, LayoutViewData} from '@client/containers/layout';
 
 import {
+  BookLink,
   BOOK_PATH,
   HOME_PATH,
 } from '../Links';
@@ -45,6 +49,7 @@ export const BookRoute: AsyncRoute<BookRouteViewData> = (
   if (!book)
     return <Redirect to={HOME_PATH} />;
 
+  const {volume, defaultTitle, hierarchy} = book;
   return (
     <Layout {...layoutData}>
       <Container className='c-book-route'>
@@ -54,15 +59,39 @@ export const BookRoute: AsyncRoute<BookRouteViewData> = (
               id: 'books',
               node: t('shared.breadcrumbs.books'),
             },
-            {
-              id: 'book',
-              node: formatBookTitle(
-                {
-                  t,
-                  book,
-                },
-              ),
-            },
+            ...(
+              volume && hierarchy?.length
+                ? [
+                  {
+                    id: 'book',
+                    node: (
+                      <BookLink item={hierarchy[0]}>
+                        {defaultTitle}
+                      </BookLink>
+                    ),
+                  },
+                  {
+                    id: 'volume',
+                    node: formatBookVolume(
+                      {
+                        t,
+                        volume,
+                      },
+                    ),
+                  },
+                ]
+                : [
+                  {
+                    id: 'book',
+                    node: formatBookTitle(
+                      {
+                        t,
+                        book,
+                      },
+                    ),
+                  },
+                ]
+            ),
           ]}
         />
         <BookInfo

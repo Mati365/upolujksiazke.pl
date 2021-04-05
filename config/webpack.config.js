@@ -7,6 +7,7 @@ const CopyPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
 const SentryPlugin = require('@sentry/webpack-plugin');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 /* eslint-disable import/no-default-export */
 require('dotenv').config(
@@ -93,6 +94,7 @@ const createConfig = ({
           exclude: /node_modules/,
           options: {
             onlyCompileBundledFiles: true,
+            transpileOnly: true,
             configFile: path.resolve(__dirname, '../tsconfig.json'),
           },
         },
@@ -148,6 +150,7 @@ const createConfig = ({
             ),
           ]
       ),
+      new ForkTsCheckerWebpackPlugin,
       new webpack.optimize.LimitChunkCountPlugin(
         {
           maxChunks: 5,

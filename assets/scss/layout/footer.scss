@@ -27,4 +27,28 @@
     text-transform: uppercase;
     font-weight: 700;
   }
+
+  &__logo {
+    font-size: $text-small;
+    font-weight: 700;
+    color: #fff;
+
+    > i {
+      margin-right: 5px;
+    }
+  }
+
+  &__about {
+    margin-top: .75rem;
+    line-height: 1.35rem;
+  }
+
+  &__copyright {
+    text-align: center;
+    color: color(text-muted);
+  }
+
+  hr {
+    opacity: .25;
+  }
 }

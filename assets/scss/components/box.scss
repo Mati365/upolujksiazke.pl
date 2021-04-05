@@ -7,6 +7,23 @@
       font-size: 0.86rem;
       line-height: 1.3rem;
     }
+
+    &.is-quote {
+      font-style: italic;
+    }
+
+    &__quote {
+      opacity: .25;
+      font-size: $text-normal;
+
+      &.is-start {
+        margin-right: 5px;
+      }
+
+      &.is-end {
+        margin-left: 5px;
+      }
+    }
   }
 
   &-layer-box {
@@ -16,6 +33,10 @@
 
     &.has-small-padding {
       padding: .85rem 1rem;
+    }
+
+    &.has-none-padding {
+      padding: 0;
     }
   }
 }

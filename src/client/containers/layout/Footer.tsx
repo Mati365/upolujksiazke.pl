@@ -2,6 +2,7 @@ import React from 'react';
 
 import {useI18n} from '@client/i18n';
 
+import {ENV} from '@client/constants/env';
 import {
   HOME_PATH,
   CATEGORIES_PATH,
@@ -13,8 +14,9 @@ import {
 } from '@client/routes/Links';
 
 import {BookCategoryRecord} from '@api/types';
+import {WebsiteLogoIcon} from '@client/components/svg';
 import {
-  Container, Grid,
+  Container, Divider, Grid,
   UndecoratedLink, UnderlinedTitle,
 } from '@client/components/ui';
 
@@ -101,7 +103,30 @@ export const Footer = ({popularCategories}: FooterProps) => {
               )}
             </Grid>
           </div>
+
+          <div className='c-footer__column'>
+            <UnderlinedTitle tag='h3'>
+              {t('footer.about')}
+            </UnderlinedTitle>
+
+            <div className='c-footer__logo c-flex-row'>
+              <WebsiteLogoIcon />
+              <span className='ml-1'>
+                {ENV.shared.website.name}
+              </span>
+            </div>
+
+            <div className='c-footer__about'>
+              {t('about.description')}
+            </div>
+          </div>
         </Grid>
+
+        <Divider />
+
+        <div className='c-footer__copyright'>
+          {t('about.copyright', [new Date().getFullYear()])}
+        </div>
       </Container>
     </footer>
   );

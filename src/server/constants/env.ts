@@ -11,3 +11,6 @@ export const ENV = {
 
 export const SERVER_ENV = ENV.server;
 export const CLIENT_ENV = ENV.client;
+export const SHARED_ENV = ENV.shared;
+
+globalThis.APP_ENV_CONFIG = ENV;

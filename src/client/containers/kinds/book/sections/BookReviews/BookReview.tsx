@@ -87,23 +87,22 @@ export const BookReview = ({review}: BookReviewProps) => {
         className='c-book-review__text c-layer-box'
         maxCharactersCount={350}
         padding='small'
+        quote={!!website}
         text={description}
       />
 
-      <div className='c-book-review__footer c-flex-row'>
-        {website && (
-          <>
-            {`${t('review.published_for')}:`}
-            <TitledFavicon
-              tag='a'
-              className='ml-2'
-              href={url}
-              src={website.logo.smallThumb?.file}
-              title={website.hostname}
-            />
-          </>
-        )}
-      </div>
+      {website && (
+        <div className='c-book-review__footer c-flex-row'>
+          {`${t('review.read_more_at')}:`}
+          <TitledFavicon
+            tag='a'
+            className='ml-2'
+            href={url}
+            src={website.logo.smallThumb?.file}
+            title={website.hostname}
+          />
+        </div>
+      )}
     </li>
   );
 };

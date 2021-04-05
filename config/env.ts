@@ -17,6 +17,11 @@ type DefaultConfigBookShopNames = (
 );
 
 export type AppEnv = Partial<{
+  shared: {
+    website: {
+      name: string,
+    },
+  },
   server: {
     instances: number,
     ssl: {
@@ -107,6 +112,11 @@ const {
 
 export const GLOBAL_CONFIG: Record<string, AppEnv> = {
   shared: {
+    shared: {
+      website: {
+        name: 'upolujksiazke.pl',
+      },
+    },
     server: {
       instances: +APP_INSTANCES,
       ssl: {

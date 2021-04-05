@@ -1,3 +1,4 @@
+import {SHARED_ENV} from '@server/constants/env';
 import {
   BookBindingKind,
   BookProtection,
@@ -115,7 +116,7 @@ export const PL_LANG_PACK = {
     },
   },
   review: {
-    published_for: 'Opublikowano na',
+    read_more_at: 'Czytaj więcej na',
   },
   sections: {
     recent_books: {
@@ -125,6 +126,7 @@ export const PL_LANG_PACK = {
   footer: {
     shortcuts: 'Na skróty',
     categories: 'Popularne kategorie',
+    about: 'O serwisie',
   },
   links: {
     home: 'Strona główna',
@@ -133,5 +135,10 @@ export const PL_LANG_PACK = {
     series: 'Serie',
     tags: 'Tagi',
     top: 'TOP książki',
+  },
+  about: {
+    // eslint-disable-next-line max-len
+    description: `${SHARED_ENV.website.name} to darmowa porównywarka cen książek, e-booków i audiobooków. Znajdziesz na niej również dopasowane do książek streszczenia i opinie.`,
+    copyright: 'Copyright by upolujksiazke.pl %{}. Wszystkie prawa zastrzeżone.',
   },
 };

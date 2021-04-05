@@ -1,4 +1,6 @@
 import React, {ReactNode, useContext, useMemo} from 'react';
+
+import {CLIENT_HYDRATE_DATA} from '@client/constants/env';
 import {isSSR} from '@shared/helpers';
 
 type ViewDataProviderProps = {
@@ -13,7 +15,7 @@ export const ViewDataProvider = ({children, initialData}: ViewDataProviderProps)
     () => (
       isSSR()
         ? initialData
-        : JSON.parse(document.getElementById('app-hydrate-data').innerHTML)
+        : CLIENT_HYDRATE_DATA
     ),
     [],
   );

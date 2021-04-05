@@ -1,11 +1,15 @@
+import pug from 'pug';
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 import {StaticRouterContext} from 'react-router';
-
-import pug from 'pug';
 import {Response, Request} from 'express';
-import {Accepts} from '@server/common/decorators/Accepts.decorator';
 import {Controller, Get, Res, Req} from '@nestjs/common';
+import {Accepts} from '@server/common/decorators/Accepts.decorator';
+
+import {
+  CLIENT_ENV,
+  SHARED_ENV,
+} from '@server/constants/env';
 
 import {UA} from '@client/modules/ua';
 import {APP_ROUTES_LIST, PageRoot} from '@client/routes/Root';
@@ -62,6 +66,11 @@ export class FrontController {
 
     const viewData = {
       ua,
+      env: {
+        shared: SHARED_ENV,
+        client: CLIENT_ENV,
+      },
+
       lang: {
         current: i18n.lang,
         translations: {

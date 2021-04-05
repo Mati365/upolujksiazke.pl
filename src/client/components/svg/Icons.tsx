@@ -1,3 +1,4 @@
+import WebsiteLogoSVG from '@assets/icons/website-logo.svg';
 import HeadphoneSVG from '@assets/icons/svg/headphone.svg';
 import ChevronRightSVG from '@assets/icons/svg/chevron-right.svg';
 import ChevronDownSVG from '@assets/icons/svg/chevron-down.svg';
@@ -23,9 +24,12 @@ import SpreadsheetSVG from '@assets/icons/svg/spreadsheet.svg';
 import QuestionMarkSVG from '@assets/icons/svg/question-mark.svg';
 import AnchorSVG from '@assets/icons/svg/anchor.svg';
 import DotsHorizontalRoundedSVG from '@assets/icons/svg/dots-horizontal-rounded.svg';
+import QuoteStartSVG from '@assets/icons/svg/quote-start.svg';
+import QuoteEndSVG from '@assets/icons/svg/quote-end.svg';
 
 import {Icon} from '../ui/Icon';
 
+export const WebsiteLogoIcon = Icon.createFromSVG(WebsiteLogoSVG, '0 0 448 512');
 export const ChevronRightIcon = Icon.createFromSVG(ChevronRightSVG);
 export const ChevronDownIcon = Icon.createFromSVG(ChevronDownSVG);
 export const HeadphoneIcon = Icon.createFromSVG(HeadphoneSVG);
@@ -51,3 +55,5 @@ export const SpreadsheetIcon = Icon.createFromSVG(SpreadsheetSVG);
 export const QuestionMarkIcon = Icon.createFromSVG(QuestionMarkSVG);
 export const AnchorIcon = Icon.createFromSVG(AnchorSVG);
 export const DotsHorizontalRoundedIcon = Icon.createFromSVG(DotsHorizontalRoundedSVG);
+export const QuoteStartIcon = Icon.createFromSVG(QuoteStartSVG);
+export const QuoteEndIcon = Icon.createFromSVG(QuoteEndSVG);

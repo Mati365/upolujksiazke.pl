@@ -13,7 +13,7 @@ type DefaultConfigBookShopNames = (
   | 'skupszop' | 'dadada' | 'aros'
   | 'publio' | 'hrosskar' | 'madbooks'
   | 'gandalf' | 'ibuk' | 'woblink'
-  | 'taniaksiazka'
+  | 'taniaksiazka' | 'lekturyGov'
 );
 
 export type AppEnv = Partial<{
@@ -170,6 +170,7 @@ export const GLOBAL_CONFIG: Record<string, AppEnv> = {
         skupszop: {
           homepageURL: 'https://skupszop.pl/',
           searchURL: 'https://skupszop.pl/wyszukiwarka',
+          logoURL: 'https://skupszop.pl/favicon.ico',
         },
         dadada: {
           homepageURL: 'https://dadada.pl/',
@@ -188,6 +189,7 @@ export const GLOBAL_CONFIG: Record<string, AppEnv> = {
         gildia: {
           homepageURL: 'https://www.gildia.pl/',
           searchURL: 'https://www.gildia.pl/szukaj',
+          logoURL: 'https://www.gildia.pl/favicon.ico',
         },
         woblink: {
           homepageURL: 'https://woblink.com',
@@ -218,6 +220,10 @@ export const GLOBAL_CONFIG: Record<string, AppEnv> = {
         },
         aros: {
           homepageURL: 'https://aros.pl',
+        },
+        lekturyGov: {
+          homepageURL: 'https://lektury.gov.pl/',
+          apiURL: 'https://api.lektury.gov.pl/api/',
         },
         publio: {
           homepageURL: 'https://www.publio.pl',

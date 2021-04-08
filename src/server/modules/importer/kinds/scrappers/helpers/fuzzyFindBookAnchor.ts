@@ -76,36 +76,39 @@ export function fuzzyAuthorsSimilarity(a: CanBeArray<string>, b: CanBeArray<stri
 }
 
 /**
- * Matches similar anchor
+ * Picks most similar books from list
  *
  * @export
+ * @template T
  * @param {Object} attrs
  * @returns
  */
-export function fuzzyFindBookAnchor(
+export function fuzzyFindMatchingBook<T>(
   {
-    $,
     book: {
       title,
       author,
     },
-    anchorSelector,
+    items,
+    mapperFn = R.identity as any,
   }: {
-    $: cheerio.Cheerio,
     book: BookSimilarityFields,
-    anchorSelector(anchor: cheerio.Element): BookSimilarityFields,
+    items: T[],
+    mapperFn?(item: T): BookSimilarityFields,
   },
 ) {
   const source = normalizeBookTitle(title.toLowerCase());
   const lowerAuthors = <string[]> safeArray(author || []).map(orderAuthorField);
 
-  const item = R.head(
+  const output = R.head(
     R.sort(
       (a, b) => b[0] - a[0],
-      $
-        .toArray()
-        .map((el): [number, cheerio.Element] => {
-          const selectorValue = anchorSelector(el);
+      items
+        .map((item): [number, T] => {
+          if (!item)
+            return null;
+
+          const selectorValue = mapperFn(item);
           if (!selectorValue)
             return null;
 
@@ -136,12 +139,39 @@ export function fuzzyFindBookAnchor(
           return (
             similarity < 0.6
               ? null
-              : [similarity, el]
+              : [similarity, item]
           );
         })
         .filter(Boolean),
     ),
   );
 
-  return item?.[1];
+  return output?.[1];
+}
+
+/**
+ * Matches similar anchor
+ *
+ * @export
+ * @param {Object} attrs
+ * @returns
+ */
+export function fuzzyFindBookAnchor(
+  {
+    $,
+    book,
+    anchorSelector,
+  }: {
+    $: cheerio.Cheerio,
+    book: BookSimilarityFields,
+    anchorSelector(anchor: cheerio.Element): BookSimilarityFields,
+  },
+) {
+  return fuzzyFindMatchingBook(
+    {
+      book,
+      mapperFn: anchorSelector,
+      items: $.toArray(),
+    },
+  );
 }

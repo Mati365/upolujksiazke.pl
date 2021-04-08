@@ -13,7 +13,7 @@ import {
 } from '@server/modules/remote/entity/RemoteRecord.entity';
 
 import {BookReviewerEntity} from '../reviewer/BookReviewer.entity';
-import {BookEntity} from '../../Book.entity';
+import {BookEntity} from '../../entity/Book.entity';
 import {BookReleaseEntity} from '../release/BookRelease.entity';
 
 @RemoteRecordEntity(

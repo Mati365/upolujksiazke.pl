@@ -15,3 +15,4 @@ export * from './gandalf';
 export * from './ibuk';
 export * from './woblink';
 export * from './taniaksiazka';
+export * from './lektury.gov';

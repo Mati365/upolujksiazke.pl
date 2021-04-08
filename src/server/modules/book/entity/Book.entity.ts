@@ -6,17 +6,20 @@ import {
   JoinColumn, ManyToOne, RelationId, Index,
 } from 'typeorm';
 
-import {Language} from '@shared/enums/language';
-import {DatedRecordEntity} from '../database/DatedRecord.entity';
-import {TagEntity} from '../tag/Tag.entity';
-import {BookAuthorEntity} from './modules/author/BookAuthor.entity';
-import {BookCategoryEntity} from './modules/category/BookCategory.entity';
-import {BookReviewEntity} from './modules/review/BookReview.entity';
-import {BookReleaseEntity, BookType} from './modules/release/BookRelease.entity';
-import {BookVolumeEntity} from './modules/volume/BookVolume.entity';
-import {BookSeriesEntity} from './modules/series/BookSeries.entity';
-import {BookPrizeEntity} from './modules/prize/BookPrize.entity';
-import {BookKindEntity} from './modules/kind/BookKind.entity';
+import {Language} from '@shared/enums';
+import {DatedRecordEntity} from '../../database/DatedRecord.entity';
+import {TagEntity} from '../../tag/Tag.entity';
+import {BookAuthorEntity} from '../modules/author/BookAuthor.entity';
+import {BookCategoryEntity} from '../modules/category/BookCategory.entity';
+import {BookReviewEntity} from '../modules/review/BookReview.entity';
+import {BookReleaseEntity, BookType} from '../modules/release/BookRelease.entity';
+import {BookVolumeEntity} from '../modules/volume/BookVolume.entity';
+import {BookSeriesEntity} from '../modules/series/BookSeries.entity';
+import {BookPrizeEntity} from '../modules/prize/BookPrize.entity';
+import {BookKindEntity} from '../modules/kind/BookKind.entity';
+import {BookEraEntity} from '../modules/era/BookEra.entity';
+import {BookGenreEntity} from '../modules/genre/BookGenre.entity';
+import {SchoolBookEntity} from './SchoolBook.entity';
 
 @Entity(
   {
@@ -30,6 +33,17 @@ export class BookEntity extends DatedRecordEntity {
 
   @Column('citext')
   defaultTitle: string;
+
+  @OneToOne(
+    () => SchoolBookEntity,
+    (entity) => entity.book,
+    {
+      cascade: true,
+      onDelete: 'SET NULL',
+    },
+  )
+  @JoinColumn()
+  schoolBook: SchoolBookEntity;
 
   @Column(
     {
@@ -65,6 +79,26 @@ export class BookEntity extends DatedRecordEntity {
     },
   )
   categories: BookCategoryEntity[];
+
+  @JoinTable()
+  @ManyToMany(
+    () => BookEraEntity,
+    (eraEntity) => eraEntity.books,
+    {
+      cascade: true,
+    },
+  )
+  era: BookGenreEntity[];
+
+  @JoinTable()
+  @ManyToMany(
+    () => BookGenreEntity,
+    (genreEntity) => genreEntity.books,
+    {
+      cascade: true,
+    },
+  )
+  genre: BookGenreEntity[];
 
   @OneToMany(() => BookReviewEntity, (review) => review.book)
   reviews: BookReviewEntity[];

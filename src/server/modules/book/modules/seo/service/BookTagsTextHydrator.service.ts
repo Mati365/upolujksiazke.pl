@@ -10,7 +10,7 @@ import {objPropsToPromise} from '@shared/helpers';
 import {BookService, BookTagsService} from '@server/modules/book/services';
 import {TagEntity} from '@server/modules/tag/Tag.entity';
 import {LinkHydrateAttrs, hydrateTextWithLinks} from '../helpers/hydrateTextWithLinks';
-import {BookEntity} from '../../../Book.entity';
+import {BookEntity} from '../../../entity/Book.entity';
 import {BookTagsStatsService} from '../../stats/services';
 import {BookTagStatDAO} from '../../stats/dao/BookTagStat.dao';
 

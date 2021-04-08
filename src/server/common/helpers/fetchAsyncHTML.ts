@@ -72,9 +72,9 @@ export type AsyncURLParseResult = {
  * @export
  * @param {string} url
  * @param {boolean} [noRetry]
- * @returns
+ * @returns {Promise<AsyncURLParseResult>}
  */
-export async function parseAsyncURLIfOK(url: string, noRetry?: boolean) {
+export async function parseAsyncURLIfOK(url: string, noRetry?: boolean): Promise<AsyncURLParseResult> {
   try {
     const result = await parseAsyncURL(url);
     const {status} = result.response;
@@ -84,7 +84,7 @@ export async function parseAsyncURLIfOK(url: string, noRetry?: boolean) {
 
     if (!noRetry && status === HTTPCode.BAD_GATEWAY) {
       await timeout(500);
-      return parseAsyncURLIfOK(url, true);
+      return await parseAsyncURLIfOK(url, true);
     }
 
     return null;

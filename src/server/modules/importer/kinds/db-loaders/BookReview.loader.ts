@@ -2,7 +2,7 @@ import {Injectable, Logger} from '@nestjs/common';
 import {plainToClass} from 'class-transformer';
 import * as R from 'ramda';
 
-import {BookEntity} from '@server/modules/book/Book.entity';
+import {BookEntity} from '@server/modules/book/entity/Book.entity';
 import {CreateBookReviewDto} from '@server/modules/book/modules/review/dto/CreateBookReview.dto';
 import {ScrapperMetadataEntity} from '@scrapper/entity/ScrapperMetadata.entity';
 import {MetadataDbLoader} from '@db-loader/MetadataDbLoader.interface';

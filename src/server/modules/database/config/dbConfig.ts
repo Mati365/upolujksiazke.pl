@@ -15,7 +15,7 @@ import {
   AttachmentEntity,
 } from '../../attachment/entity';
 
-import {BookEntity} from '../../book/Book.entity';
+import {BookEntity, SchoolBookEntity} from '../../book/entity';
 import {BookAuthorEntity} from '../../book/modules/author/BookAuthor.entity';
 import {BookReviewEntity} from '../../book/modules/review/BookReview.entity';
 import {BookCategoryEntity} from '../../book/modules/category/BookCategory.entity';
@@ -27,6 +27,8 @@ import {BookVolumeEntity} from '../../book/modules/volume/BookVolume.entity';
 import {BookKindEntity} from '../../book/modules/kind/BookKind.entity';
 import {BookPrizeEntity} from '../../book/modules/prize/BookPrize.entity';
 import {BookSeriesEntity} from '../../book/modules/series/BookSeries.entity';
+import {BookEraEntity} from '../../book/modules/era/BookEra.entity';
+import {BookGenreEntity} from '../../book/modules/genre/BookGenre.entity';
 
 export const DB_ENTITIES = {
   RemoteWebsiteEntity,
@@ -44,6 +46,9 @@ export const DB_ENTITIES = {
   BookKindEntity,
   BookPrizeEntity,
   BookSeriesEntity,
+  BookEraEntity,
+  BookGenreEntity,
+  SchoolBookEntity,
   ScrapperMetadataEntity,
   SpiderQueueEntity,
   TagEntity,

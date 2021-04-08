@@ -14,6 +14,19 @@ import {
 
 import {BOOK_TYPE_TRANSLATION_MAPPINGS} from '../Book.scrapper';
 
+/* eslint-disable quote-props */
+export const BOOK_VOLUME_ALIESES = {
+  'pierwszy': '1', 'drugi': '2', 'trzeci': '3',
+  'czwarty': '4', 'piąty': '5', 'szósty': '6',
+  'siódmy': '7', 'ósmy': '8', 'dziewiąty': '9',
+  'dziesiąty': '10', 'jedenasty': '11', 'duwnasty': '12',
+  'one': '1', 'two': '2', 'three': '3',
+  'four': '4', 'five': '5', 'six': '6',
+  'seven': '7', 'eight': '8', 'nine': '9',
+  'ten': '10', 'eleven': '11', 'twelve': '12',
+};
+/* eslint-enable quote-props */
+
 export type NormalizedBookTitleInfo = {
   title: string,
   volume: string,
@@ -111,9 +124,10 @@ export function extractBookPostifxes(name: string): {
   const editionType = lowerType === 'wydanie' || lowerType === 'w';
 
   let volume: string = null;
-  if (!editionType && part)
+  if (!editionType && part) {
     volume = safeToString(parseIfRomanNumber(part));
-  else
+    volume = BOOK_VOLUME_ALIESES[volume.toLowerCase()] || volume;
+  } else
     volume = null;
 
   return R.mapObjIndexed(

@@ -38,3 +38,5 @@ export * from './time/conversion';
 export * from './findObjNonCasedKey';
 export * from './filterAndMap';
 export * from './pickIdName';
+export * from './getNextObjKey';
+export * from './findKeyByValue';

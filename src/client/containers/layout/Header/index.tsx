@@ -32,11 +32,11 @@ export const Header = ({promoItems}: HeaderProps) => {
         </HomeLink>
 
         <HeaderToolbar />
-
-        {hasPromoBar && (
-          <HeaderPromoLinks items={promoItems} />
-        )}
       </Container>
+
+      {hasPromoBar && (
+        <HeaderPromoLinks items={promoItems} />
+      )}
     </header>
   );
 };

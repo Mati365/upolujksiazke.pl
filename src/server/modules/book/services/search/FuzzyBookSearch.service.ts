@@ -2,7 +2,7 @@ import {Injectable} from '@nestjs/common';
 import {Brackets, SelectQueryBuilder} from 'typeorm';
 import * as R from 'ramda';
 
-import {BookEntity} from '../../Book.entity';
+import {BookEntity} from '../../entity/Book.entity';
 import {BookVolumeEntity} from '../../modules/volume/BookVolume.entity';
 
 import {CreateBookDto} from '../../dto/CreateBook.dto';

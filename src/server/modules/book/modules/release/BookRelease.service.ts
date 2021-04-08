@@ -231,7 +231,6 @@ export class BookReleaseService {
         entityManager: transaction,
       };
 
-      console.info(dto.translator);
       const releaseEntity = await upsert(
         {
           connection,

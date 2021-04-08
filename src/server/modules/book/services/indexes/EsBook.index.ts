@@ -12,7 +12,7 @@ import {
   PredefinedProperties,
 } from '@server/modules/elasticsearch/classes/EntityIndex';
 
-import {BookEntity} from '../../Book.entity';
+import {BookEntity} from '../../entity/Book.entity';
 import {BookCategoryService} from '../../modules/category';
 import {BookTagsService} from '../BookTags.service';
 import {BookReleaseEntity} from '../../modules/release/BookRelease.entity';

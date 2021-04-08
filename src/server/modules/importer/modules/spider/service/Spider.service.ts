@@ -31,9 +31,6 @@ export class SpiderService {
   /**
    * Starts spider on provided website
    *
-   * @todo
-   *  Detect if page has sitemap!
-   *
    * @param {WebsiteScrappersGroup} scrappersGroup
    * @returns
    * @memberof SpiderService

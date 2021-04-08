@@ -3,7 +3,7 @@ import {EntityManager} from 'typeorm';
 import pMap from 'p-map';
 import * as R from 'ramda';
 
-import {BookEntity} from '../../../Book.entity';
+import {BookEntity} from '../../../entity/Book.entity';
 
 type BookStats = Pick<BookEntity, 'avgRating'|'totalRatings'|'lowestPrice'|'highestPrice'|'allTypes'>;
 

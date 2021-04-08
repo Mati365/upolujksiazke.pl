@@ -6,7 +6,7 @@ import {
 
 import {parameterize} from '@shared/helpers/parameterize';
 import {DatedRecordEntity} from '../../../database/DatedRecord.entity';
-import {BookEntity} from '../../Book.entity';
+import {BookEntity} from '../../entity/Book.entity';
 
 @Entity(
   {

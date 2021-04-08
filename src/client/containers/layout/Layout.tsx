@@ -52,7 +52,7 @@ Layout.getInitialProps = async ({api: {repo}}) => objPropsToPromise(
   {
     popularCategories: repo.booksCategories.findMostPopularCategories(
       {
-        limit: 12,
+        limit: 13,
       },
     ),
   },

@@ -12,8 +12,12 @@ import {CreateImageAttachmentDto} from '@server/modules/attachment/dto/CreateIma
  */
 export class WebsiteInfoScrapper {
   constructor(
-    public readonly websiteURL: string,
+    public readonly info: CreateRemoteWebsiteDto,
   ) {}
+
+  get websiteURL() {
+    return this.info.url;
+  }
 
   /**
    * Fetches current website
@@ -22,20 +26,24 @@ export class WebsiteInfoScrapper {
    * @memberof WebsiteInfoScrapper
    */
   async fetchWebsiteDTO(): Promise<CreateRemoteWebsiteDto> {
-    return WebsiteInfoScrapper.getWebsiteDtoFromURL(this.websiteURL);
+    const {info} = this;
+    if (info.description && info.title)
+      return info;
+
+    return WebsiteInfoScrapper.fetchWebsiteDto(info);
   }
 
   /**
    * Fetches website and creates dto
    *
    * @static
-   * @param {string} url
+   * @param {CreateRemoteWebsiteDto} dto
    * @returns {CreateRemoteWebsiteDto}
    * @memberof WebsiteInfoScrapper
    */
-  static async getWebsiteDtoFromURL(url: string) {
+  static async fetchWebsiteDto({url, logo}: CreateRemoteWebsiteDto) {
     const {$} = await parseAsyncURL(url);
-    let faviconUrl = $('[rel="shortcut icon"], [rel="icon"]').attr('href');
+    let faviconUrl = logo?.originalUrl || $('[rel="shortcut icon"], [rel="icon"]').attr('href');
 
     if (!faviconUrl)
       faviconUrl = $('meta[property="og:image"]').attr('content');

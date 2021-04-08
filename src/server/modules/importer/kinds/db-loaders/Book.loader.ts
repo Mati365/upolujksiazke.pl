@@ -82,6 +82,7 @@ export class BookDbLoaderService implements MetadataDbLoader {
     const {logger} = this;
     const book = plainToClass(CreateBookDto, metadata.content);
 
+    console.info(book);
     if (!book) {
       logger.error('Book not matched!');
       return null;

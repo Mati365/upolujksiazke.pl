@@ -2,7 +2,7 @@ import {Injectable, Logger} from '@nestjs/common';
 import {EntityManager, IsNull, Not} from 'typeorm';
 import * as R from 'ramda';
 
-import {BookEntity} from '@server/modules/book/Book.entity';
+import {BookEntity} from '@server/modules/book/entity/Book.entity';
 import {BookVolumeEntity} from '../../volume/BookVolume.entity';
 import {CreateBookSeriesDto} from '../dto/CreateBookSeries.dto';
 import {BookSeriesService} from './BookSeries.service';

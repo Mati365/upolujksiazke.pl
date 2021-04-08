@@ -105,6 +105,7 @@ https://coolors.co/2b2d42-8d99ae-edf2f4-ef233c-d90429
 - [ ] Cyfroteka.pl
 - [ ] Amazon.com
 - [ ] Nieprzeczytane.pl
+- [ ] wolnelektury.pl
 
 🌍 World
 
@@ -198,7 +199,6 @@ Spiders:
  gulp scrapper:spider:run
 ```
 
-
 ### Importers
 
 #### Flow
@@ -220,6 +220,15 @@ Spiders:
   ```
 
   2. Assign scrapper to `scrappersGroups` variable inside `ScrapperService`
+
+
+#### Available
+
+Available scrappers:
+
+- [x] wykop.pl
+- [x] hrosskar.pl
+- [ ] wolnelektury.pl
 
 ## Stack
 

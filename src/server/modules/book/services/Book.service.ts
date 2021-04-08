@@ -16,6 +16,7 @@ import {BookCategoryService} from '../modules/category';
 import {BookVolumeService} from '../modules/volume/BookVolume.service';
 import {BookPrizeService} from '../modules/prize/BookPrize.service';
 import {BookKindService} from '../modules/kind/BookKind.service';
+import {BookEraService} from '../modules/era/BookEra.service';
 import {
   BookHierarchySeriesService,
   BookSeriesService,
@@ -23,13 +24,15 @@ import {
 
 import {CreateBookDto} from '../dto/CreateBook.dto';
 import {CreateBookReleaseDto} from '../modules/release/dto/CreateBookRelease.dto';
-import {BookEntity} from '../Book.entity';
+import {BookEntity} from '../entity/Book.entity';
 import {BookVolumeEntity} from '../modules/volume/BookVolume.entity';
 import {BookReviewEntity} from '../modules/review/BookReview.entity';
 import {BookReleaseEntity} from '../modules/release/BookRelease.entity';
 import {BookStatsService} from '../modules/stats/services/BookStats.service';
 import {BookTagsTextHydratorService} from '../modules/seo/service/BookTagsTextHydrator.service';
+import {BookGenreService} from '../modules/genre/BookGenre.service';
 import {EsBookIndex} from './indexes/EsBook.index';
+import {SchoolBookEntity} from '../entity/SchoolBook.entity';
 
 /**
  * @see
@@ -70,6 +73,8 @@ export class BookService {
     private readonly statsService: BookStatsService,
     private readonly seoTagsService: BookTagsTextHydratorService,
     private readonly hierarchyService: BookHierarchySeriesService,
+    private readonly eraService: BookEraService,
+    private readonly genreService: BookGenreService,
     private readonly bookEsIndex: EsBookIndex,
   ) {}
 
@@ -207,13 +212,14 @@ export class BookService {
    */
   async upsert(dto: CreateBookDto): Promise<BookEntity> {
     const {
-      connection,
+      connection, eraService,
       tagService, authorService,
       volumeService, releaseService,
       categoryService, seriesService,
       prizeService, kindService,
       statsService, seoTagsService,
       hierarchyService, bookEsIndex,
+      genreService,
     } = this;
 
     const transactionResult = await runTransactionWithPostHooks(connection, async (transaction) => {
@@ -224,6 +230,8 @@ export class BookService {
         volume,
         series,
         prizes,
+        era,
+        genre,
         authors,
         categories,
       ] = (
@@ -232,6 +240,8 @@ export class BookService {
           dto.volume && await volumeService.upsert(dto.volume, transaction),
           dto.series && await seriesService.upsert(dto.series, transaction),
           dto.prizes && await prizeService.upsert(dto.prizes, transaction),
+          dto.era && await eraService.upsert(dto.era),
+          dto.genre && await genreService.upsert(dto.genre),
           await authorService.upsert(dto.authors, transaction),
           await categoryService.upsert(dto.categories, transaction),
         ]
@@ -254,10 +264,13 @@ export class BookService {
             data: new BookEntity(
               {
                 parameterizedSlug: dto.genSlug(),
+                schoolBook: dto.schoolBook && new SchoolBookEntity(dto.schoolBook),
                 defaultTitle: dto.defaultTitle,
                 originalTitle: dto.originalTitle,
                 originalLang: dto.originalLang,
                 originalPublishDate: dto.originalPublishDate,
+                era,
+                genre,
                 ...dto.kindId ? {kindId: dto.kindId} : {kind},
                 ...dto.volumeId ? {volumeId: dto.volumeId} : {volume},
               },

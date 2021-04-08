@@ -15,7 +15,7 @@ import {BookCategoryEntity, BookCategoryService} from '../../modules/category';
 import {BookPrizeService} from '../../modules/prize/BookPrize.service';
 import {BookHierarchySeriesService} from '../../modules/series/services';
 
-import {BookEntity} from '../../Book.entity';
+import {BookEntity} from '../../entity/Book.entity';
 import {BookReviewService} from '../../modules/review/BookReview.service';
 import {BookTagsService} from '../BookTags.service';
 import {EsBookIndex} from '../indexes/EsBook.index';
@@ -73,10 +73,10 @@ export class CardBookSearchService {
       query
         .select(selectFields)
         .innerJoinAndSelect('book.volume', 'volume')
-        .innerJoin('book.authors', 'author')
+        .leftJoin('book.authors', 'author')
         .innerJoin('book.primaryRelease', 'primaryRelease')
-        .innerJoin('primaryRelease.cover', 'cover', `cover.version = '${ImageVersion.PREVIEW}'`)
-        .innerJoin('cover.attachment', 'attachment')
+        .leftJoin('primaryRelease.cover', 'cover', `cover.version = '${ImageVersion.PREVIEW}'`)
+        .leftJoin('cover.attachment', 'attachment')
     );
   }
 

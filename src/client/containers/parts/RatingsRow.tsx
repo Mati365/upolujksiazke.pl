@@ -44,7 +44,7 @@ export const RatingsRow = (
         if (score === Math.floor(normalizedValue) && score !== normalizedValue) {
           Component = StarHalfIcon;
           starClassName = 'is-half';
-        } else if (score <= normalizedValue) {
+        } else if (score < normalizedValue) {
           Component = StarFilledIcon;
           starClassName = 'is-filled';
         }

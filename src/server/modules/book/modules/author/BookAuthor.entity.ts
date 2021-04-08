@@ -8,7 +8,7 @@ import {parameterize} from '@shared/helpers/parameterize';
 import {normalizeHTML} from '@server/modules/importer/kinds/scrappers/helpers';
 
 import {DatedRecordEntity} from '@server/modules/database/DatedRecord.entity';
-import {BookEntity} from '../../Book.entity';
+import {BookEntity} from '../../entity/Book.entity';
 
 export const reorderAuthorName = (name: string) => R.sortBy(
   R.identity,

@@ -65,22 +65,24 @@ export const BookInfo = ({book, authorsBooks, children}: BookInfoProps) => {
           {formattedTitle}
         </h1>
 
-        <BookHeaderAttribute
-          className='c-book-info-section__author'
-          label={
-            `${t('book.created_by')}:`
-          }
-        >
-          <LinksRow
-            items={authors}
-            linkComponent={AuthorLink}
-            linkProps={{
-              underline: true,
-            }}
-            block={false}
-            separated
-          />
-        </BookHeaderAttribute>
+        {authors.length > 0 && (
+          <BookHeaderAttribute
+            className='c-book-info-section__author'
+            label={
+              `${t('book.created_by')}:`
+            }
+          >
+            <LinksRow
+              items={authors}
+              linkComponent={AuthorLink}
+              linkProps={{
+                underline: true,
+              }}
+              block={false}
+              separated
+            />
+          </BookHeaderAttribute>
+        )}
 
         <BookHeaderAttribute
           className='c-book-info-section__ratings'
@@ -115,23 +117,25 @@ export const BookInfo = ({book, authorsBooks, children}: BookInfoProps) => {
 
         <BookProperties book={book} />
 
-        <BookHeaderAttribute
-          className='c-book-info-section__categories'
-          label={
-            `${t('shared.titles.categories')}:`
-          }
-        >
-          <LinksRow
-            className='is-text-small'
-            items={categories}
-            linkComponent={CategoryLink}
-            linkProps={{
-              underline: true,
-            }}
-            block={false}
-            separated
-          />
-        </BookHeaderAttribute>
+        {categories.length > 0 && (
+          <BookHeaderAttribute
+            className='c-book-info-section__categories'
+            label={
+              `${t('shared.titles.categories')}:`
+            }
+          >
+            <LinksRow
+              className='is-text-small'
+              items={categories}
+              linkComponent={CategoryLink}
+              linkProps={{
+                underline: true,
+              }}
+              block={false}
+              separated
+            />
+          </BookHeaderAttribute>
+        )}
 
         {children}
       </div>

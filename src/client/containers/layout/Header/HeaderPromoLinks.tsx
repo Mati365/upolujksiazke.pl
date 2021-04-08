@@ -26,6 +26,7 @@ export type HeaderPromoLinksProps = {
 export const HeaderPromoLinks = ({items}: HeaderPromoLinksProps) => (
   <CleanList
     className='c-header__promo'
+    justify='center'
     spaced={2}
     inline
   >

@@ -14,7 +14,7 @@ export type BasicParseAttrs<T = {}> = T & {
  * @class ScrapperParser
  * @extends {ScrapperGroupChild}
  */
-export abstract class ScrapperParser<Input, Output, Attr> extends ScrapperGroupChild {
+export abstract class ScrapperParser<Input, Output, Attr = {}> extends ScrapperGroupChild {
   abstract parse(input: Input, attrs?: BasicParseAttrs<Attr>): CanBePromise<Output>;
 }
 

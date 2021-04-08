@@ -84,8 +84,9 @@ export const BookWebsitesAvailabilityTable = (
             <tr key={item.id}>
               <td>
                 <TitledFavicon
-                  className={(
-                    shrink && 'is-text-tiny'
+                  className={c(
+                    shrink && 'is-text-tiny',
+                    'is-cursor-pointer is-undecorated-link has-hover-underline',
                   )}
                   src={smallThumb?.file}
                   title={website.hostname}

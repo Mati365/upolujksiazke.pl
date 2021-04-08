@@ -1,6 +1,7 @@
 .c-header {
   @include flex-list;
 
+  position: relative;
   width: 100%;
   margin-bottom: 2.5rem;
   border-bottom: 1px solid color(divider);
@@ -10,7 +11,6 @@
   }
 
   > .c-container {
-    position: relative;
     padding: 20px;
   }
 
@@ -64,6 +64,7 @@
 
   &__promo {
     position: absolute;
+    width: 100%;
     top: 100%;
     left: 0;
 

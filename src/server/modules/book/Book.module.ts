@@ -15,6 +15,8 @@ import {BookPrizeModule} from './modules/prize';
 import {BookSeriesModule} from './modules/series';
 import {BookStatsModule} from './modules/stats';
 import {BookSEOModule} from './modules/seo';
+import {BookEraModule} from './modules/era';
+import {BookGenreModule} from './modules/genre';
 
 import {EsBookIndex} from './services/indexes/EsBook.index';
 import {
@@ -41,6 +43,8 @@ import {
       BookSeriesModule,
       BookStatsModule,
       BookSEOModule,
+      BookEraModule,
+      BookGenreModule,
       TagModule,
     ],
     providers: [

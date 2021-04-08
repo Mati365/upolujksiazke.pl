@@ -7,7 +7,7 @@ import {
 
 import {parameterize} from '@shared/helpers/parameterize';
 
-import {Language} from '@shared/enums/language';
+import {Language} from '@shared/enums';
 import {IsTagCorrect} from '@server/modules/tag/validators/IsTagCorrect';
 
 import {CreateBookReleaseDto} from '../modules/release/dto/CreateBookRelease.dto';
@@ -17,6 +17,9 @@ import {CreateBookVolumeDto, DEFAULT_BOOK_VOLUME_NAME} from '../modules/volume/d
 import {CreateBookSeriesDto} from '../modules/series/dto/CreateBookSeries.dto';
 import {CreateBookPrizeDto} from '../modules/prize/dto/CreateBookPrize.dto';
 import {CreateBookKindDto} from '../modules/kind/dto/CreateBookKind.dto';
+import {CreateSchoolBookDto} from './CreateSchoolBook.dto';
+import {CreateBookEraDto} from '../modules/era/dto/CreateBookEra.dto';
+import {CreateBookGenreDto} from '../modules/genre/dto/CreateBookGenre.dto';
 
 import {BookType} from '../modules/release/BookRelease.entity';
 import {reorderAuthorName} from '../modules/author/BookAuthor.entity';
@@ -72,6 +75,11 @@ export class CreateBookDto {
   @Type(() => CreateBookVolumeDto)
   readonly volume: CreateBookVolumeDto;
 
+  @IsDefined()
+  @ValidateNested()
+  @Type(() => CreateSchoolBookDto)
+  readonly schoolBook: CreateSchoolBookDto;
+
   @IsOptional()
   @IsNumber()
   readonly volumeId: number;
@@ -108,6 +116,16 @@ export class CreateBookDto {
   @ValidateNested()
   @Type(() => CreateBookCategoryDto)
   readonly categories: CreateBookCategoryDto[];
+
+  @IsArray()
+  @ValidateNested()
+  @Type(() => CreateBookEraDto)
+  readonly era: CreateBookEraDto[];
+
+  @IsArray()
+  @ValidateNested()
+  @Type(() => CreateBookGenreDto)
+  readonly genre: CreateBookGenreDto[];
 
   @IsOptional()
   @IsNumber()

@@ -17,7 +17,7 @@ import {
 import {Language} from '@shared/enums/language';
 import {ImageAttachmentEntity} from '@server/modules/attachment/entity/ImageAttachment.entity';
 import {DatedRecordEntity} from '../../../database/DatedRecord.entity';
-import {BookEntity} from '../../Book.entity';
+import {BookEntity} from '../../entity/Book.entity';
 import {BookPublisherEntity} from '../publisher/BookPublisher.entity';
 import {BookReviewEntity} from '../review/BookReview.entity';
 import {BookAvailabilityEntity} from '../availability/BookAvailability.entity';

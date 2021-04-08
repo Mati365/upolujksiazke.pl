@@ -3,6 +3,9 @@ import {mergeWithoutNulls} from '@shared/helpers/mergeWithoutNulls';
 
 export const mergeBooks = (books: CreateBookDto[]) => mergeWithoutNulls(books, (key, a, b) => {
   switch (key) {
+    case 'authors':
+      return a?.length > b?.length ? a : b;
+
     case 'series':
     case 'prizes':
     case 'categories':

@@ -133,7 +133,7 @@ export class FuzzyBookSearchService {
     return (
       query
         .innerJoinAndSelect('book.releases', 'release')
-        .select(['release.id', 'release.isbn', 'book.id'])
+        .select(['release.id', 'release.isbn', 'book.parameterizedSlug', 'book.id'])
         .limit(1)
         .getOne()
     );

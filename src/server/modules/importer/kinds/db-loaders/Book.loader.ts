@@ -82,16 +82,16 @@ export class BookDbLoaderService implements MetadataDbLoader {
     const {logger} = this;
     const book = plainToClass(CreateBookDto, metadata.content);
 
-    console.info(book);
     if (!book) {
       logger.error('Book not matched!');
       return null;
     }
 
-    return this.extractVolumeGroupedBooks(
-      [
-        book,
-      ],
+    return this.searchAndExtractToDb(
+      book,
+      {
+        skipIfAlreadyInDb: true,
+      },
     );
   }
 
@@ -141,9 +141,21 @@ export class BookDbLoaderService implements MetadataDbLoader {
       return null;
     }
 
-    const extractedBooks = await this.extractVolumeGroupedBooks(matchedBooks, attrs);
-    const searchSlug = book.genSlug();
+    const [firstBook, ...restBooks] = matchedBooks;
+    const extractedBooks = await this.extractVolumeGroupedBooks(
+      [
+        mergeBooks(
+          [
+            firstBook,
+            book,
+          ],
+        ),
+        ...restBooks,
+      ],
+      attrs,
+    );
 
+    const searchSlug = book.genSlug();
     return R.reduce(
       (acc, item) => {
         const similarity = stringSimilarity.compareTwoStrings(searchSlug, item.parameterizedSlug);

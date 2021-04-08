@@ -76,7 +76,7 @@ export class BookReleaseService {
             'p.id', 'p.name', 'p.parameterizedName',
           ],
         )
-        .innerJoinAndSelect('r.publisher', 'p')
+        .leftJoinAndSelect('r.publisher', 'p')
         .where(
           {
             bookId,

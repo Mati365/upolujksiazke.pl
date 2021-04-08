@@ -10,7 +10,7 @@ import {PurchaseIcon} from '@client/components/svg/Icons';
 import {BookCtaButton} from '@client/containers/kinds/book/controls/BookCtaButton';
 import {BookPriceGroup} from './BookPriceGroup';
 
-import {sortReleasesAvailability} from '../../helpers';
+import {sortReleasesByPrice} from '../../helpers';
 
 type BookPriceBoxProps = {
   book: BookFullInfoRecord,
@@ -23,7 +23,7 @@ export const BookPriceBox = ({className, book, children}: BookPriceBoxProps) => 
   const isPromotion = book.highestPrice !== book.lowestPrice;
 
   const onBuy = () => {
-    const releases = sortReleasesAvailability(book.releases);
+    const releases = sortReleasesByPrice(book.releases);
 
     window.open(
       buildURL(

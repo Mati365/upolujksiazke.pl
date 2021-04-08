@@ -17,6 +17,8 @@ import {BookHierarchySeriesService} from '../../modules/series/services';
 
 import {BookEntity} from '../../entity/Book.entity';
 import {BookReviewService} from '../../modules/review/BookReview.service';
+import {BookGenreService} from '../../modules/genre/BookGenre.service';
+import {BookEraService} from '../../modules/era/BookEra.service';
 import {BookTagsService} from '../BookTags.service';
 import {EsBookIndex} from '../indexes/EsBook.index';
 
@@ -45,6 +47,8 @@ export class CardBookSearchService {
     private readonly prizeService: BookPrizeService,
     private readonly reviewsService: BookReviewService,
     private readonly hierarchyService: BookHierarchySeriesService,
+    private readonly genreService: BookGenreService,
+    private readonly eraService: BookEraService,
     private readonly bookEsIndex: EsBookIndex,
   ) {}
 
@@ -289,6 +293,8 @@ export class CardBookSearchService {
     const {
       categoryService,
       prizeService,
+      eraService,
+      genreService,
       bookTagService,
       releaseService,
       reviewsService,
@@ -299,13 +305,14 @@ export class CardBookSearchService {
     const {
       card, tags, categories,
       prizes, releases, reviews,
-      hierarchy,
+      hierarchy, era, genre,
     } = await objPropsToPromise(
       {
         card: (
           this
             .createCardsQuery(CardBookSearchService.BOOK_FULL_CARD_FIELDS)
-            .innerJoinAndSelect('primaryRelease.publisher', 'publisher')
+            .leftJoinAndSelect('primaryRelease.publisher', 'publisher')
+            .leftJoinAndSelect('book.schoolBook', 'schoolBook')
             .where(
               {
                 id,
@@ -313,7 +320,8 @@ export class CardBookSearchService {
             )
             .getOne()
         ),
-
+        genre: genreService.findBookGenre(id),
+        era: eraService.findBookEra(id),
         tags: bookTagService.findBookTags(id),
         categories: categoryService.findBookCategories(id),
         prizes: prizeService.findBookPrizes(id),
@@ -346,6 +354,8 @@ export class CardBookSearchService {
     return {
       ...entity,
       ...card,
+      era,
+      genre,
       tags,
       categories,
       prizes,

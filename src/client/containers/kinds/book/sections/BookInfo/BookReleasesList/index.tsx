@@ -20,22 +20,26 @@ type BookReleasesListProps = {
 
 export const BookReleasesList = ({book, className}: BookReleasesListProps) => {
   const t = useI18n();
-  const releases = useMemo(
+  const {releases, primaryRelease} = book;
+  const sortedReleases = useMemo(
     () => [
       R.find<BookFullInfoReleaseRecord>(
-        R.propEq('id', book.primaryRelease.id),
-        book.releases,
+        R.propEq('id', primaryRelease.id),
+        releases || [],
       ),
       ...R.sortBy(
         (item) => item.availability?.length || 0,
         R.reject<BookFullInfoReleaseRecord>(
-          R.propEq('id', book.primaryRelease.id),
-          book.releases,
+          R.propEq('id', primaryRelease.id),
+          releases || [],
         ),
       ),
     ],
-    [book.releases],
+    [releases],
   );
+
+  if (R.isEmpty(releases))
+    return null;
 
   return (
     <Tree
@@ -44,7 +48,7 @@ export const BookReleasesList = ({book, className}: BookReleasesListProps) => {
         className,
       )}
     >
-      {releases.map(
+      {sortedReleases.map(
         (release, index) => (
           <li
             key={release.id}

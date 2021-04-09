@@ -42,8 +42,12 @@ export class BookEntity extends DatedRecordEntity {
       onDelete: 'SET NULL',
     },
   )
-  @JoinColumn()
+  @JoinColumn({name: 'schoolBookId'})
   schoolBook: SchoolBookEntity;
+
+  @Column({nullable: true})
+  @RelationId((entity: BookEntity) => entity.schoolBook)
+  schoolBookId: number;
 
   @Column(
     {

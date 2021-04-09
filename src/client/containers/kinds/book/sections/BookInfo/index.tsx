@@ -23,6 +23,7 @@ import {BookPriceBox} from './BookPriceBox';
 import {BookProperties} from './BookProperties';
 import {BookHeaderAttribute} from './BookHeaderAttribute';
 import {BookTags} from './BookTags';
+import {BookSchoolInfo} from './BookSchoolInfo';
 import {BookSidebar} from './Desktop/BookSidebar';
 import {AuthorOtherBooks} from './AuthorOtherBooks';
 
@@ -39,6 +40,7 @@ export const BookInfo = ({book, authorsBooks, children}: BookInfoProps) => {
     taggedDescription, description,
     primaryRelease, authors, categories,
     avgRating, totalRatings, tags,
+    schoolBook,
   } = book;
 
   const formattedTitle = formatBookTitle(
@@ -112,6 +114,21 @@ export const BookInfo = ({book, authorsBooks, children}: BookInfoProps) => {
           )}
           html
         />
+
+        {schoolBook && (
+          <>
+            <Divider
+              spaced={1}
+              noBorder
+            />
+
+            <h2 className='c-book-info-section__description-header'>
+              {t('book.about_school_book')}
+            </h2>
+
+            <BookSchoolInfo book={book} />
+          </>
+        )}
 
         <Divider />
 

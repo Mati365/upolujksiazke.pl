@@ -14,6 +14,7 @@ export * from './Divider';
 export * from './IconPropertiesList';
 export * from './Badge';
 export * from './Table';
+export * from './KeyValueTable';
 export * from './Favicon';
 export * from './Tabs';
 export * from './LinksRow';

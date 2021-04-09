@@ -64,19 +64,19 @@ export async function downloadFile(
     headerValidatorFn,
   }: FileDownloaderAttrs,
 ) {
+  const logger = new Logger('downloadFile');
+  logger.warn(`Fetching file from ${chalk.bold(url)} to ${chalk.bold(outputFile)}!`);
+
   if (headerValidatorFn) {
     if (!headerValidatorFn(await fetchRemoteFileStats(url)))
       return undefined;
   }
 
-  const logger = new Logger('downloadFile');
   const controller = new AbortController;
   const timeoutTimer = setTimeout(
     () => controller.abort(),
     timeout,
   );
-
-  logger.warn(`Fetching file from ${chalk.bold(url)} to ${chalk.bold(outputFile)}!`);
 
   const startDate = Date.now();
   const res = await fetch(

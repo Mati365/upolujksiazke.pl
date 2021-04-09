@@ -8,6 +8,7 @@ import {getCurrentTimestampSuffix} from '@server/common/helpers';
 import {safeToString} from '@shared/helpers';
 
 import {CanBePromise, ListItem} from '@shared/types';
+import {MeasureCallDuration} from '@server/modules/api/helpers';
 
 export type EsIdNamePair = ListItem;
 
@@ -72,10 +73,10 @@ export abstract class EntityIndex<E extends {id: number}, I = any> implements On
   }
 
   abstract createIndex(): Promise<void>;
-  abstract mapRecord(entity: E): CanBePromise<EsMappedDoc<I>>;
+  protected abstract mapRecord(entity: E): CanBePromise<EsMappedDoc<I>>;
 
-  abstract findEntity(id: number): CanBePromise<E>;
-  abstract findEntitiesIds(): AsyncGenerator<number[]>;
+  protected abstract findEntity(id: number): CanBePromise<E>;
+  protected abstract findEntitiesIds(): AsyncGenerator<number[]>;
 
   /**
    * Performs ES search
@@ -94,6 +95,25 @@ export abstract class EntityIndex<E extends {id: number}, I = any> implements On
     );
 
     return response?.body?.hits;
+  }
+
+  /**
+   * Returns single record by id
+   *
+   * @param {(string|number)} id
+   * @returns
+   * @memberof EntityIndex
+   */
+  async getByID(id: string|number) {
+    const {es, indexName} = this;
+    const response = await es.get(
+      {
+        index: indexName,
+        id: safeToString(id),
+      },
+    );
+
+    return response?.body?._source;
   }
 
   /**
@@ -161,6 +181,7 @@ export abstract class EntityIndex<E extends {id: number}, I = any> implements On
    * @returns {Promise<void>}
    * @memberof EntityIndex
    */
+  @MeasureCallDuration('reindexAllEntities')
   async reindexAllEntities(): Promise<void> {
     const {es, indexName} = this;
     const idMapper = async (id: number) => this.mapRecord(
@@ -176,7 +197,7 @@ export abstract class EntityIndex<E extends {id: number}, I = any> implements On
         ids,
         idMapper,
         {
-          concurrency: 1,
+          concurrency: 2,
         },
       );
 

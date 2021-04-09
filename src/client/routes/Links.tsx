@@ -1,8 +1,11 @@
 import {UndecoratedLink} from '@client/components/ui';
+import {BookSchoolLevel} from '@shared/enums';
 import {
   BookAuthorRecord,
   BookCardRecord,
   BookCategoryRecord,
+  BookEraRecord,
+  BookGenreRecord,
   BookPublisherRecord,
   TagRecord,
 } from '@api/types';
@@ -19,6 +22,19 @@ export const PUBLISHER_PATH = '/wydawca/:slug,:id';
 export const PublisherLink = UndecoratedLink.create<Pick<BookPublisherRecord, 'parameterizedName'|'id'>>(
   ({id, parameterizedName}) => `/wydawca/${parameterizedName},${id}`,
 );
+
+export const BOOK_ERA_PATH = '/epoka/:slug,:id';
+export const BookEraLink = UndecoratedLink.create<Pick<BookEraRecord, 'parameterizedName'|'id'>>(
+  ({id, parameterizedName}) => `/wydawca/${parameterizedName},${id}`,
+);
+
+export const BOOK_GENRE_PATH = '/gatunek/:slug,:id';
+export const BookGenreLink = UndecoratedLink.create<Pick<BookGenreRecord, 'parameterizedName'|'id'>>(
+  ({id, parameterizedName}) => `/gatunek/${parameterizedName},${id}`,
+);
+
+export const BOOK_SCHOOL_LEVEL_PATH = '/poziom/:slug,:id';
+export const BookSchoolLevelLink = UndecoratedLink.create<BookSchoolLevel>((id) => `/poziom-szkolny,${id}`);
 
 export const BOOK_SERIES_PATH = '/serie-ksiazek';
 export const BookSeriesLink = UndecoratedLink.create(BOOK_SERIES_PATH);

@@ -45,21 +45,6 @@ import {SchoolBookEntity} from '../entity/SchoolBook.entity';
  */
 @Injectable()
 export class BookService {
-  public static readonly BOOK_CARD_FIELDS = [
-    'book.createdAt', 'book.id', 'book.defaultTitle', 'book.parameterizedSlug',
-    'book.totalRatings', 'book.avgRating',
-    'book.lowestPrice', 'book.highestPrice', 'book.allTypes',
-    'primaryRelease.id',
-    'author.id', 'author.name', 'author.parameterizedName',
-    'cover.ratio', 'cover.nsfw', 'cover.version', 'attachment.file',
-  ];
-
-  public static readonly BOOK_FULL_CARD_FIELDS = [
-    ...BookService.BOOK_CARD_FIELDS,
-    'book.originalPublishDate', 'book.taggedDescription', 'book.description',
-    'primaryRelease',
-  ];
-
   constructor(
     private readonly connection: Connection,
     private readonly tagService: TagService,
@@ -314,7 +299,10 @@ export class BookService {
       const description = (
         dto.description
           ?? book.description
-          ?? primaryRelease.description
+          ?? upsertedReleases.reduce(
+            (a, b) => (a?.description?.length > b.description?.length ? a : b),
+            null,
+          )?.description
       );
 
       // insert seo tags

@@ -12,9 +12,17 @@ type BookCoverGalleryProps = {
   book: BookFullInfoRecord,
   primaryAlt?: string,
   className?: string,
+  tag?: any,
 };
 
-export const BookCoverGallery = ({book, className, primaryAlt}: BookCoverGalleryProps) => {
+export const BookCoverGallery = (
+  {
+    tag: Tag = 'div',
+    book,
+    className,
+    primaryAlt,
+  }: BookCoverGalleryProps,
+) => {
   const t = useI18n();
   const primaryReleaseCover = book.primaryRelease.cover?.preview?.file;
 
@@ -50,7 +58,7 @@ export const BookCoverGallery = ({book, className, primaryAlt}: BookCoverGallery
 
   const src = thumb?.expandSrc ?? primaryReleaseCover;
   return (
-    <div
+    <Tag
       className={c(
         'c-book-gallery',
         className,
@@ -61,6 +69,8 @@ export const BookCoverGallery = ({book, className, primaryAlt}: BookCoverGallery
         alt={primaryAlt}
         book={book}
         align='top'
+        forceRatio
+        forceExpand
       />
 
       {thumbs.length > 0 && (
@@ -70,7 +80,7 @@ export const BookCoverGallery = ({book, className, primaryAlt}: BookCoverGallery
           onClick={setFocusedThumb}
         />
       )}
-    </div>
+    </Tag>
   );
 };
 

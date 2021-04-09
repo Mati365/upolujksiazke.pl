@@ -11,15 +11,21 @@
       overflow: hidden;
     }
 
-    &.has-forced-ratio {
-      height: 0;
-      padding-bottom: percentage($book-ratio);
+    &.has-forced {
+      &-ratio {
+        height: 0;
+        padding-bottom: percentage($book-ratio);
 
-      > img {
-        position: absolute;
-        left: 0;
-        bottom: 0;
-        max-height: 100%;
+        > img {
+          position: absolute;
+          left: 0;
+          bottom: 0;
+          max-height: 100%;
+        }
+      }
+
+      &-expand > img {
+        height: 100%;
       }
     }
 
@@ -139,6 +145,7 @@
 
     @include define-color('green', 'green-ribbon');
     @include define-color('red', 'red-ribbon');
+    @include define-color('blue', 'blue-ribbon');
   }
 }
 

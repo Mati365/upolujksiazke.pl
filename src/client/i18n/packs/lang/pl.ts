@@ -2,8 +2,34 @@ import {SHARED_ENV} from '@server/constants/env';
 import {
   BookBindingKind,
   BookProtection,
+  BookSchoolLevel,
   BookType,
 } from '@shared/enums';
+
+const PL_BOOK_BINDING_PACK: Record<BookBindingKind, string> = {
+  [BookBindingKind.HARDCOVER]: 'twarda okładka',
+  [BookBindingKind.NOTEBOOK]: 'miękka okładka',
+  [BookBindingKind.PAPERBACK]: 'papierowa okładka',
+  [BookBindingKind.SPIRAL]: 'spiralna okładka',
+};
+
+const PL_BOOK_TYPE_PACK: Record<BookType, string> = {
+  [BookType.AUDIOBOOK]: 'audiobook',
+  [BookType.EBOOK]: 'e-book',
+  [BookType.PAPER]: 'papier',
+};
+
+const PL_BOOK_PROTECTION_PACK: Record<BookProtection, string> = {
+  [BookProtection.WATERMARK]: 'znak wodny',
+};
+
+const PL_BOOK_SCHOOL_LEVEL_PACK: Record<BookSchoolLevel, string> = {
+  [BookSchoolLevel.I_III]: '1 - 3 klasa',
+  [BookSchoolLevel.IV_VI]: '4 - 6 klasa',
+  [BookSchoolLevel.VII_VIII]: '7 - 8 klasa',
+  [BookSchoolLevel.HIGH_SCHOOL]: 'Liceum (poziom podstawowy)',
+  [BookSchoolLevel.HIGH_SCHOOL_EXPANDED]: 'Liceum (poziom rozszerzony)',
+};
 
 export const PL_LANG_PACK = {
   home: {
@@ -22,6 +48,8 @@ export const PL_LANG_PACK = {
       more: 'Więcej',
       less: 'Mniej',
       open: 'Otwórz',
+      yes: 'Tak',
+      no: 'Nie',
     },
     book: {
       isbn: 'ISBN',
@@ -33,20 +61,12 @@ export const PL_LANG_PACK = {
       total_ratings: 'Ocen',
       available_types: 'Formaty',
       types: {
-        [BookType.AUDIOBOOK]: 'audiobook',
-        [BookType.EBOOK]: 'e-book',
-        [BookType.PAPER]: 'papier',
+        ...PL_BOOK_TYPE_PACK,
         default: 'brak danych',
       },
-      protection: {
-        [BookProtection.WATERMARK]: 'znak wodny',
-      },
-      binding: {
-        [BookBindingKind.HARDCOVER]: 'twarda okładka',
-        [BookBindingKind.NOTEBOOK]: 'miękka okładka',
-        [BookBindingKind.PAPERBACK]: 'papierowa okładka',
-        [BookBindingKind.SPIRAL]: 'spiralna okładka',
-      },
+      classLevel: PL_BOOK_SCHOOL_LEVEL_PACK,
+      protection: PL_BOOK_PROTECTION_PACK,
+      binding: PL_BOOK_BINDING_PACK,
       props: {
         total_pages: 'Strony',
         type: 'Rodzaj',
@@ -60,6 +80,10 @@ export const PL_LANG_PACK = {
         ratings: 'Głosy',
         publisher: 'Wydawca',
         protection: 'Ochrona',
+        era: 'Epoka',
+        genre: 'Gatunek',
+        school_level: 'Program lektur',
+        obligatory: 'Obowiązkowa',
         original_publish_date: 'Rok wydania',
         availability: 'Sklepy',
         translator: 'Tłumacz',
@@ -71,6 +95,7 @@ export const PL_LANG_PACK = {
     },
     ribbons: {
       top: 'HIT',
+      school: 'Lektura',
     },
     buttons: {
       more: 'pokaż więcej',
@@ -90,6 +115,7 @@ export const PL_LANG_PACK = {
     book_description: 'Opis książki',
     volumes: 'Tomy książki',
     releases: 'Wydania książki',
+    about_school_book: 'O lekturze',
     price_box: {
       header: 'Ceny książki:',
       highest_price: 'Najwyższa cena:',

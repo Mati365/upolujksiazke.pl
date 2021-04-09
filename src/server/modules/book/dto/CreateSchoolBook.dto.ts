@@ -8,7 +8,7 @@ export class CreateSchoolBookDto {
 
   @IsEnum(BookSchoolLevel)
   @IsOptional()
-  readonly schoolLevel: BookSchoolLevel;
+  readonly classLevel: BookSchoolLevel;
 
   @IsOptional()
   @IsBoolean()

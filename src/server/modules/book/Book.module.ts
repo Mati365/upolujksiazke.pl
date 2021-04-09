@@ -1,7 +1,7 @@
 import {Module} from '@nestjs/common';
 
 import {ElasticsearchConnectionModule} from '../elasticsearch';
-import {TagModule} from '../tag';
+import {TagModule} from '../tag/Tag.module';
 import {BookAuthorModule} from './modules/author/BookAuthor.module';
 import {BookReviewerModule} from './modules/reviewer/BookReviewer.module';
 import {BookCategoryModule} from './modules/category/BookCategory.module';
@@ -21,6 +21,7 @@ import {BookGenreModule} from './modules/genre';
 import {EsBookIndex} from './services/indexes/EsBook.index';
 import {
   CardBookSearchService,
+  EsCardBookSearchService,
   BookService,
   BookTagsService,
   FuzzyBookSearchService,
@@ -53,6 +54,7 @@ import {
       BookTagsService,
       FuzzyBookSearchService,
       CardBookSearchService,
+      EsCardBookSearchService,
     ],
     exports: [
       EsBookIndex,
@@ -73,6 +75,7 @@ import {
       BookSeriesModule,
       BookSEOModule,
       CardBookSearchService,
+      EsCardBookSearchService,
     ],
   },
 )

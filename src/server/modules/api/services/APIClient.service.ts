@@ -9,6 +9,7 @@ import {
   CardBookSearchService,
   BookService,
   BookTagsService,
+  EsCardBookSearchService,
 } from '@server/modules/book';
 
 import {ServerAPIClient} from '../client/ServerAPIClient';
@@ -22,6 +23,7 @@ export class APIClientService {
     public readonly bookService: BookService,
     public readonly bookCategoryService: BookCategoryService,
     public readonly cardBookSearchService: CardBookSearchService,
+    public readonly esCardBookSearchService: EsCardBookSearchService,
     public readonly tagsService: TagService,
     public readonly bookTagsService: BookTagsService,
     public readonly bookTagsStatsService: BookTagsStatsService,

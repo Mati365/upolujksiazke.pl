@@ -5,7 +5,7 @@ import {buildURL} from '@shared/helpers';
 import {useI18n} from '@client/i18n';
 
 import {BookFullInfoReleaseRecord} from '@api/types';
-import {Table} from '@client/components/ui';
+import {KeyValueTable, KeyValueTableProps} from '@client/components/ui';
 import {PublisherLink} from '@client/routes/Links';
 import {BookCtaButton} from '@client/containers/kinds/book/controls/BookCtaButton';
 
@@ -17,7 +17,7 @@ type BookReleaseInfoProps = {
 
 export const BookReleaseInfo = ({release}: BookReleaseInfoProps) => {
   const t = useI18n('shared.book');
-  const attrs = [
+  const attrs: KeyValueTableProps['items'] = [
     !R.isNil(release.totalPages) && [
       t('props.total_pages'),
       release.totalPages,
@@ -82,7 +82,7 @@ export const BookReleaseInfo = ({release}: BookReleaseInfoProps) => {
         {release.publisher.name}
       </PublisherLink>,
     ],
-  ].filter(Boolean);
+  ];
 
   const onOpen = () => {
     const [{availability}] = sortReleasesAvailability([release]);
@@ -102,37 +102,10 @@ export const BookReleaseInfo = ({release}: BookReleaseInfoProps) => {
 
   return (
     <div className='c-book-release-info'>
-      <Table>
-        <tbody>
-          {attrs.map(
-            ([key, value]) => (
-              <tr key={key as string}>
-                <th
-                  style={{
-                    width: 100,
-                  }}
-                >
-                  {key}
-                </th>
-
-                <td
-                  className='has-ellipsis'
-                  style={{
-                    width: 110,
-                  }}
-                  {...R.is(String, value) && {
-                    title: value as string,
-                  }}
-                >
-                  <div>
-                    {value}
-                  </div>
-                </td>
-              </tr>
-            ),
-          )}
-        </tbody>
-      </Table>
+      <KeyValueTable
+        className='c-book-release-info__table'
+        items={attrs}
+      />
 
       {release.availability?.length > 0 && (
         <BookCtaButton

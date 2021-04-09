@@ -4,10 +4,12 @@ import c from 'classnames';
 type SidebarSectionProps = JSX.IntrinsicElements['div'] & {
   bold?: boolean,
   title?: ReactNode,
+  tag?: any,
 };
 
 export const SidebarSection = (
   {
+    tag: Tag = 'section',
     children,
     className,
     bold = true,
@@ -15,7 +17,7 @@ export const SidebarSection = (
     ...props
   }: SidebarSectionProps,
 ) => (
-  <section
+  <Tag
     className={c(
       'c-sidebar-section',
       className,
@@ -34,7 +36,7 @@ export const SidebarSection = (
     )}
 
     {children}
-  </section>
+  </Tag>
 );
 
 SidebarSection.displayName = 'SidebarSection';

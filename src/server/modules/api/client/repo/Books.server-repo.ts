@@ -7,17 +7,11 @@ import {
 
 import {ID} from '@shared/types';
 import {BasicAPIPagination} from '@api/APIClient';
-import {
-  AuthorsBooksFilters, BooksFilters,
-  BooksRepo, SingleBookSearchAttrs,
-} from '@api/repo';
+import {AuthorsBooksFilters, BooksFilters, BooksRepo} from '@api/repo';
 
 import {RedisMemoize} from '../../helpers';
 import {MeasureCallDuration} from '../../helpers/MeasureCallDuration';
-import {
-  BookCardSerializer,
-  BookFullInfoSerializer,
-} from '../../serializers';
+import {BookCardSerializer} from '../../serializers';
 
 import {ServerAPIClientChild} from '../ServerAPIClientChild';
 
@@ -104,25 +98,11 @@ export class BooksServerRepo extends ServerAPIClientChild implements BooksRepo {
       expire: convertHoursToSeconds(0.5),
     }),
   )
-  async findOne(
-    id: ID,
-    {
-      reviewsCount,
-    }: SingleBookSearchAttrs = {},
-  ) {
-    const {cardBookSearchService} = this.services;
-    const book = await cardBookSearchService.findFullCard(
+  async findOne(id: ID) {
+    const {esCardBookSearchService} = this.services;
+    return esCardBookSearchService.findFullCard(
       {
         id: +id,
-        reviewsCount,
-      },
-    );
-
-    return plainToClass(
-      BookFullInfoSerializer,
-      book,
-      {
-        excludeExtraneousValues: true,
       },
     );
   }

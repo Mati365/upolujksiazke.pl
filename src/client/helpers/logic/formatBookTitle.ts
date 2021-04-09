@@ -80,7 +80,7 @@ export function formatReleaseTitle(
     suffix.push(`${t('shared.book.format')} ${format}`);
 
   if (binding)
-    suffix.push(`${t('shared.book.binding')} ${binding}`);
+    suffix.push(t(`shared.book.binding.${binding}`));
 
   return (
     suffix

@@ -81,6 +81,12 @@
       }
     }
 
+    &__sidebar > li:not(:last-child):not(.has-no-divider) {
+      padding-bottom: 1.5rem;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid color(divider);
+    }
+
     @include mobile {
       > .c-section__content {
         grid-template-columns: 1fr;
@@ -265,8 +271,22 @@
       width: auto;
 
       td, th {
-        padding: .35rem .35rem !important
+        padding: .35rem .35rem !important;
+
+        &:nth-child(1) {
+          width: 100px;
+        }
+
+        &:nth-child(2) {
+          width: 110px;
+        }
       }
+    }
+  }
+
+  &-book-school-info {
+    th:first-child {
+      width: 25%;
     }
   }
 }

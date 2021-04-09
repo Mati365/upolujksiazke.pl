@@ -65,7 +65,7 @@ export class LekturyGovBookScrapper extends AsyncScrapper<BookScrapperInfo[], Le
         defaultTitle: book.title,
         schoolBook: new CreateSchoolBookDto(
           {
-            schoolLevel: findAndMap(
+            classLevel: findAndMap(
               (item: any) => {
                 const level = findKeyByValue(item.id, LekturyGovBookScrapper.SCHOOL_LEVELS_IDS);
                 if (R.isNil(level))

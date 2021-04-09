@@ -1,3 +1,5 @@
+import * as R from 'ramda';
+
 import {BookCardRecord} from '@api/types/BookCard.record';
 import {BookRibbonDescription} from '@client/containers/kinds/book/cards/BookCard/BookRibbons';
 import {LangTranslateFn} from '@client/i18n/utils/createLangPack';
@@ -9,6 +11,7 @@ export function getBookRibbons(
   {
     t,
     book: {
+      schoolBookId,
       totalRatings,
       highestPrice,
       lowestPrice,
@@ -26,6 +29,15 @@ export function getBookRibbons(
       {
         title: t('shared.ribbons.top'),
         color: 'red',
+      },
+    );
+  }
+
+  if (!R.isNil(schoolBookId)) {
+    ribbons.push(
+      {
+        title: t('shared.ribbons.school'),
+        color: 'blue',
       },
     );
   }

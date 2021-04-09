@@ -5,10 +5,6 @@ import {BookCardRecord} from '@api/types';
 import {APIRepo} from '../APIRepo';
 import {BookFullInfoRecord} from '../types/BookFullInfo.record';
 
-export type SingleBookSearchAttrs = {
-  reviewsCount?: number,
-};
-
 export type AuthorsBooksFilters = BasicAPIPagination & {
   authorsIds: number[],
 };

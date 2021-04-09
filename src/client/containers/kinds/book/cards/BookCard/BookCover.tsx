@@ -1,6 +1,8 @@
 import React from 'react';
 import c from 'classnames';
 
+import noBookCoverPlaceholderUrl from '@assets/img/no-book-cover-placeholder.png';
+
 import {useI18n} from '@client/i18n';
 import {getBookRibbons} from '@client/helpers/logic';
 
@@ -12,6 +14,7 @@ type BookCoverProps = {
   book: BookCardRecord,
   className?: string,
   forceRatio?: boolean,
+  forceExpand?: boolean,
   alt?: string,
   src?: string,
   align?: string,
@@ -26,6 +29,7 @@ export const BookCover = (
     book,
     align,
     forceRatio = true,
+    forceExpand = false,
     version = 'preview',
   }: BookCoverProps,
 ) => {
@@ -36,12 +40,15 @@ export const BookCover = (
       className={c(
         'c-book-cover',
         forceRatio && 'has-forced-ratio',
+        forceExpand && 'has-forced-expand',
         align && `is-aligned-${align}`,
         className,
       )}
       alt={alt}
       src={(
-        src ?? book.primaryRelease.cover[version].file
+        src
+          ?? book.primaryRelease.cover[version]?.file
+          ?? noBookCoverPlaceholderUrl
       )}
       layer={(
         <BookRibons

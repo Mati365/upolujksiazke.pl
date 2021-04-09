@@ -3,7 +3,7 @@ import React from 'react';
 import {useI18n} from '@client/i18n';
 
 import {
-  Divider,
+  CleanList,
   SidebarSection,
 } from '@client/components/ui';
 
@@ -21,15 +21,21 @@ export const BookSidebar = ({book, formattedTitle}: BookSidebarProps) => {
   const t = useI18n();
 
   return (
-    <div className='c-book-info-section__sidebar'>
+    <CleanList
+      className='c-book-info-section__sidebar'
+      inline={false}
+      block
+    >
       <BookCoverGallery
-        className='c-book-info-section__cover'
+        tag='li'
+        className='c-book-info-section__cover has-no-divider'
         primaryAlt={formattedTitle}
         book={book}
       />
 
       {book.hierarchy?.length > 0 && (
         <SidebarSection
+          tag='li'
           className='c-book-info-section__volumes'
           title={
             `${t('book.volumes')}:`
@@ -43,22 +49,17 @@ export const BookSidebar = ({book, formattedTitle}: BookSidebarProps) => {
       )}
 
       {book.releases?.length > 0 && (
-        <>
-          {book.hierarchy?.length > 0 && (
-            <Divider />
-          )}
-
-          <SidebarSection
-            className='c-book-info-section__releases'
-            title={
-              `${t('book.releases')}:`
-            }
-          >
-            <BookReleasesList book={book} />
-          </SidebarSection>
-        </>
+        <SidebarSection
+          tag='li'
+          className='c-book-info-section__releases'
+          title={
+            `${t('book.releases')}:`
+          }
+        >
+          <BookReleasesList book={book} />
+        </SidebarSection>
       )}
-    </div>
+    </CleanList>
   );
 };
 

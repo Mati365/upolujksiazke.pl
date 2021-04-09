@@ -21,7 +21,6 @@ export function RedisMemoize(keyFn: ExpirableMemoizeCallAttrs['keyFn']) {
       }
 
       const result = await decoratedFn(...args);
-
       if (!devMode && !disabled) {
         await cacheManager.set<string>(
           key,

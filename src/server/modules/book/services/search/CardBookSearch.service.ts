@@ -1,10 +1,11 @@
 import esb from 'elastic-builder';
 import * as R from 'ramda';
-import {Injectable} from '@nestjs/common';
+import {forwardRef, Inject, Injectable} from '@nestjs/common';
 import {Connection, EntityTarget, SelectQueryBuilder} from 'typeorm';
 
 import {objPropsToPromise} from '@shared/helpers';
 
+import {Awaited} from '@shared/types';
 import {APIPaginationResult, BasicAPIPagination} from '@api/APIClient';
 import {BooksGroupsFilters} from '@api/repo/RecentBooks.repo';
 import {BooksFilters} from '@api/repo';
@@ -22,11 +23,13 @@ import {BookEraService} from '../../modules/era/BookEra.service';
 import {BookTagsService} from '../BookTags.service';
 import {EsBookIndex} from '../indexes/EsBook.index';
 
+export type FullCardEntity = Awaited<ReturnType<CardBookSearchService['findFullCard']>>;
+
 @Injectable()
 export class CardBookSearchService {
   public static readonly BOOK_CARD_FIELDS = [
     'book.createdAt', 'book.id', 'book.defaultTitle', 'book.parameterizedSlug',
-    'book.totalRatings', 'book.avgRating',
+    'book.totalRatings', 'book.avgRating', 'book.schoolBookId',
     'book.lowestPrice', 'book.highestPrice', 'book.allTypes',
     'primaryRelease.id',
     'author.id', 'author.name', 'author.parameterizedName',
@@ -36,6 +39,7 @@ export class CardBookSearchService {
   public static readonly BOOK_FULL_CARD_FIELDS = [
     ...CardBookSearchService.BOOK_CARD_FIELDS,
     'book.originalPublishDate', 'book.taggedDescription', 'book.description',
+    'schoolBook.id', 'schoolBook.classLevel', 'schoolBook.obligatory',
     'primaryRelease',
   ];
 
@@ -49,6 +53,8 @@ export class CardBookSearchService {
     private readonly hierarchyService: BookHierarchySeriesService,
     private readonly genreService: BookGenreService,
     private readonly eraService: BookEraService,
+
+    @Inject(forwardRef(() => EsBookIndex))
     private readonly bookEsIndex: EsBookIndex,
   ) {}
 
@@ -312,7 +318,7 @@ export class CardBookSearchService {
           this
             .createCardsQuery(CardBookSearchService.BOOK_FULL_CARD_FIELDS)
             .leftJoinAndSelect('primaryRelease.publisher', 'publisher')
-            .leftJoinAndSelect('book.schoolBook', 'schoolBook')
+            .leftJoin('book.schoolBook', 'schoolBook')
             .where(
               {
                 id,

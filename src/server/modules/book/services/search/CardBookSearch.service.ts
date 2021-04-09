@@ -210,6 +210,8 @@ export class CardBookSearchService {
                   .select('bcc."bookId"')
                   .from('book_categories_book_category', 'bcc')
                   .where('bcc."bookCategoryId" = :categoryId')
+                  .innerJoin('book', 'b', 'b.id = bcc."bookId"')
+                  .orderBy('b.totalRatings', 'DESC')
                   .limit(itemsPerGroup)
               );
 
@@ -219,6 +221,7 @@ export class CardBookSearchService {
               return `book."id" IN (${query.getQuery()})`;
             },
           )
+          .orderBy('book.totalRatings', 'DESC')
           .setParameters(
             {
               categoryId: category.id,

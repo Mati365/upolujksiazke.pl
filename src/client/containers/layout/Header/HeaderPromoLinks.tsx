@@ -23,29 +23,46 @@ export type HeaderPromoLinksProps = {
   }[],
 };
 
-export const HeaderPromoLinks = ({items}: HeaderPromoLinksProps) => (
-  <CleanList
-    className='c-header__promo'
-    justify='center'
-    spaced={2}
-    inline
-  >
-    {items.map(
-      ({name, href}, index) => (
-        <li
-          key={name}
-          className='c-header__promo-link'
-          style={{
-            borderBottomColor: PROMO_COLORS[index % PROMO_COLORS.length],
-          }}
-        >
-          <UndecoratedLink href={href}>
-            {name}
-          </UndecoratedLink>
-        </li>
-      ),
-    )}
-  </CleanList>
-);
+export const HeaderPromoLinks = ({items}: HeaderPromoLinksProps) => {
+  const {maxItems} = items.reduce(
+    (acc, item) => {
+      const characters = acc.characters + item.name.length;
+
+      return {
+        maxItems: acc.maxItems + +(characters < 140),
+        characters,
+      };
+    },
+    {
+      maxItems: 0,
+      characters: 0,
+    },
+  );
+
+  return (
+    <CleanList
+      className='c-header__promo'
+      justify='center'
+      spaced={2}
+      inline
+    >
+      {items.map(
+        ({name, href}, index) => index < maxItems && (
+          <li
+            key={name}
+            className='c-header__promo-link'
+            style={{
+              borderBottomColor: PROMO_COLORS[index % PROMO_COLORS.length],
+            }}
+          >
+            <UndecoratedLink href={href}>
+              {name}
+            </UndecoratedLink>
+          </li>
+        ),
+      )}
+    </CleanList>
+  );
+};
 
 HeaderPromoLinks.displayName = 'HeaderPromoLinks';

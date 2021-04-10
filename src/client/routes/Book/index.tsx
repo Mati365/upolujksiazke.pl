@@ -145,7 +145,7 @@ BookRoute.getInitialProps = async (attrs) => {
     popularCategoriesBooks,
   } = await objPropsToPromise(
     {
-      layoutData: await Layout.getInitialProps(attrs),
+      layoutData: Layout.getInitialProps(attrs),
       authorsBooks: repo.books.findAuthorsBooks(
         {
           excludeIds: [book.id],

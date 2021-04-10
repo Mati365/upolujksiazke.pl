@@ -248,7 +248,10 @@ export class CardBookSearchService {
       }
     }
 
-    return groups;
+    return R.sortBy(
+      ({items}) => -items.length,
+      groups,
+    );
   }
 
   /**

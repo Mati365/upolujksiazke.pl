@@ -28,7 +28,7 @@
     font-size: 0.8rem;
   }
 
-  @include mobile {
+  @include small-mobile {
     &__total {
       width: 100%;
       margin: 5px 0 0;

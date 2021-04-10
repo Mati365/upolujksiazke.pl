@@ -1,19 +1,11 @@
 .c {
   &-book-info-section {
+    $self: &;
+
     > .c-section__content {
       display: grid;
       grid-template-columns: 240px 1fr 210px;
       gap: 30px;
-    }
-
-    &__cover {
-      &:not(:last-child) {
-        margin-bottom: 1.75rem;
-      }
-
-      &:last-child > picture > img {
-        -webkit-box-reflect: below 10px -webkit-gradient(linear, left top, left bottom, from(transparent), color-stop(70%, transparent) , to(rgba(250, 250, 250, 0.1)));
-      }
     }
 
     &__info {
@@ -81,21 +73,41 @@
       }
     }
 
-    &__sidebar > li:not(:last-child):not(.has-no-divider) {
-      padding-bottom: 1.5rem;
-      margin-bottom: 1.5rem;
-      border-bottom: 1px solid color(divider);
+    &__toolbar-row {
+      display: grid;
+      grid-template-columns: .5fr .5fr;
+      gap: 30px;
+      margin: 1.5rem 0 2rem;
+
+      @include small-mobile {
+        grid-template-columns: 1fr;
+      }
+    }
+
+
+    &__sidebar {
+      > li:not(:last-child):not(.has-no-divider) {
+        padding-bottom: 1.5rem;
+        margin-bottom: 1.5rem;
+        border-bottom: 1px solid color(divider);
+      }
+
+
+      #{$self}__cover {
+        &:not(:last-child) {
+          margin-bottom: 1.75rem;
+        }
+
+        &:last-child > picture > img {
+          -webkit-box-reflect: below 10px -webkit-gradient(linear, left top, left bottom, from(transparent), color-stop(70%, transparent) , to(rgba(250, 250, 250, 0.1)));
+        }
+      }
     }
 
     @include mobile {
       > .c-section__content {
         grid-template-columns: 1fr;
         gap: 30px;
-      }
-
-      &__cover {
-        max-width: 150px;
-        margin: 0 auto;
       }
 
       &__header-attr {
@@ -109,7 +121,7 @@
       }
 
       &__ratings {
-        margin: 1rem 0 1.5rem;
+        margin: 1rem 0 0;
       }
     }
   }
@@ -120,6 +132,14 @@
   }
 
   &-book-price-box {
+    $self: &;
+
+    &.is-small {
+      #{$self}__price-wrapper {
+        padding: 1rem;
+      }
+    }
+
     &__header {
       @include flex-list;
 
@@ -174,6 +194,18 @@
   &-book-availability {
     th, tr {
       font-size: $text-small;
+    }
+
+    @include small-mobile {
+      .c-book-cta {
+        &__prefix-icon {
+          margin-right: 0;
+        }
+
+        &__title {
+          display: none
+        }
+      }
     }
   }
 

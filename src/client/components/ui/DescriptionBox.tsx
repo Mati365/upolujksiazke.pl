@@ -11,6 +11,7 @@ export type DescriptionBoxProps = BasicWrapperProps & {
   justify?: boolean,
   padding?: string,
   quote?: boolean,
+  mobileSmaller?: boolean,
 };
 
 export const DescriptionBox = (
@@ -19,12 +20,14 @@ export const DescriptionBox = (
     className,
     padding,
     quote,
+    mobileSmaller = true,
     justify = true,
   }: DescriptionBoxProps,
 ) => (
   <div
     className={c(
       'c-description-box',
+      mobileSmaller && 'is-mobile-smaller',
       justify && 'is-text-justify',
       quote && 'is-quote',
       padding && `has-${padding}-padding`,

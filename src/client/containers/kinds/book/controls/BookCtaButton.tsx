@@ -27,7 +27,9 @@ export const BookCtaButton = ({href, title, className, children, ...props}: Book
     {...props}
   >
     <BasketIcon className='c-book-cta__prefix-icon' />
-    {title}
+    <span className='c-book-cta__title'>
+      {title}
+    </span>
     {children}
     <ChevronRightIcon />
   </Button>

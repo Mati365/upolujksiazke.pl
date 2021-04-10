@@ -15,10 +15,18 @@ import {sortReleasesByPrice} from '../../helpers';
 type BookPriceBoxProps = {
   book: BookFullInfoRecord,
   className?: string,
+  small?: boolean,
   children?: ReactNode,
 };
 
-export const BookPriceBox = ({className, book, children}: BookPriceBoxProps) => {
+export const BookPriceBox = (
+  {
+    className,
+    book,
+    children,
+    small,
+  }: BookPriceBoxProps,
+) => {
   const t = useI18n('book.price_box');
   const isPromotion = book.highestPrice !== book.lowestPrice;
 
@@ -42,13 +50,16 @@ export const BookPriceBox = ({className, book, children}: BookPriceBoxProps) => 
     <div
       className={c(
         'c-book-price-box',
+        small && 'is-small',
         className,
       )}
     >
-      <div className='c-book-price-box__header'>
-        <PurchaseIcon className='mr-1' />
-        {t('header')}
-      </div>
+      {!small && (
+        <div className='c-book-price-box__header'>
+          <PurchaseIcon className='mr-1' />
+          {t('header')}
+        </div>
+      )}
 
       <div
         className={c(
@@ -73,7 +84,11 @@ export const BookPriceBox = ({className, book, children}: BookPriceBoxProps) => 
 
       <BookCtaButton
         className='c-book-price-box__buy-cta'
-        size='big'
+        size={(
+          small
+            ? 'medium'
+            : 'big'
+        )}
         title={
           t('buy_cta')
         }

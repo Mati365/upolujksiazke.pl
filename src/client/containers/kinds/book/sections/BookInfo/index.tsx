@@ -6,11 +6,7 @@ import {useUA} from '@client/modules/ua';
 import {useI18n} from '@client/i18n';
 
 import {BookCardRecord, BookFullInfoRecord} from '@api/types';
-import {RatingsRow} from '@client/containers/parts/RatingsRow';
-import {
-  AuthorLink,
-  CategoryLink,
-} from '@client/routes/Links';
+import {CategoryLink} from '@client/routes/Links';
 
 import {
   ExpandableDescriptionBox,
@@ -19,13 +15,14 @@ import {
   LinksRow,
 } from '@client/components/ui';
 
-import {BookPriceBox} from './BookPriceBox';
 import {BookProperties} from './BookProperties';
 import {BookHeaderAttribute} from './BookHeaderAttribute';
-import {BookTags} from './BookTags';
 import {BookSchoolInfo} from './BookSchoolInfo';
-import {BookSidebar} from './Desktop/BookSidebar';
-import {AuthorOtherBooks} from './AuthorOtherBooks';
+import {BookHeaderSection} from './BookHeaderSection';
+import {
+  BookSidebar,
+  BookPriceSidebar,
+} from './Desktop';
 
 type BookInfoProps = {
   book: BookFullInfoRecord,
@@ -38,8 +35,7 @@ export const BookInfo = ({book, authorsBooks, children}: BookInfoProps) => {
   const ua = useUA();
   const {
     taggedDescription, description,
-    primaryRelease, authors, categories,
-    avgRating, totalRatings, tags,
+    primaryRelease, categories,
     schoolBook,
   } = book;
 
@@ -63,42 +59,10 @@ export const BookInfo = ({book, authorsBooks, children}: BookInfoProps) => {
       )}
 
       <div className='c-book-info-section__info'>
-        <h1 className='c-book-info-section__header'>
-          {formattedTitle}
-        </h1>
-
-        {authors.length > 0 && (
-          <BookHeaderAttribute
-            className='c-book-info-section__author'
-            label={
-              `${t('book.created_by')}:`
-            }
-          >
-            <LinksRow
-              items={authors}
-              linkComponent={AuthorLink}
-              linkProps={{
-                underline: true,
-              }}
-              block={false}
-              separated
-            />
-          </BookHeaderAttribute>
-        )}
-
-        <BookHeaderAttribute
-          className='c-book-info-section__ratings'
-          label={
-            `${t('shared.titles.rating')}:`
-          }
-        >
-          <RatingsRow
-            size='big'
-            value={avgRating / 10}
-            totalStars={10}
-            totalRatings={totalRatings}
-          />
-        </BookHeaderAttribute>
+        <BookHeaderSection
+          book={book}
+          formattedTitle={formattedTitle}
+        />
 
         <h2 className='c-book-info-section__description-header'>
           {t('book.book_description')}
@@ -112,6 +76,7 @@ export const BookInfo = ({book, authorsBooks, children}: BookInfoProps) => {
               || primaryRelease.description
               || t('book.no_description')
           )}
+          mobileSmaller={false}
           html
         />
 
@@ -157,21 +122,12 @@ export const BookInfo = ({book, authorsBooks, children}: BookInfoProps) => {
         {children}
       </div>
 
-      <BookPriceBox
-        className='c-book-info-section__price-box'
-        book={book}
-      >
-        {authorsBooks?.length > 0 && (
-          <>
-            <AuthorOtherBooks books={authorsBooks} />
-            <Divider />
-          </>
-        )}
-
-        {tags.length > 0 && (
-          <BookTags tags={book.tags} />
-        )}
-      </BookPriceBox>
+      {ua.desktop && (
+        <BookPriceSidebar
+          book={book}
+          authorsBooks={authorsBooks}
+        />
+      )}
     </Section>
   );
 };

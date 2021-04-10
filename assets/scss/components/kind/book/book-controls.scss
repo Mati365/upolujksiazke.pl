@@ -16,11 +16,24 @@
   }
 
   &-book-gallery {
+    $self: &;
+
     position: relative;
 
-    &__thumb {
-      $self: &;
+    &.has-grid-layout {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 25px;
 
+      #{$self}__thumbs {
+        position: initial;
+        top: initial;
+        right: initial;
+        margin-right: 0;
+      }
+    }
+
+    &__thumb {
       position: relative;
       width: 54px;
       height: 0;
@@ -35,7 +48,7 @@
         margin-bottom: .65rem;
       }
 
-      &.is-active #{$self}-image {
+      &.is-active #{$self}__thumb-image {
         border-color: color(primary);
         border-width: 2px;
       }

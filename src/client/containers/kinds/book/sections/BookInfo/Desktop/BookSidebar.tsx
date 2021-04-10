@@ -8,7 +8,7 @@ import {
 } from '@client/components/ui';
 
 import {BookFullInfoRecord} from '@api/types';
-import {BookCoverGallery} from '../BookCoverGallery';
+import {BookCoverGallery} from './BookCoverGallery';
 import {BookSeriesTree} from '../BookSeriesTree';
 import {BookReleasesList} from '../BookReleasesList';
 

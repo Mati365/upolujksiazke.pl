@@ -3,9 +3,11 @@
     line-height: 1.55rem;
     white-space: pre-line;
 
-    @include mobile {
-      font-size: 0.86rem;
-      line-height: 1.3rem;
+    &.is-mobile-smaller {
+      @include mobile {
+        font-size: 0.86rem;
+        line-height: 1.3rem;
+      }
     }
 
     &.is-quote {

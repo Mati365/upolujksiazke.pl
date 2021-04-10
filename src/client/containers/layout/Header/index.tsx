@@ -2,6 +2,7 @@ import React from 'react';
 import c from 'classnames';
 
 import {ENV} from '@client/constants/env';
+import {useUA} from '@client/modules/ua';
 
 import {HomeLink} from '@client/routes/Links';
 import {Container} from '@client/components/ui';
@@ -14,7 +15,8 @@ export type HeaderProps = {
 };
 
 export const Header = ({promoItems}: HeaderProps) => {
-  const hasPromoBar = promoItems?.length > 0;
+  const ua = useUA();
+  const hasPromoBar = !ua.mobile && promoItems?.length > 0;
 
   return (
     <header

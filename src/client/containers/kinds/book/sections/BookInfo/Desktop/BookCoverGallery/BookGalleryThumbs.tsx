@@ -66,6 +66,7 @@ export const BookGalleryThumbs = (
     <CleanList
       className='c-book-gallery__thumbs'
       justify='center'
+      inline={false}
     >
       {offset > 0 && (
         <li className='c-book-gallery__less'>

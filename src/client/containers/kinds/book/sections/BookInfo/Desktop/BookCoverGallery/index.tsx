@@ -5,7 +5,7 @@ import {useI18n} from '@client/i18n';
 import {formatReleaseTitle} from '@client/helpers/logic';
 
 import {BookFullInfoRecord} from '@api/types';
-import {BookCover} from '../../../cards/BookCard/BookCover';
+import {BookCover} from '../../../../cards/BookCard/BookCover';
 import {BookGalleryThumbs, BookGalleryThumb} from './BookGalleryThumbs';
 
 type BookCoverGalleryProps = {
@@ -13,6 +13,7 @@ type BookCoverGalleryProps = {
   primaryAlt?: string,
   className?: string,
   tag?: any,
+  layout?: 'grid'|'absolute',
 };
 
 export const BookCoverGallery = (
@@ -21,6 +22,7 @@ export const BookCoverGallery = (
     book,
     className,
     primaryAlt,
+    layout = 'absolute',
   }: BookCoverGalleryProps,
 ) => {
   const t = useI18n();
@@ -28,7 +30,8 @@ export const BookCoverGallery = (
 
   const [thumb, setFocusedThumb] = useState<BookGalleryThumb>();
   const thumbs: BookGalleryThumb[] = (
-    book.releases
+    book
+      .releases
       .map(
         (release) => {
           const {cover, title} = release;
@@ -61,6 +64,7 @@ export const BookCoverGallery = (
     <Tag
       className={c(
         'c-book-gallery',
+        layout && `has-${layout}-layout`,
         className,
       )}
     >

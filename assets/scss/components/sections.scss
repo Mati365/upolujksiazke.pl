@@ -6,6 +6,10 @@
       #{$self}__header {
         margin-bottom: 1.2rem;
         font-size: 1.2rem;
+
+        @include mobile {
+          margin-bottom: 2rem;
+        }
       }
 
       &:last-child {
@@ -23,7 +27,7 @@
       @include mobile {
         @for $i from 1 through 4 {
           &-#{$i} {
-            margin: #{$i / 2}rem 0;
+            margin: #{$i / 1.5}rem 0;
           }
         }
       }

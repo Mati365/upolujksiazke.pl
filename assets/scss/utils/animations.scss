@@ -1,7 +1,32 @@
-.is-hover-scale {
-  transition: transform 250ms ease-in-out;
+@keyframes fade-in {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
+}
 
-  &:hover {
-    transform: scale3d(1.02, 1.02, 1);
+@keyframes fade-up {
+  0% {
+    transform: translate3d(0, 100%, 0);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+}
+
+
+.is {
+  $default-anim-duration: 500ms;
+
+  &-fade-in  { animation: fade-in $default-anim-duration normal forwards; }
+  &-fade-out { animation: fade-out $default-anim-duration normal forwards; }
+
+  &-hover-scale {
+    transition: transform 250ms ease-in-out;
+
+    &:hover {
+      transform: scale3d(1.02, 1.02, 1);
+    }
   }
 }

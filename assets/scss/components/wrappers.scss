@@ -2,10 +2,18 @@
   &-container {
     margin: 0 auto;
     width: $container-width;
-    max-width: calc(100vw - 20px);
+    max-width: calc(100vw - 30px);
   }
 
   &-sections-list > .c-section:first-child {
     margin-top: 0;
+  }
+
+  &-layer {
+    @include layer(fixed);
+
+    &.is-absolute {
+      position: absolute;
+    }
   }
 }

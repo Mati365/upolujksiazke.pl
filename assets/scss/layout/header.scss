@@ -80,3 +80,13 @@
     }
   }
 }
+
+@include mobile {
+  .c-header {
+    margin-bottom: 2rem;
+
+    > .c-container {
+      padding: 15px;
+    }
+  }
+}

@@ -11,4 +11,8 @@
       display: inline-flex;
     }
   }
+
+  @include mobile {
+    margin-bottom: 2.5rem;
+  }
 }

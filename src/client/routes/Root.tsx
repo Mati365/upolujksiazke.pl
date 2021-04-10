@@ -2,6 +2,7 @@ import React from 'react';
 import {StaticRouterProps} from 'react-router';
 
 import {AsyncRouterRouteInfo} from '@client/components/utils/asyncRouteUtils';
+import {ModalsContextProvider} from '@client/hooks/useModal';
 import {ProvideI18n} from '@client/i18n/ProvideI18n';
 import {
   AsyncRouter,
@@ -36,10 +37,12 @@ export const PageRoot = ({initialViewData, routerConfig}: PageRootProps) => (
         lang={viewData.lang.current}
         translations={viewData.lang.translations}
       >
-        <AsyncRouter
-          {...routerConfig}
-          routes={APP_ROUTES_LIST}
-        />
+        <ModalsContextProvider>
+          <AsyncRouter
+            {...routerConfig}
+            routes={APP_ROUTES_LIST}
+          />
+        </ModalsContextProvider>
       </ProvideI18n>
     )}
   </ViewDataProvider>

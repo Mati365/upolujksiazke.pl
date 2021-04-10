@@ -2,11 +2,14 @@ import React, {useEffect, useState, MouseEventHandler, ReactNode, ComponentType}
 import c from 'classnames';
 import * as R from 'ramda';
 
+import {isID} from '@shared/guards/isID';
 import {
   findObjectNonCasedKey,
   uniqFlatHashBy,
+  findById,
 } from '@shared/helpers';
 
+import {IconListItem, ID, ListItem} from '@shared/types';
 import {CleanList} from './CleanList';
 
 type TabProps = {
@@ -52,6 +55,13 @@ type TabsProps = {
   align?: string,
   prependNav?: ReactNode,
   children: ReactNode,
+  customNavRenderFn?(
+    attrs: {
+      items: IconListItem[],
+      activeTab: ListItem,
+      setActiveTab(item: ListItem|ID): void,
+    },
+  ): ReactNode,
 };
 
 export const Tabs = (
@@ -62,6 +72,7 @@ export const Tabs = (
     className,
     align,
     children,
+    customNavRenderFn,
   }: TabsProps,
 ) => {
   const childrenMap: any = uniqFlatHashBy<any>(
@@ -74,40 +85,77 @@ export const Tabs = (
   );
 
   const tabElement: any = childrenMap[activeTabId];
-  const list = (
-    <CleanList
-      block
-      inline
-      separated
-      spaced={4}
-      className={c(
-        'c-tabs__nav',
-        align && `is-aligned-${align}`,
-      )}
-    >
-      {prependNav}
-      {React.Children.map(
-        children,
-        (child) => {
+  let nav: ReactNode = null;
+
+  if (customNavRenderFn) {
+    const items = (
+      React.Children
+        .map(children, (child) => {
           if (!child)
             return null;
 
-          const {id} = (child as any).props;
-          const active = id === activeTabId;
+          const {id, title, icon} = (child as any).props;
+          return {
+            id,
+            icon,
+            name: title,
+          };
+        })
+        .filter(Boolean)
+    );
 
-          return React.cloneElement(
-            child as any,
-            {
-              key: id,
-              active,
-              onClick: () => setActiveTab(id),
+    nav = (
+      <div className='c-tabs__nav'>
+        {customNavRenderFn(
+          {
+            items,
+            activeTab: findById(activeTabId)(items),
+            setActiveTab: (item) => {
+              if (R.isNil(item) || isID(item))
+                setActiveTab(item);
+              else
+                setActiveTab((item as any).id);
             },
-            null,
-          );
-        },
-      )}
-    </CleanList>
-  );
+          },
+        )}
+      </div>
+    );
+  } else {
+    nav = (
+      <CleanList
+        block
+        inline
+        separated
+        spaced={4}
+        className={c(
+          'c-tabs__nav',
+          align && `is-aligned-${align}`,
+        )}
+      >
+        {prependNav}
+        {React.Children.map(
+          children,
+          (child) => {
+            if (!child)
+              return null;
+
+            const {id} = (child as any).props;
+            const active = id === activeTabId;
+
+            return React.cloneElement(
+              child as any,
+              {
+                key: id,
+                active,
+                onClick: () => setActiveTab(id),
+              },
+              null,
+            );
+          },
+        )}
+      </CleanList>
+    );
+  }
 
   const content = tabElement?.props.children(
     {
@@ -137,7 +185,7 @@ export const Tabs = (
         className,
       )}
     >
-      {list}
+      {nav}
       {content}
     </div>
   );

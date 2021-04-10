@@ -50,6 +50,7 @@ export const PL_LANG_PACK = {
       open: 'Otwórz',
       yes: 'Tak',
       no: 'Nie',
+      click_to_choose: 'Kliknij by wybrać',
     },
     book: {
       isbn: 'ISBN',
@@ -128,7 +129,7 @@ export const PL_LANG_PACK = {
       prev_price: 'Poprzednia cena',
       price: 'Cena',
       go_to_shop: 'Idź do sklepu',
-
+      choose_type: 'Format książki',
       groups: {
         all: 'Wszystkie',
         [BookType.AUDIOBOOK]: 'Audiobooki',

@@ -29,6 +29,7 @@ import QuoteEndSVG from '@assets/icons/svg/quote-end.svg';
 import GroupSVG from '@assets/icons/svg/group.svg';
 import CategorySVG from '@assets/icons/svg/category.svg';
 import TagSVG from '@assets/icons/svg/tag.svg';
+import TimesSVG from '@assets/icons/svg/times.svg';
 
 import {Icon} from '../ui/Icon';
 
@@ -63,3 +64,4 @@ export const QuoteEndIcon = Icon.createFromSVG(QuoteEndSVG);
 export const GroupIcon = Icon.createFromSVG(GroupSVG);
 export const CategoryIcon = Icon.createFromSVG(CategorySVG);
 export const TagIcon = Icon.createFromSVG(TagSVG);
+export const TimesIcon = Icon.createFromSVG(TimesSVG);

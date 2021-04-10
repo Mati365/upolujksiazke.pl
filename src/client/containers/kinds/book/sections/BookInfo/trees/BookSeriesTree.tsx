@@ -11,6 +11,7 @@ import {BookLink} from '@client/routes/Links';
 type BookSeriesTreeProps = {
   activeBookId?: number,
   className?: string,
+  size?: string,
   items: SeriesBookRecord[],
 };
 
@@ -18,6 +19,7 @@ export const BookSeriesTree = (
   {
     activeBookId,
     className,
+    size,
     items,
   }: BookSeriesTreeProps,
 ) => {
@@ -27,6 +29,7 @@ export const BookSeriesTree = (
 
   return (
     <Tree
+      size={size}
       className={c(
         'c-book-series-tree',
         className,

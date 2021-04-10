@@ -26,14 +26,21 @@ export const Header = ({promoItems}: HeaderProps) => {
       )}
     >
       <Container className='c-flex-row'>
-        <HomeLink className='c-header__brand'>
+        <HomeLink
+          className={c(
+            'c-header__brand',
+            ua.mobile && 'mx-auto',
+          )}
+        >
           <WebsiteLogoIcon />
           <span className='c-header__brand-title'>
             {ENV.shared.website.name}
           </span>
         </HomeLink>
 
-        <HeaderToolbar />
+        {!ua.mobile && (
+          <HeaderToolbar />
+        )}
       </Container>
 
       {hasPromoBar && (

@@ -9,8 +9,9 @@ import {AuthorLink} from '@client/routes/Links';
 import {LinksRow} from '@client/components/ui';
 
 import {BookHeaderAttribute} from './BookHeaderAttribute';
-import {BookCoverGallery} from './Desktop/BookCoverGallery';
+import {BookCoverGallery} from './BookCoverGallery';
 import {BookPriceBox} from './BookPriceBox';
+import {BookSeriesTree} from './trees';
 
 type BookHeaderSectionProps = {
   book: BookFullInfoRecord,
@@ -28,39 +29,56 @@ export const BookHeaderSection = ({book, formattedTitle}: BookHeaderSectionProps
         {formattedTitle}
       </h1>
 
-      {authors.length > 0 && (
+      <div className='c-book-info-section__attrs'>
+        {authors.length > 0 && (
+          <BookHeaderAttribute
+            className='c-book-info-section__author'
+            label={
+              `${t('book.created_by')}:`
+            }
+          >
+            <LinksRow
+              items={authors}
+              linkComponent={AuthorLink}
+              linkProps={{
+                underline: true,
+              }}
+              block={false}
+              separated
+            />
+          </BookHeaderAttribute>
+        )}
+
         <BookHeaderAttribute
-          className='c-book-info-section__author'
+          className='c-book-info-section__ratings'
           label={
-            `${t('book.created_by')}:`
+            `${t('shared.titles.rating')}:`
           }
         >
-          <LinksRow
-            items={authors}
-            linkComponent={AuthorLink}
-            linkProps={{
-              underline: true,
-            }}
-            block={false}
-            separated
+          <RatingsRow
+            size='big'
+            value={avgRating / 10}
+            totalStars={10}
+            totalRatings={totalRatings}
+            textOnly={ua.mobile}
           />
         </BookHeaderAttribute>
-      )}
 
-      <BookHeaderAttribute
-        className='c-book-info-section__ratings'
-        label={
-          `${t('shared.titles.rating')}:`
-        }
-      >
-        <RatingsRow
-          size='big'
-          value={avgRating / 10}
-          totalStars={10}
-          totalRatings={totalRatings}
-          textOnly={ua.mobile}
-        />
-      </BookHeaderAttribute>
+        {ua.mobile && book.hierarchy?.length > 0 && (
+          <BookHeaderAttribute
+            className='c-book-info-section__volumes'
+            label={
+              `${t('book.volumes')}:`
+            }
+          >
+            <BookSeriesTree
+              size='small'
+              activeBookId={book.id}
+              items={book.hierarchy}
+            />
+          </BookHeaderAttribute>
+        )}
+      </div>
     </>
   );
 
@@ -74,9 +92,8 @@ export const BookHeaderSection = ({book, formattedTitle}: BookHeaderSectionProps
           layout='grid'
         />
         <div className='c-book-info-section__toolbar-row'>
-          <div>
-            {info}
-          </div>
+          {info}
+
           <BookPriceBox
             book={book}
             small

@@ -5,7 +5,7 @@ import {useI18n} from '@client/i18n';
 import {formatReleaseTitle} from '@client/helpers/logic';
 
 import {BookFullInfoRecord} from '@api/types';
-import {BookCover} from '../../../../cards/BookCard/BookCover';
+import {BookCover} from '../../../cards/BookCard/BookCover';
 import {BookGalleryThumbs, BookGalleryThumb} from './BookGalleryThumbs';
 
 type BookCoverGalleryProps = {
@@ -69,6 +69,7 @@ export const BookCoverGallery = (
       )}
     >
       <BookCover
+        className='c-book-gallery__content'
         src={src}
         alt={primaryAlt}
         book={book}

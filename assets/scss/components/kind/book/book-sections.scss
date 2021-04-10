@@ -24,10 +24,17 @@
       font-size: 1rem;
     }
 
+    &__attrs {
+      max-width: 100%;
+
+      @include except-mobile {
+        margin-bottom: 2rem
+      }
+    }
+
     &__header-attr {
       @include flex-list;
 
-      margin-bottom: .85rem;
       color: color(muted-text);
 
       &-label {
@@ -35,7 +42,16 @@
       }
 
       &-value {
+        max-width: 100%;
         margin-left: 7px;
+      }
+
+      &:not(:last-child) {
+        margin-bottom: .85rem;
+
+        @include mobile {
+          margin-bottom: 1.2rem;
+        }
       }
     }
 
@@ -45,10 +61,6 @@
       a {
         color: color(primary);
       }
-    }
-
-    &__ratings {
-      margin-bottom: 1.85rem;
     }
 
     &__categories {
@@ -75,9 +87,15 @@
 
     &__toolbar-row {
       display: grid;
-      grid-template-columns: .5fr .5fr;
-      gap: 30px;
-      margin: 1.5rem 0 2rem;
+      grid-template-columns: minmax(0, .5fr) 0.5fr;
+      gap: 25px 20px;
+      margin: 2rem 0;
+
+      #{$self}__header {
+        grid-column-start: 1;
+        grid-column-end: 3;
+        margin-bottom: 0;
+      }
 
       @include small-mobile {
         grid-template-columns: 1fr;
@@ -92,6 +110,9 @@
         border-bottom: 1px solid color(divider);
       }
 
+      #{$self}__ratings {
+        margin-bottom: 1.85rem;
+      }
 
       #{$self}__cover {
         &:not(:last-child) {
@@ -118,10 +139,6 @@
           margin-top: 5px;
           margin-left: 0;
         }
-      }
-
-      &__ratings {
-        margin: 1rem 0 0;
       }
     }
   }
@@ -319,6 +336,10 @@
   &-book-school-info {
     th:first-child {
       width: 25%;
+
+      @include mobile {
+        width: 120px;
+      }
     }
   }
 }

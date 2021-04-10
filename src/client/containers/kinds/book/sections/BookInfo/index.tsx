@@ -15,6 +15,7 @@ import {
   LinksRow,
 } from '@client/components/ui';
 
+import {BookTags} from './BookTags';
 import {BookProperties} from './BookProperties';
 import {BookHeaderAttribute} from './BookHeaderAttribute';
 import {BookSchoolInfo} from './BookSchoolInfo';
@@ -22,7 +23,7 @@ import {BookHeaderSection} from './BookHeaderSection';
 import {
   BookSidebar,
   BookPriceSidebar,
-} from './Desktop';
+} from './sidebars';
 
 type BookInfoProps = {
   book: BookFullInfoRecord,
@@ -36,7 +37,7 @@ export const BookInfo = ({book, authorsBooks, children}: BookInfoProps) => {
   const {
     taggedDescription, description,
     primaryRelease, categories,
-    schoolBook,
+    schoolBook, tags,
   } = book;
 
   const formattedTitle = formatBookTitle(
@@ -117,6 +118,10 @@ export const BookInfo = ({book, authorsBooks, children}: BookInfoProps) => {
               separated
             />
           </BookHeaderAttribute>
+        )}
+
+        {ua.mobile && tags.length > 0 && (
+          <BookTags tags={book.tags} />
         )}
 
         {children}

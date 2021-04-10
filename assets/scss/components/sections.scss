@@ -9,6 +9,7 @@
 
         @include mobile {
           margin-bottom: 2rem;
+          font-size: 1.1rem;
         }
       }
 
@@ -79,17 +80,6 @@
 
       &.is-bold {
         font-weight: 700;
-      }
-    }
-
-    .c-tree li {
-      @include text-ellipsis;
-
-      font-size: $text-small;
-
-      &.is-active {
-        font-weight: 700;
-        color: color(primary);
       }
     }
   }

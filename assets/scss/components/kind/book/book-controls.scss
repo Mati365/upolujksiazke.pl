@@ -22,14 +22,20 @@
 
     &.has-grid-layout {
       display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 25px;
+      grid-template-columns: 54px .75fr;
+      grid-template-areas: "sidebar content";
+      gap: 30px;
 
       #{$self}__thumbs {
         position: initial;
         top: initial;
         right: initial;
         margin-right: 0;
+        grid-area: sidebar;
+      }
+
+      #{$self}__content {
+        grid-area: content;
       }
     }
 

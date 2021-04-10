@@ -3,6 +3,7 @@ import * as R from 'ramda';
 import {$enum} from 'ts-enum-util';
 
 import {useI18n} from '@client/i18n';
+import {useUA} from '@client/modules/ua';
 import {
   sortAvailabilityByPrice,
   pickAllBookTypedReleases,
@@ -13,6 +14,7 @@ import {BookFullInfoRecord} from '@api/types';
 import {Tabs} from '@client/components/ui';
 import {SpreadsheetIcon} from '@client/components/svg';
 
+import {MobileExpandableSelectButton} from '@client/containers/controls';
 import {TypedBookAvailabilityRecord} from './BookWebsitesAvailabilityTable';
 import {BookTypesIconsMap} from '../../cards/BookCard/BookTypesRow';
 import {
@@ -26,7 +28,9 @@ type BookPricesTabsProps = {
 };
 
 export const BookPricesTabs = ({book, shrink}: BookPricesTabsProps) => {
+  const ua = useUA();
   const t = useI18n('book.availability');
+
   const {all, ...groups} = useMemo<Partial<Record<BookType | 'all', TypedBookAvailabilityRecord[]>>>(
     () => {
       const availability: TypedBookAvailabilityRecord[] = sortAvailabilityByPrice(
@@ -56,10 +60,37 @@ export const BookPricesTabs = ({book, shrink}: BookPricesTabsProps) => {
     <Tabs
       textOnly
       align='right'
-      prependNav={(
-        <li className='mr-2 is-text-muted is-text-small has-no-separator'>
-          {t('shared.titles.group_by')}
-        </li>
+      {...(
+        ua.mobile
+          ? {
+            customNavRenderFn: ({items, activeTab, setActiveTab}) => (
+              <MobileExpandableSelectButton
+                items={items}
+                value={activeTab}
+                onChange={setActiveTab}
+                title={
+                  t('book.availability.choose_type')
+                }
+                renderSelectedValueFn={
+                  (value) => (
+                    <>
+                      {`${t('book.availability.choose_type')}:`}
+                      <span className='ml-1 is-text-semibold'>
+                        {value.name}
+                      </span>
+                    </>
+                  )
+                }
+              />
+            ),
+          }
+          : {
+            prependNav: (
+              <li className='mr-2 is-text-muted is-text-small has-no-separator'>
+                {t('shared.titles.group_by')}
+              </li>
+            ),
+          }
       )}
     >
       {all.length > 0 && (

@@ -1,0 +1,49 @@
+.c-modal {
+  $self: &;
+  $modal-anim-duration: 300ms;
+
+  @include layer(fixed);
+
+  &.is-absolute {
+    position: absolute;
+  }
+
+  &__backdrop {
+    @include layer(absolute);
+
+    background: rgba(0, 0, 0, .35);
+    animation: fade-in $modal-anim-duration normal forwards;
+  }
+
+  &__close {
+    @extend .c-clean-button;
+
+    position: absolute;
+    right: 8px;
+    top: 8px;
+    font-size: 1.8rem;
+    color: color(gray-3);
+  }
+
+  &.is-wide {
+    #{$self}__header {
+      margin-bottom: .6rem;
+      font-size: $text-small;
+      color: color(muted-text);
+    }
+
+    #{$self}__content {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      max-height: calc(100vh - 80px);
+      padding: 23px 15px 0;
+      box-shadow: 0px 0px 12px 0px rgb(0, 0, 0, .15);
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+      background: #fff;
+      animation: fade-up $modal-anim-duration normal forwards;
+    }
+  }
+}

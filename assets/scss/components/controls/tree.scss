@@ -3,6 +3,12 @@ ul.c-tree {
 	margin: 0;
 	padding: 0;
 
+	&.is-small li {
+		@include text-ellipsis;
+
+		font-size: $text-small;
+	}
+
 	ul {
 		list-style: none;
 		margin: 0;
@@ -33,6 +39,11 @@ ul.c-tree {
 			color: #fff;
 			border-bottom: 1px solid color(tree-divider);
 			display: inline-block;
+		}
+
+		&.is-active {
+			font-weight: 700;
+			color: color(primary);
 		}
 	}
 }

@@ -37,6 +37,10 @@ export type ListItem = {
   name: string,
 };
 
+export type IconListItem = ListItem & {
+  icon?: any,
+};
+
 export type DatedItem = {
   createdAt: Date,
   updatedAt: Date,

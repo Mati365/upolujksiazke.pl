@@ -10,15 +10,16 @@ import {
   ExpandableTitledContainer,
 } from '@client/components/ui';
 
+import {BookReleaseTypeBadge} from '../../../BookAvailability/BooReleaseTypeBadge';
 import {BookReleaseInfo} from './BookReleaseInfo';
-import {BookReleaseTypeBadge} from '../../BookAvailability/BooReleaseTypeBadge';
 
 type BookReleasesListProps = {
   book: BookFullInfoRecord,
+  size?: string,
   className?: string,
 };
 
-export const BookReleasesList = ({book, className}: BookReleasesListProps) => {
+export const BookReleasesList = ({book, size, className}: BookReleasesListProps) => {
   const t = useI18n();
   const {releases, primaryRelease} = book;
   const sortedReleases = useMemo(
@@ -43,6 +44,7 @@ export const BookReleasesList = ({book, className}: BookReleasesListProps) => {
 
   return (
     <Tree
+      size={size}
       className={c(
         'c-releases-tree',
         className,

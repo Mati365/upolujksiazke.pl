@@ -9,7 +9,7 @@ import {KeyValueTable, KeyValueTableProps} from '@client/components/ui';
 import {PublisherLink} from '@client/routes/Links';
 import {BookCtaButton} from '@client/containers/kinds/book/controls/BookCtaButton';
 
-import {sortReleasesAvailability} from '../../../helpers';
+import {sortReleasesAvailability} from '../../../../helpers';
 
 type BookReleaseInfoProps = {
   release: BookFullInfoReleaseRecord,

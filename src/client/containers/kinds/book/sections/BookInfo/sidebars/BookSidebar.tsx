@@ -8,9 +8,11 @@ import {
 } from '@client/components/ui';
 
 import {BookFullInfoRecord} from '@api/types';
-import {BookCoverGallery} from './BookCoverGallery';
-import {BookSeriesTree} from '../BookSeriesTree';
-import {BookReleasesList} from '../BookReleasesList';
+import {BookCoverGallery} from '../BookCoverGallery';
+import {
+  BookSeriesTree,
+  BookReleasesList,
+} from '../trees';
 
 type BookSidebarProps = {
   book: BookFullInfoRecord,
@@ -42,6 +44,7 @@ export const BookSidebar = ({book, formattedTitle}: BookSidebarProps) => {
           }
         >
           <BookSeriesTree
+            size='small'
             activeBookId={book.id}
             items={book.hierarchy}
           />
@@ -56,7 +59,10 @@ export const BookSidebar = ({book, formattedTitle}: BookSidebarProps) => {
             `${t('book.releases')}:`
           }
         >
-          <BookReleasesList book={book} />
+          <BookReleasesList
+            size='small'
+            book={book}
+          />
         </SidebarSection>
       )}
     </CleanList>

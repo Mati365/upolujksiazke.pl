@@ -13,6 +13,9 @@ import {
 export const HOME_PATH = '/';
 export const HomeLink = UndecoratedLink.create(HOME_PATH);
 
+export const BOOKS_PATH = '/ksiazki';
+export const BooksLink = UndecoratedLink.create(BOOKS_PATH);
+
 export const BOOK_PATH = '/ksiazka/:slug,:id';
 export const BookLink = UndecoratedLink.create<Pick<BookCardRecord, 'parameterizedSlug'|'id'>>(
   ({id, parameterizedSlug}) => `/ksiazka/${parameterizedSlug},${id}`,
@@ -50,9 +53,6 @@ export const AuthorLink = UndecoratedLink.create<Pick<BookAuthorRecord, 'paramet
   ({id, parameterizedName}) => `/autor/${parameterizedName},${id}`,
 );
 
-export const CATEGORY_PATH = '/kategoria/:slug,:id';
-export const CATEGORIES_PATH = '/kategorie';
-
 export const genCategoryLink = (
   {
     id,
@@ -60,7 +60,7 @@ export const genCategoryLink = (
   }: Pick<BookCategoryRecord, 'parameterizedName'|'id'>,
 ) => `/kategoria/${parameterizedName},${id}`;
 
-export const CategoriesLink = UndecoratedLink.create(CATEGORIES_PATH);
+export const CATEGORY_PATH = '/kategoria/:slug,:id';
 export const CategoryLink = UndecoratedLink.create<Parameters<typeof genCategoryLink>[0]>(genCategoryLink);
 
 export const TAG_PATH = '/tag/:slug,:id';

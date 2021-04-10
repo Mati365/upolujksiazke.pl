@@ -4,7 +4,7 @@ import {useI18n} from '@client/i18n';
 
 import {
   HOME_PATH,
-  CATEGORIES_PATH,
+  BOOKS_PATH,
   AUTHORS_PATH,
   BOOK_SERIES_PATH,
   TAGS_PATH,
@@ -25,7 +25,7 @@ export const HeaderToolbar = () => {
   const t = useI18n();
   const links: [any, string, string][] = [
     [HomeIcon, HOME_PATH, null],
-    [CategoryIcon, CATEGORIES_PATH, t('links.categories')],
+    [CategoryIcon, BOOKS_PATH, t('links.books')],
     [GroupIcon, AUTHORS_PATH, t('links.authors')],
     [BookIcon, BOOK_SERIES_PATH, t('links.series')],
     [TagIcon, TAGS_PATH, t('links.tags')],

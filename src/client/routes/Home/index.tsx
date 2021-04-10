@@ -61,7 +61,7 @@ HomeRoute.getInitialProps = (attrs) => {
       popularCategoriesBooks: repo.recentBooks.findCategoriesPopularBooks(
         {
           itemsPerGroup: 14,
-          limit: 3,
+          limit: 6,
         },
       ),
     },

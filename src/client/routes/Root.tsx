@@ -11,6 +11,7 @@ import {
 
 import {HomeRoute} from './Home';
 import {BookRoute} from './Book';
+import {BooksRoute} from './Books';
 import {AuthorRoute} from './Author';
 
 export const APP_ROUTES_LIST: AsyncRouterRouteInfo[] = [
@@ -19,6 +20,9 @@ export const APP_ROUTES_LIST: AsyncRouterRouteInfo[] = [
   },
   {
     component: BookRoute,
+  },
+  {
+    component: BooksRoute,
   },
   {
     component: AuthorRoute,

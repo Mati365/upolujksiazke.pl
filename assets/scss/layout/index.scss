@@ -1,2 +1,16 @@
 @import 'footer';
 @import 'header';
+
+#app-hydrate-root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+
+  > .c-layout {
+    flex: 1 0 auto;
+  }
+
+  > .c-footer {
+    flex-shrink: 0;
+  }
+}

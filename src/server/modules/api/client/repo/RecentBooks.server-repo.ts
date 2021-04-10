@@ -24,9 +24,10 @@ export class RecentBooksServerRepo extends ServerAPIClientChild implements Recen
    */
   @MeasureCallDuration('findCategoriesPopularBooks')
   @RedisMemoize(
-    ({filters}) => ({
+    (filters: BooksGroupsFilters = {}) => ({
       key: `popular-categories-books-${JSON.stringify(filters)}`,
       expire: convertHoursToSeconds(5),
+      disabled: filters.categoriesIds?.length > 2,
     }),
   )
   async findCategoriesPopularBooks(filters: BooksGroupsFilters = {}): Promise<CategoryBooksGroup[]> {

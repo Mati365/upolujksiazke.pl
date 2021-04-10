@@ -6,7 +6,7 @@ import {useI18n} from '@client/i18n';
 import {ENV} from '@client/constants/env';
 import {
   HOME_PATH,
-  CATEGORIES_PATH,
+  BOOKS_PATH,
   AUTHORS_PATH,
   BOOK_SERIES_PATH,
   TAGS_PATH,
@@ -39,7 +39,7 @@ export const Footer = ({popularCategories}: FooterProps) => {
   const t = useI18n();
   const shortcuts = [
     [HOME_PATH, t('links.home')],
-    [CATEGORIES_PATH, t('links.categories')],
+    [BOOKS_PATH, t('links.books')],
     [AUTHORS_PATH, t('links.authors')],
     [BOOK_SERIES_PATH, t('links.series')],
     [TAGS_PATH, t('links.tags')],

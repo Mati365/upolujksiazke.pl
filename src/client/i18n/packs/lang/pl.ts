@@ -157,7 +157,7 @@ export const PL_LANG_PACK = {
   },
   links: {
     home: 'Strona główna',
-    categories: 'Kategorie',
+    books: 'Wszystkie książki',
     authors: 'Autorzy',
     series: 'Serie',
     tags: 'Tagi',

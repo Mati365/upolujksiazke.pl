@@ -34,11 +34,14 @@ export class BookCategoryService {
       ids?: number[],
     },
   ) {
+    if (ids && R.isEmpty(ids))
+      return [];
+
     let qb = (
       BookCategoryEntity
         .createQueryBuilder('c')
         .select(BookCategoryService.BOOK_CATEGORY_FIELDS)
-        .where('c.promotion is not null')
+        .andWhere('c.promotion is not null')
         .orderBy('c.promotion', 'DESC')
     );
 
@@ -49,7 +52,7 @@ export class BookCategoryService {
       qb = qb.limit(limit);
 
     if (ids)
-      qb = qb.whereInIds(ids);
+      qb = qb.andWhereInIds(ids);
 
     return qb.getMany();
   }

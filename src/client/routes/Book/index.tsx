@@ -139,6 +139,14 @@ BookRoute.getInitialProps = async (attrs) => {
   if (!book)
     return {};
 
+  const categoriesIds = R.pluck('id', book.categories || []);
+  const excludeBooksIds = R.pluck(
+    'id',
+    book.hierarchy?.length
+      ? book.hierarchy
+      : [book],
+  );
+
   const {
     authorsBooks,
     layoutData,
@@ -146,24 +154,19 @@ BookRoute.getInitialProps = async (attrs) => {
   } = await objPropsToPromise(
     {
       layoutData: Layout.getInitialProps(attrs),
+      popularCategoriesBooks: repo.recentBooks.findCategoriesPopularBooks(
+        {
+          categoriesIds: R.take(5, categoriesIds),
+          excludeBooksIds,
+          limit: 2,
+          itemsPerGroup: 7,
+        },
+      ),
       authorsBooks: repo.books.findAuthorsBooks(
         {
           excludeIds: [book.id],
           limit: 4,
           authorsIds: R.pluck('id', book.authors),
-        },
-      ),
-      popularCategoriesBooks: repo.recentBooks.findCategoriesPopularBooks(
-        {
-          categoriesIds: R.take(3, R.pluck('id', book.categories || [])),
-          excludeBooksIds: R.pluck(
-            'id',
-            book.hierarchy?.length
-              ? book.hierarchy
-              : [book],
-          ),
-          limit: 2,
-          itemsPerGroup: 7,
         },
       ),
     },

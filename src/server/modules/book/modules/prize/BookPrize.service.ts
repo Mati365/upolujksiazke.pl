@@ -1,7 +1,7 @@
 import {Injectable} from '@nestjs/common';
 import {Connection, EntityManager} from 'typeorm';
 
-import {upsert} from '@server/common/helpers/db';
+import {groupRawMany, upsert} from '@server/common/helpers/db';
 import {BookPrizeEntity} from './BookPrize.entity';
 import {CreateBookPrizeDto} from './dto/CreateBookPrize.dto';
 
@@ -12,31 +12,54 @@ export class BookPrizeService {
   ) {}
 
   /**
+   * Find many book prizes ids
+   *
+   * @param {number[]} bookIds
+   * @returns
+   * @memberof BookPrizeService
+   */
+  async findBooksPrizes(bookIds: number[]) {
+    const items = await (
+      BookPrizeEntity
+        .createQueryBuilder('b')
+        .innerJoin(
+          'book_prizes_book_prize',
+          'bp',
+          'bp.bookId in (:...bookIds) and bp.bookPrizeId = b.id',
+          {
+            bookIds,
+          },
+        )
+        .select(
+          [
+            'b.id as "id"',
+            'b.name as "name"',
+            'b.parameterizedName as "parameterizedName"',
+            'b.wikiUrl as "wikiUrl"',
+            'bp.bookId as "e_bookId"',
+          ],
+        )
+        .getRawMany()
+    );
+
+    return groupRawMany(
+      {
+        items,
+        key: 'bookId',
+        mapperFn: (item) => new BookPrizeEntity(item),
+      },
+    );
+  }
+
+  /**
    * Find prizes for books
    *
    * @param {number} bookId
    * @returns
    * @memberof BookPrizeService
    */
-  findBookPrizes(bookId: number) {
-    return (
-      BookPrizeEntity
-        .createQueryBuilder('b')
-        .innerJoin(
-          'book_prizes_book_prize',
-          'bp', 'bp.bookId = :bookId and bp.bookPrizeId = b.id',
-          {
-            bookId,
-          },
-        )
-        .select(
-          [
-            'b.id', 'b.name',
-            'b.parameterizedName', 'b.wikiUrl',
-          ],
-        )
-        .getMany()
-    );
+  async findBookPrizes(bookId: number) {
+    return (await this.findBooksPrizes([bookId]))[bookId] || [];
   }
 
   /**

@@ -57,7 +57,7 @@ export const BookProperties = memo(({book}: BookPropertiesProps) => {
       {
         name: t('prizes'),
         icon: TrophyIcon,
-        value: prizes.length || null,
+        value: prizes?.length || null,
       },
       {
         name: t('recording_length'),

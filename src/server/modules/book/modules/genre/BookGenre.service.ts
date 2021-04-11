@@ -1,42 +1,64 @@
 import {Injectable} from '@nestjs/common';
 import {Connection, EntityManager} from 'typeorm';
 
-import {upsert} from '@server/common/helpers/db';
+import {groupRawMany, upsert} from '@server/common/helpers/db';
 
 import {CreateBookGenreDto} from './dto/CreateBookGenre.dto';
 import {BookGenreEntity} from './BookGenre.entity';
 
 @Injectable()
 export class BookGenreService {
-  public static readonly BOOK_GENRE_FIELDS = [
-    'g.id', 'g.name', 'g.parameterizedName',
-  ];
-
   constructor(
     private readonly connection: Connection,
   ) {}
 
   /**
-   * Find book genre records
+   * Find many books with genres
    *
-   * @param {number} bookId
+   * @param {number[]} bookIds
    * @returns
    * @memberof BookGenreService
    */
-  findBookGenre(bookId: number) {
-    return (
+  async findBooksGenres(bookIds: number[]) {
+    const items = await (
       BookGenreEntity
         .createQueryBuilder('g')
         .innerJoin(
           'book_genre_book_genre',
-          'bg', 'bg.bookId = :bookId and bg.bookGenreId = g.id',
+          'bg',
+          'bg.bookId in (:...bookIds) and bg.bookGenreId = g.id',
           {
-            bookId,
+            bookIds,
           },
         )
-        .select(BookGenreService.BOOK_GENRE_FIELDS)
-        .getMany()
+        .select(
+          [
+            'g.id as "id"',
+            'g.name as "name"',
+            'g.parameterizedName as "parameterizedName"',
+            'bg.bookId as "bookId"',
+          ],
+        )
+        .getRawMany()
     );
+
+    return groupRawMany(
+      {
+        items,
+        key: 'bookId',
+        mapperFn: (item) => new BookGenreEntity(item),
+      },
+    );
+  }
+
+  /**
+   * Find single book genre
+   *
+   * @param {number} bookId
+   * @returns
+   */
+  async findBookGenre(bookId: number) {
+    return (await this.findBooksGenres([bookId]))[bookId] || [];
   }
 
   /**

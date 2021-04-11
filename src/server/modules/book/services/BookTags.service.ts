@@ -3,10 +3,52 @@ import {EntityManager} from 'typeorm';
 import pMap from 'p-map';
 import * as R from 'ramda';
 
+import {groupRawMany} from '@server/common/helpers/db';
 import {TagEntity} from '../../tag/Tag.entity';
 
 @Injectable()
 export class BookTagsService {
+  /**
+   * Returns array of tags for books
+   *
+   * @param {number[]} bookIds
+   * @param {string[]} select
+   * @returns {Promise<Record<string, TagEntity[]>>}
+   * @memberof BookService
+   */
+  async findBooksTags(
+    bookIds: number[],
+    select: string[] = [
+      't.id as "id"',
+      't.name as "name"',
+      't.parameterizedName as "parameterizedName"',
+      'bt.bookId as "bookId"',
+    ],
+  ): Promise<Record<string, TagEntity[]>> {
+    const items = await (
+      TagEntity
+        .createQueryBuilder('t')
+        .innerJoin(
+          'book_tags_tag',
+          'bt',
+          'bt.bookId in (:...bookIds) and bt.tagId = t.id',
+          {
+            bookIds,
+          },
+        )
+        .select(select)
+        .getRawMany()
+    );
+
+    return groupRawMany(
+      {
+        items,
+        key: 'bookId',
+        mapperFn: (item) => new TagEntity(item),
+      },
+    );
+  }
+
   /**
    * Returns all tags for specific book
    *
@@ -14,63 +56,8 @@ export class BookTagsService {
    * @returns
    * @memberof TagService
    */
-  findBookTags(bookId: number) {
-    return (
-      TagEntity
-        .createQueryBuilder('t')
-        .innerJoin(
-          'book_tags_tag',
-          'bt', 'bt.bookId = :bookId and bt.tagId = t.id',
-          {
-            bookId,
-          },
-        )
-        .select(['t.id', 't.name', 't.parameterizedName'])
-        .getMany()
-    );
-  }
-
-  /**
-   * Returns array of tags for books
-   *
-   * @param {number[]} ids
-   * @param {string[]} [select=['t."id"', 't."name"', 'btt."bookId"']]
-   * @returns {Promise<Record<string, TagEntity[]>>}
-   * @memberof BookService
-   */
-  async findBooksTags(
-    ids: number[],
-    select: string[] = ['t."id"', 't."name"', 'btt."bookId"'],
-  ): Promise<Record<string, TagEntity[]>> {
-    const tags = await (
-      TagEntity
-        .createQueryBuilder('t')
-        .select(select)
-        .innerJoin(
-          'book_tags_tag', 'btt',
-          'btt."tagId" = t."id" and btt."bookId" IN (:...booksIds)',
-          {
-            booksIds: ids,
-          },
-        )
-        .getRawMany()
-    );
-
-    return tags.reduce(
-      (acc, {id, name, bookId}) => {
-        (acc[bookId] ||= []).push(
-          new TagEntity(
-            {
-              id,
-              name,
-            },
-          ),
-        );
-
-        return acc;
-      },
-      [],
-    );
+  async findBookTags(bookId: number) {
+    return (await this.findBooksTags([bookId]))[bookId] || [];
   }
 
   /**

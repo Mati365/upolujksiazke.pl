@@ -5,3 +5,4 @@ export * from './forwardTransaction';
 export * from './checkIfExists';
 export * from './runTransactionWithPostHooks';
 export * from './paginatedAsyncIterator';
+export * from './groupRawMany';

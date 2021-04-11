@@ -1,7 +1,6 @@
 import {Logger, OnModuleInit} from '@nestjs/common';
 import {ElasticsearchService} from '@nestjs/elasticsearch';
 import chalk from 'chalk';
-import pMap from 'p-map';
 import * as R from 'ramda';
 
 import {getCurrentTimestampSuffix} from '@server/common/helpers';
@@ -42,7 +41,7 @@ export type EsMappedDoc<I> = I & {
  * @template E database entity
  * @template I elasticsearch entity
  */
-export abstract class EntityIndex<E extends {id: number}, I = any> implements OnModuleInit {
+export abstract class EntityIndex<E extends {id: number}, I = E> implements OnModuleInit {
   protected readonly logger: Logger;
 
   constructor(
@@ -75,7 +74,7 @@ export abstract class EntityIndex<E extends {id: number}, I = any> implements On
   abstract createIndex(): Promise<void>;
   protected abstract mapRecord(entity: E): CanBePromise<EsMappedDoc<I>>;
 
-  protected abstract findEntity(id: number): CanBePromise<E>;
+  protected abstract findEntities(id: number[]): CanBePromise<E[]>;
   protected abstract findEntitiesIds(): AsyncGenerator<number[]>;
 
   /**
@@ -162,7 +161,7 @@ export abstract class EntityIndex<E extends {id: number}, I = any> implements On
   async reindexEntity(id: number) {
     const {es, logger} = this;
     const {_id: esId, ...body} = await this.mapRecord(
-      await this.findEntity(id),
+      (await this.findEntities([id]))[0],
     );
 
     logger.log(`Indexing ${chalk.bold(id)} (esID: ${chalk.bold(esId)}) record!`);
@@ -184,23 +183,13 @@ export abstract class EntityIndex<E extends {id: number}, I = any> implements On
   @MeasureCallDuration('reindexAllEntities')
   async reindexAllEntities(): Promise<void> {
     const {es, indexName} = this;
-    const idMapper = async (id: number) => this.mapRecord(
-      await this.findEntity(id),
-    );
 
     const clonedIndex = await this.cloneAndCreateIndex(
       `${indexName}_${getCurrentTimestampSuffix()}`,
     );
 
     for await (const ids of this.findEntitiesIds()) {
-      const mapped = await pMap(
-        ids,
-        idMapper,
-        {
-          concurrency: 2,
-        },
-      );
-
+      const mapped = (await this.findEntities(ids)).map(this.mapRecord.bind(this));
       await es.bulk(
         {
           refresh: true,

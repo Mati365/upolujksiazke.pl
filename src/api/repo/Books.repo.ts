@@ -13,7 +13,11 @@ export type BooksFilters = BasicAPIPagination & {
   authorsIds?: number[],
 };
 
-export interface BooksRepo extends APIRepo<BookFullInfoRecord, BooksFilters> {
+export type BookFindOneAttrs = {
+  reviewsCount?: number,
+};
+
+export interface BooksRepo extends APIRepo<BookFullInfoRecord, BooksFilters, BookFindOneAttrs> {
   findAuthorsBooks(filters?: AuthorsBooksFilters): CanBePromise<APIPaginationResult<BookCardRecord>>;
   findRecentBooks(filters?: BasicAPIPagination): CanBePromise<BookCardRecord[]>;
 }

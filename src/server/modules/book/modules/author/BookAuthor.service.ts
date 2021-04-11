@@ -1,7 +1,7 @@
 import {Injectable} from '@nestjs/common';
 import {Connection, EntityManager} from 'typeorm';
 
-import {upsert} from '@server/common/helpers/db';
+import {groupRawMany, upsert} from '@server/common/helpers/db';
 import {BookAuthorEntity} from './BookAuthor.entity';
 import {CreateBookAuthorDto} from './dto/CreateBookAuthor.dto';
 
@@ -10,6 +10,56 @@ export class BookAuthorService {
   constructor(
     private readonly connection: Connection,
   ) {}
+
+  /**
+   * Find authors for multiple books
+   *
+   * @param {number[]} bookIds
+   * @returns
+   * @memberof BookEraService
+   */
+  async findBooksAuthors(bookIds: number[]) {
+    const items = await (
+      BookAuthorEntity
+        .createQueryBuilder('b')
+        .innerJoin(
+          'book_authors_book_author',
+          'ba',
+          'ba.bookId in (:...bookIds) and ba.bookAuthorId = b.id',
+          {
+            bookIds,
+          },
+        )
+        .select(
+          [
+            'b.id as "id"',
+            'b.name as "name"',
+            'b.parameterizedName as "parameterizedName"',
+            'ba.bookId as "bookId"',
+          ],
+        )
+        .getRawMany()
+    );
+
+    return groupRawMany(
+      {
+        items,
+        key: 'bookId',
+        mapperFn: (item) => new BookAuthorEntity(item),
+      },
+    );
+  }
+
+  /**
+   * Find authors for books
+   *
+   * @param {number} bookId
+   * @returns
+   * @memberof BookCategoryService
+   */
+  async findBookAuthors(bookId: number) {
+    return (await this.findBooksAuthors([bookId]))[bookId] || [];
+  }
 
   /**
    * Create single book author

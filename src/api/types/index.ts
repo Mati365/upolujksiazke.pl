@@ -11,6 +11,7 @@ export * from './BookReviewer.record';
 export * from './BookPublisher.record';
 export * from './BookEra.record';
 export * from './BookGenre.record';
+export * from './BookPrize.record';
 export * from './Tag.record';
 export * from './Website.record';
 export * from './ImageAttachment.record';

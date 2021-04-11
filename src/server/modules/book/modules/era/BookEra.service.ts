@@ -1,20 +1,55 @@
 import {Injectable} from '@nestjs/common';
 import {Connection, EntityManager} from 'typeorm';
 
-import {upsert} from '@server/common/helpers/db';
+import {groupRawMany, upsert} from '@server/common/helpers/db';
 
 import {CreateBookEraDto} from './dto/CreateBookEra.dto';
 import {BookEraEntity} from './BookEra.entity';
 
 @Injectable()
 export class BookEraService {
-  public static readonly BOOK_ERA_FIELDS = [
-    'e.id', 'e.name', 'e.parameterizedName',
-  ];
-
   constructor(
     private readonly connection: Connection,
   ) {}
+
+  /**
+   * Find eras for multiple books
+   *
+   * @param {number[]} bookIds
+   * @returns
+   * @memberof BookEraService
+   */
+  async findBooksEras(bookIds: number[]) {
+    const items = await (
+      BookEraEntity
+        .createQueryBuilder('e')
+        .innerJoin(
+          'book_era_book_era',
+          'be',
+          'be.bookId in (:...bookIds) and be.bookEraId = e.id',
+          {
+            bookIds,
+          },
+        )
+        .select(
+          [
+            'e.id as "id"',
+            'e.name as "name"',
+            'e.parameterizedName as "parameterizedName"',
+            'be.bookId as "bookId"',
+          ],
+        )
+        .getRawMany()
+    );
+
+    return groupRawMany(
+      {
+        items,
+        key: 'bookId',
+        mapperFn: (item) => new BookEraEntity(item),
+      },
+    );
+  }
 
   /**
    * Find book era records
@@ -23,20 +58,8 @@ export class BookEraService {
    * @returns
    * @memberof BookEraService
    */
-  findBookEra(bookId: number) {
-    return (
-      BookEraEntity
-        .createQueryBuilder('e')
-        .innerJoin(
-          'book_era_book_era',
-          'be', 'be.bookId = :bookId and be.bookEraId = e.id',
-          {
-            bookId,
-          },
-        )
-        .select(BookEraService.BOOK_ERA_FIELDS)
-        .getMany()
-    );
+  async findBookEra(bookId: number) {
+    return (await this.findBooksEras([bookId]))[bookId] || [];
   }
 
   /**

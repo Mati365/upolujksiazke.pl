@@ -3,120 +3,42 @@ import {ElasticsearchService} from '@nestjs/elasticsearch';
 import * as R from 'ramda';
 
 import {paginatedAsyncIterator} from '@server/common/helpers/db';
-import {plainToClass} from 'class-transformer';
+import {objPropsToPromise} from '@shared/helpers';
 
-import {BookFullInfoSerializer} from '@server/modules/api/serializers';
 import {
   EntityIndex,
   EsMappedDoc,
   PredefinedProperties,
 } from '@server/modules/elasticsearch/classes/EntityIndex';
 
-import {
-  ImageVersionField,
-  WebsiteRecord,
-  BookFullInfoRecord,
-  BookAvailabilityRecord,
-  BookFullInfoReleaseRecord,
-} from '@api/types';
-
-import {CardBookSearchService, FullCardEntity} from '../search/CardBookSearch.service';
 import {BookEntity} from '../../entity/Book.entity';
+import {BookEraService} from '../../modules/era/BookEra.service';
+import {BookGenreService} from '../../modules/genre/BookGenre.service';
+import {BookTagsService} from '../BookTags.service';
+import {BookCategoryService} from '../../modules/category/services/BookCategory.service';
+import {BookPrizeService} from '../../modules/prize/BookPrize.service';
+import {BookAuthorService} from '../../modules/author/BookAuthor.service';
 
-export type BookIndexEntity = Omit<BookFullInfoRecord, 'reviews'|'releases'|'hierarchy'>;
+export type BookIndexEntity = Pick<
+/* eslint-disable @typescript-eslint/indent */
+  BookEntity,
+  'id'|'era'|'genre'|'tags'|'categories'|'prizes'|'authors'
+  |'originalTitle'|'defaultTitle'|'lowestPrice' |'highestPrice'
+  |'allTypes'|'schoolBook'
+/* eslint-enable @typescript-eslint/indent */
+>;
 
 @Injectable()
-export class EsBookIndex extends EntityIndex<FullCardEntity, BookIndexEntity> {
+export class EsBookIndex extends EntityIndex<BookIndexEntity> {
   static readonly INDEX_NAME = 'books';
-
-  static readonly IMAGE_ATTACHMENT_INDEX_MAPPING: Record<ImageVersionField, any> = (() => {
-    const mapping = {
-      type: 'nested',
-      properties: {
-        ratio: {type: 'float'},
-        nsfw: {type: 'boolean'},
-      },
-    };
-
-    return {
-      smallThumb: mapping,
-      thumb: mapping,
-      preview: mapping,
-      big: mapping,
-    };
-  })();
-
-  static readonly WEBSITE_INDEX_MAPPING: Record<keyof WebsiteRecord, any> = {
-    id: {type: 'integer'},
-    url: {type: 'keyword'},
-    description: {type: 'keyword'},
-    title: {type: 'keyword'},
-    hostname: {type: 'keyword'},
-    logo: {
-      type: 'nested',
-      properties: EsBookIndex.IMAGE_ATTACHMENT_INDEX_MAPPING,
-    },
-  };
-
-  static readonly BOOK_AVAILABILITY_INDEX_MAPPING: Record<keyof BookAvailabilityRecord, any> = {
-    id: {type: 'integer'},
-    prevPrice: {type: 'float'},
-    price: {type: 'float'},
-    avgRating: {type: 'float'},
-    totalRatings: {type: 'integer'},
-    inStock: {type: 'boolean'},
-    url: {type: 'keyword'},
-    website: {
-      type: 'nested',
-      properties: EsBookIndex.WEBSITE_INDEX_MAPPING,
-    },
-  };
-
-  static readonly BOOK_RELEASE_INDEX_MAPPING: Record<keyof BookFullInfoReleaseRecord, any> = {
-    id: {type: 'integer'},
-    cover: {
-      type: 'nested',
-      properties: EsBookIndex.IMAGE_ATTACHMENT_INDEX_MAPPING,
-    },
-
-    title: {type: 'text'},
-    binding: {type: 'integer'},
-    type: {type: 'integer'},
-    protection: {type: 'integer'},
-    lang: {type: 'keyword'},
-    place: {type: 'keyword'},
-    format: {type: 'keyword'},
-    publishDate: {type: 'keyword'},
-    totalPages: {type: 'integer'},
-    description: {type: 'keyword'},
-    edition: {type: 'keyword'},
-    translator: {type: 'keyword'},
-    isbn: {type: 'keyword'},
-    weight: {type: 'integer'},
-    recordingLength: {type: 'integer'},
-    parameterizedSlug: {type: 'keyword'},
-    defaultPrice: {type: 'integer'},
-    publisher: PredefinedProperties.idNamePair,
-    availability: {
-      type: 'nested',
-      properties: EsBookIndex.BOOK_AVAILABILITY_INDEX_MAPPING,
-    },
-  };
 
   static readonly BOOK_INDEX_MAPPING: Record<keyof BookIndexEntity, any> = {
     id: {type: 'integer'},
-    schoolBookId: {type: 'integer'},
+    originalTitle: {type: 'text'},
     defaultTitle: {type: 'text'},
-    parameterizedSlug: {type: 'keyword'},
-    avgRating: {type: 'float'},
-    totalRatings: {type: 'integer'},
     allTypes: {type: 'keyword'},
     lowestPrice: {type: 'float'},
     highestPrice: {type: 'float'},
-    description: {type: 'text'},
-    taggedDescription: {type: 'text'},
-    originalPublishDate: {type: 'keyword'},
-    volume: PredefinedProperties.idNamePair,
     authors: PredefinedProperties.idNamePair,
     tags: PredefinedProperties.idNamePair,
     categories: PredefinedProperties.idNamePair,
@@ -130,15 +52,16 @@ export class EsBookIndex extends EntityIndex<FullCardEntity, BookIndexEntity> {
         obligatory: {type: 'boolean'},
       },
     },
-    primaryRelease: {
-      type: 'nested',
-      properties: EsBookIndex.BOOK_RELEASE_INDEX_MAPPING,
-    },
   };
 
   constructor(
     esService: ElasticsearchService,
-    private readonly bookCardSearch: CardBookSearchService,
+    private readonly bookEraService: BookEraService,
+    private readonly bookGenreService: BookGenreService,
+    private readonly bookTagsService: BookTagsService,
+    private readonly bookCategoriesService: BookCategoryService,
+    private readonly bookPrizeService: BookPrizeService,
+    private readonly bookAuthorService: BookAuthorService,
   ) {
     super(
       esService,
@@ -173,13 +96,51 @@ export class EsBookIndex extends EntityIndex<FullCardEntity, BookIndexEntity> {
   /**
    * @inheritdoc
    */
-  protected async findEntity(id: number): Promise<FullCardEntity> {
-    return this.bookCardSearch.findFullCard(
+  protected async findEntities(ids: number[]): Promise<BookIndexEntity[]> {
+    const {
+      bookEraService,
+      bookGenreService,
+      bookTagsService,
+      bookCategoriesService,
+      bookPrizeService,
+      bookAuthorService,
+    } = this;
+
+    const {
+      books, eras, genres, tags,
+      categories, prizes, authors,
+    } = await objPropsToPromise(
       {
-        id,
-        reviewsCount: 8,
+        books: BookEntity.findByIds(
+          ids,
+          {
+            select: [
+              'id', 'originalTitle', 'defaultTitle',
+              'lowestPrice', 'highestPrice', 'allTypes',
+            ],
+            relations: ['schoolBook'],
+          },
+        ),
+        eras: bookEraService.findBooksEras(ids),
+        genres: bookGenreService.findBooksGenres(ids),
+        tags: bookTagsService.findBooksTags(ids),
+        categories: bookCategoriesService.findBooksCategories(ids),
+        prizes: bookPrizeService.findBooksPrizes(ids),
+        authors: bookAuthorService.findBooksAuthors(ids),
       },
     );
+
+    return books.map((entity) => new BookEntity(
+      {
+        ...entity,
+        era: eras[entity.id],
+        genre: genres[entity.id],
+        tags: tags[entity.id],
+        categories: categories[entity.id],
+        prizes: prizes[entity.id],
+        authors: authors[entity.id],
+      },
+    ));
   }
 
   /**
@@ -188,7 +149,7 @@ export class EsBookIndex extends EntityIndex<FullCardEntity, BookIndexEntity> {
   protected async* findEntitiesIds(): AsyncGenerator<number[]> {
     const it = paginatedAsyncIterator(
       {
-        limit: 30,
+        limit: 50,
         queryExecutor: ({limit, offset}) => (
           BookEntity
             .createQueryBuilder('b')
@@ -207,16 +168,10 @@ export class EsBookIndex extends EntityIndex<FullCardEntity, BookIndexEntity> {
   /**
    * @inheritdoc
    */
-  protected mapRecord(entity: FullCardEntity): EsMappedDoc<BookIndexEntity> {
+  protected mapRecord(entity: BookIndexEntity): EsMappedDoc<BookIndexEntity> {
     return {
       _id: entity.id,
-      ...plainToClass(
-        BookFullInfoSerializer,
-        entity,
-        {
-          excludeExtraneousValues: true,
-        },
-      ),
+      ...entity,
     };
   }
 }

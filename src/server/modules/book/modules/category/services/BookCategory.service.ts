@@ -2,7 +2,7 @@ import {Injectable} from '@nestjs/common';
 import {Connection, EntityManager} from 'typeorm';
 import * as R from 'ramda';
 
-import {BasicLimitPaginationOptions, upsert} from '@server/common/helpers/db';
+import {BasicLimitPaginationOptions, groupRawMany, upsert} from '@server/common/helpers/db';
 import {parameterize} from '@shared/helpers/parameterize';
 
 import {BookCategoryEntity} from '../BookCategory.entity';
@@ -58,26 +58,54 @@ export class BookCategoryService {
   }
 
   /**
+   * Find categories for multiple books
+   *
+   * @param {number[]} bookIds
+   * @returns
+   * @memberof BookEraService
+   */
+  async findBooksCategories(bookIds: number[]) {
+    const items = await (
+      BookCategoryEntity
+        .createQueryBuilder('c')
+        .innerJoin(
+          'book_categories_book_category',
+          'bc',
+          'bc.bookId in (:...bookIds) and bc.bookCategoryId = c.id',
+          {
+            bookIds,
+          },
+        )
+        .select(
+          [
+            'c.id as "id"',
+            'c.name as "name"',
+            'c.parameterizedName as "parameterizedName"',
+            'c.promotion as "promotion"',
+            'bc.bookId as "bookId"',
+          ],
+        )
+        .getRawMany()
+    );
+
+    return groupRawMany(
+      {
+        items,
+        key: 'bookId',
+        mapperFn: (item) => new BookCategoryEntity(item),
+      },
+    );
+  }
+
+  /**
    * Find categories for books
    *
    * @param {number} bookId
    * @returns
    * @memberof BookCategoryService
    */
-  findBookCategories(bookId: number) {
-    return (
-      BookCategoryEntity
-        .createQueryBuilder('c')
-        .innerJoin(
-          'book_categories_book_category',
-          'bc', 'bc.bookId = :bookId and bc.bookCategoryId = c.id',
-          {
-            bookId,
-          },
-        )
-        .select(BookCategoryService.BOOK_CATEGORY_FIELDS)
-        .getMany()
-    );
+  async findBookCategories(bookId: number) {
+    return (await this.findBooksCategories([bookId]))[bookId];
   }
 
   /**

@@ -46,8 +46,8 @@ export class BooksServerRepo extends ServerAPIClientChild implements BooksRepo {
    * @memberof BooksServerRepo
    */
   async findAll(filters: BooksFilters) {
-    const {cardBookSearchService} = this.services;
-    const {meta, items} = await cardBookSearchService.findFilteredBooks(filters);
+    const {esCardBookSearchService} = this.services;
+    const {meta, items} = await esCardBookSearchService.findFilteredBooks(filters);
 
     return {
       meta,

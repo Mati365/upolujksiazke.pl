@@ -119,7 +119,7 @@ export class FuzzyBookSearchService {
                       + ':slug,'
                       + 'CONCAT(release.parameterizedSlug, :bookSlugPostfix::text)'
                     + ') <= :similarity'
-                    + 'and authors."id" in (:...authorsIds)',
+                    + ' and authors."id" in (:...authorsIds)',
                     {
                       slug,
                       similarity,

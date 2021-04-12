@@ -1,4 +1,6 @@
 import {plainToClass} from 'class-transformer';
+import * as R from 'ramda';
+
 import {convertHoursToSeconds} from '@shared/helpers';
 
 import {CategoryBooksGroup} from '@api/types/CategoryBooksGroup.record';
@@ -25,9 +27,13 @@ export class RecentBooksServerRepo extends ServerAPIClientChild implements Recen
   @MeasureCallDuration('findCategoriesPopularBooks')
   @RedisMemoize(
     (filters: BooksGroupsFilters = {}) => ({
-      key: `popular-categories-books-${JSON.stringify(filters)}`,
+      key: `popular-categories-books-${JSON.stringify(
+        {
+          ...filters,
+          categoriesIds: R.sortBy(R.identity, filters.categoriesIds || []),
+        },
+      )}`,
       expire: convertHoursToSeconds(5),
-      disabled: filters.categoriesIds?.length > 2,
     }),
   )
   async findCategoriesPopularBooks(filters: BooksGroupsFilters = {}): Promise<CategoryBooksGroup[]> {

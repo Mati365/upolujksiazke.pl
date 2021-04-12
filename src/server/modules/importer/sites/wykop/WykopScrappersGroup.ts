@@ -1,6 +1,7 @@
 import {ScrapperMetadataKind} from '@scrapper/entity';
 import {CreateRemoteWebsiteDto} from '@server/modules/remote/dto';
-import {WebsiteInfoScrapper, WebsiteScrappersGroup} from '@scrapper/service/shared';
+import {WebsiteScrappersGroup} from '@scrapper/service/shared';
+import {WebsiteInfoScrapper} from '@scrapper/service/scrappers';
 import {WykopBookReviewScrapper, WykopBookReviewScrapperConfig} from './book-review/WykopBookReview.scrapper';
 
 export type WykopScrappersGroupConfig = WykopBookReviewScrapperConfig & {

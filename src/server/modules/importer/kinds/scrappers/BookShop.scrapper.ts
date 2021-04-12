@@ -1,7 +1,7 @@
 import {CreateRemoteWebsiteDto} from '@server/modules/remote/dto';
+import {WebsiteInfoScrapper} from '@scrapper/service/scrappers/WebsiteInfoScrapper';
 import {
   ScrappersGroupInitializer,
-  WebsiteInfoScrapper,
   WebsiteScrappersGroup,
 } from '@scrapper/service/shared';
 

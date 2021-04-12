@@ -12,7 +12,7 @@ import {RemoteWebsiteEntity} from '@server/modules/remote/entity';
 import {MetadataDbLoaderQueueService} from '@importer/modules/db-loader/services';
 
 import {SentryService} from '@server/modules/sentry/Sentry.service';
-import {WebsiteInfoScrapperService} from '../WebsiteInfoScrapper.service';
+import {WebsiteInfoScrapperService} from '../scrappers/WebsiteInfoScrapper';
 import {ScrapperMetadataService} from '../ScrapperMetadata.service';
 import {ScrapperService} from '../Scrapper.service';
 import {ScrapperMetadataEntity, ScrapperMetadataKind} from '../../entity';

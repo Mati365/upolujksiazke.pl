@@ -27,7 +27,7 @@ import {
 } from '@importer/sites';
 
 import {WebsiteScrappersGroup} from './shared';
-import {WebsiteInfoScrapperService} from './WebsiteInfoScrapper.service';
+import {WebsiteInfoScrapperService} from './scrappers/WebsiteInfoScrapper';
 
 const {parsers: PARSERS_ENV} = SERVER_ENV;
 

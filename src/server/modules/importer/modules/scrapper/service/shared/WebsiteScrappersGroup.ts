@@ -4,7 +4,7 @@ import {PartialRecord} from '@shared/types';
 
 import {ScrapperMetadataKind} from '../../entity/ScrapperMetadata.entity';
 import {AsyncScrapper} from './AsyncScrapper';
-import {WebsiteInfoScrapper} from './WebsiteInfoScrapper';
+import {WebsiteInfoScrapper} from '../scrappers/WebsiteInfoScrapper';
 import {WebsiteScrapperSpider} from './WebsiteScrapperSpider';
 import {ScrapperParser} from './ScrapperParser';
 import {

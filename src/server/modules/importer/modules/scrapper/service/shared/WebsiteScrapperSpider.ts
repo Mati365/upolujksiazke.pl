@@ -8,7 +8,7 @@ import {
 
 import {ScrapperMetadataQueueDriver} from '@spider/drivers/DbQueue.driver';
 import {ScrapperMetadataKind} from '../../entity/ScrapperMetadata.entity';
-import {WebsiteInfoScrapperService} from '../WebsiteInfoScrapper.service';
+import {WebsiteInfoScrapperService} from '../scrappers/WebsiteInfoScrapper';
 import {ScrapperGroupChild} from './WebsiteScrappersGroup';
 
 export enum ScrapperPriority {

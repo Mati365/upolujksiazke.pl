@@ -8,6 +8,7 @@ import {
   ScrapperCronService,
   ScrapperService,
   ScrapperMetadataService,
+  RemoteArticleScrapperService,
 } from './service';
 
 import {
@@ -24,6 +25,7 @@ import {
     ],
     providers: [
       WebsiteInfoScrapperService,
+      RemoteArticleScrapperService,
       ScrapperService,
       ScrapperCronService,
       ScrapperMetadataService,
@@ -33,6 +35,7 @@ import {
     ],
     exports: [
       WebsiteInfoScrapperService,
+      RemoteArticleScrapperService,
       ScrapperService,
       ScrapperMetadataService,
       ScrapperRefreshService,

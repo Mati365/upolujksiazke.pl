@@ -8,7 +8,10 @@ import {TagEntity} from '@server/modules/tag/Tag.entity';
 
 import {ScrapperMetadataEntity} from '../../importer/modules/scrapper/entity';
 import {SpiderQueueEntity} from '../../importer/modules/spider/entity/SpiderQueue.entity';
-import {RemoteWebsiteEntity} from '../../remote/entity';
+import {
+  RemoteWebsiteEntity,
+  RemoteArticleEntity,
+} from '../../remote/entity';
 
 import {
   ImageAttachmentEntity,
@@ -32,6 +35,7 @@ import {BookGenreEntity} from '../../book/modules/genre/BookGenre.entity';
 
 export const DB_ENTITIES = {
   RemoteWebsiteEntity,
+  RemoteArticleEntity,
   ImageAttachmentEntity,
   AttachmentEntity,
   BookAvailabilityEntity,

@@ -1,10 +1,14 @@
 import {Module} from '@nestjs/common';
-import {RemoteWebsiteService} from './service/RemoteWebsite.service';
+import {
+  RemoteWebsiteService,
+  RemoteArticleService,
+} from './service';
 
 @Module(
   {
     providers: [
       RemoteWebsiteService,
+      RemoteArticleService,
     ],
     exports: [
       RemoteWebsiteService,

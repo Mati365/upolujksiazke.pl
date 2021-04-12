@@ -5,7 +5,7 @@ import * as R from 'ramda';
 
 import {RemoteWebsiteService} from '@server/modules/remote/service/RemoteWebsite.service';
 import {RemoteWebsiteEntity} from '@server/modules/remote/entity';
-import {WebsiteInfoScrapper} from './shared';
+import {WebsiteInfoScrapper} from './WebsiteInfoScrapper';
 
 @Injectable()
 export class WebsiteInfoScrapperService {

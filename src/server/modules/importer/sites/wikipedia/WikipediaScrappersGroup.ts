@@ -1,6 +1,7 @@
 import {ScrapperMetadataKind} from '@scrapper/entity';
-import {WebsiteInfoScrapper, WebsiteScrappersGroup} from '@scrapper/service/shared';
+import {WebsiteScrappersGroup} from '@scrapper/service/shared';
 import {CreateRemoteWebsiteDto} from '@server/modules/remote/dto';
+import {WebsiteInfoScrapper} from '@scrapper/service/scrappers';
 import {
   WikipediaAPIOptions,
   WikipediaBookMatcher,

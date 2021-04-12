@@ -19,6 +19,7 @@ import {BookPrizeEntity} from '../modules/prize/BookPrize.entity';
 import {BookKindEntity} from '../modules/kind/BookKind.entity';
 import {BookEraEntity} from '../modules/era/BookEra.entity';
 import {BookGenreEntity} from '../modules/genre/BookGenre.entity';
+import {BookSummaryEntity} from '../modules/summary/entity';
 import {SchoolBookEntity} from './SchoolBook.entity';
 
 @Entity(
@@ -106,6 +107,9 @@ export class BookEntity extends DatedRecordEntity {
 
   @OneToMany(() => BookReviewEntity, (review) => review.book)
   reviews: BookReviewEntity[];
+
+  @OneToMany(() => BookSummaryEntity, (summary) => summary.book)
+  summaries: BookSummaryEntity[];
 
   @Transform(R.map(R.prop('name')) as any)
   @JoinTable()

@@ -17,6 +17,7 @@ import {BookStatsModule} from './modules/stats';
 import {BookSEOModule} from './modules/seo';
 import {BookEraModule} from './modules/era';
 import {BookGenreModule} from './modules/genre';
+import {BookSummaryModule} from './modules/summary';
 
 import {EsBookIndex} from './services/indexes/EsBook.index';
 import {
@@ -46,6 +47,7 @@ import {
       BookSEOModule,
       BookEraModule,
       BookGenreModule,
+      BookSummaryModule,
       TagModule,
     ],
     providers: [
@@ -74,6 +76,7 @@ import {
       BookPrizeModule,
       BookSeriesModule,
       BookSEOModule,
+      BookSummaryModule,
       CardBookSearchService,
       EsCardBookSearchService,
     ],

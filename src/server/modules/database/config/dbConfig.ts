@@ -32,6 +32,10 @@ import {BookPrizeEntity} from '../../book/modules/prize/BookPrize.entity';
 import {BookSeriesEntity} from '../../book/modules/series/BookSeries.entity';
 import {BookEraEntity} from '../../book/modules/era/BookEra.entity';
 import {BookGenreEntity} from '../../book/modules/genre/BookGenre.entity';
+import {
+  BookSummaryEntity,
+  BookSummaryHeaderEntity,
+} from '../../book/modules/summary/entity';
 
 export const DB_ENTITIES = {
   RemoteWebsiteEntity,
@@ -52,6 +56,8 @@ export const DB_ENTITIES = {
   BookSeriesEntity,
   BookEraEntity,
   BookGenreEntity,
+  BookSummaryEntity,
+  BookSummaryHeaderEntity,
   SchoolBookEntity,
   ScrapperMetadataEntity,
   SpiderQueueEntity,

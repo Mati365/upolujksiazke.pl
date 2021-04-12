@@ -50,6 +50,7 @@ import {
 } from '../scrappers/helpers';
 
 type BookExtractorAttrs = {
+  checkCacheBeforeSearch?: boolean,
   skipIfAlreadyInDb?: boolean,
   skipCacheLookup?: boolean,
 
@@ -97,7 +98,7 @@ export class BookDbLoaderService implements MetadataDbLoader {
     return this.searchAndExtractToDb(
       book,
       {
-        skipIfAlreadyInDb: true,
+        checkCacheBeforeSearch: true,
       },
     );
   }
@@ -129,12 +130,21 @@ export class BookDbLoaderService implements MetadataDbLoader {
     attrs: BookExtractorAttrs = {},
   ) {
     const {
+      fuzzyBookSearchService,
       logger,
       scrapperMatcherService,
     } = this;
 
     if (!BookDbLoaderService.isEnoughToBeScrapped(book))
       return null;
+
+    if (attrs.checkCacheBeforeSearch) {
+      const cachedBook: BookEntity = await fuzzyBookSearchService.findAlreadyCachedSimilarToBooks([book]);
+      if (cachedBook)
+        return cachedBook;
+
+      attrs.skipCacheLookup = true;
+    }
 
     const matchedBooks = R.pluck(
       'result',

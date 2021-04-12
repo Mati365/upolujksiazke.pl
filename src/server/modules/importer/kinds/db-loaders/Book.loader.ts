@@ -52,6 +52,13 @@ import {
 type BookExtractorAttrs = {
   skipIfAlreadyInDb?: boolean,
   skipCacheLookup?: boolean,
+
+  /**
+   * Some dtos have typos
+   *
+   * @see {@link https://www.wykop.pl/wpis/30809175/2-266-1-2-265-tytul-harry-potter-i-kamien-filozofi/}
+   */
+  skipDtoMerge?: boolean,
 };
 
 /**
@@ -117,7 +124,10 @@ export class BookDbLoaderService implements MetadataDbLoader {
    * @returns
    * @memberof BookDbLoaderService
    */
-  async searchAndExtractToDb(book: CreateBookDto, attrs: BookExtractorAttrs = {}) {
+  async searchAndExtractToDb(
+    book: CreateBookDto,
+    attrs: BookExtractorAttrs = {},
+  ) {
     const {
       logger,
       scrapperMatcherService,
@@ -145,10 +155,9 @@ export class BookDbLoaderService implements MetadataDbLoader {
     const extractedBooks = await this.extractVolumeGroupedBooks(
       [
         mergeBooks(
-          [
-            firstBook,
-            book,
-          ],
+          attrs.skipDtoMerge
+            ? [firstBook]
+            : [firstBook, book],
         ),
         ...restBooks,
       ],
@@ -180,14 +189,15 @@ export class BookDbLoaderService implements MetadataDbLoader {
   }
 
   /**
-   * Groups book by release volume and extract them to db
+   * Corrects all wrong assigned to book releases and volumes
+   * and extracts all to database
    *
    * @param {CreateBookDto[]} books
    * @param {BookExtractorAttrs} [attrs={}]
    * @memberof BookDbLoaderService
    */
-  async extractVolumeGroupedBooks(books: CreateBookDto[], attrs: BookExtractorAttrs = {}) {
-    // extract volume info from all reelases titles, assign type based on title and edition
+  private async extractVolumeGroupedBooks(books: CreateBookDto[], attrs: BookExtractorAttrs = {}) {
+    // add volume and series to all book releases
     const normalizedReleasesBooks = books.map((book) => ({
       book,
       volumesReleases: book.releases.map(
@@ -225,38 +235,84 @@ export class BookDbLoaderService implements MetadataDbLoader {
       ),
     }));
 
-    // group books by volume and rearrange releases
-    const volumes: Record<string, CreateBookDto[]> = {};
+    // check if releases are assigned to proper book
+    // by grouping them by volumes
+    const allAuthors: CreateBookAuthorDto[] = [];
+    let volumes: Record<string, CreateBookDto[]> = {};
+
     normalizedReleasesBooks.forEach(({book, volumesReleases}) => {
       volumesReleases.forEach(([{volume, series}, release]) => {
-        (volumes[volume] ||= []).push(
-          new CreateBookDto(
-            {
-              ...book,
-              defaultTitle: release.title,
-              releases: [release],
-              series: series && [
-                new CreateBookSeriesDto(
-                  {
-                    name: series,
-                  },
-                ),
-              ],
-              authors: (
-                book.authors?.length > 0
-                  ? book.authors
-                  : R.find(({authors}) => authors?.length > 0, books)?.authors
-              ),
-              volume: new CreateBookVolumeDto(
+        const volumeAuthors = (
+          book.authors?.length > 0
+            ? book.authors
+            : R.find(({authors}) => authors?.length > 0, books)?.authors
+        );
+
+        // do not lose reference! it is shared!
+        if (volumeAuthors.length > allAuthors.length) {
+          allAuthors.length = 0;
+          allAuthors.push(...volumeAuthors);
+        }
+
+        // create new book
+        const volumeBook = new CreateBookDto(
+          {
+            ...book,
+            defaultTitle: release.title,
+            releases: [release],
+            series: series && [
+              new CreateBookSeriesDto(
                 {
-                  name: volume,
+                  name: series,
                 },
               ),
-            },
-          ),
+            ],
+            authors: allAuthors,
+            volume: new CreateBookVolumeDto(
+              {
+                name: volume,
+              },
+            ),
+          },
         );
+
+        (volumes[volume] ||= []).push(volumeBook);
       });
     });
+
+    // some books has duplicated ISBNs between volumes
+    // please check for example "Uczta dla wron: Sieć spisków"
+    // its move edition has the same ISBN as book edition
+    // try to assign isbn to largest volume
+    const isbnsQueues: Record<string, {volume: string|number, queue: CreateBookDto[]}> = {};
+    const reversedVolumes = R.reverse(R.sortBy(R.identity, R.keys(volumes).map((n) => +n)));
+
+    volumes = reversedVolumes.reduce(
+      (acc, volumeName) => {
+        const volumeBooks = [...volumes[volumeName]];
+
+        for (let i = 0; i < volumeBooks.length;) {
+          const volumeBook = volumeBooks[i];
+          const release = volumeBook.releases[0];
+          const cachedIsbnQueue = isbnsQueues[release.isbn];
+
+          if (cachedIsbnQueue && cachedIsbnQueue.volume !== volumeName) {
+            cachedIsbnQueue.queue.push(volumeBook);
+            volumeBooks.splice(i, 1);
+          } else {
+            ++i;
+            isbnsQueues[release.isbn] = {
+              queue: volumeBooks,
+              volume: volumeName,
+            };
+          }
+        }
+
+        acc[volumeName] = volumeBooks;
+        return acc;
+      },
+      {},
+    );
 
     // extract all rearranged books to db
     return pMap(

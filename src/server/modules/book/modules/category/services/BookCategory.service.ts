@@ -105,7 +105,7 @@ export class BookCategoryService {
    * @memberof BookCategoryService
    */
   async findBookCategories(bookId: number) {
-    return (await this.findBooksCategories([bookId]))[bookId];
+    return (await this.findBooksCategories([bookId]))[bookId] || [];
   }
 
   /**

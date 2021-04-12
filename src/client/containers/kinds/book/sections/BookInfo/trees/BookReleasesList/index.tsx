@@ -22,6 +22,7 @@ type BookReleasesListProps = {
 export const BookReleasesList = ({book, size, className}: BookReleasesListProps) => {
   const t = useI18n();
   const {releases, primaryRelease} = book;
+
   const sortedReleases = useMemo(
     () => [
       R.find<BookFullInfoReleaseRecord>(
@@ -35,11 +36,11 @@ export const BookReleasesList = ({book, size, className}: BookReleasesListProps)
           releases || [],
         ),
       ),
-    ],
+    ].filter(Boolean),
     [releases],
   );
 
-  if (R.isEmpty(releases))
+  if (R.isEmpty(sortedReleases))
     return null;
 
   return (

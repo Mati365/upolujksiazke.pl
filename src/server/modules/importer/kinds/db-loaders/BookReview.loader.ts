@@ -1,6 +1,7 @@
 import {Injectable, Logger} from '@nestjs/common';
 import {plainToClass} from 'class-transformer';
 import * as R from 'ramda';
+import chalk from 'chalk';
 
 import {BookEntity} from '@server/modules/book/entity/Book.entity';
 import {CreateBookReviewDto} from '@server/modules/book/modules/review/dto/CreateBookReview.dto';
@@ -74,9 +75,11 @@ export class BookReviewDbLoaderService implements MetadataDbLoader {
         {
           skipIfAlreadyInDb: true,
           skipCacheLookup: true,
+          skipDtoMerge: true,
         },
       );
-    }
+    } else
+      logger.warn(`Book with title "${chalk.bold(review.book.title)}" matched to ID: ${chalk.bold(book.id)}!`);
 
     if (!book) {
       logger.warn(`Unable to match review book with title "${review.book.title}"!`);

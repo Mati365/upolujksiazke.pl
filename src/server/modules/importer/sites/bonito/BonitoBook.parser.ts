@@ -100,7 +100,7 @@ export class BonitoBookParser
     return new CreateBookDto(
       {
         defaultTitle: title,
-        authors: $details.find('h2 a[href^="/autor/"]').toArray().map((author) => (
+        authors: $details.find('h2 a[href^="/autor/"][style="font-weight: bold;"]').toArray().map((author) => (
           new CreateBookAuthorDto(
             {
               name: $(author).text(),

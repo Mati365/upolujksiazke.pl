@@ -89,6 +89,7 @@ export const BookReview = ({review}: BookReviewProps) => {
         padding='small'
         quote={!!website}
         text={description}
+        justify={false}
       />
 
       {website && (

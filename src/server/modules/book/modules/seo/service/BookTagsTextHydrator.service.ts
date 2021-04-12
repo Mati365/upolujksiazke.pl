@@ -94,7 +94,7 @@ export class BookTagsTextHydratorService {
             ids,
             [
               't."id" as "id"',
-              'btt."bookId" as "bookId"',
+              'bt."bookId" as "bookId"',
             ],
           );
 

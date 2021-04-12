@@ -2,8 +2,11 @@ import {Injectable} from '@nestjs/common';
 import {Brackets, SelectQueryBuilder} from 'typeorm';
 import * as R from 'ramda';
 
+import {parameterize} from '@shared/helpers';
+
 import {BookEntity} from '../../entity/Book.entity';
 import {BookVolumeEntity} from '../../modules/volume/BookVolume.entity';
+import {BookAuthorEntity} from '../../modules/author/BookAuthor.entity';
 
 import {CreateBookDto} from '../../dto/CreateBook.dto';
 import {CreateBookReviewDto} from '../../modules/review/dto/CreateBookReview.dto';
@@ -42,6 +45,25 @@ export class FuzzyBookSearchService {
       );
     }
 
+    const authorsIds = await (async () => {
+      const allAuthors = R.flatten(R.pluck('authors', books)) || [];
+      if (R.isEmpty(allAuthors))
+        return null;
+
+      let query = BookAuthorEntity.createQueryBuilder('a');
+      allAuthors.forEach(({name}) => {
+        query = query.andWhere(
+          'levenshtein(a."parameterizedName", :slug) <= :similarity',
+          {
+            slug: parameterize(name),
+            similarity: Math.ceil(name.length * 0.3),
+          },
+        );
+      });
+
+      return R.pluck('id', await query.getMany());
+    })();
+
     const [bookIds, volumes, isbns, releasesIds] = [
       R.pluck('id', books),
       R.pluck('volume', books),
@@ -50,9 +72,8 @@ export class FuzzyBookSearchService {
     ]
       .map((array: any[]) => array.filter(Boolean));
 
-    let query: SelectQueryBuilder<BookEntity> = BookEntity.createQueryBuilder('book');
-
     // check slugs
+    let query: SelectQueryBuilder<BookEntity> = BookEntity.createQueryBuilder('book');
     if (bookIds.length)
       query = query.where('book.id in (:...bookIds)', {bookIds});
     else {
@@ -71,9 +92,13 @@ export class FuzzyBookSearchService {
             // some websites migth contain book with single author
             // but there can be also multiple authors
             // just ignore author part when checking slugs
-            const nonPrefixedSlugs = R.uniqBy(
-              R.identity,
-              books.flatMap((book) => book.genSlugPermutations('')),
+            const nonPrefixedSlugs = (
+              authorsIds?.length
+                ? R.uniqBy(
+                  R.identity,
+                  books.flatMap((book) => book.genSlugPermutations('')),
+                )
+                : null
             );
 
             // find matching book slug
@@ -87,19 +112,23 @@ export class FuzzyBookSearchService {
               );
 
               // find book slug by release slug + book author slug
-              nonPrefixedSlugs.forEach((bookSlugPostfix) => {
-                qb = qb.orWhere(
-                  'levenshtein('
-                    + ':slug,'
-                    + 'CONCAT(release.parameterizedSlug, :bookSlugPostfix::text)'
-                  + ') <= :similarity',
-                  {
-                    slug,
-                    similarity,
-                    bookSlugPostfix,
-                  },
-                );
-              });
+              if (nonPrefixedSlugs) {
+                nonPrefixedSlugs.forEach((bookSlugPostfix) => {
+                  qb = qb.orWhere(
+                    'levenshtein('
+                      + ':slug,'
+                      + 'CONCAT(release.parameterizedSlug, :bookSlugPostfix::text)'
+                    + ') <= :similarity'
+                    + 'and authors."id" in (:...authorsIds)',
+                    {
+                      slug,
+                      similarity,
+                      bookSlugPostfix,
+                      authorsIds,
+                    },
+                  );
+                });
+              }
             });
           }
 
@@ -132,7 +161,8 @@ export class FuzzyBookSearchService {
 
     return (
       query
-        .innerJoinAndSelect('book.releases', 'release')
+        .leftJoin('book.authors', 'authors')
+        .innerJoin('book.releases', 'release')
         .select(['release.id', 'release.isbn', 'book.parameterizedSlug', 'book.id'])
         .limit(1)
         .getOne()

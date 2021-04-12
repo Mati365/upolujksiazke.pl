@@ -72,7 +72,7 @@ export class BooksServerRepo extends ServerAPIClientChild implements BooksRepo {
   @RedisMemoize(
     ({limit, offset}) => ({
       key: `recent-books-${offset}-${limit}`,
-      expire: convertMinutesToSeconds(35),
+      expire: convertMinutesToSeconds(5),
     }),
   )
   async findRecentBooks(attrs: BasicAPIPagination = {}) {

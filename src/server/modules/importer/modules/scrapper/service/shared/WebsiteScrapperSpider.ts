@@ -48,6 +48,7 @@ export abstract class WebsiteScrapperSpider extends ScrapperGroupChild implement
   public static readonly RESOURCE_PRIORITY: Record<ScrapperMetadataKind, number> = {
     [ScrapperMetadataKind.BOOK]: 7,
     [ScrapperMetadataKind.BOOK_REVIEW]: 3,
+    [ScrapperMetadataKind.BOOK_SUMMARY]: 2,
     [ScrapperMetadataKind.BOOK_AUTHOR]: 2,
     [ScrapperMetadataKind.BOOK_PUBLISHER]: 2,
     [ScrapperMetadataKind.URL]: 0,

@@ -1,6 +1,7 @@
 import {Injectable} from '@nestjs/common';
 import {Connection, EntityManager} from 'typeorm';
 
+import {extractHostname} from '@shared/helpers/urlExtract';
 import {
   forwardTransaction,
   upsert,
@@ -26,6 +27,27 @@ export class RemoteWebsiteService {
     private readonly connection: Connection,
     private readonly imageAttachmentService: ImageAttachmentService,
   ) {}
+
+  /**
+   * Search signle record by plain URL
+   *
+   * @param {string} url
+   * @returns
+   * @memberof RemoteWebsiteService
+   */
+  findByFullURL(url: string) {
+    return (
+      RemoteWebsiteEntity
+        .createQueryBuilder()
+        .where(
+          {
+            hostname: extractHostname(url),
+          },
+        )
+        .limit(1)
+        .getOne()
+    );
+  }
 
   /**
    * Delete array of websites

@@ -12,6 +12,7 @@ import {
     ],
     exports: [
       RemoteWebsiteService,
+      RemoteArticleService,
     ],
   },
 )

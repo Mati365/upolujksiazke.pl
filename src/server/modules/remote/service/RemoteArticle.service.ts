@@ -28,6 +28,51 @@ export class RemoteArticleService {
     private readonly imageAttachmentService: ImageAttachmentService,
   ) {}
 
+  /**
+   * Remove multiple articles at once
+   *
+   * @param {number[]} ids
+   * @param {EntityManager} [entityManager]
+   * @memberof RemoteArticleService
+   */
+  async delete(ids: number[], entityManager?: EntityManager) {
+    const {
+      connection,
+      imageAttachmentService,
+    } = this;
+
+    const entities = await RemoteArticleEntity.findByIds(
+      ids,
+      {
+        select: ['id'],
+        loadRelationIds: {
+          relations: ['cover'],
+        },
+      },
+    );
+
+    await forwardTransaction(
+      {
+        connection,
+        entityManager,
+      },
+      async (transaction) => {
+        for await (const entity of entities)
+          await imageAttachmentService.delete(entity.cover as any[], transaction);
+
+        await transaction.remove(entities);
+      },
+    );
+  }
+
+  /**
+   * Creates or updates article
+   *
+   * @param {CreateRemoteArticleDto} {cover, ...dto}
+   * @param {UpsertResourceAttrs} [attrs={}]
+   * @returns {Promise<RemoteArticleEntity>}
+   * @memberof RemoteArticleService
+   */
   async upsert(
     {cover, ...dto}: CreateRemoteArticleDto,
     attrs: UpsertResourceAttrs = {},
@@ -39,7 +84,7 @@ export class RemoteArticleService {
 
     const {connection, imageAttachmentService} = this;
     const executor = async (transaction: EntityManager) => {
-      const website = await upsert(
+      const article = await upsert(
         {
           connection,
           constraint: 'scrapper_article_unique_remote_website',
@@ -53,7 +98,7 @@ export class RemoteArticleService {
         await imageAttachmentService.upsertImage(
           {
             entityManager: transaction,
-            entity: website,
+            entity: article,
             resourceColName: 'cover',
             image: cover,
             manyToMany: {
@@ -61,7 +106,7 @@ export class RemoteArticleService {
               idEntityColName: 'scrapperArticleId',
             },
             fetcher: {
-              destSubDir: `article/${website.id}`,
+              destSubDir: `article/${article.id}`,
               sizes: RemoteArticleService.COVER_IMAGE_SIZES,
             },
             upsertResources,
@@ -69,7 +114,7 @@ export class RemoteArticleService {
         );
       }
 
-      return website;
+      return article;
     };
 
     return forwardTransaction(

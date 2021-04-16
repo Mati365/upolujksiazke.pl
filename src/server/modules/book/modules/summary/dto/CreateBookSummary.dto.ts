@@ -6,6 +6,7 @@ import {
 
 import {BookSummaryKind} from '@shared/enums/bookSummaries';
 
+import {CreateBookDto} from '@server/modules/book/dto/CreateBook.dto';
 import {CreateRemoteArticleDto} from '@server/modules/remote/dto/CreateRemoteArticle.dto';
 import {CreateRemoteRecordDto} from '@server/modules/remote/dto/CreateRemoteRecord.dto';
 import {CreateBookSummaryHeaderDto} from './CreateBookSummaryHeader.dto';
@@ -14,6 +15,11 @@ export class CreateBookSummaryDto extends CreateRemoteRecordDto {
   @IsDefined()
   @IsNumber()
   readonly bookId: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Type(() => CreateBookDto)
+  readonly book: CreateBookDto;
 
   @IsDefined()
   @ValidateNested()

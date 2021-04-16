@@ -119,6 +119,7 @@ export class BookReviewService {
         async ({reviewer, reviewerId, book, ...dto}) => new BookReviewEntity(
           {
             ...dto,
+            bookId: dto.bookId ?? book?.id,
             reviewerId: reviewerId ?? (await bookReviewerService.upsert(
               {
                 ...reviewer,

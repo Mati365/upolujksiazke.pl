@@ -14,6 +14,7 @@ type DefaultConfigBookShopNames = (
   | 'publio' | 'hrosskar' | 'madbooks'
   | 'gandalf' | 'ibuk' | 'woblink'
   | 'taniaksiazka' | 'lekturyGov'
+  | 'bryk'
 );
 
 export type AppEnv = Partial<{
@@ -178,6 +179,10 @@ export const GLOBAL_CONFIG: Record<string, AppEnv> = {
         granice: {
           homepageURL: 'https://www.granice.pl/',
           searchURL: 'https://www.granice.pl/wyszukaj/',
+        },
+        bryk: {
+          homepageURL: 'https://www.bryk.pl/',
+          searchURL: 'https://www.bryk.pl/wyniki-wyszukiwania.html',
         },
         hrosskar: {
           homepageURL: 'https://hrosskar.blogspot.com',

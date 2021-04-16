@@ -1,16 +1,17 @@
 import {Injectable, Logger} from '@nestjs/common';
+import {EventEmitter2} from 'eventemitter2';
 import {plainToClass} from 'class-transformer';
 import * as R from 'ramda';
 import chalk from 'chalk';
 
 import {BookEntity} from '@server/modules/book/entity/Book.entity';
 import {CreateBookReviewDto} from '@server/modules/book/modules/review/dto/CreateBookReview.dto';
-import {ScrapperMetadataEntity} from '@scrapper/entity/ScrapperMetadata.entity';
-import {MetadataDbLoader} from '@db-loader/MetadataDbLoader.interface';
+import {InlineMetadataObject, MetadataDbLoader} from '@db-loader/MetadataDbLoader.interface';
 import {FuzzyBookSearchService} from '@server/modules/book/services/search';
 import {BookReviewService} from '@server/modules/book/modules/review/BookReview.service';
 import {ScrapperService} from '../../modules/scrapper/service/Scrapper.service';
 import {BookDbLoaderService} from './Book.loader';
+import {BookReviewImportedEvent} from './events';
 
 import {normalizeBookDTO} from '../scrappers/helpers';
 
@@ -23,34 +24,39 @@ export class BookReviewDbLoaderService implements MetadataDbLoader {
     private readonly bookDbLoader: BookDbLoaderService,
     private readonly fuzzyBookSearchService: FuzzyBookSearchService,
     private readonly bookReviewService: BookReviewService,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   /**
    * @inheritdoc
    */
-  async extractMetadataToDb(metadata: ScrapperMetadataEntity) {
-    const {logger, bookReviewService} = this;
+  async extractMetadataToDb(metadata: InlineMetadataObject) {
+    const {logger, bookReviewService, eventEmitter} = this;
 
     if (!metadata?.content) {
       logger.warn('Missing metadata content!');
       return;
     }
 
-    const review = await this.parseAndAssignBook(metadata);
-    if (!review)
+    const dto = await this.parseAndAssignBook(metadata);
+    if (!dto)
       return;
 
-    await bookReviewService.upsert([review]);
+    const [reviewEntity] = await bookReviewService.upsert([dto]);
+    await eventEmitter.emitAsync(
+      'loader.review.imported',
+      new BookReviewImportedEvent(reviewEntity, dto),
+    );
   }
 
   /**
    * Converts json to review dto and search book attached to it
    *
-   * @param {ScrapperMetadataEntity} metadata
+   * @param {InlineMetadataObject} metadata
    * @returns
    * @memberof BookReviewDbLoaderService
    */
-  async parseAndAssignBook(metadata: ScrapperMetadataEntity) {
+  async parseAndAssignBook(metadata: InlineMetadataObject) {
     const {
       fuzzyBookSearchService,
       scrapperService,
@@ -106,7 +112,6 @@ export class BookReviewDbLoaderService implements MetadataDbLoader {
         bookId: book.id,
         websiteId: (
           metadata.websiteId
-            ?? metadata.website?.id
             ?? (await scrapperService.findOrCreateWebsiteByUrl(review.url))?.id
         ),
       },

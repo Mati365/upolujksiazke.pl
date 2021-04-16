@@ -7,6 +7,8 @@ import {BookModule} from '@server/modules/book/Book.module';
 import {
   BookDbLoaderService,
   BookReviewDbLoaderService,
+  BookSummaryDbLoaderService,
+  EntityImportedListener,
   UrlDbLoaderService,
 } from '@importer/kinds/db-loaders';
 
@@ -43,13 +45,16 @@ import {ScrapperModule} from '../scrapper/Scrapper.module';
       MetadataDbLoaderService,
       MetadataDbLoaderQueueService,
       UrlDbLoaderService,
+      EntityImportedListener,
       BookDbLoaderService,
+      BookSummaryDbLoaderService,
       BookReviewDbLoaderService,
     ],
     exports: [
       UrlDbLoaderService,
       BookDbLoaderService,
       BookReviewDbLoaderService,
+      BookSummaryDbLoaderService,
       MetadataDbLoaderService,
       MetadataDbLoaderQueueService,
     ],

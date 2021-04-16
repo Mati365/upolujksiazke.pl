@@ -1,2 +1,2 @@
 export * from './WebsiteInfoScrapper';
-export * from './RemoteArticleScrapper.service';
+export * from './RemoteArticleScrapper';

@@ -30,8 +30,8 @@ export class BooksServerRepo extends ServerAPIClientChild implements BooksRepo {
    */
   @MeasureCallDuration('findAuthorsBooks')
   @RedisMemoize(
-    ({limit, offset, authorsIds}) => ({
-      key: `authors-books-${offset}-${limit}-${authorsIds.join(',')}`,
+    (filters) => ({
+      key: `authors-books-${JSON.stringify(filters)}`,
       expire: convertMinutesToSeconds(35),
     }),
   )

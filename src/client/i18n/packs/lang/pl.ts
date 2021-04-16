@@ -121,7 +121,7 @@ export const PL_LANG_PACK = {
       header: 'Ceny książki:',
       highest_price: 'Najwyższa cena:',
       lowest_price: 'Najniższa cena:',
-      buy_cta: 'Kup książkę',
+      buy_cta: 'Otwórz sklep',
     },
     availability: {
       title: 'Porównaj ceny wydań w księgarniach',

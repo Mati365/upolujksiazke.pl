@@ -34,12 +34,11 @@ export class ScrapperMatcherService {
     const {scrappersGroups} = scrapperService;
     const items = await pMap(
       scrappersGroups,
-      async (scrapper) => {
+      async (group) => {
         try {
-          return await scrapper.searchRemoteRecord(attrs);
+          return await group.searchRemoteRecord(attrs);
         } catch (e) {
-          console.error(e);
-          logger.error(`Scrapper ${chalk.bold(scrapper.websiteURL)}: ${e}`);
+          logger.error(`Scrapper ${chalk.bold(group.websiteURL)}:`, e);
           sentryService.instance.captureException(e);
           return null;
         }

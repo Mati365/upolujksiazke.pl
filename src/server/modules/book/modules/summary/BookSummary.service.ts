@@ -19,7 +19,7 @@ export class BookSummaryService {
   ) {}
 
   async upsert(
-    {article, headers, ...params}: CreateBookSummaryDto,
+    {article, headers, book, ...params}: CreateBookSummaryDto,
     attrs: UpsertResourceAttrs = {},
   ): Promise<BookSummaryEntity> {
     const {
@@ -50,6 +50,7 @@ export class BookSummaryService {
           data: new BookSummaryEntity(
             {
               ...params,
+              bookId: params.bookId ?? book?.id,
               articleId: upsertedArticle.id,
             },
           ),

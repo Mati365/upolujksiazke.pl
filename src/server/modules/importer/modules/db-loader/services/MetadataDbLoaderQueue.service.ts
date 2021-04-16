@@ -2,7 +2,13 @@ import {Injectable} from '@nestjs/common';
 import {InjectQueue} from '@nestjs/bull';
 
 import {ScrapperMetadataEntity} from '../../scrapper/entity';
-import {DbLoaderQueue, SCRAPPER_METADATA_LOADER_QUEUE} from '../processors/MetadataDbLoaderConsumer.processor';
+import {InlineMetadataObject} from '../MetadataDbLoader.interface';
+import {
+  DbLoaderQueue,
+  SCRAPPER_METADATA_LOADER_QUEUE,
+} from '../processors/MetadataDbLoaderConsumer.processor';
+
+export type DbLoaderItem = ScrapperMetadataEntity | InlineMetadataObject;
 
 @Injectable()
 export class MetadataDbLoaderQueueService {
@@ -17,21 +23,25 @@ export class MetadataDbLoaderQueueService {
    * @see
    *  Do not use mergeToOneJob in scrappers due to limit issues
    *
-   * @param {ScrapperMetadataEntity[]} items
+   * @param {DbLoaderItem[]} items
    * @param {boolean} [mergeToOneJob]
    * @returns
    * @memberof MetadataDbLoaderQueueService
    */
-  addBulkMetadataToQueue(items: ScrapperMetadataEntity[], mergeToOneJob?: boolean) {
+  addBulkMetadataToQueue(items: DbLoaderItem[], mergeToOneJob?: boolean) {
     const {dbLoaderQueue} = this;
     const mappedItems = (
       items
         .filter(Boolean)
-        .map(
-          ({id}) => ({
-            metadataId: id,
-          }),
-        )
+        .map((item) => {
+          if (item instanceof ScrapperMetadataEntity) {
+            return {
+              metadataId: item.id,
+            };
+          }
+
+          return item;
+        })
     );
 
     if (mergeToOneJob)
@@ -47,11 +57,11 @@ export class MetadataDbLoaderQueueService {
   /**
    * Add single item into queue
    *
-   * @param {ScrapperMetadataEntity} {id}
+   * @param {DbLoaderItem} {id}
    * @returns
    * @memberof MetadataDbLoaderService
    */
-  addMetadataToQueue(item: ScrapperMetadataEntity) {
+  addMetadataToQueue(item: DbLoaderItem) {
     return this.addBulkMetadataToQueue([item]);
   }
 }

@@ -1,13 +1,20 @@
 import {CanBePromise} from '@shared/types';
-import {ScrapperMetadataEntity} from '../scrapper/entity';
+import {ScrapperMetadataKind} from '../scrapper/entity';
+
+export type InlineMetadataObject = {
+  kind: ScrapperMetadataKind,
+  content: any,
+  url?: string,
+  websiteId?: number,
+};
 
 export interface MetadataDbLoader {
   /**
    * Insert metadata info to DB
    *
-   * @param {ScrapperMetadataEntity} metadata
+   * @param {InlineMetadataObject} metadata
    * @returns {Promise<any>}
    * @memberof MetadataDbLoader
    */
-  extractMetadataToDb(metadata: ScrapperMetadataEntity): CanBePromise<any>
+  extractMetadataToDb(metadata: InlineMetadataObject): CanBePromise<any>
 }

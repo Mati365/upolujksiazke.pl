@@ -3,6 +3,7 @@ import stringSimilarity from 'string-similarity';
 import pMap from 'p-map';
 import {validate} from 'class-validator';
 import {plainToClass} from 'class-transformer';
+import {EventEmitter2} from 'eventemitter2';
 import {
   Inject, Injectable,
   Logger, forwardRef,
@@ -33,14 +34,11 @@ import {
   DEFAULT_BOOK_VOLUME_NAME,
 } from '@server/modules/book/modules/volume/dto/CreateBookVolume.dto';
 
-import {
-  ScrapperMetadataEntity,
-  ScrapperMetadataKind,
-} from '@scrapper/entity';
-
-import {MetadataDbLoader} from '@db-loader/MetadataDbLoader.interface';
+import {ScrapperMetadataKind} from '@scrapper/entity';
+import {InlineMetadataObject, MetadataDbLoader} from '@db-loader/MetadataDbLoader.interface';
 import {ScrapperMatcherService} from '@scrapper/service/actions';
 import {ScrapperService} from '@scrapper/service/Scrapper.service';
+import {BookImportedEvent} from './events/BookImported.event';
 
 import {
   mergeBooks,
@@ -81,12 +79,13 @@ export class BookDbLoaderService implements MetadataDbLoader {
     private readonly scrapperMatcherService: ScrapperMatcherService,
     private readonly scrapperService: ScrapperService,
     private readonly publisherService: BookPublisherService,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   /**
    * @inheritdoc
    */
-  extractMetadataToDb(metadata: ScrapperMetadataEntity) {
+  extractMetadataToDb(metadata: InlineMetadataObject) {
     const {logger} = this;
     const book = plainToClass(CreateBookDto, metadata.content);
 
@@ -113,7 +112,7 @@ export class BookDbLoaderService implements MetadataDbLoader {
    */
   static isEnoughToBeScrapped(book: CreateBookDto) {
     return (
-      book.authors?.length > 0 && !!book.title
+      !!book && book.authors?.length > 0 && !!book.title
     );
   }
 
@@ -345,10 +344,14 @@ export class BookDbLoaderService implements MetadataDbLoader {
    * @returns
    * @memberof BookDbLoaderService
    */
-  private async mergeAndExtractBookToDb(books: CreateBookDto[], attrs: BookExtractorAttrs = {}) {
+  private async mergeAndExtractBookToDb(
+    books: CreateBookDto[],
+    attrs: BookExtractorAttrs = {},
+  ) {
     const {
       fuzzyBookSearchService,
       bookService,
+      eventEmitter,
     } = this;
 
     if (R.isEmpty(books))
@@ -380,19 +383,25 @@ export class BookDbLoaderService implements MetadataDbLoader {
     if (!normalizedReleases)
       return null;
 
-    return bookService.upsert(
-      new CreateBookDto(
-        {
-          ...mergeBooks(books),
-          ...cachedBook && {
-            id: cachedBook.id,
-            parameterizedSlug: cachedBook.parameterizedSlug,
-          },
-          releases: await this.fixSimilarNamedReleasesPublishers(normalizedReleases),
-          authors,
+    const dto = new CreateBookDto(
+      {
+        ...mergeBooks(books),
+        ...cachedBook && {
+          id: cachedBook.id,
+          parameterizedSlug: cachedBook.parameterizedSlug,
         },
-      ),
+        releases: await this.fixSimilarNamedReleasesPublishers(normalizedReleases),
+        authors,
+      },
     );
+
+    const book = await bookService.upsert(dto);
+    await eventEmitter.emitAsync(
+      'loader.book.imported',
+      new BookImportedEvent(book, dto),
+    );
+
+    return book;
   }
 
   /**

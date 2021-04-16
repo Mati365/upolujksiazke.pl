@@ -5,9 +5,8 @@ import * as R from 'ramda';
 import {AsyncURLParseResult, parseAsyncURLIfOK} from '@server/common/helpers/fetchAsyncHTML';
 
 import {WebsiteScrappersGroup} from '@scrapper/service/shared';
-import {ScrapperMetadataEntity} from '@scrapper/entity/ScrapperMetadata.entity';
 import {ScrapperService} from '@scrapper/service/Scrapper.service';
-import {MetadataDbLoader} from '@db-loader/MetadataDbLoader.interface';
+import {InlineMetadataObject, MetadataDbLoader} from '@db-loader/MetadataDbLoader.interface';
 import {MetadataDbLoaderService} from '@db-loader/services/MetadataDbLoader.service';
 
 @Injectable()
@@ -23,7 +22,7 @@ export class UrlDbLoaderService implements MetadataDbLoader {
   /**
    * @inheritdoc
    */
-  async extractMetadataToDb({url}: ScrapperMetadataEntity) {
+  async extractMetadataToDb({url}: InlineMetadataObject) {
     await this.extractParseResultToDb(
       await parseAsyncURLIfOK(url),
     );
@@ -80,12 +79,10 @@ export class UrlDbLoaderService implements MetadataDbLoader {
     }
 
     await loader.extractMetadataToDb(
-      new ScrapperMetadataEntity(
-        {
-          kind,
-          content,
-        },
-      ),
+      {
+        kind,
+        content,
+      },
     );
   }
 }

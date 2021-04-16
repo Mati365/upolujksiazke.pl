@@ -1,6 +1,7 @@
 import {Module} from '@nestjs/common';
 import {ScheduleModule} from '@nestjs/schedule';
 import {BullModule} from '@nestjs/bull';
+import {EventEmitterModule} from '@nestjs/event-emitter';
 
 import {SERVER_ENV} from '@server/constants/env';
 import {isDevMode} from '@shared/helpers';
@@ -27,6 +28,7 @@ import {ElasticsearchConnectionModule} from './elasticsearch';
   {
     imports: [
       DatabaseModule,
+      EventEmitterModule.forRoot(),
       ...(
         isCmdAppInstance()
           ? []

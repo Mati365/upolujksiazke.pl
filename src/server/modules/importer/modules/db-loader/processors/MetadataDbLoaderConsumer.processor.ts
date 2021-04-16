@@ -8,12 +8,15 @@ import * as R from 'ramda';
 import {SentryService} from '@server/modules/sentry/Sentry.service';
 import {ScrapperMetadataEntity} from '../../scrapper/entity';
 import {MetadataDbLoaderService} from '../services/MetadataDbLoader.service';
+import {InlineMetadataObject} from '../MetadataDbLoader.interface';
 
 export const SCRAPPER_METADATA_LOADER_QUEUE = 'scrapper_metadata_loader';
 
-export type DbLoaderJobValue = ({
+export type DbStoredLoaderMetadata = {
   metadataId: number,
-})[];
+};
+
+export type DbLoaderJobValue = (DbStoredLoaderMetadata | InlineMetadataObject)[];
 
 export type DbLoaderQueue = Queue<DbLoaderJobValue>;
 
@@ -59,13 +62,21 @@ export class MetadataDbLoaderConsumerProcessor {
       metadataDbLoaderService,
     } = this;
 
-    const metadataItems = await ScrapperMetadataEntity.find(
-      {
-        where: {
-          id: In(R.pluck('metadataId', job.data)),
+    const dbMetadataIds = R.pluck('metadataId', <DbStoredLoaderMetadata[]> job.data).filter(Boolean);
+    const metadataItems: InlineMetadataObject[] = [
+      ...R.filter(
+        (item) => !('metadataId' in item),
+        job.data,
+      ) as InlineMetadataObject[],
+
+      ...!dbMetadataIds.length ? [] : await ScrapperMetadataEntity.find(
+        {
+          where: {
+            id: In(dbMetadataIds),
+          },
         },
-      },
-    );
+      ),
+    ];
 
     await pMap(
       metadataItems,

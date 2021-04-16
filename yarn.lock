@@ -743,6 +743,13 @@
   resolved "https://registry.yarnpkg.com/@nestjs/elasticsearch/-/elasticsearch-7.1.0.tgz#ba77a11d419b9aa542252a83b6490ef8c458fed4"
   integrity sha512-3ixmu9MkTh0DS+LKAKcWHLyf/1DPQTXoy+aVClVI14DJQU208oHR3V0e9klApC+GXCYW+BDhNReh4HRyekjTrw==
 
+"@nestjs/event-emitter@^0.0.3":
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/@nestjs/event-emitter/-/event-emitter-0.0.3.tgz#c8f88351564c0ecd87fb8f70cfba9dddd3da12db"
+  integrity sha512-ggVMXdu80VN62rXMtfbQ7XTu3k4t0UUFn4DNQyQee5NTRCcRpT1ZmYR/qt0Exh9JiNvzYDR9TYRr20GU40n6fg==
+  dependencies:
+    eventemitter2 "6.4.3"
+
 "@nestjs/platform-express@^7.6.5":
   version "7.6.14"
   resolved "https://registry.yarnpkg.com/@nestjs/platform-express/-/platform-express-7.6.14.tgz#b16de114421492b719d924a8abf408071c75898e"
@@ -4168,6 +4175,11 @@ etag@~1.8.1:
   version "1.8.1"
   resolved "https://registry.yarnpkg.com/etag/-/etag-1.8.1.tgz#41ae2eeb65efa62268aebfea83ac7d79299b0887"
   integrity sha1-Qa4u62XvpiJorr/qg6x9eSmbCIc=
+
+eventemitter2@6.4.3:
+  version "6.4.3"
+  resolved "https://registry.yarnpkg.com/eventemitter2/-/eventemitter2-6.4.3.tgz#35c563619b13f3681e7eb05cbdaf50f56ba58820"
+  integrity sha512-t0A2msp6BzOf+QAcI6z9XMktLj52OjGQg+8SJH6v5+3uxNpWYRR3wQmfA+6xtMU9kOC59qk9licus5dYcrYkMQ==
 
 events@^3.2.0:
   version "3.3.0"

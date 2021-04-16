@@ -55,6 +55,10 @@ export abstract class WebsiteScrapperMatcher<
     super();
   }
 
+  get homepageURL() {
+    return this.config.homepageURL;
+  }
+
   /**
    * Concats urls with root page url and fetches page
    *

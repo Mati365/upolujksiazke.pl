@@ -1,22 +1,19 @@
-import {Injectable} from '@nestjs/common';
-
 import {concatWithAnchor} from '@spider/helpers/concatWithAnchor';
-import {parseAsyncURL} from '@server/common/helpers/fetchAsyncHTML';
+import {AsyncURLParseResult, parseAsyncURL} from '@server/common/helpers/fetchAsyncHTML';
 
 import {CreateImageAttachmentDto} from '@server/modules/attachment/dto/CreateImageAttachment.dto';
 import {CreateRemoteArticleDto} from '@server/modules/remote/dto/CreateRemoteArticle.dto';
 
-@Injectable()
-export class RemoteArticleScrapperService {
+export class RemoteArticleScrapper {
   /**
-   * Fetchs article and picks og:tags
+   * Fetches remote article dto from parse result
    *
-   * @param {CreateRemoteArticleDto} {url}
+   * @static
+   * @param {AsyncURLParseResult} {$, url}
    * @returns
-   * @memberof RemoteArticleScrapperService
+   * @memberof SocialTagsScrapper
    */
-  async fetchRemoteArticleDto({url}: CreateRemoteArticleDto) {
-    const {$} = await parseAsyncURL(url);
+  static pickRemoteArticleDtoFromPage({$, url}: AsyncURLParseResult) {
     const $head = $('head');
 
     const title = $head.find('meta[property="og:title"]').attr('content') || $head.find('title').text();
@@ -41,6 +38,20 @@ export class RemoteArticleScrapperService {
           ),
         },
       },
+    );
+  }
+
+  /**
+   * Gets remote article dto from URL
+   *
+   * @static
+   * @param {string} url
+   * @returns
+   * @memberof RemoteArticleScrapper
+   */
+  static async fetchRemoteArticleFromURL(url: string) {
+    return RemoteArticleScrapper.pickRemoteArticleDtoFromPage(
+      await parseAsyncURL(url),
     );
   }
 }

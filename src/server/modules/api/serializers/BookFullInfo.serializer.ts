@@ -8,6 +8,7 @@ import {BookPrizeSerializer} from './BookPrize.serializer';
 import {BookReviewSerializer} from './BookReview.serializer';
 import {BookEraSerializer} from './BookEra.serializer';
 import {BookGenreSerializer} from './BookGenre.serializer';
+import {BookSummarySerializer} from './BookSummary.serializer';
 import {SchoolBookSerializer} from './SchoolBook.serializer';
 import {SeriesBookSerializer} from './SeriesBook.serializer';
 import {TagSerializer} from './Tag.serializer';
@@ -46,6 +47,10 @@ export class BookFullInfoSerializer extends BookCardSerializer implements BookFu
   @Expose()
   @Type(() => BookFullInfoReleaseSerializer)
   releases: BookFullInfoReleaseSerializer[];
+
+  @Expose()
+  @Type(() => BookSummarySerializer)
+  summaries: BookSummarySerializer[];
 
   @Expose()
   @Type(() => BookPrizeSerializer)

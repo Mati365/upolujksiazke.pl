@@ -1,4 +1,4 @@
-import {UndecoratedLink} from '@client/components/ui';
+import {UndecoratedLink} from '@client/components/ui/Link';
 import {BookSchoolLevel} from '@shared/enums';
 import {
   BookAuthorRecord,

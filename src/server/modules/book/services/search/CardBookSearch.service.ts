@@ -1,8 +1,9 @@
 import * as R from 'ramda';
-import {Injectable} from '@nestjs/common';
+import {forwardRef, Inject, Injectable} from '@nestjs/common';
 import {Connection, EntityTarget, SelectQueryBuilder} from 'typeorm';
 
 import {objPropsToPromise} from '@shared/helpers';
+import {paginatedAsyncIterator} from '@server/common/helpers/db/paginatedAsyncIterator';
 
 import {Awaited} from '@shared/types';
 import {BasicAPIPagination} from '@api/APIClient';
@@ -19,6 +20,7 @@ import {BookReviewService} from '../../modules/review/BookReview.service';
 import {BookGenreService} from '../../modules/genre/BookGenre.service';
 import {BookEraService} from '../../modules/era/BookEra.service';
 import {BookTagsService} from '../BookTags.service';
+import {BookSummaryService} from '../../modules/summary/BookSummary.service';
 
 export type FullCardEntity = Awaited<ReturnType<CardBookSearchService['findFullCard']>>;
 
@@ -41,15 +43,17 @@ export class CardBookSearchService {
   ];
 
   constructor(
+    @Inject(forwardRef(() => BookCategoryService))
+    private readonly categoryService: BookCategoryService,
     private readonly connection: Connection,
     private readonly bookTagService: BookTagsService,
     private readonly releaseService: BookReleaseService,
-    private readonly categoryService: BookCategoryService,
     private readonly prizeService: BookPrizeService,
     private readonly reviewsService: BookReviewService,
     private readonly hierarchyService: BookHierarchySeriesService,
     private readonly genreService: BookGenreService,
     private readonly eraService: BookEraService,
+    private readonly summaryService: BookSummaryService,
   ) {}
 
   /**
@@ -81,6 +85,33 @@ export class CardBookSearchService {
         .innerJoin('book.primaryRelease', 'primaryRelease')
         .leftJoin('primaryRelease.cover', 'cover', `cover.version = '${ImageVersion.PREVIEW}'`)
         .leftJoin('cover.attachment', 'attachment')
+    );
+  }
+
+  /**
+   * Create query that iterates over all books
+   *
+   * @param {{pageLimit: number}} {pageLimit}
+   * @returns
+   * @memberof CardBookSearchService
+   */
+  createIdsIteratedQuery({pageLimit}: {pageLimit: number}) {
+    return paginatedAsyncIterator(
+      {
+        limit: pageLimit,
+        queryExecutor: async ({limit, offset}) => {
+          const result = await (
+            BookEntity
+              .createQueryBuilder('b')
+              .select('b.id')
+              .offset(offset)
+              .limit(limit)
+              .getMany()
+          );
+
+          return R.pluck('id', result);
+        },
+      },
     );
   }
 
@@ -233,9 +264,11 @@ export class CardBookSearchService {
     {
       id,
       reviewsCount,
+      summariesCount,
     }: {
       id: number,
       reviewsCount?: number,
+      summariesCount?: number,
     },
   ) {
     const {
@@ -247,14 +280,11 @@ export class CardBookSearchService {
       releaseService,
       reviewsService,
       hierarchyService,
+      summaryService,
     } = this;
 
     const entity = new BookEntity;
-    const {
-      card, tags, categories,
-      prizes, releases, reviews,
-      hierarchy, era, genre,
-    } = await objPropsToPromise(
+    const {card, ...items} = await objPropsToPromise(
       {
         card: (
           this
@@ -273,6 +303,12 @@ export class CardBookSearchService {
         tags: bookTagService.findBookTags(id),
         categories: categoryService.findBookCategories(id),
         prizes: prizeService.findBookPrizes(id),
+        summaries: summaryService.findBookSummaries(
+          {
+            bookId: id,
+            limit: summariesCount,
+          },
+        ),
         releases: releaseService.findBookReleases(
           {
             bookId: id,
@@ -302,14 +338,7 @@ export class CardBookSearchService {
     return {
       ...entity,
       ...card,
-      era,
-      genre,
-      tags,
-      categories,
-      prizes,
-      releases,
-      reviews,
-      hierarchy,
+      ...items,
     };
   }
 }

@@ -15,6 +15,7 @@ export type BooksFilters = BasicAPIPagination & {
 
 export type BookFindOneAttrs = {
   reviewsCount?: number,
+  summariesCount?: number,
 };
 
 export interface BooksRepo extends APIRepo<BookFullInfoRecord, BooksFilters, BookFindOneAttrs> {

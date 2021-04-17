@@ -1,8 +1,6 @@
-import {Injectable} from '@nestjs/common';
+import {forwardRef, Inject, Injectable} from '@nestjs/common';
 import {ElasticsearchService} from '@nestjs/elasticsearch';
-import * as R from 'ramda';
 
-import {paginatedAsyncIterator} from '@server/common/helpers/db';
 import {objPropsToPromise} from '@shared/helpers';
 
 import {
@@ -11,6 +9,7 @@ import {
   PredefinedProperties,
 } from '@server/modules/elasticsearch/classes/EntityIndex';
 
+import {CardBookSearchService} from '../search/CardBookSearch.service';
 import {BookEntity} from '../../entity/Book.entity';
 import {BookEraService} from '../../modules/era/BookEra.service';
 import {BookGenreService} from '../../modules/genre/BookGenre.service';
@@ -56,6 +55,9 @@ export class EsBookIndex extends EntityIndex<BookIndexEntity> {
 
   constructor(
     esService: ElasticsearchService,
+
+    @Inject(forwardRef(() => CardBookSearchService))
+    private readonly bookSearchService: CardBookSearchService,
     private readonly bookEraService: BookEraService,
     private readonly bookGenreService: BookGenreService,
     private readonly bookTagsService: BookTagsService,
@@ -147,22 +149,14 @@ export class EsBookIndex extends EntityIndex<BookIndexEntity> {
    * @inheritdoc
    */
   protected async* findEntitiesIds(): AsyncGenerator<number[]> {
-    const it = paginatedAsyncIterator(
+    const it = this.bookSearchService.createIdsIteratedQuery(
       {
-        limit: 50,
-        queryExecutor: ({limit, offset}) => (
-          BookEntity
-            .createQueryBuilder('b')
-            .select('b.id')
-            .offset(offset)
-            .limit(limit)
-            .getMany()
-        ),
+        pageLimit: 40,
       },
     );
 
-    for await (const [, item] of it)
-      yield R.pluck('id', item);
+    for await (const [, ids] of it)
+      yield ids;
   }
 
   /**

@@ -1,6 +1,7 @@
 import {concatWithAnchor} from '@spider/helpers/concatWithAnchor';
-import {AsyncURLParseResult, parseAsyncURL} from '@server/common/helpers/fetchAsyncHTML';
+import {extractPathname} from '@shared/helpers';
 
+import {AsyncURLParseResult, parseAsyncURL} from '@server/common/helpers/fetchAsyncHTML';
 import {CreateImageAttachmentDto} from '@server/modules/attachment/dto/CreateImageAttachment.dto';
 import {CreateRemoteArticleDto} from '@server/modules/remote/dto/CreateRemoteArticle.dto';
 
@@ -27,11 +28,12 @@ export class RemoteArticleScrapper {
 
     return new CreateRemoteArticleDto(
       {
+        remoteId: extractPathname(url),
         url: $head.find('meta[property="og:url"]').attr('content') || url,
         title,
         description,
         ...coverUrl && {
-          logo: coverUrl && new CreateImageAttachmentDto(
+          cover: coverUrl && new CreateImageAttachmentDto(
             {
               originalUrl: concatWithAnchor(url, coverUrl),
             },

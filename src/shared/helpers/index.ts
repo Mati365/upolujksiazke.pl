@@ -40,3 +40,5 @@ export * from './filterAndMap';
 export * from './pickIdName';
 export * from './getNextObjKey';
 export * from './findKeyByValue';
+export * from './toFixedIfFloating';
+export * from './concatUrls';

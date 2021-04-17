@@ -19,6 +19,7 @@ type BookTagHydratorAttrs = Optional<Omit<LinkHydrateAttrs<BookTagStatDAO>, 'lin
 @Injectable()
 export class BookTagsTextHydratorService {
   constructor(
+    @Inject(forwardRef(() => BookTagsStatsService))
     private readonly bookTagsStats: BookTagsStatsService,
 
     @Inject(forwardRef(() => BookTagsService))

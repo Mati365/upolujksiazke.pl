@@ -61,6 +61,7 @@ export const BookHeaderSection = ({book, formattedTitle}: BookHeaderSectionProps
             totalStars={10}
             totalRatings={totalRatings}
             textOnly={ua.mobile}
+            showTextValue
           />
         </BookHeaderAttribute>
 

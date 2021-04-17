@@ -1,8 +1,9 @@
-import {Injectable} from '@nestjs/common';
+import {forwardRef, Inject, Injectable} from '@nestjs/common';
 import {EntityManager} from 'typeorm';
 import pMap from 'p-map';
 import * as R from 'ramda';
 
+import {CardBookSearchService} from '@server/modules/book/services/search/CardBookSearch.service';
 import {BookEntity} from '../../../entity/Book.entity';
 
 type BookStats = Pick<BookEntity, 'avgRating'|'totalRatings'|'lowestPrice'|'highestPrice'|'allTypes'>;
@@ -10,6 +11,8 @@ type BookStats = Pick<BookEntity, 'avgRating'|'totalRatings'|'lowestPrice'|'high
 @Injectable()
 export class BookStatsService {
   constructor(
+    @Inject(forwardRef(() => CardBookSearchService))
+    private readonly bookSearchService: CardBookSearchService,
     private readonly entityManager: EntityManager,
   ) {}
 
@@ -99,32 +102,37 @@ export class BookStatsService {
     const [stats]: [BookStats] = await entityManager.query(
       /* sql */ `
         with
+          releases as (
+            select br."id", br."bookId", br."type"
+            from book_release br
+            where "bookId" = $1
+          ),
           release_types as (
-            select array (select br."type" from book_release br where "bookId" = $1 group by "type") as items
+            select array (select br."type" from releases br group by "type") as items
           ),
           availability as (
             select
               min("price")::float as "lowestPrice",
               max("price")::float as "highestPrice",
-              sum("avgRating")::float as "sumRatings",
-              sum(CASE WHEN "avgRating" IS NULL THEN 0 ELSE "totalRatings" END)::int as "totalRatings",
-              sum(CASE WHEN "avgRating" IS NULL THEN 0 ELSE 1 END)::int as "totalAvgItems"
-            from public.book_availability
-            where "bookId" = $1
+              sum("avgRating" * coalesce("totalRatings", 0))::float as "sumRatings",
+              sum(CASE WHEN "avgRating" IS NULL THEN 0 ELSE "totalRatings" END)::int as "totalRatings"
+            from public.book_availability ba
+            left join releases r on r."id" = ba."releaseId"
+            where r."bookId" = $1
           ),
           reviews as (
             select
               sum("rating")::float as "sumRatings",
-              count(CASE WHEN "rating" IS NULL THEN 0 ELSE 1 END)::int as "totalAvgItems"
-            from public.book_review
-            where "bookId" = $1 and "includeInStats" = true
+              count(CASE WHEN "rating" IS NULL THEN 0 ELSE 1 END)::int as "totalRatings"
+            from public.book_review br
+            where br."bookId" = $1 and br."includeInStats" = true
           )
         select
           a."lowestPrice",
           a."highestPrice",
           (coalesce(a."sumRatings", 0) + coalesce(r."sumRatings", 0))
-            / nullif(a."totalAvgItems" + r."totalAvgItems", 0) as "avgRating",
-          (coalesce(a."totalRatings", 0) + coalesce(r."totalAvgItems", 0)) as "totalRatings",
+            / nullif(a."totalRatings" + r."totalRatings", 0) as "avgRating",
+          (coalesce(a."totalRatings", 0) + coalesce(r."totalRatings", 0)) as "totalRatings",
           rt."items" as "allTypes"
         from availability a
         cross join reviews r
@@ -157,5 +165,21 @@ export class BookStatsService {
         concurrency: 3,
       },
     );
+  }
+
+  /**
+   * Iterates over all books and updates stats
+   *
+   * @memberof BookStatsService
+   */
+  async refreshAllBooksStats() {
+    const it = this.bookSearchService.createIdsIteratedQuery(
+      {
+        pageLimit: 40,
+      },
+    );
+
+    for await (const [, ids] of it)
+      await this.refreshBooksStats(ids);
   }
 }

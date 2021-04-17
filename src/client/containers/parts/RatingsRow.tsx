@@ -3,6 +3,7 @@ import c from 'classnames';
 import * as R from 'ramda';
 
 import {useI18n} from '@client/i18n';
+import {toFixedIfFloating} from '@shared/helpers';
 
 import {CleanList} from '@client/components/ui';
 import {
@@ -75,7 +76,7 @@ export const RatingsRow = (
       {stars}
       {(textOnly || showTextValue) && (
         <span className='c-ratings-row__text-value'>
-          {`${Math.floor(normalizedValue)} / ${totalStars}`}
+          {`${toFixedIfFloating(normalizedValue, 1)} / ${totalStars}`}
         </span>
       )}
       {!R.isNil(totalRatings) && (

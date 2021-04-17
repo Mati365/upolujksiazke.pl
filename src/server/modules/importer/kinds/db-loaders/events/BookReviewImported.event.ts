@@ -3,7 +3,7 @@ import {CreateBookReviewDto} from '@server/modules/book/modules/review/dto/Creat
 
 export class BookReviewImportedEvent {
   constructor(
-    public readonly book: BookReviewEntity,
+    public readonly review: BookReviewEntity,
     public readonly dto: CreateBookReviewDto,
   ) {}
 }

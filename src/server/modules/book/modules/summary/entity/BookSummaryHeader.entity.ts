@@ -16,8 +16,8 @@ import {BookSummaryEntity} from './BookSummary.entity';
 )
 @Index(['summary'])
 @Unique(
-  'book_summary_header_unique_title_url',
-  ['title', 'url'],
+  'book_summary_header_unique_slug_url',
+  ['parameterizedTitle', 'url'],
 )
 export class BookSummaryHeaderEntity extends DatedRecordEntity {
   @Column('text')

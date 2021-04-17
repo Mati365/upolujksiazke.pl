@@ -103,12 +103,13 @@ export class BooksServerRepo extends ServerAPIClientChild implements BooksRepo {
       expire: convertHoursToSeconds(0.5),
     }),
   )
-  async findOne(id: ID, {reviewsCount}: BookFindOneAttrs = {}) {
+  async findOne(id: ID, {reviewsCount, summariesCount}: BookFindOneAttrs = {}) {
     const {cardBookSearchService} = this.services;
     const book = await cardBookSearchService.findFullCard(
       {
         id: +id,
         reviewsCount,
+        summariesCount,
       },
     );
 

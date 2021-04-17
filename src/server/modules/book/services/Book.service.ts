@@ -371,11 +371,9 @@ export class BookService {
 
     // post hooks
     if (transactionResult) {
-      const {alreadyInDB, mergedBook} = transactionResult;
+      const {mergedBook} = transactionResult;
 
-      if (alreadyInDB)
-        await statsService.refreshBookStats(mergedBook.id);
-
+      await statsService.refreshBookStats(mergedBook.id);
       await hierarchyService.findAndCreateBookHierarchy(mergedBook.id);
       await bookEsIndex.reindexEntity(mergedBook.id);
     }

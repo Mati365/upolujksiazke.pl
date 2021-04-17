@@ -8,10 +8,13 @@ import {BookSummaryKind} from '@shared/enums/bookSummaries';
 
 import {CreateBookDto} from '@server/modules/book/dto/CreateBook.dto';
 import {CreateRemoteArticleDto} from '@server/modules/remote/dto/CreateRemoteArticle.dto';
-import {CreateRemoteRecordDto} from '@server/modules/remote/dto/CreateRemoteRecord.dto';
 import {CreateBookSummaryHeaderDto} from './CreateBookSummaryHeader.dto';
 
-export class CreateBookSummaryDto extends CreateRemoteRecordDto {
+export class CreateBookSummaryDto {
+  @IsOptional()
+  @IsNumber()
+  readonly id: number;
+
   @IsDefined()
   @IsNumber()
   readonly bookId: number;
@@ -37,6 +40,10 @@ export class CreateBookSummaryDto extends CreateRemoteRecordDto {
 
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(partial: Partial<CreateBookSummaryDto>) {
-    super(partial);
+    Object.assign(this, partial);
+  }
+
+  get url() {
+    return this.article?.url;
   }
 }

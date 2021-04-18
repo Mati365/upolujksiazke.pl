@@ -1,6 +1,7 @@
-import {Injectable} from '@nestjs/common';
+import {Inject, Injectable, forwardRef} from '@nestjs/common';
 import {Connection, EntityManager} from 'typeorm';
 import pMap from 'p-map';
+import * as R from 'ramda';
 
 import {
   forwardTransaction,
@@ -12,6 +13,7 @@ import {ImageVersion} from '@shared/enums';
 import {CreateBookReviewDto} from './dto/CreateBookReview.dto';
 import {BookReviewEntity} from './BookReview.entity';
 import {BookReviewerService} from '../reviewer/BookReviewer.service';
+import {BookStatsService} from '../stats/services/BookStats.service';
 
 @Injectable()
 export class BookReviewService {
@@ -25,6 +27,9 @@ export class BookReviewService {
 
   constructor(
     private readonly connection: Connection,
+
+    @Inject(forwardRef(() => BookStatsService))
+    private readonly bookStatsService: BookStatsService,
     private readonly bookReviewerService: BookReviewerService,
   ) {}
 
@@ -107,7 +112,12 @@ export class BookReviewService {
     if (!dtos?.length)
       return [];
 
-    const {connection, bookReviewerService} = this;
+    const {
+      connection,
+      bookReviewerService,
+      bookStatsService,
+    } = this;
+
     const {
       upsertResources = false,
       entityManager,
@@ -149,12 +159,25 @@ export class BookReviewService {
       );
     };
 
-    return forwardTransaction(
+    const reviews = await forwardTransaction(
       {
         connection,
         entityManager,
       },
       executor,
     );
+
+    // prevents refreshing book stats inside transaction
+    if (!attrs.entityManager) {
+      await pMap(
+        R.uniq(R.pluck('bookId', reviews)),
+        (id) => bookStatsService.refreshBookStats(id),
+        {
+          concurrency: 3,
+        },
+      );
+    }
+
+    return reviews;
   }
 }

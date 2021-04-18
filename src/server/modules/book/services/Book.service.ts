@@ -1,4 +1,4 @@
-import {Injectable} from '@nestjs/common';
+import {Injectable, Inject, forwardRef} from '@nestjs/common';
 import {Connection, EntityManager, In} from 'typeorm';
 import pMap from 'p-map';
 import * as R from 'ramda';
@@ -31,6 +31,7 @@ import {BookReleaseEntity} from '../modules/release/BookRelease.entity';
 import {BookStatsService} from '../modules/stats/services/BookStats.service';
 import {BookTagsTextHydratorService} from '../modules/seo/service/BookTagsTextHydrator.service';
 import {BookGenreService} from '../modules/genre/BookGenre.service';
+import {BookSummaryService} from '../modules/summary/BookSummary.service';
 import {EsBookIndex} from './indexes/EsBook.index';
 import {SchoolBookEntity} from '../entity/SchoolBook.entity';
 
@@ -46,18 +47,22 @@ import {SchoolBookEntity} from '../entity/SchoolBook.entity';
 @Injectable()
 export class BookService {
   constructor(
+    @Inject(forwardRef(() => BookReleaseService))
+    private readonly releaseService: BookReleaseService,
+    @Inject(forwardRef(() => BookCategoryService))
+    private readonly categoryService: BookCategoryService,
+    @Inject(forwardRef(() => BookStatsService))
+    private readonly statsService: BookStatsService,
     private readonly connection: Connection,
     private readonly tagService: TagService,
     private readonly authorService: BookAuthorService,
-    private readonly releaseService: BookReleaseService,
-    private readonly categoryService: BookCategoryService,
     private readonly volumeService: BookVolumeService,
     private readonly seriesService: BookSeriesService,
     private readonly prizeService: BookPrizeService,
     private readonly kindService: BookKindService,
-    private readonly statsService: BookStatsService,
     private readonly seoTagsService: BookTagsTextHydratorService,
     private readonly hierarchyService: BookHierarchySeriesService,
+    private readonly summaryService: BookSummaryService,
     private readonly eraService: BookEraService,
     private readonly genreService: BookGenreService,
     private readonly bookEsIndex: EsBookIndex,
@@ -72,10 +77,11 @@ export class BookService {
    */
   async delete(ids: number[], entityManager?: EntityManager) {
     const {
-      seriesService,
       connection,
-      releaseService,
       bookEsIndex,
+      seriesService,
+      releaseService,
+      summaryService,
     } = this;
 
     const seriesIds = R.pluck(
@@ -100,7 +106,7 @@ export class BookService {
       {
         select: ['id'],
         loadRelationIds: {
-          relations: ['releases', 'availability'],
+          relations: ['releases', 'availability', 'summaries'],
         },
       },
     );
@@ -112,8 +118,10 @@ export class BookService {
         },
       );
 
-      for await (const entity of entities)
+      for await (const entity of entities) {
+        await summaryService.delete(entity.summaries as any[], transaction);
         await releaseService.delete(entity.releases as any[], transaction);
+      }
 
       const orphanVolumes = (
         await transaction
@@ -192,6 +200,7 @@ export class BookService {
    *  Should we rewrite series / books etc or merge to existing?
    *
    * @param {CreateBookDto} dto
+   * @param {Object} attrs
    * @returns {Promise<BookEntity>}
    * @memberof BookService
    */
@@ -203,8 +212,7 @@ export class BookService {
       categoryService, seriesService,
       prizeService, kindService,
       statsService, seoTagsService,
-      hierarchyService, bookEsIndex,
-      genreService,
+      genreService, hierarchyService,
     } = this;
 
     const transactionResult = await runTransactionWithPostHooks(connection, async (transaction) => {
@@ -370,12 +378,11 @@ export class BookService {
     });
 
     // post hooks
-    if (transactionResult) {
+    if (transactionResult?.mergedBook) {
       const {mergedBook} = transactionResult;
 
-      await statsService.refreshBookStats(mergedBook.id);
       await hierarchyService.findAndCreateBookHierarchy(mergedBook.id);
-      await bookEsIndex.reindexEntity(mergedBook.id);
+      await statsService.refreshBookStats(mergedBook.id);
     }
 
     return transactionResult.mergedBook;

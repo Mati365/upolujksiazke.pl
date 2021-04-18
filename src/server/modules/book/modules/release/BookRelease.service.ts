@@ -6,6 +6,7 @@ import * as R from 'ramda';
 import {objPropsToPromise, uniqFlatHashByProp} from '@shared/helpers';
 import {
   forwardTransaction,
+  groupRawMany,
   upsert,
   UpsertResourceAttrs,
 } from '@server/common/helpers/db';
@@ -46,6 +47,43 @@ export class BookReleaseService {
     private readonly reviewsService: BookReviewService,
     private readonly imageAttachmentService: ImageAttachmentService,
   ) {}
+
+  /**
+   * Selects releases for multiple books at once
+   *
+   * @param {Object} attrs
+   * @returns
+   * @memberof BookReleaseService
+   */
+  async findBooksReleases(
+    {
+      booksIds,
+      select,
+    }: {
+      booksIds: number[],
+      select: string[],
+    },
+  ) {
+    const releases = await (
+      BookReleaseEntity
+        .createQueryBuilder('r')
+        .select([...select, '"bookId"'])
+        .where(
+          {
+            bookId: In(booksIds),
+          },
+        )
+        .getRawMany()
+    );
+
+    return groupRawMany(
+      {
+        items: releases,
+        key: 'bookId',
+        mapperFn: (item) => new BookReleaseEntity(item),
+      },
+    );
+  }
 
   /**
    * Find prizes for books

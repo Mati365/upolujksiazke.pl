@@ -3,6 +3,7 @@ import {EntityManager} from 'typeorm';
 import pMap from 'p-map';
 import * as R from 'ramda';
 
+import {EsBookIndex} from '@server/modules/book/services/indexes/EsBook.index';
 import {CardBookSearchService} from '@server/modules/book/services/search/CardBookSearch.service';
 import {BookEntity} from '../../../entity/Book.entity';
 
@@ -13,6 +14,7 @@ export class BookStatsService {
   constructor(
     @Inject(forwardRef(() => CardBookSearchService))
     private readonly bookSearchService: CardBookSearchService,
+    private readonly bookEsIndex: EsBookIndex,
     private readonly entityManager: EntityManager,
   ) {}
 
@@ -95,10 +97,11 @@ export class BookStatsService {
    * Finds book in database and refreshes its ratings
    *
    * @param {number} id
+   * @param {boolean} reindex
    * @memberof BookStatsService
    */
-  async refreshBookStats(id: number) {
-    const {entityManager} = this;
+  async refreshBookStats(id: number, reindex: boolean = true) {
+    const {entityManager, bookEsIndex} = this;
     const [stats]: [BookStats] = await entityManager.query(
       /* sql */ `
         with
@@ -141,14 +144,9 @@ export class BookStatsService {
       [id],
     );
 
-    await BookEntity.save(
-      new BookEntity(
-        {
-          id,
-          ...stats,
-        },
-      ),
-    );
+    await BookEntity.update(id, stats);
+    if (reindex)
+      await bookEsIndex.reindexEntity(id);
   }
 
   /**
@@ -160,11 +158,13 @@ export class BookStatsService {
   async refreshBooksStats(ids: number[]) {
     await pMap(
       ids,
-      this.refreshBookStats.bind(this),
+      (id) => this.refreshBookStats(id, false),
       {
         concurrency: 3,
       },
     );
+
+    await this.bookEsIndex.reindexBulk(ids);
   }
 
   /**

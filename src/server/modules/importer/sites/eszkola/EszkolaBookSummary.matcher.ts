@@ -1,3 +1,5 @@
+import * as R from 'ramda';
+
 import {fuzzyFindBookAnchor} from '@importer/kinds/scrappers/helpers/fuzzyFindBookAnchor';
 
 import {CreateBookSummaryDto} from '@server/modules/book/modules/summary/dto';
@@ -8,6 +10,8 @@ import {ScrapperMetadataKind} from '../../modules/scrapper/entity';
 
 export class EszkolaBookSummaryMatcher
   extends WebsiteScrapperMatcher<CreateBookSummaryDto, BookShopScrappersGroupConfig> {
+  static BOOK_SUMMARY_LISTING_SUFFIX = '- streszczenie';
+
   /**
    * @inheritdoc
    */
@@ -28,7 +32,9 @@ export class EszkolaBookSummaryMatcher
    * @memberof BrykBookSummaryMatcher
    */
   private async searchByPhrase({book}: CreateBookSummaryDto) {
+    const {BOOK_SUMMARY_LISTING_SUFFIX} = EszkolaBookSummaryMatcher;
     const {title} = book;
+
     const $ = (await this.fetchPageBySearch(
       {
         ie: 'UTF-8',
@@ -43,11 +49,17 @@ export class EszkolaBookSummaryMatcher
       {
         $: $('#search_results > strong > ul > li > a'),
         book: {
-          title: `${title.trim()} - streszczenie`,
+          title,
         },
-        anchorSelector: (anchor) => ({
-          title: $(anchor).find('> span').text(),
-        }),
+        anchorSelector: (anchor) => {
+          const anchorTitle = $(anchor).find('> span').text();
+          if (!R.endsWith(BOOK_SUMMARY_LISTING_SUFFIX, anchorTitle))
+            return null;
+
+          return {
+            title: anchorTitle.substring(0, anchorTitle.length - BOOK_SUMMARY_LISTING_SUFFIX.length),
+          };
+        },
       },
     );
 

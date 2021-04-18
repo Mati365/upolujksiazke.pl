@@ -32,6 +32,7 @@ import {Layout, LayoutViewData} from '@client/containers/layout';
 
 import {
   BookLink,
+  BooksLink,
   BOOK_PATH,
   HOME_PATH,
 } from '../Links';
@@ -65,7 +66,11 @@ export const BookRoute: AsyncRoute<BookRouteViewData> = (
           items={[
             {
               id: 'books',
-              node: t('shared.breadcrumbs.books'),
+              node: (
+                <BooksLink>
+                  {t('shared.breadcrumbs.books')}
+                </BooksLink>
+              ),
             },
             ...(
               volume && hierarchy?.length
@@ -111,8 +116,8 @@ export const BookRoute: AsyncRoute<BookRouteViewData> = (
             book={book}
             shrink={ua.mobile}
           />
-          <BookSummariesSection book={book} />
           <BookReviewsSection book={book} />
+          <BookSummariesSection book={book} />
         </BookInfo>
 
         {popularCategoriesBooks?.length > 0 && (

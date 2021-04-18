@@ -1,5 +1,6 @@
 import {forwardRef, Inject, Injectable} from '@nestjs/common';
 import {ElasticsearchService} from '@nestjs/elasticsearch';
+import * as R from 'ramda';
 
 import {objPropsToPromise} from '@shared/helpers';
 
@@ -17,6 +18,7 @@ import {BookTagsService} from '../BookTags.service';
 import {BookCategoryService} from '../../modules/category/services/BookCategory.service';
 import {BookPrizeService} from '../../modules/prize/BookPrize.service';
 import {BookAuthorService} from '../../modules/author/BookAuthor.service';
+import {BookReleaseService} from '../../modules/release/BookRelease.service';
 
 export type BookIndexEntity = Pick<
 /* eslint-disable @typescript-eslint/indent */
@@ -25,10 +27,13 @@ export type BookIndexEntity = Pick<
   |'originalTitle'|'defaultTitle'|'lowestPrice' |'highestPrice'
   |'allTypes'|'schoolBook'
 /* eslint-enable @typescript-eslint/indent */
->;
+> & {
+  volumeName: string,
+  isbns: string[],
+};
 
 @Injectable()
-export class EsBookIndex extends EntityIndex<BookIndexEntity> {
+export class EsBookIndex extends EntityIndex<BookEntity, BookIndexEntity> {
   static readonly INDEX_NAME = 'books';
 
   static readonly BOOK_INDEX_MAPPING: Record<keyof BookIndexEntity, any> = {
@@ -38,6 +43,8 @@ export class EsBookIndex extends EntityIndex<BookIndexEntity> {
     allTypes: {type: 'keyword'},
     lowestPrice: {type: 'float'},
     highestPrice: {type: 'float'},
+    volumeName: {type: 'keyword'},
+    isbns: {type: 'keyword'},
     authors: PredefinedProperties.idNamePair,
     tags: PredefinedProperties.idNamePair,
     categories: PredefinedProperties.idNamePair,
@@ -64,6 +71,7 @@ export class EsBookIndex extends EntityIndex<BookIndexEntity> {
     private readonly bookCategoriesService: BookCategoryService,
     private readonly bookPrizeService: BookPrizeService,
     private readonly bookAuthorService: BookAuthorService,
+    private readonly bookReleasesService: BookReleaseService,
   ) {
     super(
       esService,
@@ -98,7 +106,7 @@ export class EsBookIndex extends EntityIndex<BookIndexEntity> {
   /**
    * @inheritdoc
    */
-  protected async findEntities(ids: number[]): Promise<BookIndexEntity[]> {
+  protected async findEntities(ids: number[]): Promise<BookEntity[]> {
     const {
       bookEraService,
       bookGenreService,
@@ -106,11 +114,13 @@ export class EsBookIndex extends EntityIndex<BookIndexEntity> {
       bookCategoriesService,
       bookPrizeService,
       bookAuthorService,
+      bookReleasesService,
     } = this;
 
     const {
       books, eras, genres, tags,
       categories, prizes, authors,
+      releases,
     } = await objPropsToPromise(
       {
         books: BookEntity.findByIds(
@@ -120,7 +130,9 @@ export class EsBookIndex extends EntityIndex<BookIndexEntity> {
               'id', 'originalTitle', 'defaultTitle',
               'lowestPrice', 'highestPrice', 'allTypes',
             ],
-            relations: ['schoolBook'],
+            relations: [
+              'schoolBook', 'volume',
+            ],
           },
         ),
         eras: bookEraService.findBooksEras(ids),
@@ -129,6 +141,12 @@ export class EsBookIndex extends EntityIndex<BookIndexEntity> {
         categories: bookCategoriesService.findBooksCategories(ids),
         prizes: bookPrizeService.findBooksPrizes(ids),
         authors: bookAuthorService.findBooksAuthors(ids),
+        releases: bookReleasesService.findBooksReleases(
+          {
+            booksIds: ids,
+            select: ['id', 'isbn'],
+          },
+        ),
       },
     );
 
@@ -141,6 +159,7 @@ export class EsBookIndex extends EntityIndex<BookIndexEntity> {
         categories: categories[entity.id],
         prizes: prizes[entity.id],
         authors: authors[entity.id],
+        releases: releases[entity.id],
       },
     ));
   }
@@ -162,9 +181,11 @@ export class EsBookIndex extends EntityIndex<BookIndexEntity> {
   /**
    * @inheritdoc
    */
-  protected mapRecord(entity: BookIndexEntity): EsMappedDoc<BookIndexEntity> {
+  protected mapRecord({volume, releases, ...entity}: BookEntity): EsMappedDoc<BookIndexEntity> {
     return {
       _id: entity.id,
+      volumeName: volume?.name,
+      isbns: R.pluck('isbn', releases),
       ...entity,
     };
   }

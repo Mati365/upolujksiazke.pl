@@ -175,6 +175,46 @@ export abstract class EntityIndex<E extends {id: number}, I = E> implements OnMo
   }
 
   /**
+   * Reindex multiple entities at once
+   *
+   * @param {number[]} ids
+   * @param {string} [indexName=this.indexName]
+   * @memberof EntityIndex
+   */
+  async reindexBulk(ids: number[], indexName: string = this.indexName) {
+    const {es} = this;
+    const mapped = await this.findAndMap(ids);
+
+    await es.bulk(
+      {
+        refresh: true,
+        body: mapped.flatMap(
+          ({_id, ...doc}) => [
+            {
+              index: {
+                _index: indexName,
+                _id,
+              },
+            },
+            doc,
+          ],
+        ),
+      },
+    );
+  }
+
+  /**
+   * Finds multiple records by ids and maps
+   *
+   * @param {number[]} ids
+   * @returns
+   * @memberof EntityIndex
+   */
+  async findAndMap(ids: number[]) {
+    return (await this.findEntities(ids)).map(this.mapRecord.bind(this));
+  }
+
+  /**
    * Reindexes whole table, creates new alias, indexes it and changes alias
    *
    * @returns {Promise<void>}
@@ -183,29 +223,12 @@ export abstract class EntityIndex<E extends {id: number}, I = E> implements OnMo
   @MeasureCallDuration('reindexAllEntities')
   async reindexAllEntities(): Promise<void> {
     const {es, indexName} = this;
-
     const clonedIndex = await this.cloneAndCreateIndex(
       `${indexName}_${getCurrentTimestampSuffix()}`,
     );
 
     for await (const ids of this.findEntitiesIds()) {
-      const mapped = (await this.findEntities(ids)).map(this.mapRecord.bind(this));
-      await es.bulk(
-        {
-          refresh: true,
-          body: mapped.flatMap(
-            ({_id, ...doc}) => [
-              {
-                index: {
-                  _index: clonedIndex.indexName,
-                  _id,
-                },
-              },
-              doc,
-            ],
-          ),
-        },
-      );
+      await this.reindexBulk(ids, clonedIndex.indexName);
     }
 
     // change alias

@@ -1,6 +1,8 @@
 import React, {ReactNode, useState} from 'react';
 import c from 'classnames';
 
+import noImagePlaceholderUrl from '@assets/img/no-image-placeholder.png';
+
 import {capitalize} from '@shared/helpers';
 import {useI18n} from '@client/i18n';
 
@@ -33,6 +35,7 @@ export const RemoteArticleCard = (
   const {url, title, description, cover, website} = item;
   const [expandedLinks, setExpandedLinks] = useState(false);
   const t = useI18n();
+  const coverUrl = cover?.preview?.file;
 
   return (
     <article
@@ -41,17 +44,22 @@ export const RemoteArticleCard = (
         className,
       )}
     >
-      {showCover && cover?.preview && (
+      {showCover && (
         <UndecoratedLink
           href={url}
           rel='noopener nofollow noreferrer'
           target='_blank'
-          className='c-article-card__cover'
+          className={c(
+            'c-article-card__cover',
+            !coverUrl && 'is-placeholder',
+          )}
         >
           <Picture
             loading='lazy'
             alt={title}
-            src={cover.preview.file}
+            src={
+              coverUrl || noImagePlaceholderUrl
+            }
           />
         </UndecoratedLink>
       )}

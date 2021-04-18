@@ -13,6 +13,7 @@ export class EsCardBookSearchService {
   constructor(
     @Inject(forwardRef(() => EsBookIndex))
     private readonly bookEsIndex: EsBookIndex,
+    @Inject(forwardRef(() => CardBookSearchService))
     private readonly cardBookSearch: CardBookSearchService,
   ) {}
 

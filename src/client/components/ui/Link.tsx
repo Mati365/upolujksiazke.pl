@@ -1,6 +1,8 @@
 import React, {ReactNode} from 'react';
 import {Link, LinkProps} from 'react-router-dom';
 import * as R from 'ramda';
+import c from 'classnames';
+
 import {buildURL} from '@shared/helpers/urlEncoder';
 
 type LinkItem<I> = I & {
@@ -11,6 +13,7 @@ export type UndecoratedLinkProps<I = {}, P = {}> = P & {
   urlGenerator?: string | LinkURLGeneratorFn<I, P>,
   children?: ReactNode,
   className?: string,
+  additionalClassName?: string,
   item?: LinkItem<I>,
   searchParams?: object,
   state?: object,
@@ -29,7 +32,7 @@ type LinkURLGeneratorFn<I, P> = (item: LinkItem<I>, props: P, action: string) =>
 
 export function UndecoratedLink<I = {}, P = {}>(
   {
-    urlGenerator, underline,
+    urlGenerator, underline, additionalClassName,
     searchParams, state, absolute, action,
     href, hash, utm, item, className, spaMode,
     ...props
@@ -83,7 +86,10 @@ export function UndecoratedLink<I = {}, P = {}>(
       // eslint-disable-next-line jsx-a11y/anchor-has-content
       <a
         href={to}
-        className={generatedClassName}
+        className={c(
+          generatedClassName,
+          additionalClassName,
+        )}
         {...props}
       />
     );

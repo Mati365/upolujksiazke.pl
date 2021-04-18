@@ -77,7 +77,7 @@ export const BookReleaseInfo = ({release}: BookReleaseInfoProps) => {
       t('props.publisher'),
       <PublisherLink
         item={release.publisher}
-        className='c-promo-tag-link'
+        className='is-primary-chevron-link'
       >
         {release.publisher.name}
       </PublisherLink>,

@@ -6,6 +6,7 @@ import {Favicon} from './Favicon';
 
 type TitledFaviconProps = JSX.IntrinsicElements['span'] & {
   src: string,
+  bold?: boolean,
   title?: string,
   tag?: any,
   href?: string,
@@ -15,13 +16,15 @@ type TitledFaviconProps = JSX.IntrinsicElements['span'] & {
 export const TitledFavicon = (
   {
     src, title, children, className,
+    bold = true,
     tag: Tag = 'span',
     ...props
   }: TitledFaviconProps,
 ) => (
   <Tag
     className={c(
-      'c-flex-row is-text-semibold',
+      'c-titled-favicon c-flex-row',
+      bold && 'is-text-semibold',
       Tag === 'a' && (
         'is-undecorated-link has-hover-underline has-double-link-chevron'
       ),

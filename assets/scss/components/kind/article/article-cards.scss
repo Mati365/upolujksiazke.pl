@@ -1,0 +1,61 @@
+.c-article-card {
+  border: 1px solid color(divider);
+  border-radius: 5px;
+  overflow: hidden;
+
+  &__cover {
+    display: block;
+    position: relative;
+    width: 100%;
+    height: 0;
+    padding-bottom: 50%;
+
+    > picture {
+      @include layer(absolute);
+
+      img {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+      }
+    }
+  }
+
+  &__header {
+    margin-top: 0;
+    margin-bottom: .75rem;
+    font-size: $text-normal;
+    line-height: 1.3rem;
+  }
+
+  &__content {
+    display: block;
+    padding: 0.75em 1em;
+    font-size: $text-small;
+    line-height: $text-small-line-height;
+  }
+
+  &__footer {
+    margin-top: 1rem;
+
+    > .c-titled-favicon {
+      color: color(muted-text);
+    }
+  }
+
+  &__sublinks {
+    margin: 1.5rem 0;
+
+    > li {
+      @include text-ellipsis;
+    }
+
+    h4 {
+      display: inline;
+      margin: 0;
+      font-size: $text-small;
+      line-height: 1rem;
+      font-weight: normal;
+    }
+  }
+}

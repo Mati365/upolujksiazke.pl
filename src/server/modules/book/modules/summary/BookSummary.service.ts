@@ -15,6 +15,16 @@ import {BookSummaryEntity, BookSummaryHeaderEntity} from './entity';
 
 @Injectable()
 export class BookSummaryService {
+  public static readonly BOOK_SUMMARY_CARD_FIELDS = [
+    'summary.id', 'summary.kind',
+
+    'article.title', 'article.publishDate', 'article.description',
+    'cover.version', 'attachment.file',
+
+    'websiteLogo.version', 'websiteAttachment.file',
+    'website.id', 'website.hostname', 'website.url',
+  ];
+
   constructor(
     private readonly connection: Connection,
     private readonly articleService: RemoteArticleService,
@@ -22,6 +32,9 @@ export class BookSummaryService {
 
   /**
    * Fetches N summaries for book
+   *
+   * @todo
+   *  Add card select fields! There is bug in selection!
    *
    * @param {Object} attrs
    * @memberof BookSummaryService
@@ -38,22 +51,28 @@ export class BookSummaryService {
     const summaries = await (
       BookSummaryEntity
         .createQueryBuilder('summary')
+        .select(BookSummaryService.BOOK_SUMMARY_CARD_FIELDS)
         .where(
           {
             bookId,
           },
         )
-        .leftJoinAndSelect('summary.article', 'article')
-        .leftJoin('article.cover', 'cover', `cover.version = '${ImageVersion.THUMB}'`)
-        .leftJoin('cover.attachment', 'attachment')
-        .limit(limit)
+
+        .innerJoinAndSelect('summary.article', 'article')
+        .leftJoinAndSelect('article.cover', 'cover', `cover.version = '${ImageVersion.PREVIEW}'`)
+        .leftJoinAndSelect('cover.attachment', 'attachment')
+
+        .innerJoinAndSelect('article.website', 'website')
+        .leftJoinAndSelect('website.logo', 'websiteLogo', `websiteLogo.version = '${ImageVersion.SMALL_THUMB}'`)
+        .leftJoinAndSelect('websiteLogo.attachment', 'websiteAttachment')
+
+        .take(limit)
         .getMany()
     );
 
     const headers = R.groupBy(R.prop('summaryId') as any, await (
       BookSummaryHeaderEntity
         .createQueryBuilder('header')
-        .select(['id', 'title', 'url'])
         .where(
           {
             summaryId: In(R.pluck('id', summaries)),

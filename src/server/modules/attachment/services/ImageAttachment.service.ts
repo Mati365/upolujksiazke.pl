@@ -11,6 +11,7 @@ import {checkIfExists, runInPostHookIfPresent} from '@server/common/helpers/db';
 import {
   safeArray,
   mapObjValuesToPromise,
+  extractNonSearchParamsURL,
 } from '@shared/helpers';
 
 import {
@@ -277,7 +278,10 @@ export class ImageAttachmentService {
     const resultFile = await downloadFile(
       {
         url: originalUrl,
-        outputFile: path.join(tmpFolderPath, `source${path.extname(originalUrl)}`),
+        outputFile: path.join(
+          tmpFolderPath,
+          `source${path.extname(extractNonSearchParamsURL(originalUrl))}`,
+        ),
         headerValidatorFn: ({size: {kilobytes}, type}) => (
           kilobytes < 5_000 && isImageMimeType(type)
         ),

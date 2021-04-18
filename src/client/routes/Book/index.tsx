@@ -23,6 +23,7 @@ import {BookReviewsSection} from '@client/containers/kinds/book/sections/BookRev
 import {
   BookAvailabilitySection,
   BookInfo,
+  BookSummariesSection,
   CategoriesGroupsBooksSection,
 } from '@client/containers/kinds/book';
 
@@ -110,6 +111,7 @@ export const BookRoute: AsyncRoute<BookRouteViewData> = (
             book={book}
             shrink={ua.mobile}
           />
+          <BookSummariesSection book={book} />
           <BookReviewsSection book={book} />
         </BookInfo>
 

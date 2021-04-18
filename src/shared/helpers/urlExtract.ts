@@ -27,3 +27,9 @@ export function extractOrigin(url: string) {
 
   return new URL(url).origin;
 }
+
+export function extractNonSearchParamsURL(url: string) {
+  const {hostname, pathname} = new URL(url);
+
+  return `${hostname}${pathname}`;
+}

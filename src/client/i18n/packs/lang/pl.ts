@@ -141,6 +141,9 @@ export const PL_LANG_PACK = {
     reviews: {
       title: 'Recenzje książki',
     },
+    summaries: {
+      title: 'Streszczenia książki',
+    },
   },
   review: {
     read_more_at: 'Czytaj więcej na',

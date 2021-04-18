@@ -47,8 +47,6 @@ export const BookInfo = ({book, authorsBooks, children}: BookInfoProps) => {
     },
   );
 
-  console.info(book);
-
   return (
     <Section
       spaced={2}

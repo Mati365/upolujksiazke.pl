@@ -17,14 +17,19 @@ export class RemoteArticleScrapper {
   static pickRemoteArticleDtoFromPage({$, url}: AsyncURLParseResult) {
     const $head = $('head');
 
-    const title = $head.find('meta[property="og:title"]').attr('content') || $head.find('title').text();
     const coverUrl = $head.find('meta[property="og:image"]').attr('content');
+    const title = (
+      $head.find('meta[property="og:title"]').attr('content')
+        || $head.find('title').text()
+    );
 
     // description tag is more rich, see bryk.pl
     const description = (
-      $head.find('meta[name="description"]')
-        || $head.find('meta[property="og:description"]')
-    )?.attr('content');
+      $head
+        .find('meta[name="description"], meta[name="Description"], meta[property="og:description"]')
+        .first()
+        ?.attr('content')
+    );
 
     return new CreateRemoteArticleDto(
       {

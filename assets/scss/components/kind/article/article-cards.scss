@@ -3,6 +3,11 @@
   border-radius: 5px;
   overflow: hidden;
 
+  &, &__content {
+    display: flex;
+    flex-direction: column;
+  }
+
   &__cover {
     display: block;
     position: relative;
@@ -21,23 +26,31 @@
     }
   }
 
+  &__description {
+    @include limit-text-lines(3);
+  }
+
   &__header {
-    margin-top: 0;
-    margin-bottom: .75rem;
+    @include text-ellipsis;
+
+    margin-top: .35rem;
+    margin-bottom: 1rem;
     font-size: $text-normal;
     line-height: 1.3rem;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
   }
 
   &__content {
-    display: block;
     padding: 0.75em 1em;
     font-size: $text-small;
     line-height: $text-small-line-height;
+    flex: 1;
   }
 
   &__footer {
-    margin-top: 1rem;
-
     > .c-titled-favicon {
       color: color(muted-text);
     }
@@ -45,6 +58,7 @@
 
   &__sublinks {
     margin: 1.5rem 0;
+    flex: 1;
 
     > li {
       @include text-ellipsis;

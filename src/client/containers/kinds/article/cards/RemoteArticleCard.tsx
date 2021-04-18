@@ -65,10 +65,12 @@ export const RemoteArticleCard = (
             {title}
           </h3>
 
-          <div className='c-article-card__description'>
-            {description}
-            {children}
-          </div>
+          {(children || description) && (
+            <div className='c-article-card__description'>
+              {description}
+              {children}
+            </div>
+          )}
         </UndecoratedLink>
 
         {sublinks?.length > 0 && (

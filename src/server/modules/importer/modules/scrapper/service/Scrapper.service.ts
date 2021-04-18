@@ -25,6 +25,7 @@ import {
   LekturyGovScrappersGroup,
   WykopScrappersGroup,
   BrykScrappersGroup,
+  StreszczeniaScrappersGroup,
 } from '@importer/sites';
 
 import {WebsiteScrappersGroup} from './shared';
@@ -57,6 +58,7 @@ export class ScrapperService {
       new WoblinkScrappersGroup(PARSERS_ENV.woblink),
       new TaniaksiazkaScrappersGroup(PARSERS_ENV.taniaksiazka),
       new BrykScrappersGroup(PARSERS_ENV.bryk),
+      new StreszczeniaScrappersGroup(PARSERS_ENV.streszczenia),
       new WykopScrappersGroup(
         {
           homepageURL: PARSERS_ENV.wykop.homepageURL,

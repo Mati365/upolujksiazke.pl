@@ -119,7 +119,9 @@ export function fuzzyFindMatchingBook<T>(
 
           let authorSimilarity = author ? 0 : 1;
 
-          if (selected.author) {
+          if (!lowerAuthors.length)
+            authorSimilarity = 1;
+          else if (selected.author) {
             authorSimilarity = 0;
 
             for (const sourceAuthor of lowerAuthors) {

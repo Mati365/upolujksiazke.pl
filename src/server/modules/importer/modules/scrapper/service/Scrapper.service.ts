@@ -27,6 +27,7 @@ import {
   BrykScrappersGroup,
   StreszczeniaScrappersGroup,
   KlpScrappersGroup,
+  PolskiNa5ScrappersGroup,
 } from '@importer/sites';
 
 import {WebsiteScrappersGroup} from './shared';
@@ -61,6 +62,7 @@ export class ScrapperService {
       new BrykScrappersGroup(PARSERS_ENV.bryk),
       new StreszczeniaScrappersGroup(PARSERS_ENV.streszczenia),
       new KlpScrappersGroup(PARSERS_ENV.klp),
+      new PolskiNa5ScrappersGroup(PARSERS_ENV.polskina5),
       new WykopScrappersGroup(
         {
           homepageURL: PARSERS_ENV.wykop.homepageURL,

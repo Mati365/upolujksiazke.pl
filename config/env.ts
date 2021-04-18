@@ -15,6 +15,7 @@ type DefaultConfigBookShopNames = (
   | 'gandalf' | 'ibuk' | 'woblink'
   | 'taniaksiazka' | 'lekturyGov'
   | 'bryk' | 'streszczenia' | 'klp'
+  | 'polskina5'
 );
 
 export type AppEnv = Partial<{
@@ -167,6 +168,10 @@ export const GLOBAL_CONFIG: Record<string, AppEnv> = {
               key: WYKOP_ACCOUNT_KEY,
             },
           },
+        },
+        polskina5: {
+          homepageURL: 'https://www.polskina5.pl/',
+          logoURL: 'https://www.polskina5.pl/favicon.ico',
         },
         skupszop: {
           homepageURL: 'https://skupszop.pl/',

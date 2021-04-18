@@ -19,3 +19,4 @@ export * from './lektury.gov';
 export * from './bryk';
 export * from './streszczenia';
 export * from './klp';
+export * from './polskina5';

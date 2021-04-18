@@ -135,7 +135,7 @@ BookRoute.getInitialProps = async (attrs) => {
     match.params.id,
     {
       reviewsCount: 5,
-      summariesCount: 3,
+      summariesCount: 4,
     },
   );
 

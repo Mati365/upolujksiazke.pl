@@ -4,12 +4,14 @@ import {RemoteArticleCard} from '../../article';
 
 type BookSummaryCardProps = {
   item: BookSummaryRecord,
+  showCover?: boolean,
 };
 
-export const BookSummaryCard = ({item}: BookSummaryCardProps) => (
+export const BookSummaryCard = ({item, showCover}: BookSummaryCardProps) => (
   <RemoteArticleCard
     item={item.article}
     sublinks={item.headers}
+    showCover={showCover}
   />
 );
 

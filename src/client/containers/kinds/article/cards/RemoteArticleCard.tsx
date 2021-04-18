@@ -13,6 +13,7 @@ type RemoteArticleCardProps = {
   children?: ReactNode,
   item: RemoteArticleRecord,
   maxVisibleSublinksCount?: number,
+  showCover?: boolean,
   sublinks?: {
     title: string,
     url: string,
@@ -25,6 +26,7 @@ export const RemoteArticleCard = (
     children,
     sublinks,
     item,
+    showCover = true,
     maxVisibleSublinksCount = 3,
   }: RemoteArticleCardProps,
 ) => {
@@ -39,7 +41,7 @@ export const RemoteArticleCard = (
         className,
       )}
     >
-      {cover?.preview && (
+      {showCover && cover?.preview && (
         <UndecoratedLink
           href={url}
           rel='noopener nofollow noreferrer'
@@ -61,7 +63,7 @@ export const RemoteArticleCard = (
           target='_blank'
           className='is-undecorated-link'
         >
-          <h3 className='c-article-card__header'>
+          <h3 className='c-article-card__header has-double-link-chevron'>
             {title}
           </h3>
 

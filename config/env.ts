@@ -15,7 +15,7 @@ type DefaultConfigBookShopNames = (
   | 'gandalf' | 'ibuk' | 'woblink'
   | 'taniaksiazka' | 'lekturyGov'
   | 'bryk' | 'streszczenia' | 'klp'
-  | 'polskina5'
+  | 'polskina5' | 'eszkola'
 );
 
 export type AppEnv = Partial<{
@@ -172,6 +172,11 @@ export const GLOBAL_CONFIG: Record<string, AppEnv> = {
         polskina5: {
           homepageURL: 'https://www.polskina5.pl/',
           logoURL: 'https://www.polskina5.pl/favicon.ico',
+        },
+        eszkola: {
+          homepageURL: 'https://eszkola.pl/',
+          searchURL: 'https://eszkola.pl/szukaj',
+          logoURL: 'https://eszkola.pl/favicon.ico',
         },
         skupszop: {
           homepageURL: 'https://skupszop.pl/',

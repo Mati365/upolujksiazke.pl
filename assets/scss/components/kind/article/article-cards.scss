@@ -41,12 +41,20 @@
     &:last-child {
       margin-bottom: 0;
     }
+
+    &:hover {
+      text-decoration: underline;
+    }
   }
 
   &__content {
     padding: 0.75em 1em;
     font-size: $text-small;
     line-height: $text-small-line-height;
+    flex: 1;
+  }
+
+  &__anchor {
     flex: 1;
   }
 

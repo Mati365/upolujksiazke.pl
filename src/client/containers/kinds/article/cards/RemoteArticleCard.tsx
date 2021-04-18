@@ -61,7 +61,7 @@ export const RemoteArticleCard = (
           href={url}
           rel='noopener nofollow noreferrer'
           target='_blank'
-          className='is-undecorated-link'
+          className='c-article-card__anchor is-undecorated-link'
         >
           <h3 className='c-article-card__header has-double-link-chevron'>
             {title}

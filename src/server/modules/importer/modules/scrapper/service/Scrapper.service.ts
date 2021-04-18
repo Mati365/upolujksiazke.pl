@@ -28,6 +28,7 @@ import {
   StreszczeniaScrappersGroup,
   KlpScrappersGroup,
   PolskiNa5ScrappersGroup,
+  EszkolaScrappersGroup,
 } from '@importer/sites';
 
 import {WebsiteScrappersGroup} from './shared';
@@ -63,6 +64,7 @@ export class ScrapperService {
       new StreszczeniaScrappersGroup(PARSERS_ENV.streszczenia),
       new KlpScrappersGroup(PARSERS_ENV.klp),
       new PolskiNa5ScrappersGroup(PARSERS_ENV.polskina5),
+      new EszkolaScrappersGroup(PARSERS_ENV.eszkola),
       new WykopScrappersGroup(
         {
           homepageURL: PARSERS_ENV.wykop.homepageURL,

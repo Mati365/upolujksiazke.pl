@@ -1,5 +1,5 @@
-import slugify from 'slugify';
 import {fuzzyFindBookAnchor} from '@importer/kinds/scrappers/helpers/fuzzyFindBookAnchor';
+import {parseAsyncURLIfOK} from '@server/common/helpers/fetchAsyncHTML';
 
 import {CreateBookSummaryDto} from '@server/modules/book/modules/summary/dto';
 import {MatchRecordAttrs} from '@scrapper/service/shared/WebsiteScrappersGroup';
@@ -7,8 +7,7 @@ import {WebsiteScrapperMatcher, ScrapperMatcherResult} from '@scrapper/service/s
 import {BookShopScrappersGroupConfig} from '@importer/kinds/scrappers/BookShop.scrapper';
 import {ScrapperMetadataKind} from '../../modules/scrapper/entity';
 
-export class StreszczeniaBookSummaryMatcher
-  extends WebsiteScrapperMatcher<CreateBookSummaryDto, BookShopScrappersGroupConfig> {
+export class KlpBookSummaryMatcher extends WebsiteScrapperMatcher<CreateBookSummaryDto, BookShopScrappersGroupConfig> {
   /**
    * @inheritdoc
    */
@@ -26,18 +25,18 @@ export class StreszczeniaBookSummaryMatcher
    *
    * @private
    * @param {CreateBookSummaryDto} bookSummary
-   * @memberof StreszczeniaBookSummaryMatcher
+   * @memberof BrykBookSummaryMatcher
    */
   private async searchByPhrase({book}: CreateBookSummaryDto) {
     const {title} = book;
-    const $ = (await this.fetchPageByPath(`books/getlist/${slugify(title[0], {lower: true})}/`))?.$;
+    const $ = (await parseAsyncURLIfOK(this.config.searchURL))?.$;
 
     if (!$)
       return null;
 
     const matchedAnchor = fuzzyFindBookAnchor(
       {
-        $: $('.book-lis-block a'),
+        $: $('#ie78_glowna div[style="display:block; float:left;"] a'),
         book: {
           title,
         },

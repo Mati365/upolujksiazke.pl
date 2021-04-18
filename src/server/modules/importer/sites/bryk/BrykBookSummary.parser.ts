@@ -21,8 +21,7 @@ export class BrykBookSummaryParser extends WebsiteScrapperParser<CreateBookSumma
     if (!page)
       return null;
 
-    const {websiteURL} = this;
-    const {$} = page;
+    const {$, url} = page;
     const $footerItems = $(BrykBookSummaryParser.BOOK_SUMMARY_HEADER_SELECTOR);
 
     return new CreateBookSummaryDto(
@@ -35,7 +34,7 @@ export class BrykBookSummaryParser extends WebsiteScrapperParser<CreateBookSumma
 
             return new CreateBookSummaryHeaderDto(
               {
-                url: concatWithAnchor(websiteURL, $el.attr('href')),
+                url: concatWithAnchor(url, $el.attr('href')),
                 title: $el.find('.navigation-element-title').text(),
               },
             );

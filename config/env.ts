@@ -14,7 +14,7 @@ type DefaultConfigBookShopNames = (
   | 'publio' | 'hrosskar' | 'madbooks'
   | 'gandalf' | 'ibuk' | 'woblink'
   | 'taniaksiazka' | 'lekturyGov'
-  | 'bryk' | 'streszczenia'
+  | 'bryk' | 'streszczenia' | 'klp'
 );
 
 export type AppEnv = Partial<{
@@ -175,6 +175,11 @@ export const GLOBAL_CONFIG: Record<string, AppEnv> = {
         },
         dadada: {
           homepageURL: 'https://dadada.pl/',
+        },
+        klp: {
+          homepageURL: 'https://klp.pl/',
+          searchURL: 'https://lektury.klp.pl',
+          logoURL: 'https://klp.pl/favicon.ico',
         },
         granice: {
           homepageURL: 'https://www.granice.pl/',

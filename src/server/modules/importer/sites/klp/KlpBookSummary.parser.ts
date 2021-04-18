@@ -10,10 +10,7 @@ import {AsyncURLParseResult} from '@server/common/helpers/fetchAsyncHTML';
 import {WebsiteScrapperParser} from '@scrapper/service/shared';
 import {RemoteArticleScrapper} from '../../modules/scrapper/service';
 
-export class StreszczeniaBookSummaryParser extends WebsiteScrapperParser<CreateBookSummaryDto> {
-  // eslint-disable-next-line max-len
-  static BOOK_SUMMARY_HEADER_SELECTOR = '#box-elaboration h4 a, #box-charakter h4 a, #box-motive h4 a';
-
+export class KlpBookSummaryParser extends WebsiteScrapperParser<CreateBookSummaryDto> {
   /**
    * @inheritdoc
    */
@@ -22,7 +19,7 @@ export class StreszczeniaBookSummaryParser extends WebsiteScrapperParser<CreateB
       return null;
 
     const {$, url} = page;
-    const $footerItems = $(StreszczeniaBookSummaryParser.BOOK_SUMMARY_HEADER_SELECTOR);
+    const $footerItems = $('#sidebar .menux li a, #ie78 a[href^="#"]');
 
     return new CreateBookSummaryDto(
       {
@@ -35,7 +32,7 @@ export class StreszczeniaBookSummaryParser extends WebsiteScrapperParser<CreateB
             return new CreateBookSummaryHeaderDto(
               {
                 url: concatWithAnchor(url, $el.attr('href')),
-                title: $el.attr('title'),
+                title: $el.text(),
               },
             );
           },

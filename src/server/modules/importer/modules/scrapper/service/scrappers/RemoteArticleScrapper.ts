@@ -15,26 +15,23 @@ export class RemoteArticleScrapper {
    * @memberof SocialTagsScrapper
    */
   static pickRemoteArticleDtoFromPage({$, url}: AsyncURLParseResult) {
-    const $head = $('head');
-
-    const coverUrl = $head.find('meta[property="og:image"]').attr('content');
+    const coverUrl = $('meta[property="og:image"]').attr('content');
     const title = (
-      $head.find('meta[property="og:title"]').attr('content')
-        || $head.find('title').text()
+      $('meta[property="og:title"]').attr('content')
+        || $('title, TITLE').first().text()
     );
 
     // description tag is more rich, see bryk.pl
     const description = (
-      $head
-        .find('meta[name="description"], meta[name="Description"], meta[property="og:description"]')
+      $('meta[name="description"], meta[name="Description"], meta[property="og:description"]')
         .first()
         ?.attr('content')
     );
 
     return new CreateRemoteArticleDto(
       {
-        remoteId: extractPathname(url),
-        url: $head.find('meta[property="og:url"]').attr('content') || url,
+        remoteId: extractPathname(url) || url,
+        url: $('meta[property="og:url"]').attr('content') || url,
         title,
         description,
         ...coverUrl && {

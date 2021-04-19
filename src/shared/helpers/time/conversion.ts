@@ -5,3 +5,7 @@ export function convertHoursToSeconds(hours: number) {
 export function convertMinutesToSeconds(hours: number) {
   return hours * 60;
 }
+
+export const PredefinedSeconds = {
+  ONE_DAY: convertHoursToSeconds(24),
+};

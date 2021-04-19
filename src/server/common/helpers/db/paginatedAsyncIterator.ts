@@ -3,6 +3,7 @@ import {BasicLimitPaginationOptions} from './pagination';
 
 type PaginatedAsyncIterator<T> = BasicLimitPaginationOptions & {
   increment?: boolean,
+  maxOffset?: number,
   queryExecutor(
     attrs: {
       limit: number,
@@ -21,6 +22,7 @@ type PaginatedAsyncIterator<T> = BasicLimitPaginationOptions & {
 export async function* paginatedAsyncIterator<T>(
   {
     offset = 0,
+    maxOffset = Infinity,
     increment = true,
     limit,
     queryExecutor,
@@ -41,6 +43,9 @@ export async function* paginatedAsyncIterator<T>(
 
     if (increment)
       offset += limit;
+
+    if (offset >= maxOffset)
+      break;
   }
 }
 

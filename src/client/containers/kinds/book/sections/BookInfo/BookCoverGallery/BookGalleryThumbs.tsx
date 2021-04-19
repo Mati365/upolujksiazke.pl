@@ -21,7 +21,6 @@ export type BookGalleryThumb = {
 type BookGalleryThumbsProps = {
   active?: string,
   showPerPage?: number,
-  minRemainCount?: number,
   items: BookGalleryThumb[],
   onClick?(item: BookGalleryThumb): void,
 };
@@ -31,7 +30,6 @@ export const BookGalleryThumbs = (
     active,
     items,
     showPerPage = 3,
-    minRemainCount = 1,
     onClick,
   }: BookGalleryThumbsProps,
 ) => {
@@ -92,9 +90,7 @@ export const BookGalleryThumbs = (
               className={c(
                 'c-book-gallery__thumb',
                 active === expandSrc && 'is-active',
-                (index < offset || index >= offset + show)
-                  && (!offset || index < items.length - minRemainCount - show)
-                  && 'is-hidden',
+                (index < offset || index >= offset + show) && 'is-hidden',
               )}
               onClick={
                 () => onClick?.(item)
@@ -111,7 +107,7 @@ export const BookGalleryThumbs = (
         },
       )}
 
-      {remain > minRemainCount && (
+      {remain > 0 && (
         <li className='c-book-gallery__more'>
           <TextButton
             type='primary'

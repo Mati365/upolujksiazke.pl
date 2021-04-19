@@ -1,11 +1,7 @@
 import {plainToClass} from 'class-transformer';
 
-import {
-  convertMinutesToSeconds,
-  convertHoursToSeconds,
-} from '@shared/helpers';
-
 import {ID} from '@shared/types';
+import {PredefinedSeconds} from '@shared/helpers';
 import {BasicAPIPagination} from '@api/APIClient';
 import {
   AuthorsBooksFilters,
@@ -32,7 +28,7 @@ export class BooksServerRepo extends ServerAPIClientChild implements BooksRepo {
   @RedisMemoize(
     (filters) => ({
       key: `authors-books-${JSON.stringify(filters)}`,
-      expire: convertMinutesToSeconds(35),
+      expire: PredefinedSeconds.ONE_DAY,
     }),
   )
   findAuthorsBooks(filters: AuthorsBooksFilters) {
@@ -72,7 +68,7 @@ export class BooksServerRepo extends ServerAPIClientChild implements BooksRepo {
   @RedisMemoize(
     ({limit, offset}) => ({
       key: `recent-books-${offset}-${limit}`,
-      expire: convertMinutesToSeconds(5),
+      expire: PredefinedSeconds.ONE_DAY,
     }),
   )
   async findRecentBooks(attrs: BasicAPIPagination = {}) {
@@ -89,7 +85,7 @@ export class BooksServerRepo extends ServerAPIClientChild implements BooksRepo {
   }
 
   /**
-   * Finds one book
+   * Find one book
    *
    * @param {ID} id
    * @param {BookFindOneAttrs} attrs
@@ -100,10 +96,16 @@ export class BooksServerRepo extends ServerAPIClientChild implements BooksRepo {
   @RedisMemoize(
     (id: ID) => ({
       key: `book-${id}`,
-      expire: convertHoursToSeconds(0.5),
+      expire: PredefinedSeconds.ONE_DAY,
     }),
   )
-  async findOne(id: ID, {reviewsCount, summariesCount}: BookFindOneAttrs = {}) {
+  async findOne(
+    id: ID,
+    {
+      reviewsCount = 5,
+      summariesCount = 4,
+    }: BookFindOneAttrs = {},
+  ) {
     const {cardBookSearchService} = this.services;
     const book = await cardBookSearchService.findFullCard(
       {

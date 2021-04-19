@@ -24,6 +24,12 @@ import {BookSummaryService} from '../../modules/summary/BookSummary.service';
 
 export type FullCardEntity = Awaited<ReturnType<CardBookSearchService['findFullCard']>>;
 
+type BookIdsIteratorAttrs = {
+  pageLimit: number,
+  maxOffset?: number,
+  query?: SelectQueryBuilder<BookEntity>,
+};
+
 @Injectable()
 export class CardBookSearchService {
   public static readonly BOOK_CARD_FIELDS = [
@@ -89,20 +95,48 @@ export class CardBookSearchService {
   }
 
   /**
+   * Creates iterator that iterates over all most popular books
+   * It calculates popularity by reviews count
+   *
+   * @param {Object} attrs
+   * @memberof CardBookSearchService
+   */
+  createMostPopularIdsIteratedQuery(attrs: Omit<BookIdsIteratorAttrs, 'query'>) {
+    return this.createIdsIteratedQuery(
+      {
+        ...attrs,
+        query: (
+          BookEntity
+            .createQueryBuilder('b')
+            .orderBy('b.totalRatings', 'DESC')
+        ),
+      },
+    );
+  }
+
+  /**
    * Create query that iterates over all books
    *
-   * @param {{pageLimit: number}} {pageLimit}
+   * @param {Object} attrs
    * @returns
    * @memberof CardBookSearchService
    */
-  createIdsIteratedQuery({pageLimit}: {pageLimit: number}) {
+  createIdsIteratedQuery(
+    {
+      pageLimit,
+      maxOffset = Infinity,
+      query = (
+        BookEntity.createQueryBuilder('b')
+      ),
+    }: BookIdsIteratorAttrs,
+  ) {
     return paginatedAsyncIterator(
       {
+        maxOffset,
         limit: pageLimit,
         queryExecutor: async ({limit, offset}) => {
           const result = await (
-            BookEntity
-              .createQueryBuilder('b')
+            query
               .select('b.id')
               .offset(offset)
               .limit(limit)

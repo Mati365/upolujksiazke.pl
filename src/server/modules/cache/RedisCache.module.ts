@@ -3,10 +3,16 @@ import * as redisStore from 'cache-manager-redis-store';
 
 import {SERVER_ENV} from '@server/constants/env';
 
+import {RedisCacheWarmup} from './services/RedisCacheWarmup.service';
+import {APIModule} from '../api';
+import {BookModule} from '../book/Book.module';
+
 @Global()
 @Module(
   {
     imports: [
+      APIModule,
+      BookModule,
       CacheModule.register(
         {
           store: redisStore,
@@ -14,6 +20,9 @@ import {SERVER_ENV} from '@server/constants/env';
           ...SERVER_ENV.redisConfig,
         },
       ),
+    ],
+    providers: [
+      RedisCacheWarmup,
     ],
     exports: [
       CacheModule,

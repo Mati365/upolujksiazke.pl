@@ -284,6 +284,7 @@ export class BookService {
         {
           entityManager: transaction,
           upsertResources: false,
+          reindexBook: false,
         },
       );
 
@@ -356,14 +357,6 @@ export class BookService {
           },
         },
       );
-
-      // prevent typeorm saving, releases already contains bookId
-      if (!alreadyInDB) {
-        Object.assign(
-          mergedBook,
-          statsService.getLoadedEntityStats(mergedBook),
-        );
-      }
 
       await transaction.save(
         new BookEntity(

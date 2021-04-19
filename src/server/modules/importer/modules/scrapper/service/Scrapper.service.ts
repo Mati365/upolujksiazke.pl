@@ -6,30 +6,7 @@ import {extractHostname} from '@shared/helpers';
 
 import {RemoteWebsiteEntity} from '@server/modules/remote/entity';
 import {WykopAPI} from '@importer/sites/wykop/api/WykopAPI';
-import {
-  IbukScrappersGroup,
-  GraniceScrappersGroup,
-  MatrasScrappersGroup,
-  GildiaScrappersGroup,
-  LiteraturaGildiaScrappersGroup,
-  SkupszopScrappersGroup,
-  BonitoScrappersGroup,
-  DadadaScrappersGroup,
-  ArosScrappersGroup,
-  PublioScrappersGroup,
-  GandalfScrappersGroup,
-  HrosskarScrappersGroup,
-  MadBooksScrappersGroup,
-  WoblinkScrappersGroup,
-  TaniaksiazkaScrappersGroup,
-  LekturyGovScrappersGroup,
-  WykopScrappersGroup,
-  BrykScrappersGroup,
-  StreszczeniaScrappersGroup,
-  KlpScrappersGroup,
-  PolskiNa5ScrappersGroup,
-  EszkolaScrappersGroup,
-} from '@importer/sites';
+import * as Groups from '@importer/sites';
 
 import {WebsiteScrappersGroup} from './shared';
 import {WebsiteInfoScrapperService} from './scrappers/WebsiteInfoScrapper';
@@ -44,28 +21,28 @@ export class ScrapperService {
     private readonly websiteInfoService: WebsiteInfoScrapperService,
   ) {
     this.scrappersGroups = [
-      new LekturyGovScrappersGroup(PARSERS_ENV.lekturyGov),
-      new PublioScrappersGroup(PARSERS_ENV.publio),
-      new BonitoScrappersGroup(PARSERS_ENV.bonito),
-      new SkupszopScrappersGroup(PARSERS_ENV.skupszop),
-      new GildiaScrappersGroup(PARSERS_ENV.gildia),
-      new GraniceScrappersGroup(PARSERS_ENV.granice),
-      new LiteraturaGildiaScrappersGroup(PARSERS_ENV.literaturaGildia),
-      new MatrasScrappersGroup(PARSERS_ENV.matras), // sucky DB
-      new DadadaScrappersGroup(PARSERS_ENV.dadada),
-      new ArosScrappersGroup(PARSERS_ENV.aros),
-      new MadBooksScrappersGroup(PARSERS_ENV.madbooks),
-      new HrosskarScrappersGroup(PARSERS_ENV.hrosskar),
-      new GandalfScrappersGroup(PARSERS_ENV.gandalf),
-      new IbukScrappersGroup(PARSERS_ENV.ibuk),
-      new WoblinkScrappersGroup(PARSERS_ENV.woblink),
-      new TaniaksiazkaScrappersGroup(PARSERS_ENV.taniaksiazka),
-      new BrykScrappersGroup(PARSERS_ENV.bryk),
-      new StreszczeniaScrappersGroup(PARSERS_ENV.streszczenia),
-      new KlpScrappersGroup(PARSERS_ENV.klp),
-      new PolskiNa5ScrappersGroup(PARSERS_ENV.polskina5),
-      new EszkolaScrappersGroup(PARSERS_ENV.eszkola),
-      new WykopScrappersGroup(
+      new Groups.LekturyGovScrappersGroup(PARSERS_ENV.lekturyGov),
+      new Groups.PublioScrappersGroup(PARSERS_ENV.publio),
+      new Groups.BonitoScrappersGroup(PARSERS_ENV.bonito),
+      new Groups.SkupszopScrappersGroup(PARSERS_ENV.skupszop),
+      new Groups.GildiaScrappersGroup(PARSERS_ENV.gildia),
+      new Groups.GraniceScrappersGroup(PARSERS_ENV.granice),
+      new Groups.LiteraturaGildiaScrappersGroup(PARSERS_ENV.literaturaGildia),
+      new Groups.MatrasScrappersGroup(PARSERS_ENV.matras), // sucky DB
+      new Groups.DadadaScrappersGroup(PARSERS_ENV.dadada),
+      new Groups.ArosScrappersGroup(PARSERS_ENV.aros),
+      new Groups.MadBooksScrappersGroup(PARSERS_ENV.madbooks),
+      new Groups.HrosskarScrappersGroup(PARSERS_ENV.hrosskar),
+      new Groups.GandalfScrappersGroup(PARSERS_ENV.gandalf),
+      new Groups.IbukScrappersGroup(PARSERS_ENV.ibuk),
+      new Groups.WoblinkScrappersGroup(PARSERS_ENV.woblink),
+      new Groups.TaniaksiazkaScrappersGroup(PARSERS_ENV.taniaksiazka),
+      new Groups.BrykScrappersGroup(PARSERS_ENV.bryk),
+      new Groups.StreszczeniaScrappersGroup(PARSERS_ENV.streszczenia),
+      new Groups.KlpScrappersGroup(PARSERS_ENV.klp),
+      new Groups.PolskiNa5ScrappersGroup(PARSERS_ENV.polskina5),
+      new Groups.EszkolaScrappersGroup(PARSERS_ENV.eszkola),
+      new Groups.WykopScrappersGroup(
         {
           homepageURL: PARSERS_ENV.wykop.homepageURL,
           api: new WykopAPI(

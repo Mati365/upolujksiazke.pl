@@ -15,6 +15,10 @@ import {BookReviewEntity} from './BookReview.entity';
 import {BookReviewerService} from '../reviewer/BookReviewer.service';
 import {BookStatsService} from '../stats/services/BookStats.service';
 
+export type UpdateBookReviewAttrs = UpsertResourceAttrs & {
+  reindexBook?: boolean,
+};
+
 @Injectable()
 export class BookReviewService {
   public static readonly REVIEW_CARD_FIELDS = [
@@ -101,13 +105,13 @@ export class BookReviewService {
    * Creates or updates record
    *
    * @param {CreateBookReviewDto[]} dtos
-   * @param {UpsertResourceAttrs} [attrs={}]
+   * @param {UpdateBookReviewAttrs} [attrs={}]
    * @returns {Promise<BookReviewEntity[]>}
    * @memberof BookReviewService
    */
   async upsert(
     dtos: CreateBookReviewDto[],
-    attrs: UpsertResourceAttrs = {},
+    attrs: UpdateBookReviewAttrs = {},
   ): Promise<BookReviewEntity[]> {
     if (!dtos?.length)
       return [];
@@ -120,6 +124,7 @@ export class BookReviewService {
 
     const {
       upsertResources = false,
+      reindexBook = true,
       entityManager,
     } = attrs;
 
@@ -168,7 +173,7 @@ export class BookReviewService {
     );
 
     // prevents refreshing book stats inside transaction
-    if (!attrs.entityManager) {
+    if (reindexBook) {
       await pMap(
         R.uniq(R.pluck('bookId', reviews)),
         (id) => bookStatsService.refreshBookStats(id),

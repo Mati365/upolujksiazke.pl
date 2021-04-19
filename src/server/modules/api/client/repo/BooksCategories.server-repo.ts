@@ -1,6 +1,6 @@
 import {plainToClass} from 'class-transformer';
-import {convertHoursToSeconds} from '@shared/helpers';
 
+import {PredefinedSeconds} from '@shared/helpers';
 import {BookCategoryRecord} from '@api/types/BookCategory.record';
 import {BooksCategoriesRepo, MostPopularCategoriesFilters} from '@api/repo';
 
@@ -16,7 +16,7 @@ export class BooksCategoriesServerRepo extends ServerAPIClientChild implements B
   @RedisMemoize(
     ({limit}) => ({
       key: `popular-books-categories-${limit}`,
-      expire: convertHoursToSeconds(5),
+      expire: PredefinedSeconds.ONE_DAY,
     }),
   )
   async findMostPopularCategories({limit}: MostPopularCategoriesFilters): Promise<BookCategoryRecord[]> {

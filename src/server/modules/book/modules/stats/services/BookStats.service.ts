@@ -1,7 +1,6 @@
 import {forwardRef, Inject, Injectable} from '@nestjs/common';
 import {EntityManager} from 'typeorm';
 import pMap from 'p-map';
-import * as R from 'ramda';
 
 import {EsBookIndex} from '@server/modules/book/services/indexes/EsBook.index';
 import {CardBookSearchService} from '@server/modules/book/services/search/CardBookSearch.service';
@@ -29,68 +28,6 @@ export class BookStatsService {
    */
   getTotalBooks() {
     return BookEntity.count();
-  }
-
-  /**
-   * Calculates book stats for record that contains all
-   * releases and availability records.
-   * Used primarly during creating of record.
-   *
-   * @see
-   *  It summarizes all ratings from all websites and current website ratings!
-   *
-   * @param {BookEntity} {releases}
-   * @returns {BookStats}
-   * @memberof BookStatsService
-   */
-  getLoadedEntityStats({releases}: BookEntity): BookStats {
-    let totalAvgRatings = 0;
-    const stats: BookStats = {
-      avgRating: null,
-      totalRatings: null,
-      lowestPrice: null,
-      highestPrice: null,
-      allTypes: [],
-    };
-
-    releases.forEach(({reviews, availability, type}) => {
-      if (!R.isNil(type) && !R.includes(type, stats.allTypes))
-        stats.allTypes.push(type);
-
-      if (availability?.length) {
-        availability.forEach(
-          ({avgRating, totalRatings, price}) => {
-            stats.totalRatings = (stats.totalRatings || 0) + (totalRatings || 0);
-
-            if (!R.isNil(avgRating)) {
-              stats.avgRating += avgRating;
-              totalAvgRatings++;
-            }
-
-            if (!R.isNil(price)) {
-              stats.lowestPrice = Math.min(stats.lowestPrice ?? Infinity, price);
-              stats.highestPrice = Math.max(stats.highestPrice ?? -Infinity, price);
-            }
-          },
-        );
-      }
-
-      if (reviews?.length) {
-        reviews.forEach(({rating, includeInStats}) => {
-          if (!includeInStats)
-            return;
-
-          stats.avgRating += rating;
-          stats.totalRatings++;
-          totalAvgRatings++;
-        });
-      }
-    });
-
-    if (stats.avgRating !== null && totalAvgRatings > 0)
-      stats.avgRating /= totalAvgRatings;
-
-    return stats;
   }
 
   /**

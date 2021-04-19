@@ -29,6 +29,10 @@ import {BookAvailabilityService} from '../availability/BookAvailability.service'
 import {BookReviewService} from '../review/BookReview.service';
 import {BookAvailabilityEntity} from '../availability/BookAvailability.entity';
 
+export type UpsertBookReleaseAttrs = UpsertResourceAttrs & {
+  reindexBook?: boolean,
+};
+
 @Injectable()
 export class BookReleaseService {
   static readonly COVER_IMAGE_SIZES = Object.freeze<ImageResizeConfig>(
@@ -239,7 +243,7 @@ export class BookReleaseService {
    * Inserts or updates remote entity
    *
    * @param {CreateRemoteRecordDto} dto
-   * @param {PostHookEntityManager} [entityManager]
+   * @param {UpsertBookReleaseAttrs} attrs
    * @returns {Promise<BookReleaseEntity>}
    * @memberof BookReleaseService
    */
@@ -253,7 +257,7 @@ export class BookReleaseService {
       ...dto
     }: CreateBookReleaseDto,
 
-    attrs: UpsertResourceAttrs = {},
+    attrs: UpsertBookReleaseAttrs = {},
   ): Promise<BookReleaseEntity> {
     const {
       connection,
@@ -264,9 +268,10 @@ export class BookReleaseService {
     } = this;
 
     const executor = async (transaction: EntityManager) => {
-      const transactionAttrs: UpsertResourceAttrs = {
+      const transactionAttrs: typeof attrs = {
         ...attrs,
         entityManager: transaction,
+        reindexBook: attrs.reindexBook ?? true,
       };
 
       const releaseEntity = await upsert(
@@ -364,13 +369,13 @@ export class BookReleaseService {
    * Create or update array of books releases
    *
    * @param {CreateBookReleaseDto[]} dtos
-   * @param {UpsertResourceAttrs} [attrs={}]
+   * @param {UpsertBookReleaseAttrs} [attrs={}]
    * @returns {Promise<BookReleaseEntity[]>}
    * @memberof BookReleaseService
    */
   async upsertList(
     dtos: CreateBookReleaseDto[],
-    attrs: UpsertResourceAttrs = {},
+    attrs: UpsertBookReleaseAttrs = {},
   ): Promise<BookReleaseEntity[]> {
     if (!dtos?.length)
       return [];

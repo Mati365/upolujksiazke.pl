@@ -1,6 +1,6 @@
 import {plainToClass} from 'class-transformer';
-import {convertHoursToSeconds} from '@shared/helpers';
 
+import {PredefinedSeconds} from '@shared/helpers';
 import {TagRecord} from '@api/types/Tag.record';
 import {MostPopularTagsFilters, TagsRepo} from '@api/repo';
 
@@ -16,7 +16,7 @@ export class TagsServerRepo extends ServerAPIClientChild implements TagsRepo {
   @RedisMemoize(
     ({limit}) => ({
       key: `popular-tags-${limit}`,
-      expire: convertHoursToSeconds(5),
+      expire: PredefinedSeconds.ONE_DAY,
     }),
   )
   async findMostPopularBooksTags({limit}: MostPopularTagsFilters): Promise<TagRecord[]> {

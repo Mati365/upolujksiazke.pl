@@ -1,4 +1,4 @@
-import {Global, Module} from '@nestjs/common';
+import {Global, Module, forwardRef} from '@nestjs/common';
 import {BookModule} from '../book/Book.module';
 import {RedisCacheModule} from '../cache';
 import {TagModule} from '../tag';
@@ -8,7 +8,7 @@ import {APIClientService} from './services';
 @Module(
   {
     imports: [
-      RedisCacheModule,
+      forwardRef(() => RedisCacheModule),
       TagModule,
       BookModule,
     ],

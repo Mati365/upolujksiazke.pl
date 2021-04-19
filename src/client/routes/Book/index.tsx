@@ -134,15 +134,13 @@ BookRoute.route = {
   path: BOOK_PATH,
 };
 
+/**
+ * See RedisCacheWarmup when you edit any cached
+ * query, prefer using default values
+ */
 BookRoute.getInitialProps = async (attrs) => {
   const {api: {repo}, match} = attrs;
-  const book = await repo.books.findOne(
-    match.params.id,
-    {
-      reviewsCount: 5,
-      summariesCount: 4,
-    },
-  );
+  const book = await repo.books.findOne(match.params.id);
 
   if (!book)
     return {};

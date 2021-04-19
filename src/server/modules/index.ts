@@ -11,4 +11,5 @@ export {BookPublisherModule} from './book/modules/publisher/BookPublisher.module
 export {BookAvailabilityModule} from './book/modules/availability/BookAvailability.module';
 export {BookVolumeModule} from './book/modules/volume/BookVolume.module';
 export {BookModule} from './book/Book.module';
+export {RedisCacheModule} from './cache/RedisCache.module';
 export {AppModule} from './App.module';

@@ -24,6 +24,7 @@ const LOGGER_OPTIONS = {
   const server = repl.start(
     {
       useColors: true,
+      useGlobal: true,
       prompt: '> ',
       writer: (value: object): string => Logger.stringify(value, LOGGER_OPTIONS),
       ignoreUndefined: true,

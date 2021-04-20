@@ -90,6 +90,7 @@ export const BookReview = ({review}: BookReviewProps) => {
         quote={!!website}
         text={description}
         justify={false}
+        html
       />
 
       {website && (

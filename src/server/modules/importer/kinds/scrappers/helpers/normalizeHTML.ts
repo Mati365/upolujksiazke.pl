@@ -1,19 +1,31 @@
 import {stripHtml} from 'string-strip-html';
 
-export function normalizeHTML(html: string) {
+export function normalizeHTML(
+  html: string,
+  {
+    stripDoubledNewlines = true,
+  }: {
+    stripDoubledNewlines?: boolean,
+  } = {},
+) {
   if (!html)
     return html;
 
-  const {result: output} = stripHtml(
+  let {result: output} = stripHtml(
     html
       .replace(/&nbsp;/g, '')
-      .replace(/(&quot;|"{2,})/g, '"')
-      .replace(/<br\s*[/]?>/g, '\n'),
+      .replace(/(&quot;|"{2,})/g, '"'),
+    {
+      ignoreTags: ['cite', 'br', 'spoiler'],
+    },
   );
+
+  if (stripDoubledNewlines)
+    output = output.replace(/\s*\n[\n\s]{1,}/g, '\n\n');
 
   return (
     output
-      .replace(/\s*\n[\n\s]{1,}/g, '\n\n')
       .trim()
+      .replace(/(?:<br\s*\/>)+$/, '')
   );
 }

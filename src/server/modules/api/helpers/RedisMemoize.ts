@@ -1,4 +1,4 @@
-import {convertMinutesToMiliseconds} from '@shared/helpers';
+import {convertMinutesToMiliseconds, isDevMode} from '@shared/helpers';
 
 import {WrapMethod} from '@shared/helpers/decorators/WrapMethod';
 import {LRUCacheConfig, LRUMemCache} from '@shared/helpers/classes/LRUMemCache';
@@ -19,11 +19,15 @@ export function RedisMemoize(
     },
   }: RedisMemoizeAttrs,
 ) {
-  const lruCache = lru && new LRUMemCache(
-    {
-      ...lru,
-      maxAge: lru.maxAge ?? convertMinutesToMiliseconds(15),
-    },
+  const lruCache = (
+    !isDevMode() && lru
+      ? new LRUMemCache(
+        {
+          ...lru,
+          maxAge: lru.maxAge ?? convertMinutesToMiliseconds(15),
+        },
+      )
+      : null
   );
 
   return WrapMethod(
@@ -32,7 +36,7 @@ export function RedisMemoize(
       const {key, expire, disabled} = keyFn(...args);
 
       if (!disabled) {
-        const lruCached = lruCache.get<any>(key);
+        const lruCached = lruCache?.get<any>(key);
         if (lruCached)
           return lruCached;
 

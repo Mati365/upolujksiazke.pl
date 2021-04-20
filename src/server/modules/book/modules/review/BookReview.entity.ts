@@ -73,7 +73,13 @@ export class BookReviewEntity extends RemoteRecordFields {
   transformFields() {
     const {description} = this;
 
-    if (description)
-      this.description = normalizeHTML(description);
+    if (description) {
+      this.description = normalizeHTML(
+        description,
+        {
+          stripDoubledNewlines: false,
+        },
+      );
+    }
   }
 }

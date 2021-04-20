@@ -2,21 +2,22 @@ import React from 'react';
 
 import {useI18n} from '@client/i18n';
 import {Grid, SidebarSection} from '@client/components/ui';
-import {BookCardRecord} from '@api/types';
+import {BookAuthorRecord, BookCardRecord} from '@api/types';
 import {BookThumbCard} from '../../cards/BookThumbCard';
 
 type AuthorOtherBooksProps = {
   books: BookCardRecord[],
+  author: BookAuthorRecord,
 };
 
-export const AuthorOtherBooks = ({books}: AuthorOtherBooksProps) => {
+export const AuthorOtherBooks = ({books, author}: AuthorOtherBooksProps) => {
   const t = useI18n();
 
   return (
     <SidebarSection
       className='c-book-info-section__releases'
       title={
-        `${t('author.other_books')}:`
+        `${t('author.other_books', [author.name])}:`
       }
     >
       <Grid

@@ -147,12 +147,12 @@ export class WykopEntryLatestParser extends WykopEntryContentParser {
     return (
       R
         .trim(match)
-        .replace(/(<br\s\/>)+/g, '<br />')
         .replace(
-          /<a href="spoiler:(.+)">\[.+\]<\/a>/g,
+          /<a href="spoiler:([^"]+)">\[[^[<]+\]<\/a>/g,
           (_, p1) => `<spoiler>${decodeURIComponent(p1).replace(/\+/g, ' ')}</spoiler>`,
         )
         .replaceAll('&quot;', '"')
+        .replace(/(Wpis dodany za pomocą <.*$)/, '')
     );
   }
 }

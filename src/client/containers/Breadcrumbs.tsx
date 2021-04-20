@@ -1,4 +1,4 @@
-import React, {ReactNode} from 'react';
+import React, {ReactNode, Fragment} from 'react';
 import c from 'classnames';
 
 import {CleanList} from '@client/components/ui';
@@ -43,7 +43,7 @@ export const Breadcrumbs = ({items = [], className}: BreadcrumbsProps) => {
     >
       {mergedItems.map(
         ({id, node, title}, index) => (
-          <React.Fragment key={id}>
+          <Fragment key={id}>
             <li
               className='c-breadcrumbs__item'
               title={title}
@@ -56,7 +56,7 @@ export const Breadcrumbs = ({items = [], className}: BreadcrumbsProps) => {
                 <ChevronRightIcon />
               </li>
             )}
-          </React.Fragment>
+          </Fragment>
         ),
       )}
     </CleanList>

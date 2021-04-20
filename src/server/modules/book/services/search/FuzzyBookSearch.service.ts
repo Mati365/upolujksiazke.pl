@@ -1,5 +1,6 @@
 import {forwardRef, Inject, Injectable} from '@nestjs/common';
 import {Brackets, SelectQueryBuilder} from 'typeorm';
+import esb from 'elastic-builder';
 import * as R from 'ramda';
 
 import {parameterize} from '@shared/helpers';
@@ -258,66 +259,54 @@ export class FuzzyBookSearchService {
     },
   ): Promise<BookEntity> {
     const {bookEsIndex} = this;
-    const should = [
-      {
-        bool: {
-          must: [
-            ...!volumes?.length ? [] : [{
-              terms: {
-                volumeName: volumes,
-              },
-            }],
-            ...!names?.length ? [] : names.map((name) => ({
-              match: {
-                defaultTitle: {
-                  query: name,
-                },
-              },
-            })),
-            ...!authors?.length ? [] : [{
-              nested: {
-                path: 'authors',
-                query: {
-                  bool: {
-                    should: authors.map((author) => ({
-                      match: {
-                        'authors.name': {
-                          query: author,
-                        },
-                      },
-                    })),
-                    minimum_should_match: 1,
-                  },
-                },
-              },
-            }],
+    const shouldQueries: esb.Query[] = [
+      ...!isbns?.length ? [] : [
+        esb.termsQuery('isbns', isbns),
+      ],
+      ...(() => {
+        const mustFields = [
+          ...!volumes?.length ? [] : [
+            esb.termsQuery('volumeName', volumes),
           ],
-        },
-      },
-      ...!isbns?.length ? [] : [{
-        terms: {
-          isbns,
-        },
-      }],
+          ...!names?.length ? [] : names.map((name) => (
+            esb.matchQuery('defaultTitle', name)
+          )),
+          ...!authors?.length ? [] : [
+            esb.nestedQuery().path('authors').query(
+              esb
+                .boolQuery()
+                .minimumShouldMatch(1)
+                .should(authors.map(
+                  (author) => esb.matchQuery('authors.name', author),
+                )),
+            ),
+          ],
+        ];
+
+        return !mustFields.length ? [] : [
+          esb
+            .boolQuery()
+            .must(mustFields),
+        ];
+      })(),
     ];
 
-    if (should.length === 1 && should[0].bool && !should[0].bool.must.length)
+    if (!shouldQueries.length)
       return null;
 
     const result = await bookEsIndex.search(
-      {
-        _source: ['id'],
-        query: {
-          bool: {
-            should,
-            minimum_should_match: 1,
-          },
-        },
-        sort: {
-          _score: 'desc',
-        },
-        size: 1,
-      },
+      esb
+        .requestBodySearch()
+        .source(['id'])
+        .query((
+          esb
+            .boolQuery()
+            .should(shouldQueries)
+            .minimumShouldMatch(1)
+        ))
+        .sort(esb.sort('_score', 'desc'))
+        .size(1)
+        .toJSON(),
     );
 
     return result.hits?.[0]?._id ?? null;

@@ -108,7 +108,7 @@ export const PL_LANG_PACK = {
     },
   },
   author: {
-    other_books: 'Inne książki autora',
+    other_books: 'Inne książki %{}',
   },
   book: {
     created_by: 'Autor',

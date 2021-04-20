@@ -22,6 +22,17 @@
         margin-left: 5px;
       }
     }
+
+    cite {
+      display: block;
+      margin: 1rem 0;
+      padding-left: 20px;
+      font-weight: 300;
+
+      & ~ br {
+        display: none;
+      }
+    }
   }
 
   &-layer-box {

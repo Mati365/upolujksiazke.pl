@@ -34,9 +34,9 @@ export const ExpandableDescriptionBox = (
   if (length - maxCharactersCount > 20) {
     const expandTitle = t(`shared.buttons.${toggled ? 'less' : 'more'}`);
 
-    let chunks: [string, string] = null;
+    let chunks: string[] = null;
     if (html) {
-      chunks = splitHTMLAt(maxCharactersCount, text) as [string, string];
+      chunks = splitHTMLAt(maxCharactersCount, text);
     } else {
       chunks = [
         text.substr(0, maxCharactersCount),
@@ -44,49 +44,56 @@ export const ExpandableDescriptionBox = (
       ];
     }
 
-    content = (
-      <>
-        {(
-          html
-            ? <span dangerouslySetInnerHTML={{__html: chunks[0]}} />
-            : chunks[0]
-        )}
-
-        {!toggled && (
-          <span>...</span>
-        )}
-
-        <span
-          className={c(
-            !toggled && 'is-hidden',
-          )}
-          {...(
+    chunks = chunks.filter((chunk) => chunk?.length > 0);
+    if (chunks.length === 1) {
+      content = (
+        <span dangerouslySetInnerHTML={{__html: text}} />
+      );
+    } else {
+      content = (
+        <>
+          {(
             html
-              ? {
-                dangerouslySetInnerHTML: {
-                  __html: chunks[1],
-                },
-              }
-              : {
-                children: chunks[1],
-              }
+              ? <span dangerouslySetInnerHTML={{__html: chunks[0]}} />
+              : chunks[0]
           )}
-        />
 
-        &nbsp;
+          {!toggled && (
+            <span>...</span>
+          )}
 
-        <TextButton
-          role='button'
-          type='primary'
-          aria-label={expandTitle}
-          onClick={
-            () => setToggled(!toggled)
-          }
-        >
-          {expandTitle}
-        </TextButton>
-      </>
-    );
+          <span
+            className={c(
+              !toggled && 'is-hidden',
+            )}
+            {...(
+              html
+                ? {
+                  dangerouslySetInnerHTML: {
+                    __html: chunks[1],
+                  },
+                }
+                : {
+                  children: chunks[1],
+                }
+            )}
+          />
+
+          &nbsp;
+
+          <TextButton
+            role='button'
+            type='primary'
+            aria-label={expandTitle}
+            onClick={
+              () => setToggled(!toggled)
+            }
+          >
+            {expandTitle}
+          </TextButton>
+        </>
+      );
+    }
   } else if (html) {
     content = (
       <span dangerouslySetInnerHTML={{__html: text}} />

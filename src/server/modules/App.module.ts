@@ -29,12 +29,12 @@ import {ElasticsearchConnectionModule} from './elasticsearch';
     imports: [
       DatabaseModule,
       EventEmitterModule.forRoot(),
-      RedisCacheModule,
       ...(
         isCmdAppInstance()
           ? []
           : [
             ElasticsearchConnectionModule,
+            RedisCacheModule,
             BullModule.forRoot(
               {
                 redis: SERVER_ENV.redisConfig,

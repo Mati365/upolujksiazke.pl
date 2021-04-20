@@ -14,10 +14,12 @@ import {
 export class BooksCategoriesServerRepo extends ServerAPIClientChild implements BooksCategoriesRepo {
   @MeasureCallDuration('findMostPopularCategories')
   @RedisMemoize(
-    ({limit}) => ({
-      key: `popular-books-categories-${limit}`,
-      expire: PredefinedSeconds.ONE_DAY,
-    }),
+    {
+      keyFn: ({limit}) => ({
+        key: `popular-books-categories-${limit}`,
+        expire: PredefinedSeconds.ONE_DAY,
+      }),
+    },
   )
   async findMostPopularCategories({limit}: MostPopularCategoriesFilters): Promise<BookCategoryRecord[]> {
     const {bookCategoryService} = this.services;

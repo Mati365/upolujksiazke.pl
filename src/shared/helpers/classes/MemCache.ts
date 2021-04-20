@@ -8,11 +8,15 @@ type MemCacheEntry = {
 export interface CacheStore {
   del(key: string): this;
   clear(): this;
-  setex<T = any>(key: string, value: T, seconds?: number): T;
+  set<T = any>(key: string, value: T): T;
   get<T = any>(key: string): T;
 }
 
-export class MemCache implements CacheStore {
+export interface KeyExpirableCacheStore extends CacheStore {
+  setex<T = any>(key: string, value: T, seconds?: number): T;
+}
+
+export class MemCache implements KeyExpirableCacheStore {
   memory: {[key: string]: MemCacheEntry} = {};
 
   constructor(
@@ -29,6 +33,10 @@ export class MemCache implements CacheStore {
     }
 
     return this;
+  }
+
+  set<T>(key: string, value: T) {
+    return this.setex(key, value);
   }
 
   setex<T = any>(key: string, value: T, seconds: number = this.defaultKeyExpire) {

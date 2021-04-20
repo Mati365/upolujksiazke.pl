@@ -10,7 +10,7 @@ import {BookRoute} from '@client/routes/Book';
 import {HomeRoute} from '@client/routes/Home';
 
 @Injectable()
-export class RedisCacheWarmup {
+export class RedisCacheWarmupCron {
   constructor(
     private readonly bookSearchService: CardBookSearchService,
     private readonly apiService: APIClientService,

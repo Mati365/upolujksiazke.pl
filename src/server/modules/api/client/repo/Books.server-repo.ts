@@ -26,10 +26,12 @@ export class BooksServerRepo extends ServerAPIClientChild implements BooksRepo {
    */
   @MeasureCallDuration('findAuthorsBooks')
   @RedisMemoize(
-    (filters) => ({
-      key: `authors-books-${JSON.stringify(filters)}`,
-      expire: PredefinedSeconds.ONE_DAY,
-    }),
+    {
+      keyFn: (filters) => ({
+        key: `authors-books-${JSON.stringify(filters)}`,
+        expire: PredefinedSeconds.ONE_DAY,
+      }),
+    },
   )
   findAuthorsBooks(filters: AuthorsBooksFilters) {
     return this.findAll(filters);
@@ -66,10 +68,12 @@ export class BooksServerRepo extends ServerAPIClientChild implements BooksRepo {
    */
   @MeasureCallDuration('findRecentBooks')
   @RedisMemoize(
-    ({limit, offset}) => ({
-      key: `recent-books-${offset}-${limit}`,
-      expire: PredefinedSeconds.ONE_DAY,
-    }),
+    {
+      keyFn: ({limit, offset}) => ({
+        key: `recent-books-${offset}-${limit}`,
+        expire: PredefinedSeconds.ONE_DAY,
+      }),
+    },
   )
   async findRecentBooks(attrs: BasicAPIPagination = {}) {
     const {cardBookSearchService} = this.services;
@@ -94,10 +98,12 @@ export class BooksServerRepo extends ServerAPIClientChild implements BooksRepo {
    */
   @MeasureCallDuration((id: ID) => `findOne(id: ${id})`)
   @RedisMemoize(
-    (id: ID) => ({
-      key: `book-${id}`,
-      expire: PredefinedSeconds.ONE_DAY,
-    }),
+    {
+      keyFn: (id: ID) => ({
+        key: `book-${id}`,
+        expire: PredefinedSeconds.ONE_DAY,
+      }),
+    },
   )
   async findOne(
     id: ID,

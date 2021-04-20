@@ -3,14 +3,14 @@ import {shallowMemoizeOneCall} from '../memoizeOne';
 
 import {WrapMethod} from './WrapMethod';
 import {
-  CacheStore,
+  KeyExpirableCacheStore,
   MemCache,
 } from '../classes/MemCache';
 
 export const MemoizeMethod = WrapMethod(shallowMemoizeOneCall);
 
 export type ExpirableMemoizeCallAttrs = {
-  cacheStore?: CacheStore,
+  cacheStore?: KeyExpirableCacheStore,
   keyFn: (...args: any[]) => {
     key: string,
     expire: number,

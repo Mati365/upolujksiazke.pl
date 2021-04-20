@@ -14,10 +14,12 @@ import {
 export class TagsServerRepo extends ServerAPIClientChild implements TagsRepo {
   @MeasureCallDuration('findMostPopularTags')
   @RedisMemoize(
-    ({limit}) => ({
-      key: `popular-tags-${limit}`,
-      expire: PredefinedSeconds.ONE_DAY,
-    }),
+    {
+      keyFn: ({limit}) => ({
+        key: `popular-tags-${limit}`,
+        expire: PredefinedSeconds.ONE_DAY,
+      }),
+    },
   )
   async findMostPopularBooksTags({limit}: MostPopularTagsFilters): Promise<TagRecord[]> {
     const {bookTagsStatsService} = this.services;

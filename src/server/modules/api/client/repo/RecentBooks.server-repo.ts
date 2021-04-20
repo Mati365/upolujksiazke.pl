@@ -26,15 +26,17 @@ export class RecentBooksServerRepo extends ServerAPIClientChild implements Recen
    */
   @MeasureCallDuration('findCategoriesPopularBooks')
   @RedisMemoize(
-    (filters: BooksGroupsFilters = {}) => ({
-      key: `popular-categories-books-${JSON.stringify(
-        {
-          ...filters,
-          categoriesIds: R.sortBy(R.identity, filters.categoriesIds || []),
-        },
-      )}`,
-      expire: convertHoursToSeconds(5),
-    }),
+    {
+      keyFn: (filters: BooksGroupsFilters = {}) => ({
+        key: `popular-categories-books-${JSON.stringify(
+          {
+            ...filters,
+            categoriesIds: R.sortBy(R.identity, filters.categoriesIds || []),
+          },
+        )}`,
+        expire: convertHoursToSeconds(5),
+      }),
+    },
   )
   async findCategoriesPopularBooks(filters: BooksGroupsFilters = {}): Promise<CategoryBooksGroup[]> {
     const {cardBookSearchService} = this.services;

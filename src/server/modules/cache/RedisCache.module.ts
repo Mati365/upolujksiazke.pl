@@ -3,7 +3,7 @@ import * as redisStore from 'cache-manager-redis-store';
 
 import {SERVER_ENV} from '@server/constants/env';
 
-import {RedisCacheWarmup} from './services/RedisCacheWarmup.service';
+import {RedisCacheWarmupCron} from './cron/RedisCacheWarmup.cron';
 import {APIModule} from '../api';
 import {BookModule} from '../book/Book.module';
 
@@ -22,7 +22,7 @@ import {BookModule} from '../book/Book.module';
       ),
     ],
     providers: [
-      RedisCacheWarmup,
+      RedisCacheWarmupCron,
     ],
     exports: [
       CacheModule,

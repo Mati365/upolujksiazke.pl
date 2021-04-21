@@ -45,7 +45,10 @@ export const HeaderToolbar = () => {
             key={title}
             className='c-header__link'
           >
-            <UndecoratedLink href={url}>
+            <UndecoratedLink
+              href={url}
+              activeClassName='is-active'
+            >
               <Icon className='c-header__link-icon' />
               {title && (
                 <span className='c-header__link-text'>

@@ -1,0 +1,51 @@
+.c-filters {
+  &-section {
+    $gap: 30px;
+
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    grid-gap: $gap;
+    min-height: calc(100vh - 350px);
+
+    &__sidebar {
+      height: 100%;
+      padding-right: $gap;
+      border-right: 1px solid color(divider);
+
+      &-header {
+        margin-top: 0;
+        margin-bottom: 1.5rem;
+        font-weight: 700;
+      }
+    }
+  }
+
+  &-group {
+    $spacing: 20px;
+
+    &:not(:first-child) {
+      margin-top: $spacing;
+    }
+
+    &:not(:last-child) {
+      padding-bottom: $spacing;
+      border-bottom: 1px solid color(divider);
+    }
+
+    &__header {
+      margin-bottom: .85rem;
+      font-size: $text-small;
+      color: color(muted-text);
+    }
+
+    &__content {
+      font-size: .85rem;
+    }
+  }
+
+  &-small-counter {
+    margin-left: auto;
+    font-size: $text-tiny;
+    font-weight: 300;
+  }
+}

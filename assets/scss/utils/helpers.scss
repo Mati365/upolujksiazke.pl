@@ -1,4 +1,8 @@
 .is {
+  &-float {
+    &-right { float: right; }
+  }
+
   &-text {
     @mixin text-size($name, $size, $line-height) {
       &-#{$name} {
@@ -52,11 +56,13 @@
     }
   }
 
-  &-primary-chevron-link {
-    @extend .is-undecorated-link;
-    @extend .has-double-link-chevron;
+  &-primary {
+    &-chevron-link {
+      @extend .is-undecorated-link;
+      @extend .has-double-link-chevron;
 
-    color: color(primary);
+      color: color(primary);
+    }
   }
 }
 

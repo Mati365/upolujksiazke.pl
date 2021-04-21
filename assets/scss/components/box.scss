@@ -3,17 +3,23 @@
     &__btn {
       @extend .c-clean-button;
 
-      padding: 2px 4px;
-      background: color(divider);
-      border: 1px solid color(gray-4);
+      padding: 4px 8px;
+      color: color(primary);
+      border: 1px solid color(primary);
+      border-radius: 5px;
+      font-size: .9em;
+      font-weight: 600;
+      text-transform: lowercase;
     }
 
     &__content {
       display: none;
       font-family: monospace;
+      font-size: .9em;
 
       &.is-expanded {
         display: block;
+        margin: 10px 0;
       }
     }
   }
@@ -47,6 +53,9 @@
     }
 
     spoiler {
+      display: block;
+      margin: 5px 0;
+
       & ~ br + br {
         display: none;
       }

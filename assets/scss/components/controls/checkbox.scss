@@ -1,0 +1,96 @@
+.c-checkbox-group {
+  $self: &;
+
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  cursor: pointer;
+
+  > input {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 0;
+    height: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  &__btn {
+    position: relative;
+    width: 18px;
+    height: 18px;
+    margin-right: 7px;
+    border: 2px solid #000;
+    border-radius: 100%;
+    overflow: hidden;
+    padding: 2px;
+    cursor: pointer;
+    transition: 150ms ease-in-out;
+    transition-property: border-color;
+
+    &::after {
+      content: " ";
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: calc(100% - 6px);
+      height: calc(100% - 6px);
+      border-radius: 100%;
+      background: color(primary);
+      opacity: 0;
+      transition: 150ms opacity ease-in-out;
+    }
+  }
+
+  &__title {
+    display: inherit;
+    position: relative;
+    top: -1px;
+    align-items: center;
+    font-weight: 500;
+    flex: 1;
+  }
+
+  input:checked {
+    ~ #{$self}__btn {
+      border-color: color(primary);
+
+      &::after {
+        opacity: 1;
+      }
+    }
+
+    ~ #{$self}__title {
+      font-weight: 600;
+    }
+  }
+
+  &.is-square {
+    #{$self}__btn {
+      border: 1px solid #dddddd;
+      border-radius: 5px;
+
+      &::after {
+        top: 2px;
+        left: 2px;
+        width: calc(100% - 4px);
+        height: calc(100% - 4px);
+        border-radius: 3px;
+      }
+    }
+
+    input:checked ~ #{$self}__btn {
+      border-width: 2px;
+    }
+
+    &:hover {
+      color: color(primary);
+
+      #{$self}__btn {
+        border-color: color(primary);
+      }
+    }
+  }
+}

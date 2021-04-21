@@ -25,6 +25,10 @@ export type APIPaginationFilters<F = {}> = BasicAPIPagination & F & {
 
 export type APIPaginationResult<T> = PaginationResult<T>;
 
+export type APIPaginationResultWithAggs<T, A> = APIPaginationResult<T> & {
+  aggs: A,
+};
+
 export abstract class APIClientChild<T extends APIClient = APIClient> {
   protected api: T;
 

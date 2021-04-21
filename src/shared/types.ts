@@ -37,6 +37,10 @@ export type ListItem = {
   name: string,
 };
 
+export type CountedListItem = ListItem & {
+  count?: number,
+};
+
 export type IconListItem = ListItem & {
   icon?: any,
 };

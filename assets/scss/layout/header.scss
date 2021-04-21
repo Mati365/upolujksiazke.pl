@@ -46,6 +46,14 @@
     > a {
       @include flex-list;
       color: #000;
+
+      &.is-active {
+        color: color(primary);
+
+        & .c-header__link-text {
+          font-weight: 500;
+        }
+      }
     }
 
     &-icon {

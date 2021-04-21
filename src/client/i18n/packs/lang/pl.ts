@@ -107,6 +107,9 @@ export const PL_LANG_PACK = {
       home: 'Strona główna',
       books: 'Książki',
     },
+    filters: {
+      header: 'Filtry',
+    },
   },
   author: {
     other_books: 'Inne książki %{}',
@@ -118,6 +121,35 @@ export const PL_LANG_PACK = {
     volumes: 'Tomy książki',
     releases: 'Wydania książki',
     about_school_book: 'O lekturze',
+    filters: {
+      categories: {
+        header: 'Kategorie',
+      },
+      price: {
+        header: 'Cena',
+      },
+      authors: {
+        header: 'Autorzy',
+      },
+      types: {
+        header: 'Typy',
+      },
+      era: {
+        header: 'Epoka',
+      },
+      genre: {
+        header: 'Gatunek',
+      },
+      school_book: {
+        header: 'Szkoła',
+      },
+      prizes: {
+        header: 'Nagrody',
+      },
+      publisher: {
+        header: 'Wydawca',
+      },
+    },
     price_box: {
       header: 'Ceny książki:',
       highest_price: 'Najwyższa cena:',

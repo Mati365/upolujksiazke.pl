@@ -4,7 +4,7 @@ import chalk from 'chalk';
 import * as R from 'ramda';
 
 import {getCurrentTimestampSuffix} from '@server/common/helpers';
-import {safeToString} from '@shared/helpers';
+import {isDevMode, safeToString} from '@shared/helpers';
 
 import {CanBePromise, ListItem} from '@shared/types';
 import {MeasureCallDuration} from '@server/modules/api/helpers';
@@ -85,7 +85,11 @@ export abstract class EntityIndex<E extends {id: number}, I = E> implements OnMo
    * @memberof EntityIndex
    */
   async search(body: any) {
-    const {es, indexName} = this;
+    const {es, indexName, logger} = this;
+
+    if (isDevMode())
+      logger.debug(`ES query ${JSON.stringify(body)}`);
+
     const response = await es.search(
       {
         index: indexName,

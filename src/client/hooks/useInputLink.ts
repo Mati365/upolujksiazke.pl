@@ -1,5 +1,6 @@
 import {useRef, useState} from 'react';
 import * as R from 'ramda';
+import {safeToString} from '@shared/helpers';
 
 type PropertyWatchersMap = Record<string, {
   value?: any,
@@ -19,20 +20,22 @@ export type LinkInputConfig<T> = {
 };
 
 export type LinkInputProps<T> = {
-  value: T,
-  onChange(e: any): any,
+  value?: T,
+  onChange?(e: any): any,
 };
 
 export type InputLinkerFn<T> = (
-  name?: string,
+  name?: string | number,
   params?: {
     uncontrolled?: boolean,
     defaultValue?: any,
+    valueAttrName?: string,
+    changeAttrName?: string,
     relatedInputsFn?(newValue: any, value: any): Partial<T>,
     valueParserFn?(val: any): any,
     assignValueParserFn?(val: any): any,
   },
-) => LinkInputProps<any>;
+) => any;
 
 export type LinkInputAttachParams<T> = {
   initialData: T,
@@ -165,9 +168,11 @@ export const useInputLink = <T>(
       relatedInputsFn = null,
       valueParserFn = R.identity,
       assignValueParserFn = R.identity,
+      valueAttrName = 'value',
+      changeAttrName = 'onChange',
     } = {},
   ): LinkInputProps<T> => {
-    const lensPath = name && R.lensPath(name.split('.'));
+    const lensPath = name && R.lensPath(safeToString(name).split('.'));
     const inputValue = !uncontrolled && assignValueParserFn(
       <any> R.defaultTo(
         defaultValue,
@@ -179,29 +184,31 @@ export const useInputLink = <T>(
       ),
     );
 
-    return {
-      ...!uncontrolled && {
-        value: inputValue,
-      },
-      onChange(e: Event) {
-        const newValue = valueParserFn(pickEventValue(e));
-        let newStateValue: T = newValue;
+    const onChangeListener = (e: Event) => {
+      const newValue = valueParserFn(pickEventValue(e));
+      let newStateValue: T = newValue;
 
-        if (name) {
-          newStateValue = R.set(
-            lensPath,
-            newValue,
-            {
-              ...outerValue.value,
-              ...relatedInputsFn && relatedInputsFn(newValue, inputValue),
-            },
-          );
-        } else if (R.equals(inputValue, newValue))
-          return;
+      if (name) {
+        newStateValue = R.set(
+          lensPath,
+          newValue,
+          {
+            ...outerValue.value,
+            ...relatedInputsFn && relatedInputsFn(newValue, inputValue),
+          },
+        );
+      } else if (R.equals(inputValue, newValue))
+        return;
 
-        safeUpdateValue(newStateValue);
-      },
+      safeUpdateValue(newStateValue);
     };
+
+    const props: any = {};
+    if (!uncontrolled)
+      props[valueAttrName] = inputValue;
+
+    props[changeAttrName] = onChangeListener;
+    return props;
   };
 
   return <LinkInputAttachParams<T>> {

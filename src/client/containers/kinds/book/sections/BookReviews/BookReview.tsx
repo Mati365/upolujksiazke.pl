@@ -85,7 +85,7 @@ export const BookReview = ({review}: BookReviewProps) => {
 
       <ExpandableDescriptionBox
         className='c-book-review__text c-layer-box'
-        maxCharactersCount={350}
+        maxCharactersCount={500}
         padding='small'
         quote={!!website}
         text={description}

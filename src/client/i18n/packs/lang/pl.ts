@@ -52,6 +52,11 @@ export const PL_LANG_PACK = {
       no: 'Nie',
       click_to_choose: 'Kliknij by wybrać',
     },
+    buttons: {
+      more: 'pokaż więcej',
+      less: 'pokaż mniej',
+      show_spoiler: 'Pokaż spoiler',
+    },
     book: {
       isbn: 'ISBN',
       volume: 'Tom',
@@ -97,10 +102,6 @@ export const PL_LANG_PACK = {
     ribbons: {
       top: 'HIT',
       school: 'Lektura',
-    },
-    buttons: {
-      more: 'pokaż więcej',
-      less: 'pokaż mniej',
     },
     breadcrumbs: {
       home: 'Strona główna',

@@ -1,4 +1,23 @@
 .c {
+  &-spoiler {
+    &__btn {
+      @extend .c-clean-button;
+
+      padding: 2px 4px;
+      background: color(divider);
+      border: 1px solid color(gray-4);
+    }
+
+    &__content {
+      display: none;
+      font-family: monospace;
+
+      &.is-expanded {
+        display: block;
+      }
+    }
+  }
+
   &-description-box {
     line-height: 1.55rem;
     white-space: pre-line;
@@ -20,6 +39,16 @@
 
       &.is-end {
         margin-left: 5px;
+      }
+    }
+
+    em {
+      font-style: italic;
+    }
+
+    spoiler {
+      & ~ br + br {
+        display: none;
       }
     }
 

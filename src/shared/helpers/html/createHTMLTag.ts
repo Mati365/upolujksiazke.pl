@@ -4,6 +4,7 @@ export function createHTMLTag(
   tag: string,
   attrs?: Record<string, any>,
   content: string = '',
+  selfClosing: boolean = true,
 ) {
   const attrsStr = (
     attrs
@@ -20,5 +21,9 @@ export function createHTMLTag(
       : ''
   );
 
-  return `<${tag}${attrsStr}>${content}</${tag}>`;
+  const start = `<${tag}${attrsStr}>`;
+  if (!content && !selfClosing)
+    return start;
+
+  return `${start}${content}</${tag}>`;
 }

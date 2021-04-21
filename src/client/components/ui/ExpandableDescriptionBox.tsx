@@ -1,8 +1,12 @@
-import React, {ReactNode, useState} from 'react';
+import React, {ReactNode, useState, useMemo} from 'react';
 import c from 'classnames';
 
 import {useI18n} from '@client/i18n';
-import {getHTMLTextLength, splitHTMLAt} from '@client/helpers/parsers/html';
+import {
+  getHTMLTextLength,
+  splitHTMLAt,
+  wrapHTMLSpoilers,
+} from '@shared/helpers/html';
 
 import {DescriptionBox, DescriptionBoxProps} from './DescriptionBox';
 import {TextButton} from './TextButton';
@@ -25,10 +29,43 @@ export const ExpandableDescriptionBox = (
   const t = useI18n();
 
   let content: ReactNode = null;
+  const hydratedText = useMemo(
+    () => {
+      if (!html)
+        return text;
+
+      return wrapHTMLSpoilers(
+        {
+          buttonTitle: t('shared.buttons.show_spoiler'),
+          text,
+        },
+      );
+    },
+    [html, text],
+  );
+
   const length = (
     html
-      ? getHTMLTextLength(text)
-      : text.length
+      ? getHTMLTextLength(hydratedText)
+      : hydratedText.length
+  );
+
+  const onClickHTML: React.MouseEventHandler<HTMLSpanElement> = (e) => {
+    const element = e.target as HTMLElement;
+    if (element?.className === 'c-spoiler__btn') {
+      element.classList.add('is-hidden');
+      element
+        .parentNode
+        .querySelector('.c-spoiler__content')
+        .classList.add('is-expanded');
+    }
+  };
+
+  const renderFullHTML = (innerHTML: string = hydratedText) => (
+    <span
+      dangerouslySetInnerHTML={{__html: innerHTML}}
+      onClick={onClickHTML}
+    />
   );
 
   if (length - maxCharactersCount > 20) {
@@ -36,25 +73,23 @@ export const ExpandableDescriptionBox = (
 
     let chunks: string[] = null;
     if (html) {
-      chunks = splitHTMLAt(maxCharactersCount, text);
+      chunks = splitHTMLAt(maxCharactersCount, hydratedText);
     } else {
       chunks = [
-        text.substr(0, maxCharactersCount),
-        text.substr(maxCharactersCount, text.length),
+        hydratedText.substr(0, maxCharactersCount),
+        hydratedText.substr(maxCharactersCount, hydratedText.length),
       ];
     }
 
     chunks = chunks.filter((chunk) => chunk?.length > 0);
-    if (chunks.length === 1) {
-      content = (
-        <span dangerouslySetInnerHTML={{__html: text}} />
-      );
-    } else {
+    if (chunks.length === 1)
+      content = renderFullHTML();
+    else {
       content = (
         <>
           {(
             html
-              ? <span dangerouslySetInnerHTML={{__html: chunks[0]}} />
+              ? renderFullHTML(chunks[0])
               : chunks[0]
           )}
 
@@ -94,12 +129,13 @@ export const ExpandableDescriptionBox = (
         </>
       );
     }
-  } else if (html) {
+  } else {
     content = (
-      <span dangerouslySetInnerHTML={{__html: text}} />
+      html
+        ? renderFullHTML()
+        : hydratedText
     );
-  } else
-    content = text;
+  }
 
   return (
     <DescriptionBox {...props}>

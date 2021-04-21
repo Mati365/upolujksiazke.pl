@@ -2,13 +2,13 @@ import * as R from 'ramda';
 
 import stringSimilarity from 'string-similarity';
 
-import {createHTMLTag} from '@server/common/helpers/html/createHTMLTag';
 import {filterAndMap} from '@shared/helpers';
 import {
+  createHTMLTag,
   extractTextWords,
   getHTMLInnerText,
   isWordCharacter,
-} from '@client/helpers/parsers';
+} from '@shared/helpers/html';
 
 export type LinkHydrateAttrs<T = any> = {
   text: string,

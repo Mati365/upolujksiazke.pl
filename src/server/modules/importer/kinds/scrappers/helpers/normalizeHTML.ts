@@ -16,7 +16,7 @@ export function normalizeHTML(
       .replace(/&nbsp;/g, '')
       .replace(/(&quot;|"{2,})/g, '"'),
     {
-      ignoreTags: ['cite', 'br', 'spoiler'],
+      ignoreTags: ['cite', 'br', 'spoiler', 'b', 'i', 'strong', 'em'],
     },
   );
 

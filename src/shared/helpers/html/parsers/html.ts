@@ -24,13 +24,19 @@ export function splitHTMLAt(
     const c = text[i];
 
     if (c === '<') {
+      const closingTag = text[i + 1] === '/';
       nesting += (
-        text[i + 1] === '/'
+        closingTag
           ? -1
           : 1
       );
 
       for (; i < text.length && text[i] !== '>'; ++i);
+
+      const selfClosing = text[i - 1] === '/';
+      if (selfClosing)
+        nesting--;
+
       continue;
     }
 

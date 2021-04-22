@@ -246,7 +246,9 @@ export function hydrateTextWithLinks<T>(
         for (; i < text.length && text[i + 1] !== '>'; ++i, tagContent += text[i]);
 
         output += tagContent;
-        if (!pop)
+
+        const selfClosing = tagContent[tagContent.length - 1] === '/';
+        if (!pop && !selfClosing)
           nesting.push(tagContent.split(' ')[0]);
       }
     }

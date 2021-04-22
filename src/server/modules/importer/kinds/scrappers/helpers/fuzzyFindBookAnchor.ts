@@ -139,7 +139,7 @@ export function fuzzyFindMatchingBook<T>(
           );
 
           return (
-            similarity < 0.6
+            similarity < (author ? 0.6 : 0.82)
               ? null
               : [similarity, item]
           );

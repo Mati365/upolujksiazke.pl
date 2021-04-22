@@ -3,9 +3,9 @@ import {stripHtml} from 'string-strip-html';
 export function normalizeHTML(
   html: string,
   {
-    stripDoubledNewlines = true,
+    stripNewlines = true,
   }: {
-    stripDoubledNewlines?: boolean,
+    stripNewlines?: boolean,
   } = {},
 ) {
   if (!html)
@@ -20,8 +20,8 @@ export function normalizeHTML(
     },
   );
 
-  if (stripDoubledNewlines)
-    output = output.replace(/\s*\n[\n\s]{1,}/g, '\n\n');
+  if (stripNewlines)
+    output = output.replace(/\n{1,}/g, '');
 
   return (
     output

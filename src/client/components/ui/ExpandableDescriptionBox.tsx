@@ -72,9 +72,12 @@ export const ExpandableDescriptionBox = (
     const expandTitle = t(`shared.buttons.${toggled ? 'less' : 'more'}`);
 
     let chunks: string[] = null;
-    if (html) {
-      chunks = splitHTMLAt(maxCharactersCount, hydratedText);
-    } else {
+    if (html)
+      chunks = splitHTMLAt(
+        maxCharactersCount,
+        hydratedText,
+      );
+    else {
       chunks = [
         hydratedText.substr(0, maxCharactersCount),
         hydratedText.substr(maxCharactersCount, hydratedText.length),

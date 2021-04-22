@@ -73,7 +73,7 @@ export const BookGalleryThumbs = (
             direction='vertical'
             onClick={onLess}
           >
-            {`${t('shared.titles.less')} (${offset - 1})`}
+            {`${t('shared.titles.less')} (${offset})`}
             <DotsHorizontalRoundedIcon />
           </TextButton>
         </li>

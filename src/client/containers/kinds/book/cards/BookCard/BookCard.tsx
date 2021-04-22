@@ -79,6 +79,9 @@ export const BookCard = (
           items={
             R.take(2, authors)
           }
+          spaced={0}
+          inline={false}
+          block
         />
       </div>
 

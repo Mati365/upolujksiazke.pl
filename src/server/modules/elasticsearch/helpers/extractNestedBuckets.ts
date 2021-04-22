@@ -21,6 +21,22 @@ export function extractNestedBuckets(path: string, agg: object) {
 }
 
 /**
+ * Maps _key, doc_count buckets into id, count pairs
+ *
+ * @export
+ * @param {any[]} buckets
+ * @returns
+ */
+export function mapCountedBucketsPairs(buckets: any[]) {
+  return buckets?.map(
+    ({key: id, doc_count: count}) => ({
+      id,
+      count,
+    }),
+  );
+}
+
+/**
  * Extracs id/count from bucket
  *
  * @export
@@ -33,10 +49,5 @@ export const extractNestedBucketsPairs = R.curry((path: string, agg: object) : C
   if (!buckets?.length)
     return null;
 
-  return buckets.map(
-    ({key: id, doc_count: count}) => ({
-      id,
-      count,
-    }),
-  );
+  return mapCountedBucketsPairs(buckets);
 });

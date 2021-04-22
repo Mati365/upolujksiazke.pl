@@ -38,6 +38,22 @@ export const BooksFiltersGroups = ({aggs}: BooksFiltersGroupsProps) => {
         </FiltersGroup>
       )}
 
+      {aggs.types && (
+        <FiltersGroup header={t('types.header')}>
+          <CountedCheckboxList
+            items={
+              aggs.types.map(
+                ({record: type, count}) => ({
+                  id: type,
+                  name: t(`shared.book.types.${type}`),
+                  count,
+                }),
+              )
+            }
+          />
+        </FiltersGroup>
+      )}
+
       {aggs.publishers && (
         <FiltersGroup header={t('publisher.header')}>
           <CountedCheckboxList
@@ -48,27 +64,41 @@ export const BooksFiltersGroups = ({aggs}: BooksFiltersGroupsProps) => {
         </FiltersGroup>
       )}
 
+      {aggs.era && (
+        <FiltersGroup header={t('era.header')}>
+          <CountedCheckboxList
+            items={
+              mapCountedRecordsToCountedListItems(aggs.era)
+            }
+          />
+        </FiltersGroup>
+      )}
+
+      {aggs.genre && (
+        <FiltersGroup header={t('genre.header')}>
+          <CountedCheckboxList
+            items={
+              mapCountedRecordsToCountedListItems(aggs.genre)
+            }
+          />
+        </FiltersGroup>
+      )}
+
+      {aggs.prizes && (
+        <FiltersGroup header={t('prize.header')}>
+          <CountedCheckboxList
+            items={
+              mapCountedRecordsToCountedListItems(aggs.prizes)
+            }
+          />
+        </FiltersGroup>
+      )}
+
       <FiltersGroup header={t('price.header')}>
         ABC
       </FiltersGroup>
 
-      <FiltersGroup header={t('types.header')}>
-        ABC
-      </FiltersGroup>
-
-      <FiltersGroup header={t('era.header')}>
-        ABC
-      </FiltersGroup>
-
-      <FiltersGroup header={t('genre.header')}>
-        ABC
-      </FiltersGroup>
-
       <FiltersGroup header={t('school_book.header')}>
-        ABC
-      </FiltersGroup>
-
-      <FiltersGroup header={t('prizes.header')}>
         ABC
       </FiltersGroup>
     </>

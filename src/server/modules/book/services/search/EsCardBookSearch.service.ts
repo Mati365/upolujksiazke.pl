@@ -7,6 +7,7 @@ import {
   createNestedIdsAgg,
   extractNestedBucketsPairs,
   fetchDbAggsRecords,
+  mapCountedBucketsPairs,
 } from '@server/modules/elasticsearch/helpers';
 
 import {CreateCountedAggType} from '@api/APIRecord';
@@ -109,8 +110,8 @@ export class EsCardBookSearchService {
 
     const [aggs, books] = await Promise.all(
       [
-        await this.fetchBooksAggs(result.aggs),
-        await cardBookSearch.findBooksByIds(result.ids),
+        this.fetchBooksAggs(result.aggs),
+        cardBookSearch.findBooksByIds(result.ids),
       ],
     );
 
@@ -135,6 +136,10 @@ export class EsCardBookSearchService {
 
     return objPropsToPromise(
       {
+        types: mapCountedBucketsPairs(aggs.types.buckets).map(({id, count}) => ({
+          record: id,
+          count,
+        })),
         publishers: fetchDbAggsRecords(
           {
             items: extractNestedBucketsPairs('publishers_ids', aggs.publishers),
@@ -155,7 +160,7 @@ export class EsCardBookSearchService {
         ),
         genre: fetchDbAggsRecords(
           {
-            items: extractNestedBucketsPairs('genre_ids', aggs.authors),
+            items: extractNestedBucketsPairs('genre_ids', aggs.genre),
             fetchFn: (ids) => BookGenreEntity.findByIds(ids),
           },
         ),

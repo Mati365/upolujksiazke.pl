@@ -110,6 +110,7 @@ export const ExpandableDescriptionBox = (
                   dangerouslySetInnerHTML: {
                     __html: chunks[1],
                   },
+                  onClick: onClickHTML,
                 }
                 : {
                   children: chunks[1],

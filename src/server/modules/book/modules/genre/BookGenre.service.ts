@@ -5,6 +5,7 @@ import {groupRawMany, upsert} from '@server/common/helpers/db';
 
 import {CreateBookGenreDto} from './dto/CreateBookGenre.dto';
 import {BookGenreEntity} from './BookGenre.entity';
+import {BookGroupedSelectAttrs} from '../../shared/types';
 
 @Injectable()
 export class BookGenreService {
@@ -15,28 +16,35 @@ export class BookGenreService {
   /**
    * Find many books with genres
    *
-   * @param {number[]} bookIds
+   * @param {BookGroupedSelectAttrs} attrs
    * @returns
    * @memberof BookGenreService
    */
-  async findBooksGenres(bookIds: number[]) {
+  async findBooksGenres(
+    {
+      booksIds,
+      select = [
+        'g.id as "id"',
+        'g.name as "name"',
+        'g.parameterizedName as "parameterizedName"',
+      ],
+    }: BookGroupedSelectAttrs,
+  ) {
     const items = await (
       BookGenreEntity
         .createQueryBuilder('g')
         .innerJoin(
           'book_genre_book_genre',
           'bg',
-          'bg.bookId in (:...bookIds) and bg.bookGenreId = g.id',
+          'bg.bookId in (:...booksIds) and bg.bookGenreId = g.id',
           {
-            bookIds,
+            booksIds,
           },
         )
         .select(
           [
-            'g.id as "id"',
-            'g.name as "name"',
-            'g.parameterizedName as "parameterizedName"',
             'bg.bookId as "bookId"',
+            ...select,
           ],
         )
         .getRawMany()
@@ -58,7 +66,11 @@ export class BookGenreService {
    * @returns
    */
   async findBookGenre(bookId: number) {
-    return (await this.findBooksGenres([bookId]))[bookId] || [];
+    return (await this.findBooksGenres(
+      {
+        booksIds: [bookId],
+      },
+    ))[bookId] || [];
   }
 
   /**

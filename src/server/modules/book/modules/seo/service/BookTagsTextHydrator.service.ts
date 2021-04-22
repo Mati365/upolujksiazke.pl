@@ -92,11 +92,12 @@ export class BookTagsTextHydratorService {
       {
         booksTags: (async () => {
           const tags = await bookTags.findBooksTags(
-            ids,
-            [
-              't."id" as "id"',
-              'bt."bookId" as "bookId"',
-            ],
+            {
+              booksIds: ids,
+              select: [
+                't."id" as "id"',
+              ],
+            },
           );
 
           return R.mapObjIndexed(

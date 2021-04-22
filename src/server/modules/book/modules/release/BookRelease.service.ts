@@ -1,5 +1,5 @@
 import {Injectable} from '@nestjs/common';
-import {Connection, EntityManager, In} from 'typeorm';
+import {Connection, EntityManager, In, SelectQueryBuilder} from 'typeorm';
 import pMap from 'p-map';
 import * as R from 'ramda';
 
@@ -28,6 +28,8 @@ import {BookPublisherService} from '../publisher/BookPublisher.service';
 import {BookAvailabilityService} from '../availability/BookAvailability.service';
 import {BookReviewService} from '../review/BookReview.service';
 import {BookAvailabilityEntity} from '../availability/BookAvailability.entity';
+import {BookPublisherEntity} from '../publisher/BookPublisher.entity';
+import {BookGroupedSelectAttrs} from '../../shared/types';
 
 export type UpsertBookReleaseAttrs = UpsertResourceAttrs & {
   reindexBook?: boolean,
@@ -63,28 +65,52 @@ export class BookReleaseService {
     {
       booksIds,
       select,
-    }: {
-      booksIds: number[],
-      select: string[],
+      queryMapperFn = R.identity,
+    }: BookGroupedSelectAttrs & {
+      queryMapperFn?(query: SelectQueryBuilder<BookReleaseEntity>): SelectQueryBuilder<BookReleaseEntity>,
     },
   ) {
-    const releases = await (
+    const query = (
       BookReleaseEntity
         .createQueryBuilder('r')
-        .select([...select, '"bookId"'])
+        .select(['r.bookId as "bookId"', ...select])
         .where(
           {
             bookId: In(booksIds),
           },
         )
-        .getRawMany()
     );
 
+    const items = await queryMapperFn(query).getRawMany();
     return groupRawMany(
       {
-        items: releases,
+        items,
         key: 'bookId',
-        mapperFn: (item) => new BookReleaseEntity(item),
+        mapperFn: (
+          {
+            p_id: pID,
+            p_name: pName,
+            p_parameterizedName: pParameterizedName,
+            id,
+            isbn,
+            bookId,
+          },
+        ) => new BookReleaseEntity(
+          {
+            id,
+            isbn,
+            bookId,
+            ...!R.isNil(pID) && {
+              publisher: new BookPublisherEntity(
+                {
+                  id: pID,
+                  name: pName,
+                  parameterizedName: pParameterizedName,
+                },
+              ),
+            },
+          },
+        ),
       },
     );
   }

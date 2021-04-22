@@ -2,7 +2,9 @@ import {Injectable} from '@nestjs/common';
 import {Connection, EntityManager} from 'typeorm';
 
 import {groupRawMany, upsert} from '@server/common/helpers/db';
+
 import {BookPrizeEntity} from './BookPrize.entity';
+import {BookGroupedSelectAttrs} from '../../shared/types';
 import {CreateBookPrizeDto} from './dto/CreateBookPrize.dto';
 
 @Injectable()
@@ -14,29 +16,35 @@ export class BookPrizeService {
   /**
    * Find many book prizes ids
    *
-   * @param {number[]} bookIds
+   * @param {BookGroupedSelectAttrs} attrs
    * @returns
    * @memberof BookPrizeService
    */
-  async findBooksPrizes(bookIds: number[]) {
+  async findBooksPrizes(
+    {
+      booksIds,
+      select = [
+        'b.id as "id"',
+        'b.name as "name"',
+        'b.parameterizedName as "parameterizedName"',
+      ],
+    }: BookGroupedSelectAttrs,
+  ) {
     const items = await (
       BookPrizeEntity
         .createQueryBuilder('b')
         .innerJoin(
           'book_prizes_book_prize',
           'bp',
-          'bp.bookId in (:...bookIds) and bp.bookPrizeId = b.id',
+          'bp.bookId in (:...booksIds) and bp.bookPrizeId = b.id',
           {
-            bookIds,
+            booksIds,
           },
         )
         .select(
           [
-            'b.id as "id"',
-            'b.name as "name"',
-            'b.parameterizedName as "parameterizedName"',
-            'b.wikiUrl as "wikiUrl"',
-            'bp.bookId as "e_bookId"',
+            'bp.bookId as "bookId"',
+            ...select,
           ],
         )
         .getRawMany()
@@ -59,7 +67,11 @@ export class BookPrizeService {
    * @memberof BookPrizeService
    */
   async findBookPrizes(bookId: number) {
-    return (await this.findBooksPrizes([bookId]))[bookId] || [];
+    return (await this.findBooksPrizes(
+      {
+        booksIds: [bookId],
+      },
+    ))[bookId] || [];
   }
 
   /**

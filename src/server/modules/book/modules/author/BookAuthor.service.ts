@@ -2,6 +2,8 @@ import {Injectable} from '@nestjs/common';
 import {Connection, EntityManager} from 'typeorm';
 
 import {groupRawMany, upsert} from '@server/common/helpers/db';
+
+import {BookGroupedSelectAttrs} from '../../shared/types';
 import {BookAuthorEntity} from './BookAuthor.entity';
 import {CreateBookAuthorDto} from './dto/CreateBookAuthor.dto';
 
@@ -14,27 +16,34 @@ export class BookAuthorService {
   /**
    * Find authors for multiple books
    *
-   * @param {number[]} bookIds
+   * @param {BookGroupedSelectAttrs} attrs
    * @returns
    * @memberof BookEraService
    */
-  async findBooksAuthors(bookIds: number[]) {
+  async findBooksAuthors(
+    {
+      booksIds,
+      select = [
+        'b.id as "id"',
+        'b.name as "name"',
+        'b.parameterizedName as "parameterizedName"',
+      ],
+    }: BookGroupedSelectAttrs,
+  ) {
     const items = await (
       BookAuthorEntity
         .createQueryBuilder('b')
         .innerJoin(
           'book_authors_book_author',
           'ba',
-          'ba.bookId in (:...bookIds) and ba.bookAuthorId = b.id',
+          'ba.bookId in (:...booksIds) and ba.bookAuthorId = b.id',
           {
-            bookIds,
+            booksIds,
           },
         )
         .select(
           [
-            'b.id as "id"',
-            'b.name as "name"',
-            'b.parameterizedName as "parameterizedName"',
+            ...select,
             'ba.bookId as "bookId"',
           ],
         )
@@ -58,7 +67,11 @@ export class BookAuthorService {
    * @memberof BookCategoryService
    */
   async findBookAuthors(bookId: number) {
-    return (await this.findBooksAuthors([bookId]))[bookId] || [];
+    return (await this.findBooksAuthors(
+      {
+        booksIds: [bookId],
+      },
+    ))[bookId] || [];
   }
 
   /**

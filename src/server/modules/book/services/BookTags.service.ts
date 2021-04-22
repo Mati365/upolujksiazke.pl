@@ -4,26 +4,28 @@ import pMap from 'p-map';
 import * as R from 'ramda';
 
 import {groupRawMany} from '@server/common/helpers/db';
+
 import {TagEntity} from '../../tag/Tag.entity';
+import {BookGroupedSelectAttrs} from '../shared/types';
 
 @Injectable()
 export class BookTagsService {
   /**
    * Returns array of tags for books
    *
-   * @param {number[]} bookIds
-   * @param {string[]} select
+   * @param {BookGroupedSelectAttrs} attrs
    * @returns {Promise<Record<string, TagEntity[]>>}
    * @memberof BookService
    */
   async findBooksTags(
-    bookIds: number[],
-    select: string[] = [
-      't.id as "id"',
-      't.name as "name"',
-      't.parameterizedName as "parameterizedName"',
-      'bt.bookId as "bookId"',
-    ],
+    {
+      booksIds,
+      select = [
+        't.id as "id"',
+        't.name as "name"',
+        't.parameterizedName as "parameterizedName"',
+      ],
+    }: BookGroupedSelectAttrs,
   ): Promise<Record<string, TagEntity[]>> {
     const items = await (
       TagEntity
@@ -31,12 +33,17 @@ export class BookTagsService {
         .innerJoin(
           'book_tags_tag',
           'bt',
-          'bt.bookId in (:...bookIds) and bt.tagId = t.id',
+          'bt.bookId in (:...booksIds) and bt.tagId = t.id',
           {
-            bookIds,
+            booksIds,
           },
         )
-        .select(select)
+        .select(
+          [
+            'bt.bookId as "bookId"',
+            ...select,
+          ],
+        )
         .getRawMany()
     );
 
@@ -57,7 +64,11 @@ export class BookTagsService {
    * @memberof TagService
    */
   async findBookTags(bookId: number) {
-    return (await this.findBooksTags([bookId]))[bookId] || [];
+    return (await this.findBooksTags(
+      {
+        booksIds: [bookId],
+      },
+    ))[bookId] || [];
   }
 
   /**

@@ -294,7 +294,7 @@ export class FuzzyBookSearchService {
     if (!shouldQueries.length)
       return null;
 
-    const result = await bookEsIndex.search(
+    const result = await bookEsIndex.searchHits(
       esb
         .requestBodySearch()
         .source(['id'])
@@ -309,6 +309,6 @@ export class FuzzyBookSearchService {
         .toJSON(),
     );
 
-    return result.hits?.[0]?._id ?? null;
+    return result?.[0]?._id ?? null;
   }
 }

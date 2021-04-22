@@ -18,8 +18,16 @@ export const PredefinedProperties = Object.freeze(
       properties: {
         id: {type: 'keyword'},
         name: {type: 'keyword'},
+        parameterizedName: {type: 'keyword'},
       },
     },
+
+    customIdNamePair: (properties) => R.mergeDeepLeft(
+      PredefinedProperties.idNamePair,
+      {
+        properties,
+      },
+    ),
   },
 );
 
@@ -78,29 +86,6 @@ export abstract class EntityIndex<E extends {id: number}, I = E> implements OnMo
   protected abstract findEntitiesIds(): AsyncGenerator<number[]>;
 
   /**
-   * Performs ES search
-   *
-   * @param {*} body
-   * @returns
-   * @memberof EntityIndex
-   */
-  async search(body: any) {
-    const {es, indexName, logger} = this;
-
-    if (isDevMode())
-      logger.debug(`ES query ${JSON.stringify(body)}`);
-
-    const response = await es.search(
-      {
-        index: indexName,
-        body,
-      },
-    );
-
-    return response?.body?.hits;
-  }
-
-  /**
    * Returns single record by id
    *
    * @param {(string|number)} id
@@ -120,6 +105,40 @@ export abstract class EntityIndex<E extends {id: number}, I = E> implements OnMo
   }
 
   /**
+   * Performs ES search
+   *
+   * @param {*} body
+   * @returns
+   * @memberof EntityIndex
+   */
+  async search(body: any) {
+    const {es, indexName, logger} = this;
+
+    if (isDevMode())
+      logger.debug(`ES query ${JSON.stringify(body)}`);
+
+    const response = await es.search(
+      {
+        index: indexName,
+        body,
+      },
+    );
+
+    return response?.body;
+  }
+
+  /**
+   * Executes search and picks hits
+   *
+   * @param {*} body
+   * @returns
+   * @memberof EntityIndex
+   */
+  async searchHits(body: any) {
+    return (await this.search(body))?.hits?.hits || [];
+  }
+
+  /**
    * Returns array of found ids
    *
    * @param {*} body
@@ -127,9 +146,28 @@ export abstract class EntityIndex<E extends {id: number}, I = E> implements OnMo
    * @memberof EntityIndex
    */
   async searchIds(body: any): Promise<string[]> {
-    const result = await this.search(body);
+    return R.pluck(
+      '_id' as any,
+      await this.searchHits(body),
+    );
+  }
 
-    return R.pluck('_id' as any, result?.hits || []);
+  /**
+   * Search data with aggregations
+   *
+   * @param {*} body
+   * @returns
+   * @memberof EntityIndex
+   */
+  async searchIdsWithAggs(body: any) {
+    const result = await this.search(body);
+    if (!result)
+      return null;
+
+    return {
+      ids: R.pluck('_id' as any, result.hits?.hits || []),
+      aggs: result.aggregations,
+    };
   }
 
   /**

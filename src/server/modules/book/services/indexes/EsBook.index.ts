@@ -3,7 +3,9 @@ import {ElasticsearchService} from '@nestjs/elasticsearch';
 import * as R from 'ramda';
 
 import {objPropsToPromise} from '@shared/helpers';
+import {createMapperListItemSelector} from '@server/modules/elasticsearch/helpers';
 
+import {ListItem} from '@shared/types';
 import {
   EntityIndex,
   EsMappedDoc,
@@ -30,6 +32,7 @@ export type BookIndexEntity = Pick<
 > & {
   volumeName: string,
   isbns: string[],
+  publishers: ListItem[],
 };
 
 @Injectable()
@@ -45,9 +48,14 @@ export class EsBookIndex extends EntityIndex<BookEntity, BookIndexEntity> {
     highestPrice: {type: 'float'},
     volumeName: {type: 'keyword'},
     isbns: {type: 'keyword'},
+    categories: PredefinedProperties.customIdNamePair(
+      {
+        promotion: {type: 'integer'},
+      },
+    ),
+    publishers: PredefinedProperties.idNamePair,
     authors: PredefinedProperties.idNamePair,
     tags: PredefinedProperties.idNamePair,
-    categories: PredefinedProperties.idNamePair,
     era: PredefinedProperties.idNamePair,
     genre: PredefinedProperties.idNamePair,
     prizes: PredefinedProperties.idNamePair,
@@ -79,6 +87,22 @@ export class EsBookIndex extends EntityIndex<BookEntity, BookIndexEntity> {
         name: EsBookIndex.INDEX_NAME,
       },
     );
+  }
+
+  /**
+   * Create nested books relations filters
+   *
+   * @static
+   * @param {number[]} ids
+   * @param {string} alias
+   * @returns
+   * @memberof EsBookIndex
+   */
+  static createBooksNestedListItemSelector(ids: number[], alias: string) {
+    return {
+      booksIds: ids,
+      select: createMapperListItemSelector(alias),
+    };
   }
 
   /**
@@ -135,16 +159,41 @@ export class EsBookIndex extends EntityIndex<BookEntity, BookIndexEntity> {
             ],
           },
         ),
-        eras: bookEraService.findBooksEras(ids),
-        genres: bookGenreService.findBooksGenres(ids),
-        tags: bookTagsService.findBooksTags(ids),
-        categories: bookCategoriesService.findBooksCategories(ids),
-        prizes: bookPrizeService.findBooksPrizes(ids),
-        authors: bookAuthorService.findBooksAuthors(ids),
+        eras: bookEraService.findBooksEras(
+          EsBookIndex.createBooksNestedListItemSelector(ids, 'e'),
+        ),
+        genres: bookGenreService.findBooksGenres(
+          EsBookIndex.createBooksNestedListItemSelector(ids, 'g'),
+        ),
+        tags: bookTagsService.findBooksTags(
+          EsBookIndex.createBooksNestedListItemSelector(ids, 't'),
+        ),
+        prizes: bookPrizeService.findBooksPrizes(
+          EsBookIndex.createBooksNestedListItemSelector(ids, 'b'),
+        ),
+        authors: bookAuthorService.findBooksAuthors(
+          EsBookIndex.createBooksNestedListItemSelector(ids, 'b'),
+        ),
+        categories: bookCategoriesService.findBooksCategories(
+          {
+            booksIds: ids,
+            select: [
+              ...createMapperListItemSelector('c'),
+              'c.promotion as "promotion"',
+            ],
+          },
+        ),
         releases: bookReleasesService.findBooksReleases(
           {
             booksIds: ids,
-            select: ['id', 'isbn'],
+            select: [
+              'r.id as "id"',
+              'r.isbn as "isbn"',
+              'p.id as "p_id"',
+              'p.name as "p_name"',
+              'p."parameterizedName" as "p_parameterizedName"',
+            ],
+            queryMapperFn: (qb) => qb.leftJoin('r.publisher', 'p'),
           },
         ),
       },
@@ -181,11 +230,18 @@ export class EsBookIndex extends EntityIndex<BookEntity, BookIndexEntity> {
   /**
    * @inheritdoc
    */
-  protected mapRecord({volume, releases, ...entity}: BookEntity): EsMappedDoc<BookIndexEntity> {
+  protected mapRecord(
+    {
+      volume,
+      releases,
+      ...entity
+    }: BookEntity,
+  ): EsMappedDoc<BookIndexEntity> {
     return {
       _id: entity.id,
       volumeName: volume?.name,
       isbns: R.pluck('isbn', releases),
+      publishers: R.pluck('publisher', releases),
       ...entity,
     };
   }

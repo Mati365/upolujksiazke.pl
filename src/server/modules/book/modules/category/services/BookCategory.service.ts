@@ -5,6 +5,7 @@ import * as R from 'ramda';
 import {BasicLimitPaginationOptions, groupRawMany, upsert} from '@server/common/helpers/db';
 import {parameterize} from '@shared/helpers/parameterize';
 
+import {BookGroupedSelectAttrs} from '@server/modules/book/shared/types';
 import {BookCategoryEntity} from '../BookCategory.entity';
 import {CreateBookCategoryDto} from '../dto/CreateBookCategory.dto';
 
@@ -64,25 +65,32 @@ export class BookCategoryService {
    * @returns
    * @memberof BookEraService
    */
-  async findBooksCategories(bookIds: number[]) {
+  async findBooksCategories(
+    {
+      booksIds,
+      select = [
+        'c.id as "id"',
+        'c.name as "name"',
+        'c.parameterizedName as "parameterizedName"',
+        'c.promotion as "promotion"',
+      ],
+    }: BookGroupedSelectAttrs,
+  ) {
     const items = await (
       BookCategoryEntity
         .createQueryBuilder('c')
         .innerJoin(
           'book_categories_book_category',
           'bc',
-          'bc.bookId in (:...bookIds) and bc.bookCategoryId = c.id',
+          'bc.bookId in (:...booksIds) and bc.bookCategoryId = c.id',
           {
-            bookIds,
+            booksIds,
           },
         )
         .select(
           [
-            'c.id as "id"',
-            'c.name as "name"',
-            'c.parameterizedName as "parameterizedName"',
-            'c.promotion as "promotion"',
             'bc.bookId as "bookId"',
+            ...select,
           ],
         )
         .getRawMany()
@@ -105,7 +113,11 @@ export class BookCategoryService {
    * @memberof BookCategoryService
    */
   async findBookCategories(bookId: number) {
-    return (await this.findBooksCategories([bookId]))[bookId] || [];
+    return (await this.findBooksCategories(
+      {
+        booksIds: [bookId],
+      },
+    ))[bookId] || [];
   }
 
   /**

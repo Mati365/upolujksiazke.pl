@@ -5,6 +5,7 @@ import {groupRawMany, upsert} from '@server/common/helpers/db';
 
 import {CreateBookEraDto} from './dto/CreateBookEra.dto';
 import {BookEraEntity} from './BookEra.entity';
+import {BookGroupedSelectAttrs} from '../../shared/types';
 
 @Injectable()
 export class BookEraService {
@@ -15,28 +16,35 @@ export class BookEraService {
   /**
    * Find eras for multiple books
    *
-   * @param {number[]} bookIds
+   * @param {BookGroupedSelectAttrs} attrs
    * @returns
    * @memberof BookEraService
    */
-  async findBooksEras(bookIds: number[]) {
+  async findBooksEras(
+    {
+      booksIds,
+      select = [
+        'e.id as "id"',
+        'e.name as "name"',
+        'e.parameterizedName as "parameterizedName"',
+      ],
+    }: BookGroupedSelectAttrs,
+  ) {
     const items = await (
       BookEraEntity
         .createQueryBuilder('e')
         .innerJoin(
           'book_era_book_era',
           'be',
-          'be.bookId in (:...bookIds) and be.bookEraId = e.id',
+          'be.bookId in (:...booksIds) and be.bookEraId = e.id',
           {
-            bookIds,
+            booksIds,
           },
         )
         .select(
           [
-            'e.id as "id"',
-            'e.name as "name"',
-            'e.parameterizedName as "parameterizedName"',
             'be.bookId as "bookId"',
+            ...select,
           ],
         )
         .getRawMany()
@@ -59,7 +67,11 @@ export class BookEraService {
    * @memberof BookEraService
    */
   async findBookEra(bookId: number) {
-    return (await this.findBooksEras([bookId]))[bookId] || [];
+    return (await this.findBooksEras(
+      {
+        booksIds: [bookId],
+      },
+    ))[bookId] || [];
   }
 
   /**

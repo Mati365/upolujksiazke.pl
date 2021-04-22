@@ -1,7 +1,23 @@
 import {CanBePromise} from '@shared/types';
 
-import {APIPaginationResult, APIPaginationResultWithAggs, BasicAPIPagination} from '@api/APIClient';
-import {BookCardRecord} from '@api/types';
+import {CreateCountedAggType} from '@api/APIRecord';
+import {
+  APIPaginationResult,
+  APIPaginationResultWithAggs,
+  BasicAPIPagination,
+} from '@api/APIClient';
+
+import {BookType} from '@shared/enums';
+import {
+  BookAuthorRecord,
+  BookCardRecord,
+  BookCategoryRecord,
+  BookEraRecord,
+  BookGenreRecord,
+  BookPrizeRecord,
+  BookPublisherRecord,
+} from '@api/types';
+
 import {APIRepo} from '../APIRepo';
 import {BookFullInfoRecord} from '../types/BookFullInfo.record';
 
@@ -9,15 +25,15 @@ export type AuthorsBooksFilters = BasicAPIPagination & {
   authorsIds: number[],
 };
 
-export type BookAggs = Partial<{
-  categories?: boolean,
-  authors?: boolean,
-  types?: boolean,
-  era?: boolean,
+export type BookAggs = CreateCountedAggType<{
+  categories?: BookCategoryRecord[],
+  authors?: BookAuthorRecord[],
+  types?: BookType[],
+  prizes?: BookPrizeRecord[],
+  genre?: BookGenreRecord[],
+  era?: BookEraRecord[],
+  publishers?: BookPublisherRecord[],
   schoolBook?: boolean,
-  prizes?: boolean,
-  genre?: boolean,
-  publisher?: boolean,
 }>;
 
 export type BooksFilters = BasicAPIPagination & {
@@ -25,7 +41,7 @@ export type BooksFilters = BasicAPIPagination & {
   aggs?: Record<keyof BookAggs, boolean>,
 };
 
-export type BooksPaginationResultWithAggs = APIPaginationResultWithAggs<BookCardRecord, BooksFilters>;
+export type BooksPaginationResultWithAggs = APIPaginationResultWithAggs<BookCardRecord, BookAggs>;
 
 export type BookFindOneAttrs = {
   reviewsCount?: number,

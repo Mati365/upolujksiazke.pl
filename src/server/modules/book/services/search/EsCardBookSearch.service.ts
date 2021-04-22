@@ -2,7 +2,10 @@ import {forwardRef, Inject, Injectable} from '@nestjs/common';
 import esb from 'elastic-builder';
 import * as R from 'ramda';
 
-import {createNestedIdsAgg} from '@server/modules/elasticsearch/helpers/createNestedIdsAgg';
+import {
+  createNestedIdsAgg,
+  extractNestedBucketsPairs,
+} from '@server/modules/elasticsearch/helpers';
 
 import {APIPaginationResultWithAggs} from '@api/APIClient';
 import {BookAggs, BooksFilters} from '@api/repo';
@@ -72,15 +75,43 @@ export class EsCardBookSearchService {
       );
     }
 
-    const ids = await bookEsIndex.searchIds(esSearchBody.toJSON());
+    const result = await bookEsIndex.searchIdsWithAggs(esSearchBody.toJSON());
+    if (!result)
+      return null;
+
+    const aggsIds = this.fetchBooksAggs(result.aggs);
     return {
-      items: await cardBookSearch.findBooksByIds(ids),
+      items: await cardBookSearch.findBooksByIds(result.ids),
       meta: {
         limit: filters.limit,
         offset: filters.offset,
       },
-      aggs: null,
+      aggs: aggsIds,
     };
+  }
+
+  /**
+   * Fetches all aggregations records
+   *
+   * @private
+   * @param {*} aggs
+   * @returns
+   * @memberof EsCardBookSearchService
+   */
+  private fetchBooksAggs(aggs: any) {
+    const aggsIds = R.evolve(
+      {
+        publishers: extractNestedBucketsPairs('publishers_ids'),
+        categories: extractNestedBucketsPairs('categories_ids'),
+        authors: extractNestedBucketsPairs('authors_ids'),
+        genre: extractNestedBucketsPairs('genre_ids'),
+        era: extractNestedBucketsPairs('era_ids'),
+      },
+      aggs || {},
+    );
+
+    console.info(aggsIds);
+    return aggsIds;
   }
 
   /**
@@ -98,11 +129,11 @@ export class EsCardBookSearchService {
       return null;
 
     const queries: esb.Aggregation[] = [];
-    if (aggs.types) {
-      queries.push(
-        esb.termsAggregation('types', 'allTypes'),
-      );
-    }
+    if (aggs.types)
+      queries.push(esb.termsAggregation('types', 'allTypes'));
+
+    if (aggs.publishers)
+      queries.push(createNestedIdsAgg('publishers'));
 
     if (aggs.categories)
       queries.push(createNestedIdsAgg('categories'));

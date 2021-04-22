@@ -8,14 +8,14 @@ import {Breadcrumbs} from '@client/containers/Breadcrumbs';
 
 import {Container} from '@client/components/ui';
 import {Layout, LayoutViewData} from '@client/containers/layout';
+import {BooksPaginationResultWithAggs} from '@api/repo';
 import {BooksFiltersContainer} from '@client/containers/kinds/book/filters/BooksFiltersContainer';
-import {BookCardRecord} from '@api/types';
 
 import {BOOKS_PATH} from '../Links';
 
 type BooksRouteViewData = {
   layoutData: LayoutViewData,
-  initialBooks: BookCardRecord[],
+  initialBooks: BooksPaginationResultWithAggs,
 };
 
 export const BooksRoute: AsyncRoute<BooksRouteViewData> = (
@@ -58,7 +58,7 @@ BooksRoute.getInitialProps = async (attrs) => {
   } = await objPropsToPromise(
     {
       layoutData: Layout.getInitialProps(attrs),
-      initialBooks: repo.books.findRecentBooks(
+      initialBooks: repo.books.findAggregatedBooks(
         {
           limit: 36,
         },

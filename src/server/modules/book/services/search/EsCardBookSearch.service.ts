@@ -2,17 +2,36 @@ import {forwardRef, Inject, Injectable} from '@nestjs/common';
 import esb from 'elastic-builder';
 import * as R from 'ramda';
 
+import {objPropsToPromise} from '@shared/helpers';
 import {
   createNestedIdsAgg,
   extractNestedBucketsPairs,
+  fetchDbAggsRecords,
 } from '@server/modules/elasticsearch/helpers';
 
+import {CreateCountedAggType} from '@api/APIRecord';
 import {APIPaginationResultWithAggs} from '@api/APIClient';
-import {BookAggs, BooksFilters} from '@api/repo';
+import {AggsBooksFilters, BookAggs} from '@api/repo';
 
 import {EsBookIndex} from '../indexes/EsBook.index';
 import {BookEntity} from '../../entity/Book.entity';
 import {CardBookSearchService} from './CardBookSearch.service';
+
+import {BookPublisherEntity} from '../../modules/publisher/BookPublisher.entity';
+import {BookCategoryEntity} from '../../modules/category/BookCategory.entity';
+import {BookAuthorEntity} from '../../modules/author/BookAuthor.entity';
+import {BookGenreEntity} from '../../modules/genre/BookGenre.entity';
+import {BookEraEntity} from '../../modules/era/BookEra.entity';
+import {BookPrizeEntity} from '../../modules/prize/BookPrize.entity';
+
+export type BookEntityAggs = Pick<BookAggs, 'types'|'schoolBook'> & CreateCountedAggType<{
+  categories: BookCategoryEntity,
+  authors: BookAuthorEntity,
+  prizes: BookPrizeEntity,
+  genre: BookGenreEntity,
+  era: BookEraEntity,
+  publishers: BookPublisherEntity,
+}>;
 
 @Injectable()
 export class EsCardBookSearchService {
@@ -27,13 +46,17 @@ export class EsCardBookSearchService {
    * Advanced search
    *
    * @async
-   * @param {BooksFilters} filters
-   * @returns {Promise<APIPaginationResultWithAggs<BookEntity, BookAggs>>}
+   * @param {AggsBooksFilters} filters
+   * @returns {Promise<APIPaginationResultWithAggs<BookEntity, BookEntityAggs>>}
    * @memberof EsCardBookSearchService
    */
-  async findFilteredBooks(filters: BooksFilters): Promise<APIPaginationResultWithAggs<BookEntity, BookAggs>> {
+  async findFilteredBooks(filters: AggsBooksFilters): Promise<APIPaginationResultWithAggs<BookEntity, BookEntityAggs>> {
     const {bookEsIndex, cardBookSearch} = this;
     const {authorsIds, excludeIds} = filters;
+    const meta = {
+      limit: filters.limit,
+      offset: filters.offset,
+    };
 
     let esQuery: esb.Query = null;
     if (authorsIds || excludeIds) {
@@ -59,15 +82,20 @@ export class EsCardBookSearchService {
       }
     }
 
-    if (!esQuery)
-      return null;
-
     let esSearchBody = (
       esb
         .requestBodySearch()
         .source(['_id'])
-        .query(esQuery)
     );
+
+    if (meta.limit)
+      esSearchBody = esSearchBody.size(meta.limit);
+
+    if (meta.offset)
+      esSearchBody = esSearchBody.from(meta.offset);
+
+    if (esQuery)
+      esSearchBody = esSearchBody.query(esQuery);
 
     if (filters.aggs) {
       esSearchBody = esSearchBody.aggs(
@@ -79,14 +107,17 @@ export class EsCardBookSearchService {
     if (!result)
       return null;
 
-    const aggsIds = this.fetchBooksAggs(result.aggs);
+    const [aggs, books] = await Promise.all(
+      [
+        await this.fetchBooksAggs(result.aggs),
+        await cardBookSearch.findBooksByIds(result.ids),
+      ],
+    );
+
     return {
-      items: await cardBookSearch.findBooksByIds(result.ids),
-      meta: {
-        limit: filters.limit,
-        offset: filters.offset,
-      },
-      aggs: aggsIds,
+      items: books,
+      meta,
+      aggs,
     };
   }
 
@@ -95,34 +126,64 @@ export class EsCardBookSearchService {
    *
    * @private
    * @param {*} aggs
-   * @returns
+   * @returns {Promise<BookEntityAggs>}
    * @memberof EsCardBookSearchService
    */
-  private fetchBooksAggs(aggs: any) {
-    const aggsIds = R.evolve(
-      {
-        publishers: extractNestedBucketsPairs('publishers_ids'),
-        categories: extractNestedBucketsPairs('categories_ids'),
-        authors: extractNestedBucketsPairs('authors_ids'),
-        genre: extractNestedBucketsPairs('genre_ids'),
-        era: extractNestedBucketsPairs('era_ids'),
-      },
-      aggs || {},
-    );
+  private async fetchBooksAggs(aggs: any): Promise<BookEntityAggs> {
+    if (!aggs)
+      return null;
 
-    console.info(aggsIds);
-    return aggsIds;
+    return objPropsToPromise(
+      {
+        publishers: fetchDbAggsRecords(
+          {
+            items: extractNestedBucketsPairs('publishers_ids', aggs.publishers),
+            fetchFn: (ids) => BookPublisherEntity.findByIds(ids),
+          },
+        ),
+        categories: fetchDbAggsRecords(
+          {
+            items: extractNestedBucketsPairs('categories_ids', aggs.categories),
+            fetchFn: (ids) => BookCategoryEntity.findByIds(ids),
+          },
+        ),
+        authors: fetchDbAggsRecords(
+          {
+            items: extractNestedBucketsPairs('authors_ids', aggs.authors),
+            fetchFn: (ids) => BookAuthorEntity.findByIds(ids),
+          },
+        ),
+        genre: fetchDbAggsRecords(
+          {
+            items: extractNestedBucketsPairs('genre_ids', aggs.authors),
+            fetchFn: (ids) => BookGenreEntity.findByIds(ids),
+          },
+        ),
+        era: fetchDbAggsRecords(
+          {
+            items: extractNestedBucketsPairs('era_ids', aggs.era),
+            fetchFn: (ids) => BookEraEntity.findByIds(ids),
+          },
+        ),
+        prizes: fetchDbAggsRecords(
+          {
+            items: extractNestedBucketsPairs('prizes_ids', aggs.prizes),
+            fetchFn: (ids) => BookPrizeEntity.findByIds(ids),
+          },
+        ),
+      },
+    );
   }
 
   /**
    * Create elasticsearch aggs query
    *
    * @private
-   * @param {BooksFilters} filters
+   * @param {AggsBooksFilters} filters
    * @returns {esb.Aggregation[]}
    * @memberof EsCardBookSearchService
    */
-  private createFilteredBooksAggsEsQueries(filters: BooksFilters): esb.Aggregation[] {
+  private createFilteredBooksAggsEsQueries(filters: AggsBooksFilters): esb.Aggregation[] {
     const {aggs} = filters;
 
     if (!aggs || R.isEmpty(aggs))

@@ -26,18 +26,21 @@ export type AuthorsBooksFilters = BasicAPIPagination & {
 };
 
 export type BookAggs = CreateCountedAggType<{
-  categories?: BookCategoryRecord[],
-  authors?: BookAuthorRecord[],
-  types?: BookType[],
-  prizes?: BookPrizeRecord[],
-  genre?: BookGenreRecord[],
-  era?: BookEraRecord[],
-  publishers?: BookPublisherRecord[],
-  schoolBook?: boolean,
+  categories: BookCategoryRecord,
+  authors: BookAuthorRecord,
+  types: BookType,
+  prizes: BookPrizeRecord,
+  genre: BookGenreRecord,
+  era: BookEraRecord,
+  publishers: BookPublisherRecord,
+  schoolBook: boolean,
 }>;
 
 export type BooksFilters = BasicAPIPagination & {
   authorsIds?: number[],
+};
+
+export type AggsBooksFilters = BooksFilters & {
   aggs?: Record<keyof BookAggs, boolean>,
 };
 
@@ -49,6 +52,7 @@ export type BookFindOneAttrs = {
 };
 
 export interface BooksRepo extends APIRepo<BookFullInfoRecord, BooksFilters, BookFindOneAttrs> {
+  findAggregatedBooks(filters?: AggsBooksFilters): CanBePromise<BooksPaginationResultWithAggs>;
   findAuthorsBooks(filters?: AuthorsBooksFilters): CanBePromise<APIPaginationResult<BookCardRecord>>;
   findRecentBooks(filters?: BasicAPIPagination): CanBePromise<BookCardRecord[]>;
 }

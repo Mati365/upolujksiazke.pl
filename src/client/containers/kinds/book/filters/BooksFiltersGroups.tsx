@@ -1,45 +1,54 @@
 import React from 'react';
 
 import {useI18n} from '@client/i18n';
+import {mapCountedRecordsToCountedListItems} from '@client/modules/api/helpers/mapCountedRecordsToCountedListItems';
+
+import {BookAggs} from '@api/repo';
 import {
   FiltersGroup,
   CountedCheckboxList,
 } from '@client/containers/filters';
 
-export const BooksFiltersGroups = () => {
+type BooksFiltersGroupsProps = {
+  aggs: BookAggs,
+};
+
+export const BooksFiltersGroups = ({aggs}: BooksFiltersGroupsProps) => {
   const t = useI18n('book.filters');
 
   return (
     <>
-      <FiltersGroup header={t('categories.header')}>
-        ABC
-      </FiltersGroup>
+      {aggs.categories && (
+        <FiltersGroup header={t('categories.header')}>
+          <CountedCheckboxList
+            items={
+              mapCountedRecordsToCountedListItems(aggs.categories)
+            }
+          />
+        </FiltersGroup>
+      )}
+
+      {aggs.authors && (
+        <FiltersGroup header={t('authors.header')}>
+          <CountedCheckboxList
+            items={
+              mapCountedRecordsToCountedListItems(aggs.authors)
+            }
+          />
+        </FiltersGroup>
+      )}
+
+      {aggs.publishers && (
+        <FiltersGroup header={t('publisher.header')}>
+          <CountedCheckboxList
+            items={
+              mapCountedRecordsToCountedListItems(aggs.publishers)
+            }
+          />
+        </FiltersGroup>
+      )}
 
       <FiltersGroup header={t('price.header')}>
-        ABC
-      </FiltersGroup>
-
-      <FiltersGroup header={t('authors.header')}>
-        <CountedCheckboxList
-          value={{
-            1: true,
-          }}
-          items={[
-            {
-              id: 1,
-              name: 'Dupa',
-              count: 199,
-            },
-            {
-              id: 2,
-              name: 'Dupa 2',
-              count: 55,
-            },
-          ]}
-        />
-      </FiltersGroup>
-
-      <FiltersGroup header={t('publisher.header')}>
         ABC
       </FiltersGroup>
 

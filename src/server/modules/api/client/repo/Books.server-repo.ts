@@ -4,6 +4,7 @@ import {ID} from '@shared/types';
 import {PredefinedSeconds} from '@shared/helpers';
 import {BasicAPIPagination} from '@api/APIClient';
 import {
+  AggsBooksFilters,
   AuthorsBooksFilters,
   BookFindOneAttrs,
   BooksFilters,
@@ -12,7 +13,11 @@ import {
 
 import {RedisMemoize} from '../../helpers';
 import {MeasureCallDuration} from '../../helpers/MeasureCallDuration';
-import {BookCardSerializer, BookFullInfoSerializer} from '../../serializers';
+import {
+  BookAggsSerializer,
+  BookCardSerializer,
+  BookFullInfoSerializer,
+} from '../../serializers';
 
 import {ServerAPIClientChild} from '../ServerAPIClientChild';
 
@@ -49,6 +54,49 @@ export class BooksServerRepo extends ServerAPIClientChild implements BooksRepo {
 
     return {
       meta,
+      items: plainToClass(
+        BookCardSerializer,
+        items,
+        {
+          excludeExtraneousValues: true,
+        },
+      ),
+    };
+  }
+
+  /**
+   * Find all books that matches filters
+   *
+   * @param {AggsBooksFilters} filters
+   * @memberof BooksServerRepo
+   */
+  async findAggregatedBooks(filters: AggsBooksFilters) {
+    const {esCardBookSearchService} = this.services;
+    const {meta, items, aggs} = await esCardBookSearchService.findFilteredBooks(
+      {
+        ...filters,
+        aggs: filters.aggs ?? {
+          authors: true,
+          categories: true,
+          era: true,
+          genre: true,
+          prizes: true,
+          publishers: true,
+          schoolBook: true,
+          types: true,
+        },
+      },
+    );
+
+    return {
+      meta,
+      aggs: plainToClass(
+        BookAggsSerializer,
+        aggs,
+        {
+          excludeExtraneousValues: true,
+        },
+      ),
       items: plainToClass(
         BookCardSerializer,
         items,

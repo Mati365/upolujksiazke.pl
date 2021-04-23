@@ -124,30 +124,37 @@ export const PL_LANG_PACK = {
     filters: {
       categories: {
         header: 'Kategorie',
+        total: '%{} kategorii',
       },
       price: {
         header: 'Cena',
       },
       authors: {
         header: 'Autorzy',
+        total: '%{} autorów',
       },
       types: {
         header: 'Typy',
+        total: '%{} typów',
       },
       era: {
         header: 'Epoka',
+        total: '%{} epok',
       },
       genre: {
         header: 'Gatunek',
+        total: '%{} gatunków',
       },
       school_book: {
         header: 'Szkoła',
       },
       prizes: {
         header: 'Nagrody',
+        total: '%{} nagród',
       },
       publisher: {
         header: 'Wydawca',
+        total: '%{} wydawców',
       },
     },
     price_box: {

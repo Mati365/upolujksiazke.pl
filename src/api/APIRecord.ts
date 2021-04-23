@@ -17,6 +17,16 @@ export type APICountedRecord<T> = {
   count: number,
 };
 
+export type APIBucketTotalStats = {
+  bucket: number, // all items
+  root: number,
+};
+
+export type APICountedBucket<T> = {
+  items: APICountedRecord<T>[],
+  total: APIBucketTotalStats,
+};
+
 export type CreateCountedAggType<Type> = Partial<{
-  +readonly [Key in keyof Type]: APICountedRecord<Type[Key]>[];
+  +readonly [Key in keyof Type]: APICountedBucket<Type[Key]>;
 }>;

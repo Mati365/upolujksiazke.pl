@@ -21,4 +21,4 @@ export * from './Website.serializer';
 export * from './Tag.serializer';
 export * from './VoteStats.serializer';
 export * from './RemoteArticle.serializer';
-export * from './CountedRecord.serializer';
+export * from './AggsBucket.serializer';

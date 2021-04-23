@@ -1,8 +1,16 @@
-import React from 'react';
+import React, {ReactNode} from 'react';
 import * as R from 'ramda';
 
 import {CountedListItem} from '@shared/types';
 import {CheckboxList, CheckboxListProps} from '@client/components/ui/controls/CheckboxList';
+
+export const SmallFiltersCounter = ({count}: {count: ReactNode}) => (
+  <small className='c-filters-small-counter'>
+    (
+    {count}
+    )
+  </small>
+);
 
 export const CountedCheckboxList = (props: CheckboxListProps<CountedListItem>) => (
   <CheckboxList
@@ -11,9 +19,7 @@ export const CountedCheckboxList = (props: CheckboxListProps<CountedListItem>) =
       <>
         {name}
         {!R.isNil(count) && (
-          <small className='c-filters-small-counter'>
-            {`(${count})`}
-          </small>
+          <SmallFiltersCounter count={count} />
         )}
       </>
     )}

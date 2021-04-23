@@ -1,9 +1,9 @@
 import {Expose} from 'class-transformer';
 
 import {BookAggs} from '@api/repo';
-import {APICountedRecord} from '@api/APIRecord';
+import {APICountedBucket} from '@api/APIRecord';
 import {BookType} from '@shared/enums';
-import {CountedRecordType} from './CountedRecord.serializer';
+import {BucketType} from './AggsBucket.serializer';
 
 import {BookCategorySerializer} from './BookCategory.serializer';
 import {BookAuthorSerializer} from './BookAuthor.serializer';
@@ -14,34 +14,34 @@ import {BookPublisherSerializer} from './BookPublisher.serializer';
 
 export class BookAggsSerializer implements Required<BookAggs> {
   @Expose()
-  @CountedRecordType(() => BookCategorySerializer)
-  categories: APICountedRecord<BookCategorySerializer>[];
+  @BucketType(() => BookCategorySerializer)
+  categories: APICountedBucket<BookCategorySerializer>;
 
   @Expose()
-  @CountedRecordType(() => BookAuthorSerializer)
-  authors: APICountedRecord<BookAuthorSerializer>[];
+  @BucketType(() => BookAuthorSerializer)
+  authors: APICountedBucket<BookAuthorSerializer>;
 
   @Expose()
-  @CountedRecordType(() => BookType)
-  types: APICountedRecord<BookType>[];
+  @BucketType(() => BookType)
+  types: APICountedBucket<BookType>;
 
   @Expose()
-  @CountedRecordType(() => BookPrizeSerializer)
-  prizes: APICountedRecord<BookPrizeSerializer>[];
+  @BucketType(() => BookPrizeSerializer)
+  prizes: APICountedBucket<BookPrizeSerializer>;
 
   @Expose()
-  @CountedRecordType(() => BookGenreSerializer)
-  genre: APICountedRecord<BookGenreSerializer>[];
+  @BucketType(() => BookGenreSerializer)
+  genre: APICountedBucket<BookGenreSerializer>;
 
   @Expose()
-  @CountedRecordType(() => BookEraSerializer)
-  era: APICountedRecord<BookEraSerializer>[];
+  @BucketType(() => BookEraSerializer)
+  era: APICountedBucket<BookEraSerializer>;
 
   @Expose()
-  @CountedRecordType(() => BookPublisherSerializer)
-  publishers: APICountedRecord<BookPublisherSerializer>[];
+  @BucketType(() => BookPublisherSerializer)
+  publishers: APICountedBucket<BookPublisherSerializer>;
 
   @Expose()
-  @CountedRecordType(() => Boolean)
-  schoolBook: APICountedRecord<boolean>[];
+  @BucketType(() => Boolean)
+  schoolBook: APICountedBucket<boolean>;
 }

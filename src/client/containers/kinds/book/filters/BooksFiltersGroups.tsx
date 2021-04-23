@@ -15,34 +15,52 @@ type BooksFiltersGroupsProps = {
 
 export const BooksFiltersGroups = ({aggs}: BooksFiltersGroupsProps) => {
   const t = useI18n('book.filters');
+  const {
+    categories,
+    authors,
+    types,
+    publishers,
+    era,
+    genre,
+    prizes,
+  } = aggs;
 
   return (
     <>
-      {aggs.categories && (
-        <FiltersGroup header={t('categories.header')}>
+      {categories && (
+        <FiltersGroup
+          header={t('categories.header')}
+          total={t('categories.total', [categories.total.bucket])}
+        >
           <CountedCheckboxList
             items={
-              mapCountedRecordsToCountedListItems(aggs.categories)
+              mapCountedRecordsToCountedListItems(categories.items)
             }
           />
         </FiltersGroup>
       )}
 
-      {aggs.authors && (
-        <FiltersGroup header={t('authors.header')}>
+      {authors && (
+        <FiltersGroup
+          header={t('authors.header')}
+          total={t('authors.total', [authors.total.bucket])}
+        >
           <CountedCheckboxList
             items={
-              mapCountedRecordsToCountedListItems(aggs.authors)
+              mapCountedRecordsToCountedListItems(authors.items)
             }
           />
         </FiltersGroup>
       )}
 
-      {aggs.types && (
-        <FiltersGroup header={t('types.header')}>
+      {types && (
+        <FiltersGroup
+          header={t('types.header')}
+          total={t('types.total', [types.total.bucket])}
+        >
           <CountedCheckboxList
             items={
-              aggs.types.map(
+              types.items.map(
                 ({record: type, count}) => ({
                   id: type,
                   name: t(`shared.book.types.${type}`),
@@ -54,41 +72,53 @@ export const BooksFiltersGroups = ({aggs}: BooksFiltersGroupsProps) => {
         </FiltersGroup>
       )}
 
-      {aggs.publishers && (
-        <FiltersGroup header={t('publisher.header')}>
+      {publishers && (
+        <FiltersGroup
+          header={t('publisher.header')}
+          total={t('publisher.total', [publishers.total.bucket])}
+        >
           <CountedCheckboxList
             items={
-              mapCountedRecordsToCountedListItems(aggs.publishers)
+              mapCountedRecordsToCountedListItems(publishers.items)
             }
           />
         </FiltersGroup>
       )}
 
-      {aggs.era && (
-        <FiltersGroup header={t('era.header')}>
+      {era && (
+        <FiltersGroup
+          header={t('era.header')}
+          total={t('era.total', [era.total.bucket])}
+        >
           <CountedCheckboxList
             items={
-              mapCountedRecordsToCountedListItems(aggs.era)
+              mapCountedRecordsToCountedListItems(era.items)
             }
           />
         </FiltersGroup>
       )}
 
-      {aggs.genre && (
-        <FiltersGroup header={t('genre.header')}>
+      {genre && (
+        <FiltersGroup
+          header={t('genre.header')}
+          total={t('genre.total', [genre.total.bucket])}
+        >
           <CountedCheckboxList
             items={
-              mapCountedRecordsToCountedListItems(aggs.genre)
+              mapCountedRecordsToCountedListItems(genre.items)
             }
           />
         </FiltersGroup>
       )}
 
-      {aggs.prizes && (
-        <FiltersGroup header={t('prize.header')}>
+      {prizes && (
+        <FiltersGroup
+          header={t('prize.header')}
+          total={t('prizes.total', [prizes.total.bucket])}
+        >
           <CountedCheckboxList
             items={
-              mapCountedRecordsToCountedListItems(aggs.prizes)
+              mapCountedRecordsToCountedListItems(prizes.items)
             }
           />
         </FiltersGroup>

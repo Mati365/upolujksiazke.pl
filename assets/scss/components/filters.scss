@@ -33,9 +33,15 @@
     }
 
     &__header {
+      @include flex-list;
+
       margin-bottom: .85rem;
       font-size: $text-small;
       color: color(muted-text);
+
+      .c-filters-small-counter {
+        font-weight: 600;
+      }
     }
 
     &__content {

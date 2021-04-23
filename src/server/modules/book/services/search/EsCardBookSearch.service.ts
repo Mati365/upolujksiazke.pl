@@ -5,14 +5,15 @@ import * as R from 'ramda';
 import {objPropsToPromise} from '@shared/helpers';
 import {
   createNestedIdsAgg,
-  extractNestedBucketsPairs,
+  extractBucket,
   fetchDbAggsRecords,
-  mapCountedBucketsPairs,
+  mapBucketItems,
 } from '@server/modules/elasticsearch/helpers';
 
 import {CreateCountedAggType} from '@api/APIRecord';
 import {APIPaginationResultWithAggs} from '@api/APIClient';
 import {AggsBooksFilters, BookAggs} from '@api/repo';
+import {BookType} from '@shared/enums';
 
 import {EsBookIndex} from '../indexes/EsBook.index';
 import {BookEntity} from '../../entity/Book.entity';
@@ -136,43 +137,46 @@ export class EsCardBookSearchService {
 
     return objPropsToPromise(
       {
-        types: mapCountedBucketsPairs(aggs.types.buckets).map(({id, count}) => ({
-          record: id,
-          count,
-        })),
+        types: mapBucketItems(
+          ({count, record}) => ({
+            record: +record.id as BookType,
+            count,
+          }),
+          extractBucket(aggs.types),
+        ),
         publishers: fetchDbAggsRecords(
           {
-            items: extractNestedBucketsPairs('publishers_ids', aggs.publishers),
+            bucket: extractBucket(aggs.publishers, 'publishers_ids'),
             fetchFn: (ids) => BookPublisherEntity.findByIds(ids),
           },
         ),
         categories: fetchDbAggsRecords(
           {
-            items: extractNestedBucketsPairs('categories_ids', aggs.categories),
+            bucket: extractBucket(aggs.categories, 'categories_ids'),
             fetchFn: (ids) => BookCategoryEntity.findByIds(ids),
           },
         ),
         authors: fetchDbAggsRecords(
           {
-            items: extractNestedBucketsPairs('authors_ids', aggs.authors),
+            bucket: extractBucket(aggs.authors, 'authors_ids'),
             fetchFn: (ids) => BookAuthorEntity.findByIds(ids),
           },
         ),
         genre: fetchDbAggsRecords(
           {
-            items: extractNestedBucketsPairs('genre_ids', aggs.genre),
+            bucket: extractBucket(aggs.genre, 'genre_ids'),
             fetchFn: (ids) => BookGenreEntity.findByIds(ids),
           },
         ),
         era: fetchDbAggsRecords(
           {
-            items: extractNestedBucketsPairs('era_ids', aggs.era),
+            bucket: extractBucket(aggs.era, 'era_ids'),
             fetchFn: (ids) => BookEraEntity.findByIds(ids),
           },
         ),
         prizes: fetchDbAggsRecords(
           {
-            items: extractNestedBucketsPairs('prizes_ids', aggs.prizes),
+            bucket: extractBucket(aggs.prizes, 'prizes_ids'),
             fetchFn: (ids) => BookPrizeEntity.findByIds(ids),
           },
         ),

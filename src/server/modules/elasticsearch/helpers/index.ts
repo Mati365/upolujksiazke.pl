@@ -1,4 +1,4 @@
 export * from './createNestedIdsAgg';
-export * from './extractNestedBuckets';
+export * from './extractNestedBucket';
 export * from './createMapperListItemSelector';
 export * from './fetchDbAggsRecords';

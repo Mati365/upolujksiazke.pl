@@ -7,7 +7,7 @@ import chalk from 'chalk';
 import {BookEntity} from '@server/modules/book/entity/Book.entity';
 import {CreateBookReviewDto} from '@server/modules/book/modules/review/dto/CreateBookReview.dto';
 import {InlineMetadataObject, MetadataDbLoader} from '@db-loader/MetadataDbLoader.interface';
-import {FuzzyBookSearchService} from '@server/modules/book/services/search';
+import {EsFuzzyBookSearchService} from '@server/modules/book/services/search';
 import {BookReviewService} from '@server/modules/book/modules/review/BookReview.service';
 import {ScrapperService} from '../../modules/scrapper/service/Scrapper.service';
 import {BookDbLoaderService} from './Book.loader';
@@ -22,7 +22,7 @@ export class BookReviewDbLoaderService implements MetadataDbLoader {
   constructor(
     private readonly scrapperService: ScrapperService,
     private readonly bookDbLoader: BookDbLoaderService,
-    private readonly fuzzyBookSearchService: FuzzyBookSearchService,
+    private readonly esFuzzyBookSearchService: EsFuzzyBookSearchService,
     private readonly bookReviewService: BookReviewService,
     private readonly eventEmitter: EventEmitter2,
   ) {}
@@ -58,7 +58,7 @@ export class BookReviewDbLoaderService implements MetadataDbLoader {
    */
   async parseAndAssignBook(metadata: InlineMetadataObject) {
     const {
-      fuzzyBookSearchService,
+      esFuzzyBookSearchService,
       scrapperService,
       bookDbLoader,
       logger,
@@ -74,7 +74,7 @@ export class BookReviewDbLoaderService implements MetadataDbLoader {
     );
 
     // lookup in cache
-    let book: BookEntity = await fuzzyBookSearchService.findAlreadyCachedReviewBook(review);
+    let book: BookEntity = await esFuzzyBookSearchService.findAlreadyCachedReviewBook(review);
     if (!book) {
       book = await bookDbLoader.searchAndExtractToDb(
         review.book,

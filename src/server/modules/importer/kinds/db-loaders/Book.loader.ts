@@ -20,7 +20,7 @@ import {BookPublisherService} from '@server/modules/book/modules/publisher/BookP
 import {
   BookEntity,
   CreateBookDto,
-  FuzzyBookSearchService,
+  EsFuzzyBookSearchService,
 } from '@server/modules/book';
 
 import {CreateBookSeriesDto} from '@server/modules/book/modules/series/dto/CreateBookSeries.dto';
@@ -74,8 +74,8 @@ export class BookDbLoaderService implements MetadataDbLoader {
   constructor(
     @Inject(forwardRef(() => BookService))
     private readonly bookService: BookService,
-    @Inject(forwardRef(() => FuzzyBookSearchService))
-    private readonly fuzzyBookSearchService: FuzzyBookSearchService,
+    @Inject(forwardRef(() => EsFuzzyBookSearchService))
+    private readonly esFuzzyBookSearchService: EsFuzzyBookSearchService,
     private readonly scrapperMatcherService: ScrapperMatcherService,
     private readonly scrapperService: ScrapperService,
     private readonly publisherService: BookPublisherService,
@@ -129,7 +129,7 @@ export class BookDbLoaderService implements MetadataDbLoader {
     attrs: BookExtractorAttrs = {},
   ) {
     const {
-      fuzzyBookSearchService,
+      esFuzzyBookSearchService,
       logger,
       scrapperMatcherService,
     } = this;
@@ -138,7 +138,7 @@ export class BookDbLoaderService implements MetadataDbLoader {
       return null;
 
     if (attrs.checkCacheBeforeSearch) {
-      const cachedBook: BookEntity = await fuzzyBookSearchService.findAlreadyCachedSimilarToBooks([book]);
+      const cachedBook: BookEntity = await esFuzzyBookSearchService.findAlreadyCachedSimilarToBooks([book]);
       if (cachedBook)
         return cachedBook;
 
@@ -328,7 +328,7 @@ export class BookDbLoaderService implements MetadataDbLoader {
       R.values(volumes),
       (volumeBooks) => this.mergeAndExtractBookToDb(volumeBooks, attrs),
       {
-        concurrency: 2,
+        concurrency: 1,
       },
     );
   }
@@ -349,7 +349,7 @@ export class BookDbLoaderService implements MetadataDbLoader {
     attrs: BookExtractorAttrs = {},
   ) {
     const {
-      fuzzyBookSearchService,
+      esFuzzyBookSearchService,
       bookService,
       eventEmitter,
     } = this;
@@ -361,7 +361,7 @@ export class BookDbLoaderService implements MetadataDbLoader {
     let cachedBook: BookEntity = null;
 
     if (!attrs.skipCacheLookup) {
-      cachedBook = await fuzzyBookSearchService.findAlreadyCachedSimilarToBooks(books, allReleases);
+      cachedBook = await esFuzzyBookSearchService.findAlreadyCachedSimilarToBooks(books, allReleases);
       if (attrs.skipIfAlreadyInDb && cachedBook)
         return cachedBook;
     }

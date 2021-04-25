@@ -134,7 +134,7 @@ export abstract class EntityIndex<E extends {id: number}, I = E> implements OnMo
    * @returns
    * @memberof EntityIndex
    */
-  async searchHits(body: any) {
+  async searchHits(body: any): Promise<any[]> {
     return (await this.search(body))?.hits?.hits || [];
   }
 

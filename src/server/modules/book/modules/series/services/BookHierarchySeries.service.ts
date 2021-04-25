@@ -4,6 +4,7 @@ import * as R from 'ramda';
 
 import {BookEntity} from '@server/modules/book/entity/Book.entity';
 import {BookVolumeEntity} from '../../volume/BookVolume.entity';
+import {EsFuzzyBookSearchService} from '../../../services/search/EsFuzzyBookSearch.service';
 import {CreateBookSeriesDto} from '../dto/CreateBookSeries.dto';
 import {BookSeriesService} from './BookSeries.service';
 
@@ -20,6 +21,7 @@ export class BookHierarchySeriesService {
   constructor(
     private readonly entityManager: EntityManager,
     private readonly bookSeriesService: BookSeriesService,
+    private readonly esFuzzyBookSearchService: EsFuzzyBookSearchService,
   ) {}
 
   /**
@@ -75,40 +77,17 @@ export class BookHierarchySeriesService {
       logger,
       bookSeriesService,
       entityManager,
+      esFuzzyBookSearchService,
     } = this;
 
-    const books: {
-      id: number,
-      title: string,
-    }[] = await entityManager.query(
-      /* sql */ `
-        /* Select primary release and all book authors */
-        with origin_book as (
-          select br."parameterizedSlug", array_agg(ba."bookAuthorId") as "authors"
-          from book b
-          inner join book_authors_book_author ba on ba."bookId" = b.id
-          inner join book_release br on br.id = b."primaryReleaseId"
-          where b.id = $1
-          group by br."parameterizedSlug"
-          limit 1
-        )
-          /** Select book that has at least one similar author and similar primary release slug */
-          select b."id", b."defaultTitle" as "title"
-          FROM book b
-          inner join book_release br on br."id" = b."primaryReleaseId"
-          inner join book_authors_book_author baba on baba."bookId" = b."id"
-          cross join origin_book origin
-          where
-            baba."bookAuthorId" = any(origin."authors")
-            and levenshtein(br."parameterizedSlug", origin."parameterizedSlug") < 3
-          group by b."id", b."defaultTitle";
-      `,
-      [
+    const similarBooks = await esFuzzyBookSearchService.findSimilarAuthorSeriesBook(
+      {
         bookId,
-      ],
+        source: ['defaultTitle'],
+      },
     );
 
-    if (books?.length <= 1) {
+    if (!similarBooks.length) {
       logger.warn('No series books found!');
       return;
     }
@@ -117,7 +96,7 @@ export class BookHierarchySeriesService {
       [
         new CreateBookSeriesDto(
           {
-            name: books[0].title,
+            name: similarBooks[0].defaultTitle,
             hierarchic: true,
           },
         ),
@@ -128,7 +107,12 @@ export class BookHierarchySeriesService {
       entityManager
         .createQueryBuilder()
         .update(BookEntity)
-        .whereInIds(R.pluck('id', books))
+        .whereInIds(
+          [
+            ...R.pluck('id', similarBooks),
+            bookId,
+          ],
+        )
         .set(
           {
             hierarchicSeriesId: series.id,

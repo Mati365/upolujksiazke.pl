@@ -73,7 +73,7 @@ export const BookRoute: AsyncRoute<BookRouteViewData> = (
               ),
             },
             ...(
-              volume && hierarchy?.length
+              volume?.name !== '1' && hierarchy?.length
                 ? [
                   {
                     id: 'book',

@@ -1,5 +1,6 @@
 import React from 'react';
 import c from 'classnames';
+import * as R from 'ramda';
 
 import {useI18n} from '@client/i18n';
 import {formatBookTitle} from '@client/helpers/logic';
@@ -27,6 +28,14 @@ export const BookSeriesTree = (
   if (!items?.length)
     return null;
 
+  // some books like harry potter have not
+  // volume prefix, just different names
+  // do not display volumes if all of them is volume 1
+  const noVolumeNames = R.uniq(R.map(
+    ({volume}) => volume?.id,
+    items,
+  )).length <= 1;
+
   return (
     <Tree
       size={size}
@@ -36,7 +45,7 @@ export const BookSeriesTree = (
       )}
     >
       {items.map(
-        (item) => (
+        (item, index) => (
           <li
             key={item.id}
             className={c(
@@ -47,14 +56,14 @@ export const BookSeriesTree = (
               item={item}
               className='is-undecorated-link has-hover-underline has-double-link-chevron'
             >
-              {formatBookTitle(
+              {`${noVolumeNames ? `#${index + 1} ` : ''}${formatBookTitle(
                 {
                   t,
                   book: item,
-                  withDefaultVolumeName: true,
+                  withDefaultVolumeName: !noVolumeNames,
                   volumeFirst: true,
                 },
-              )}
+              )}`}
             </BookLink>
           </li>
         ),

@@ -25,7 +25,7 @@ import {
   EsCardBookSearchService,
   BookService,
   BookTagsService,
-  FuzzyBookSearchService,
+  EsFuzzyBookSearchService,
 } from './services';
 
 @Module(
@@ -54,13 +54,13 @@ import {
       EsBookIndex,
       BookService,
       BookTagsService,
-      FuzzyBookSearchService,
+      EsFuzzyBookSearchService,
       CardBookSearchService,
       EsCardBookSearchService,
     ],
     exports: [
       EsBookIndex,
-      FuzzyBookSearchService,
+      EsFuzzyBookSearchService,
       BookService,
       BookTagsService,
       BookAvailabilityModule,

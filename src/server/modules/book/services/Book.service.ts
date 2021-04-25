@@ -374,6 +374,7 @@ export class BookService {
     if (transactionResult?.mergedBook) {
       const {mergedBook} = transactionResult;
 
+      // not work
       await hierarchyService.findAndCreateBookHierarchy(mergedBook.id);
       await statsService.refreshBookStats(mergedBook.id);
     }

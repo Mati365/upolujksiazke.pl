@@ -19,10 +19,10 @@ import {CreateBookReleaseDto} from '../../modules/release/dto/CreateBookRelease.
  * primarly based only on names (instead of ids)
  *
  * @export
- * @class FuzzyBookSearchService
+ * @class EsFuzzyBookSearchService
  */
 @Injectable()
-export class FuzzyBookSearchService {
+export class EsFuzzyBookSearchService {
   constructor(
     @Inject(forwardRef(() => EsBookIndex))
     private readonly bookEsIndex: EsBookIndex,
@@ -35,7 +35,7 @@ export class FuzzyBookSearchService {
    * @param {CreateBookReleaseDto[]} [allReleases]
    * @param {number} similarity
    * @returns
-   * @memberof FuzzyBookSearchService
+   * @memberof EsFuzzyBookSearchService
    */
   async findAlreadyCachedSimilarToBooks(
     books: CreateBookDto[],
@@ -57,7 +57,7 @@ export class FuzzyBookSearchService {
     ]
       .map((array: any[]) => array.filter(Boolean));
 
-    const esBookId = await this.fuzzyEsFindMatchingBookId(
+    const esBookId = await this.findBookByNames(
       {
         isbns,
         names: R.pluck('defaultTitle', books),
@@ -238,14 +238,82 @@ export class FuzzyBookSearchService {
   }
 
   /**
+   * Search all author books that maybe create series
+   *
+   * @param {Object} attrs
+   * @returns
+   * @memberof EsFuzzyBookSearchService
+   */
+  async findSimilarAuthorSeriesBook(
+    {
+      bookId,
+      source = [],
+    }: {
+      bookId: number,
+      source?: string[],
+    },
+  ) {
+    const {bookEsIndex} = this;
+    const book = await BookEntity.findOne(
+      bookId,
+      {
+        select: ['id', 'originalTitle', 'defaultTitle'],
+        relations: ['authors'],
+      },
+    );
+
+    const query = (
+      esb
+        .boolQuery()
+        .must([
+          esb.boolQuery().minimumShouldMatch(1).should([
+            esb.multiMatchQuery(['originalTitle', 'defaultTitle'], book.defaultTitle),
+            ...book.originalTitle
+              ? [esb.multiMatchQuery(['originalTitle', 'defaultTitle'], book.originalTitle)]
+              : [],
+          ]),
+          esb.nestedQuery().path('authors').query(
+            esb
+              .boolQuery()
+              .minimumShouldMatch(1)
+              .should(book.authors.map(
+                (author) => esb.termQuery('authors.id', author.id),
+              )),
+          ),
+        ])
+        .mustNot(
+          esb.termQuery('id', book.id),
+        )
+    );
+
+    const results = await bookEsIndex.searchHits(
+      esb
+        .requestBodySearch()
+        .query(query)
+        .source(['id', ...source])
+        .toJSON(),
+    );
+
+    return R.map(
+      R.pick(
+        [
+          'id',
+          ...source,
+        ],
+      ),
+      R.pluck('_source', results || []),
+    ) as any[];
+  }
+
+  /**
    * Lookups using ES book by names
    *
    * @private
    * @param {Object} attrs
    * @returns {Promise<BookEntity>}
-   * @memberof FuzzyBookSearchService
+   * @memberof EsFuzzyBookSearchService
    */
-  private async fuzzyEsFindMatchingBookId(
+  async findBookByNames(
     {
       names,
       volumes,
@@ -298,12 +366,12 @@ export class FuzzyBookSearchService {
       esb
         .requestBodySearch()
         .source(['id'])
-        .query((
+        .query(
           esb
             .boolQuery()
             .should(shouldQueries)
-            .minimumShouldMatch(1)
-        ))
+            .minimumShouldMatch(1),
+        )
         .sort(esb.sort('_score', 'desc'))
         .size(1)
         .toJSON(),

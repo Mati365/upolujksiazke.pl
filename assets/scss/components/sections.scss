@@ -20,14 +20,14 @@
 
     &.is-spaced {
       @for $i from 1 through 4 {
-        &-#{$i} {
+        &-#{$i}:not(:last-child) {
           margin: #{$i}rem 0;
         }
       }
 
       @include mobile {
         @for $i from 1 through 4 {
-          &-#{$i} {
+          &-#{$i}:not(:last-child) {
             margin: #{$i / 1.5}rem 0;
           }
         }

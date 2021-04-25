@@ -10,7 +10,7 @@ import fs from 'fs';
 
 import {NestFactory, Reflector} from '@nestjs/core';
 import {ExpressAdapter, NestExpressApplication} from '@nestjs/platform-express';
-import {ClassSerializerInterceptor} from '@nestjs/common';
+import {ClassSerializerInterceptor, ValidationPipe} from '@nestjs/common';
 
 import {AppEnv, SERVER_ENV} from './constants/env';
 
@@ -55,6 +55,17 @@ async function forkApp(
       express.static(path.resolve(__dirname, 'public/'), {fallthrough: false}),
     )
     .use(cookieParser())
+    .useGlobalPipes(
+      new ValidationPipe(
+        {
+          whitelist: true,
+          transform: true,
+          forbidUnknownValues: true,
+          forbidNonWhitelisted: true,
+          skipMissingProperties: true,
+        },
+      ),
+    )
     .useGlobalInterceptors(
       new ClassSerializerInterceptor(app.get(Reflector)),
       new LoggerInterceptor,

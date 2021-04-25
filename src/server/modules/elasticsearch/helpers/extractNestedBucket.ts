@@ -44,7 +44,7 @@ export function extractBucket(bucket: any, path?: string): CountedBucketValue {
     items,
     total: {
       bucket: bucket.bucket_size?.value ?? items.length,
-      root: bucket.root_docs?.doc_count,
+      parent: bucket.parent_docs?.doc_count,
     },
   };
 }
@@ -62,8 +62,10 @@ export function mapBucketItems<R>(
   fn: (record: CountedEsKeyRecord) => APICountedRecord<R>,
   countedBucket: CountedBucketValue,
 ): APICountedBucket<R> {
-  const {total, items} = countedBucket;
+  if (!countedBucket)
+    return null;
 
+  const {total, items} = countedBucket;
   return {
     items: items.map(fn),
     total,

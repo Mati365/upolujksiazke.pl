@@ -57,7 +57,7 @@ export class EsCardBookSearchService {
     const {authorsIds, excludeIds} = filters;
     const meta = {
       limit: filters.limit,
-      offset: filters.offset,
+      offset: filters.offset || 0,
     };
 
     let esQuery: esb.Query = null;
@@ -90,7 +90,7 @@ export class EsCardBookSearchService {
         .source(['_id'])
     );
 
-    if (meta.limit)
+    if (!R.isNil(meta.limit))
       esSearchBody = esSearchBody.size(meta.limit);
 
     if (meta.offset)
@@ -112,7 +112,9 @@ export class EsCardBookSearchService {
     const [aggs, books] = await Promise.all(
       [
         this.fetchBooksAggs(result.aggs),
-        cardBookSearch.findBooksByIds(result.ids),
+        filters.skipBooksLoading
+          ? null
+          : cardBookSearch.findBooksByIds(result.ids),
       ],
     );
 

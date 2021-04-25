@@ -19,7 +19,7 @@ export type APICountedRecord<T> = {
 
 export type APIBucketTotalStats = {
   bucket: number, // all items
-  root: number,
+  parent: number,
 };
 
 export type APICountedBucket<T> = {

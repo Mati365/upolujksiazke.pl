@@ -34,6 +34,7 @@ export const BooksFiltersGroups = ({aggs}: BooksFiltersGroupsProps) => {
           total={t('categories.total', [categories.total.bucket])}
         >
           <CheckboxExpandableList
+            listComponent={CountedCheckboxList}
             totalItems={categories.total.bucket}
             firstChunk={
               mapCountedRecordsToCountedListItems(categories.items)
@@ -48,6 +49,7 @@ export const BooksFiltersGroups = ({aggs}: BooksFiltersGroupsProps) => {
           total={t('authors.total', [authors.total.bucket])}
         >
           <CheckboxExpandableList
+            listComponent={CountedCheckboxList}
             totalItems={authors.total.bucket}
             firstChunk={
               mapCountedRecordsToCountedListItems(authors.items)
@@ -81,6 +83,7 @@ export const BooksFiltersGroups = ({aggs}: BooksFiltersGroupsProps) => {
           total={t('publisher.total', [publishers.total.bucket])}
         >
           <CheckboxExpandableList
+            listComponent={CountedCheckboxList}
             totalItems={authors.total.bucket}
             firstChunk={
               mapCountedRecordsToCountedListItems(publishers.items)
@@ -95,6 +98,7 @@ export const BooksFiltersGroups = ({aggs}: BooksFiltersGroupsProps) => {
           total={t('era.total', [era.total.bucket])}
         >
           <CheckboxExpandableList
+            listComponent={CountedCheckboxList}
             totalItems={era.total.bucket}
             firstChunk={
               mapCountedRecordsToCountedListItems(era.items)
@@ -109,6 +113,7 @@ export const BooksFiltersGroups = ({aggs}: BooksFiltersGroupsProps) => {
           total={t('genre.total', [genre.total.bucket])}
         >
           <CheckboxExpandableList
+            listComponent={CountedCheckboxList}
             totalItems={genre.total.bucket}
             firstChunk={
               mapCountedRecordsToCountedListItems(genre.items)
@@ -123,6 +128,7 @@ export const BooksFiltersGroups = ({aggs}: BooksFiltersGroupsProps) => {
           total={t('prizes.total', [prizes.total.bucket])}
         >
           <CheckboxExpandableList
+            listComponent={CountedCheckboxList}
             totalItems={prizes.total.bucket}
             firstChunk={
               mapCountedRecordsToCountedListItems(prizes.items)

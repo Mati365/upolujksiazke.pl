@@ -9,28 +9,46 @@ import {
   BookFindOneAttrs,
   BooksFilters,
   BooksRepo,
+  SingleAggBookFilters,
 } from '@api/repo';
 
 import {RedisMemoize} from '../../helpers';
 import {MeasureCallDuration} from '../../helpers/MeasureCallDuration';
 import {
   BookAggsSerializer,
+  BookAuthorSerializer,
   BookCardSerializer,
+  BookCategorySerializer,
+  BookEraSerializer,
   BookFullInfoSerializer,
+  BookGenreSerializer,
+  BookPrizeSerializer,
+  BookPublisherSerializer,
 } from '../../serializers';
 
 import {ServerAPIClientChild} from '../ServerAPIClientChild';
 
 export class BooksServerRepo extends ServerAPIClientChild implements BooksRepo {
   static readonly DEFAULT_BOOK_AGGS_FILTERS: AggsBooksFilters['aggs'] = {
-    categories: {size: 10},
-    authors: {size: 5},
-    publishers: {size: 5},
+    categories: {limit: 10},
+    authors: {limit: 5},
+    publishers: {limit: 5},
     era: {},
     genre: {},
     prizes: {},
     schoolBook: {},
     types: {},
+  };
+
+  static readonly BOOK_AGGS_SERIALIZERS: Record<keyof AggsBooksFilters['aggs'], {new(): any}> = {
+    categories: BookCategorySerializer,
+    authors: BookAuthorSerializer,
+    publishers: BookPublisherSerializer,
+    era: BookEraSerializer,
+    genre: BookGenreSerializer,
+    prizes: BookPrizeSerializer,
+    schoolBook: null,
+    types: null,
   };
 
   /**
@@ -72,6 +90,53 @@ export class BooksServerRepo extends ServerAPIClientChild implements BooksRepo {
           excludeExtraneousValues: true,
         },
       ),
+    };
+  }
+
+  /**
+   * Finds single agg paginated values
+   *
+   * @param {SingleAggBookFilters} {agg, filters}
+   * @returns
+   * @memberof BooksServerRepo
+   */
+  async findBooksAggsItems({agg, filters}: SingleAggBookFilters) {
+    const {esCardBookSearchService} = this.services;
+    const {aggs} = await esCardBookSearchService.findFilteredBooks(
+      {
+        ...filters,
+        limit: 0,
+        skipBooksLoading: true,
+        aggs: {
+          [agg.name]: agg.pagination,
+        } as AggsBooksFilters['aggs'],
+      },
+    );
+
+    let items: any[] = aggs?.[agg.name]?.items;
+    const serializer = BooksServerRepo.BOOK_AGGS_SERIALIZERS[agg.name];
+
+    if (serializer) {
+      items = items.map(
+        ({record, ...rest}) => ({
+          record: plainToClass(
+            serializer,
+            record,
+            {
+              excludeExtraneousValues: true,
+            },
+          ),
+          ...rest,
+        }),
+      );
+    }
+
+    return {
+      items,
+      meta: {
+        limit: agg.pagination.limit,
+        offset: agg.pagination.offset || 0,
+      },
     };
   }
 

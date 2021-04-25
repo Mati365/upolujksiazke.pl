@@ -10,11 +10,13 @@ import {
 
 type CheckboxExpandableListProps<T extends ListItem> = Omit<AsyncExpandableChunksProps<T>, 'renderChunkFn'> & {
   checkboxListProps?(attrs: AsyncChunkAttributes<T>): Partial<CheckboxListProps<T>>,
+  listComponent?: any,
 };
 
 export function CheckboxExpandableList<T extends ListItem>(
   {
     checkboxListProps,
+    listComponent: ListComponent = CheckboxList,
     ...props
   }: CheckboxExpandableListProps<T>,
 ) {
@@ -23,7 +25,7 @@ export function CheckboxExpandableList<T extends ListItem>(
       {...props}
       renderChunkFn={
         (attr) => (
-          <CheckboxList
+          <ListComponent
             items={attr.chunk}
             {...checkboxListProps?.(attr)}
           />

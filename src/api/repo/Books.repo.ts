@@ -41,7 +41,10 @@ export type BooksFilters = BasicAPIPagination & {
 };
 
 export type AggsBooksFilters = BooksFilters & {
-  aggs?: Record<keyof BookAggs, boolean>,
+  aggs?: Record<keyof BookAggs, {
+    limit?: number,
+    size?: number,
+  }>,
 };
 
 export type BooksPaginationResultWithAggs = APIPaginationResultWithAggs<BookCardRecord, BookAggs>;

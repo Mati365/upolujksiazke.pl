@@ -203,19 +203,19 @@ export class EsCardBookSearchService {
       queries.push(esb.termsAggregation('types', 'allTypes'));
 
     if (aggs.publishers)
-      queries.push(createNestedIdsAgg('publishers'));
+      queries.push(createNestedIdsAgg('publishers', aggs.publishers));
 
     if (aggs.categories)
-      queries.push(createNestedIdsAgg('categories'));
+      queries.push(createNestedIdsAgg('categories', aggs.categories));
 
     if (aggs.authors)
-      queries.push(createNestedIdsAgg('authors'));
+      queries.push(createNestedIdsAgg('authors', aggs.authors));
 
     if (aggs.genre)
-      queries.push(createNestedIdsAgg('genre'));
+      queries.push(createNestedIdsAgg('genre', aggs.genre));
 
     if (aggs.era)
-      queries.push(createNestedIdsAgg('era'));
+      queries.push(createNestedIdsAgg('era', aggs.era));
 
     return queries;
   }

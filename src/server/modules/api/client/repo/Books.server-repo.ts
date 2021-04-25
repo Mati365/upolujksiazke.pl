@@ -22,6 +22,17 @@ import {
 import {ServerAPIClientChild} from '../ServerAPIClientChild';
 
 export class BooksServerRepo extends ServerAPIClientChild implements BooksRepo {
+  static readonly DEFAULT_BOOK_AGGS_FILTERS: AggsBooksFilters['aggs'] = {
+    categories: {size: 10},
+    authors: {size: 5},
+    publishers: {size: 5},
+    era: {},
+    genre: {},
+    prizes: {},
+    schoolBook: {},
+    types: {},
+  };
+
   /**
    * Returns all books for specified authos
    *
@@ -75,16 +86,7 @@ export class BooksServerRepo extends ServerAPIClientChild implements BooksRepo {
     const {meta, items, aggs} = await esCardBookSearchService.findFilteredBooks(
       {
         ...filters,
-        aggs: filters.aggs ?? {
-          authors: true,
-          categories: true,
-          era: true,
-          genre: true,
-          prizes: true,
-          publishers: true,
-          schoolBook: true,
-          types: true,
-        },
+        aggs: filters.aggs ?? BooksServerRepo.DEFAULT_BOOK_AGGS_FILTERS,
       },
     );
 

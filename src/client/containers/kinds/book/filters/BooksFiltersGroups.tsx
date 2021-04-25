@@ -4,6 +4,7 @@ import {useI18n} from '@client/i18n';
 import {mapCountedRecordsToCountedListItems} from '@client/modules/api/helpers/mapCountedRecordsToCountedListItems';
 
 import {BookAggs} from '@api/repo';
+import {CheckboxExpandableList} from '@client/components/ui/controls';
 import {
   FiltersGroup,
   CountedCheckboxList,
@@ -32,8 +33,9 @@ export const BooksFiltersGroups = ({aggs}: BooksFiltersGroupsProps) => {
           header={t('categories.header')}
           total={t('categories.total', [categories.total.bucket])}
         >
-          <CountedCheckboxList
-            items={
+          <CheckboxExpandableList
+            totalItems={categories.total.bucket}
+            firstChunk={
               mapCountedRecordsToCountedListItems(categories.items)
             }
           />
@@ -45,8 +47,9 @@ export const BooksFiltersGroups = ({aggs}: BooksFiltersGroupsProps) => {
           header={t('authors.header')}
           total={t('authors.total', [authors.total.bucket])}
         >
-          <CountedCheckboxList
-            items={
+          <CheckboxExpandableList
+            totalItems={authors.total.bucket}
+            firstChunk={
               mapCountedRecordsToCountedListItems(authors.items)
             }
           />
@@ -77,8 +80,9 @@ export const BooksFiltersGroups = ({aggs}: BooksFiltersGroupsProps) => {
           header={t('publisher.header')}
           total={t('publisher.total', [publishers.total.bucket])}
         >
-          <CountedCheckboxList
-            items={
+          <CheckboxExpandableList
+            totalItems={authors.total.bucket}
+            firstChunk={
               mapCountedRecordsToCountedListItems(publishers.items)
             }
           />
@@ -90,8 +94,9 @@ export const BooksFiltersGroups = ({aggs}: BooksFiltersGroupsProps) => {
           header={t('era.header')}
           total={t('era.total', [era.total.bucket])}
         >
-          <CountedCheckboxList
-            items={
+          <CheckboxExpandableList
+            totalItems={era.total.bucket}
+            firstChunk={
               mapCountedRecordsToCountedListItems(era.items)
             }
           />
@@ -103,8 +108,9 @@ export const BooksFiltersGroups = ({aggs}: BooksFiltersGroupsProps) => {
           header={t('genre.header')}
           total={t('genre.total', [genre.total.bucket])}
         >
-          <CountedCheckboxList
-            items={
+          <CheckboxExpandableList
+            totalItems={genre.total.bucket}
+            firstChunk={
               mapCountedRecordsToCountedListItems(genre.items)
             }
           />
@@ -116,8 +122,9 @@ export const BooksFiltersGroups = ({aggs}: BooksFiltersGroupsProps) => {
           header={t('prize.header')}
           total={t('prizes.total', [prizes.total.bucket])}
         >
-          <CountedCheckboxList
-            items={
+          <CheckboxExpandableList
+            totalItems={prizes.total.bucket}
+            firstChunk={
               mapCountedRecordsToCountedListItems(prizes.items)
             }
           />

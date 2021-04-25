@@ -7,7 +7,9 @@ import {CheckboxList, CheckboxListProps} from '@client/components/ui/controls/Ch
 export const SmallFiltersCounter = ({count}: {count: ReactNode}) => (
   <small className='c-filters-small-counter'>
     (
-    {count}
+    <span>
+      {count}
+    </span>
     )
   </small>
 );

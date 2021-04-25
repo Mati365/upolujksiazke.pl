@@ -19,7 +19,9 @@ export const CountedCheckboxList = (props: CheckboxListProps<CountedListItem>) =
     {...props}
     renderNameFn={({name, count}: CountedListItem) => (
       <>
-        {name}
+        <span>
+          {name}
+        </span>
         {!R.isNil(count) && (
           <SmallFiltersCounter count={count} />
         )}

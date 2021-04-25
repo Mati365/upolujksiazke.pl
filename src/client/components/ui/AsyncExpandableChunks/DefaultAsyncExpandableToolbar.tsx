@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {useI18n} from '@client/i18n';
-import {Button} from '../Button';
+import {TextButton} from '../TextButton';
 
 export type AsyncExpandableToolbarProps = {
   remain: number,
@@ -16,12 +16,13 @@ export const DefaultAsyncExpandableToolbar = ({remain, onExpand}) => {
 
   return (
     <div className='mt-3 c-flex-center'>
-      <Button
-        size='small'
+      <TextButton
+        type='primary'
+        className='is-text-tiny is-text-semibold'
         onClick={() => onExpand()}
       >
         {`${t('shared.titles.more')} (${remain})`}
-      </Button>
+      </TextButton>
     </div>
   );
 };

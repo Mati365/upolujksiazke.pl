@@ -145,8 +145,13 @@ export class BookDbLoaderService implements MetadataDbLoader {
       attrs.skipCacheLookup = true;
     }
 
-    const matchedBooks = R.pluck(
-      'result',
+    const matchedBooks = R.map(
+      ({result, scrappersGroup}) => new CreateBookDto(
+        {
+          ...result,
+          scrappersIds: [scrappersGroup.id],
+        },
+      ),
       await scrapperMatcherService.searchRemoteRecord<CreateBookDto>(
         {
           kind: ScrapperMetadataKind.BOOK,

@@ -36,7 +36,14 @@ export class ScrapperMatcherService {
       scrappersGroups,
       async (group) => {
         try {
-          return await group.searchRemoteRecord(attrs);
+          const result = await group.searchRemoteRecord(attrs);
+          if (!result)
+            return null;
+
+          return {
+            ...result,
+            scrappersGroup: group,
+          };
         } catch (e) {
           logger.error(`Scrapper ${chalk.bold(group.websiteURL)}:`, e);
           sentryService.instance.captureException(e);

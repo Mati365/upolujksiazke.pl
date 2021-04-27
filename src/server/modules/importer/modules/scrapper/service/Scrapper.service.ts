@@ -5,7 +5,6 @@ import {SERVER_ENV} from '@server/constants/env';
 import {extractHostname} from '@shared/helpers';
 
 import {RemoteWebsiteEntity} from '@server/modules/remote/entity';
-import {WykopAPI} from '@importer/sites/wykop/api/WykopAPI';
 import * as Groups from '@importer/sites';
 
 import {WebsiteScrappersGroup} from './shared';
@@ -42,16 +41,7 @@ export class ScrapperService {
       new Groups.KlpScrappersGroup(PARSERS_ENV.klp),
       new Groups.PolskiNa5ScrappersGroup(PARSERS_ENV.polskina5),
       new Groups.EszkolaScrappersGroup(PARSERS_ENV.eszkola),
-      new Groups.WykopScrappersGroup(
-        {
-          homepageURL: PARSERS_ENV.wykop.homepageURL,
-          api: new WykopAPI(
-            {
-              authConfig: PARSERS_ENV.wykop.authConfig,
-            },
-          ),
-        },
-      ),
+      new Groups.WykopScrappersGroup(PARSERS_ENV.wykop),
       // new WikipediaScrappersGroup(PARSERS_ENV.wikipedia),
     ];
   }

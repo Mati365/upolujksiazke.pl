@@ -2,7 +2,9 @@ import {Options as SentryOptions} from '@sentry/types';
 import {LogLevel} from '@sentry/types/dist/loglevel';
 
 import {BookShopUrlsConfig} from '@importer/kinds/scrappers/BookShop.scrapper';
-import {WykopAPIAuthParams} from '@sites/wykop/api/WykopAPI';
+import {WykopScrappersGroupConfig} from '@server/modules/importer/sites/wykop/WykopScrappersGroup';
+import {WykopAPI} from '@server/modules/importer/sites/wykop/api/WykopAPI';
+import {WikipediaScrappersGroupConfig} from '@server/modules/importer/sites/wikipedia/WikipediaScrappersGroup';
 
 /* eslint-disable import/no-default-export */
 require('dotenv').config();
@@ -58,27 +60,8 @@ export type AppEnv = Partial<{
     },
     sentry: Omit<SentryOptions, 'integrations'>,
     parsers: Record<DefaultConfigBookShopNames, BookShopUrlsConfig> & {
-      wykop: {
-        homepageURL: string,
-        authConfig: WykopAPIAuthParams,
-      },
-      wikipedia: {
-        homepageURL: string,
-        clientOptions: {
-          apiUrl?: string,
-          origin?: string,
-        },
-      },
-      eisbn: {
-        homepageURL: string,
-        tmp: {
-          folder: string,
-          dbFiles: {
-            records: string,
-            publishers: string,
-          },
-        },
-      },
+      wykop: WykopScrappersGroupConfig,
+      wikipedia: WikipediaScrappersGroupConfig,
     },
   },
   client: {
@@ -158,115 +141,132 @@ export const GLOBAL_CONFIG: Record<string, AppEnv> = {
         tracesSampleRate: 1.0,
       },
       parsers: {
-        wykop: {
-          homepageURL: 'https://wykop.pl',
-          authConfig: {
-            key: WYKOP_KEY,
-            secret: WYKOP_SECRET,
-            account: {
-              name: WYKOP_ACCOUNT_NAME,
-              key: WYKOP_ACCOUNT_KEY,
-            },
-          },
-        },
         polskina5: {
+          id: 1,
           homepageURL: 'https://www.polskina5.pl/',
           logoURL: 'https://www.polskina5.pl/favicon.ico',
         },
         eszkola: {
+          id: 2,
           homepageURL: 'https://eszkola.pl/',
           searchURL: 'https://eszkola.pl/szukaj',
           logoURL: 'https://eszkola.pl/favicon.ico',
         },
         skupszop: {
+          id: 3,
           homepageURL: 'https://skupszop.pl/',
           searchURL: 'https://skupszop.pl/wyszukiwarka',
           logoURL: 'https://skupszop.pl/favicon.ico',
         },
         dadada: {
+          id: 4,
           homepageURL: 'https://dadada.pl/',
         },
         klp: {
+          id: 5,
           homepageURL: 'https://klp.pl/',
           searchURL: 'https://lektury.klp.pl',
           logoURL: 'https://klp.pl/favicon.ico',
         },
         granice: {
+          id: 6,
           homepageURL: 'https://www.granice.pl/',
           searchURL: 'https://www.granice.pl/wyszukaj/',
         },
         bryk: {
+          id: 7,
           homepageURL: 'https://www.bryk.pl/',
           searchURL: 'https://www.bryk.pl/wyniki-wyszukiwania.html',
         },
         streszczenia: {
+          id: 8,
           homepageURL: 'https://streszczenia.pl/',
         },
         hrosskar: {
+          id: 9,
           homepageURL: 'https://hrosskar.blogspot.com',
         },
         literaturaGildia: {
+          id: 10,
           homepageURL: 'https://www.literatura.gildia.pl/',
           searchURL: 'https://portal.gildia.pl/szukanie',
         },
         gildia: {
+          id: 11,
           homepageURL: 'https://www.gildia.pl/',
           searchURL: 'https://www.gildia.pl/szukaj',
           logoURL: 'https://www.gildia.pl/favicon.ico',
         },
         woblink: {
+          id: 12,
           homepageURL: 'https://woblink.com',
           searchURL: 'https://woblink.com/katalog/al',
         },
         taniaksiazka: {
+          id: 13,
           homepageURL: 'https://www.taniaksiazka.pl',
           searchURL: 'https://www.taniaksiazka.pl/Szukaj/',
         },
         matras: {
+          id: 14,
           homepageURL: 'https://www.matras.pl',
           searchURL: 'https://www.matras.pl/wyszukiwanie',
         },
         madbooks: {
+          id: 15,
           homepageURL: 'https://madbooks.pl/',
           searchURL: 'https://madbooks.pl/s',
         },
         ibuk: {
+          id: 16,
           homepageURL: 'https://www.ibuk.pl/',
           searchURL: 'https://www.ibuk.pl/szukaj/list',
         },
         gandalf: {
+          id: 17,
           homepageURL: 'https://www.gandalf.com.pl/',
           searchURL: 'https://www.gandalf.com.pl/ex',
         },
         bonito: {
+          id: 18,
           homepageURL: 'https://bonito.pl',
         },
         aros: {
+          id: 19,
           homepageURL: 'https://aros.pl',
         },
         lekturyGov: {
+          id: 20,
           homepageURL: 'https://lektury.gov.pl/',
           apiURL: 'https://api.lektury.gov.pl/api/',
         },
         publio: {
+          id: 21,
           homepageURL: 'https://www.publio.pl',
           searchURL: 'https://www.publio.pl/szukaj.html',
         },
+        wykop: {
+          id: 22,
+          homepageURL: 'https://wykop.pl',
+          api: new WykopAPI(
+            {
+              authConfig: {
+                key: WYKOP_KEY,
+                secret: WYKOP_SECRET,
+                account: {
+                  name: WYKOP_ACCOUNT_NAME,
+                  key: WYKOP_ACCOUNT_KEY,
+                },
+              },
+            },
+          ),
+        },
         wikipedia: {
+          id: 23,
           homepageURL: 'https://pl.wikipedia.org',
           clientOptions: {
             apiUrl: 'http://pl.wikipedia.org/w/api.php',
             origin: '*',
-          },
-        },
-        eisbn: {
-          homepageURL: 'https://e-isbn.pl',
-          tmp: {
-            folder: 'isbn-db',
-            dbFiles: {
-              records: 'records.xml',
-              publishers: 'publishers.xml',
-            },
           },
         },
       },

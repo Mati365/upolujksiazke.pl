@@ -8,14 +8,16 @@ import {
 } from './WikipediaBook.matcher';
 
 export type WikipediaScrappersGroupConfig = {
+  id: number,
   homepageURL: string,
   clientOptions: WikipediaAPIOptions,
 };
 
 export class WikipediaScrappersGroup extends WebsiteScrappersGroup {
-  constructor({clientOptions, homepageURL}: WikipediaScrappersGroupConfig) {
+  constructor({id, clientOptions, homepageURL}: WikipediaScrappersGroupConfig) {
     super(
       {
+        id,
         websiteInfoScrapper: new WebsiteInfoScrapper(
           new CreateRemoteWebsiteDto(
             {

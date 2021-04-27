@@ -348,6 +348,9 @@ export class BookService {
           authors,
           tags,
           categories,
+          ...!R.isNil(dto.scrappersIds) && {
+            scrappersIds: dto.scrappersIds,
+          },
           ...!R.isNil(taggedDescription) && {
             description,
             taggedDescription,

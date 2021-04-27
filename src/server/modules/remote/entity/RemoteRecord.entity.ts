@@ -6,6 +6,10 @@ import {
 import {DatedRecordEntity} from '@server/modules/database/DatedRecord.entity';
 import {RemoteWebsiteEntity} from './RemoteWebsite.entity';
 
+export interface TrackScrappersList {
+  scrappersIds: number[],
+}
+
 export abstract class RemoteRecordFields extends DatedRecordEntity {
   @Column('text', {nullable: true})
   url: string;

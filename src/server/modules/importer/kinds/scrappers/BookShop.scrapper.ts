@@ -9,6 +9,7 @@ import {CreateImageAttachmentDto} from '@server/modules/attachment/dto';
 import {SpiderQueueProxyScrapper} from './SpiderQueueProxy.scrapper';
 
 export type BookShopUrlsConfig = {
+  id: number,
   homepageURL?: string,
   searchURL?: string,
   apiURL?: string,

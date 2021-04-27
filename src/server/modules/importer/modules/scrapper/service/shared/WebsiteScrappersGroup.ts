@@ -18,6 +18,7 @@ export type WebsiteScrappersMatchersKindMap = PartialRecord<ScrapperMetadataKind
 export type WebsiteParsersKindMap = PartialRecord<ScrapperMetadataKind, ScrapperParser<any, any, any>>;
 
 export type ScrappersGroupInitializer<W extends WebsiteInfoScrapper = WebsiteInfoScrapper> = {
+  id: number,
   websiteInfoScrapper?: W,
   spider?: WebsiteScrapperSpider,
   scrappers?: WebsiteScrappersKindMap,
@@ -40,6 +41,7 @@ export type MatchRecordAttrs<T = any> = {
  */
 export class WebsiteScrappersGroup<W extends WebsiteInfoScrapper = WebsiteInfoScrapper>
 implements ScrapperMatchable<string> {
+  public readonly id: number;
   public readonly websiteInfoScrapper: W;
   public readonly scrappers: WebsiteScrappersKindMap;
   public readonly matchers: WebsiteScrappersMatchersKindMap;
@@ -48,6 +50,7 @@ implements ScrapperMatchable<string> {
 
   constructor(
     {
+      id,
       websiteInfoScrapper,
       spider,
       scrappers = {},
@@ -55,6 +58,7 @@ implements ScrapperMatchable<string> {
       parsers = {},
     }: ScrappersGroupInitializer<W>,
   ) {
+    this.id = id;
     this.websiteInfoScrapper = websiteInfoScrapper;
     this.scrappers = scrappers;
     this.matchers = matchers;

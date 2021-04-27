@@ -57,6 +57,10 @@ export class CreateBookDto {
   readonly originalPublishDate: string;
 
   @IsOptional()
+  @IsArray()
+  readonly scrappersIds: number[];
+
+  @IsOptional()
   @ArrayMaxSize(25)
   @IsTagCorrect(
     {

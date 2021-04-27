@@ -5,9 +5,14 @@ import {parseAsyncURLIfOK} from '@server/common/helpers/fetchAsyncHTML';
 import {concatUrls} from '@shared/helpers/concatUrls';
 
 import {CanBePromise} from '@shared/types';
-import {ScrapperGroupChild, MatchRecordAttrs} from './WebsiteScrappersGroup';
+import {
+  ScrapperGroupChild,
+  MatchRecordAttrs,
+  WebsiteScrappersGroup,
+} from './WebsiteScrappersGroup';
 
 export type ScrapperMatcherResult<T> = {
+  scrappersGroup?: WebsiteScrappersGroup<any>,
   result: T,
   discovery?: any[],
 };

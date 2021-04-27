@@ -44,7 +44,7 @@ const createConfig = ({
     target,
     entry,
     externals,
-    devtool: devMode ? 'eval' : false,
+    devtool: devMode ? 'eval' : 'source-map',
     node: {
       __dirname: false,
       __filename: false,
@@ -148,9 +148,9 @@ const createConfig = ({
                 cache: true,
               },
             ),
+            new ForkTsCheckerWebpackPlugin,
           ]
       ),
-      new ForkTsCheckerWebpackPlugin,
       new webpack.optimize.LimitChunkCountPlugin(
         {
           maxChunks: 5,

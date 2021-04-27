@@ -1,0 +1,44 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    airbrussh (1.4.0)
+      sshkit (>= 1.6.1, != 1.7.0)
+    capistrano (3.14.1)
+      airbrussh (>= 1.0.0)
+      i18n
+      rake (>= 10.0.0)
+      sshkit (>= 1.9.0)
+    capistrano-bundler (2.0.1)
+      capistrano (~> 3.1)
+    capistrano-rvm (0.1.2)
+      capistrano (~> 3.0)
+      sshkit (~> 1.2)
+    capistrano-yarn (2.0.2)
+      capistrano (~> 3.0)
+    concurrent-ruby (1.1.7)
+    i18n (1.8.5)
+      concurrent-ruby (~> 1.0)
+    net-scp (3.0.0)
+      net-ssh (>= 2.6.5, < 7.0.0)
+    net-ssh (6.1.0)
+    passenger (6.0.7)
+      rack
+      rake (>= 0.8.1)
+    rack (2.2.3)
+    rake (13.0.1)
+    sshkit (1.21.0)
+      net-scp (>= 1.1.2)
+      net-ssh (>= 2.8.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  capistrano (~> 3.14)
+  capistrano-bundler (~> 2.0)
+  capistrano-rvm
+  capistrano-yarn
+  passenger
+
+BUNDLED WITH
+   2.0.2

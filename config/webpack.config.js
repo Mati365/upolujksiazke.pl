@@ -44,7 +44,7 @@ const createConfig = ({
     target,
     entry,
     externals,
-    devtool: devMode ? 'eval' : 'source-map',
+    devtool: devMode ? 'eval' : false,
     node: {
       __dirname: false,
       __filename: false,

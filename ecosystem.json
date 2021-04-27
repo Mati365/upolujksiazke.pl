@@ -1,7 +1,7 @@
 {
   "apps" : [
     {
-      "name" : "bookmeter.org",
+      "name" : "upolujksiazke.pl",
       "script" : "dist/server.js",
       "instances" : "4",
       "exec_mode" : "cluster"
@@ -9,12 +9,12 @@
   ],
   "deploy" : {
     "production" : {
-      "user" : "web",
-      "host" : ["192.168.1.105"],
+      "user" : "deploy",
+      "host" : ["192.166.218.41"],
       "ref"  : "origin/main",
-      "repo" : "git@github.com:Mati365/bookmeter.org.git",
-      "path" : "/var/www/bookmeter.org",
-      "post-deploy" : "SENTRYCLI_CDNURL=https://github.com/Mati365/sentry-cli-Linux-arm64/raw/master yarn install --production=false && yarn run build:production && ln -sf ../.env ./.env && ln -sf ../.pgpass ./.pgpass && yarn run migration:run && pm2 startOrRestart ecosystem.json --env production",
+      "repo" : "git@github.com:upolujksiazke/upolujksiazke.pl.git",
+      "path" : "/var/www/upolujksiazke.pl",
+      "post-deploy" : "yarn install --production=false && yarn run build:production && ln -sf ../.env ./.env && ln -sf ../.pgpass ./.pgpass && yarn run migration:run && pm2 startOrRestart ecosystem.json --env production",
       "env": {
         "NODE_ENV": "production",
         "APP_ENV": "production"

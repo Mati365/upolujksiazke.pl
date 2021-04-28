@@ -15,7 +15,7 @@ namespace :deploy do
   end
 
   task :rsync_build do
-    sh "prsync -h config/hosts/#{fetch(:stage)}.txt -a --recursive /tmp/#{fetch(:application)}/build #{release_path}/"
+    sh "prsync -h config/hosts/#{fetch(:stage)}.txt -a --recursive /tmp/#{fetch(:application)}/dist #{release_path}/"
   end
 
   task :cleanup_tmp do
@@ -24,7 +24,13 @@ namespace :deploy do
 
   task :migrate do
     on roles(:app) do
-      execute 'cd /var/www/upolujksiazke.pl/current && yarn run migration:run'
+      execute "cd #{release_path} \
+        && mkdir tmp \
+        && chown deploy:webusers -R ./tmp \
+        && chmod 770 ./tmp \
+        && ln -sf ../../.env ./.env \
+        && ln -sf ../../.pgpass ./.pgpass \
+        && yarn run migration:run"
     end
   end
 
@@ -42,6 +48,6 @@ end
 
 after 'yarn:install', 'deploy:build_yarn'
 after 'deploy:build_yarn', 'deploy:rsync_build'
+after 'deploy:rsync_build', 'deploy:migrate'
 after 'deploy:publishing', 'deploy:cleanup_tmp'
-after 'deploy:publishing', 'deploy:migrate'
 after 'deploy:publishing', 'deploy:restart'

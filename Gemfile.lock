@@ -16,6 +16,7 @@ GEM
     capistrano-yarn (2.0.2)
       capistrano (~> 3.0)
     concurrent-ruby (1.1.7)
+    dotenv (0.7.0)
     i18n (1.8.5)
       concurrent-ruby (~> 1.0)
     net-scp (3.0.0)
@@ -38,6 +39,7 @@ DEPENDENCIES
   capistrano-bundler (~> 2.0)
   capistrano-rvm
   capistrano-yarn
+  dotenv
   passenger
 
 BUNDLED WITH

@@ -240,8 +240,8 @@ export class EsBookIndex extends EntityIndex<BookEntity, BookIndexEntity> {
     return {
       _id: entity.id,
       volumeName: volume?.name,
-      isbns: R.pluck('isbn', releases),
-      publishers: R.pluck('publisher', releases),
+      isbns: R.pluck('isbn', releases || []),
+      publishers: R.pluck('publisher', releases || []),
       ...entity,
     };
   }

@@ -210,7 +210,7 @@ export class CardBookSearchService {
                   .createQueryBuilder()
                   .select('bcc."bookId"')
                   .from('book_categories_book_category', 'bcc')
-                  .where('bcc."bookCategoryId" = :categoryId')
+                  .where('bcc."bookCategoryId" = :categoryId and b."totalRatings" > 0')
                   .innerJoin('book', 'b', 'b.id = bcc."bookId"')
                   .orderBy('b.totalRatings', 'DESC')
                   .limit(itemsPerGroup)

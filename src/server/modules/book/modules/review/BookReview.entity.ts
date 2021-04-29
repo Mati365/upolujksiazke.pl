@@ -1,3 +1,4 @@
+import * as R from 'ramda';
 import {
   Column, ManyToOne,
   JoinColumn, RelationId, Index,
@@ -71,9 +72,12 @@ export class BookReviewEntity extends RemoteRecordFields {
   @BeforeInsert()
   @BeforeUpdate()
   transformFields() {
-    const {description} = this;
+    const {description, rating} = this;
 
     if (description)
       this.description = normalizeHTML(description);
+
+    if (rating)
+      this.rating = R.clamp(0, 10, rating);
   }
 }

@@ -62,6 +62,9 @@ export class BookSummaryDbLoaderService implements MetadataDbLoader {
       },
     );
 
+    if (R.isEmpty(matchedItems))
+      return null;
+
     const matchedSummaries = R.pluck('result', matchedItems);
     const websites = await scrapperService.findOrCreateWebsitesByUrls(
       R.map(

@@ -11,7 +11,7 @@ import {
 
 import {objPropsToPromise} from '@shared/helpers/async/mapObjValuesToPromise';
 import {parameterize} from '@shared/helpers/parameterize';
-import {pickLongestArrayItem} from '@shared/helpers';
+import {pickLongestArrayItem, safeToString} from '@shared/helpers';
 import {trimBorderSpecialCharacters} from '@server/common/helpers/text/trimBorderSpecialCharacters';
 
 import {BookService} from '@server/modules/book/services/Book.service';
@@ -439,7 +439,7 @@ export class BookDbLoaderService implements MetadataDbLoader {
 
     // book normalization
     const releases = await pMap(
-      allReleases.filter(({isbn}) => !!isbn),
+      allReleases.filter(({isbn}) => !!isbn || safeToString(isbn).length < 7),
       async (release) => {
         let publisher = release.publisher || null;
         if (publisher && (await validate(publisher)).length > 0)

@@ -24,7 +24,7 @@ export function RedisMemoize(
       ? new LRUMemCache(
         {
           ...lru,
-          maxAge: lru.maxAge ?? convertMinutesToMiliseconds(15),
+          maxAge: lru.maxAge ?? convertMinutesToMiliseconds(1),
         },
       )
       : null

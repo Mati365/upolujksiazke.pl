@@ -70,6 +70,7 @@ export const BookInfo = ({book, authorsBooks, children}: BookInfoProps) => {
         </h2>
 
         <ExpandableDescriptionBox
+          className='c-book-info-section__description'
           maxCharactersCount={900}
           text={(
             taggedDescription

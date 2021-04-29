@@ -69,7 +69,7 @@ export class ScrapperMatcherService {
     );
 
     return {
-      matchedItems: matched,
+      matchedItems: matched || [],
       notMatchedInScrappers: R.map(
         ({scrappersGroup}) => scrappersGroup,
         (notMatched || []).filter(Boolean),

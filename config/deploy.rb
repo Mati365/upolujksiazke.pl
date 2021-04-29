@@ -26,7 +26,7 @@ namespace :deploy do
     on roles(:app) do
       execute "cd #{release_path} \
         && mkdir tmp \
-        && chown deploy:webusers -R ./tmp \
+        && chown deploy:webusers -R ./tmp ./dist \
         && chmod 770 ./tmp \
         && ln -sf ../../.env ./.env \
         && ln -sf ../../.pgpass ./.pgpass \

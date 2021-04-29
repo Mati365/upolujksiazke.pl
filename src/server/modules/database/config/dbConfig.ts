@@ -2,8 +2,6 @@ import {TypeOrmModuleOptions} from '@nestjs/typeorm';
 import * as R from 'ramda';
 
 import {SERVER_ENV} from '@server/constants/env';
-import {isDevMode} from '@shared/helpers';
-
 import {TagEntity} from '@server/modules/tag/Tag.entity';
 
 import {ScrapperMetadataEntity} from '../../importer/modules/scrapper/entity';
@@ -68,11 +66,7 @@ export const DB_CONFIG: TypeOrmModuleOptions = {
   ...SERVER_ENV.dbConfig,
   type: 'postgres',
   logger: 'advanced-console',
-  logging: (
-    isDevMode()
-      ? 'all'
-      : false
-  ),
+  logging: 'all',
   synchronize: false,
   entities: R.values(DB_ENTITIES),
 };

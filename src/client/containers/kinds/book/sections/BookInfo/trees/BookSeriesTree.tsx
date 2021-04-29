@@ -60,7 +60,7 @@ export const BookSeriesTree = (
                 {
                   t,
                   book: item,
-                  withDefaultVolumeName: !noVolumeNames,
+                  withDefaultVolumeName: false,
                   volumeFirst: true,
                 },
               )}`}

@@ -71,8 +71,8 @@ export type BookFindOneAttrs = {
 };
 
 export interface BooksRepo extends APIRepo<BookFullInfoRecord, BooksFilters, BookFindOneAttrs> {
-  findBooksAggsItems(attrs: SingleAggBookFilters): CanBePromise<APIPaginationResult<any>>;
-  findAggregatedBooks(filters?: AggsBooksFilters): CanBePromise<BooksPaginationResultWithAggs>;
-  findAuthorsBooks(filters?: AuthorsBooksFilters): CanBePromise<APIPaginationResult<BookCardRecord>>;
-  findRecentBooks(filters?: BasicAPIPagination): CanBePromise<BookCardRecord[]>;
+  findBooksAggsItems?(attrs: SingleAggBookFilters): CanBePromise<APIPaginationResult<any>>;
+  findAggregatedBooks?(filters?: AggsBooksFilters): CanBePromise<BooksPaginationResultWithAggs>;
+  findAuthorsBooks?(filters?: AuthorsBooksFilters): CanBePromise<APIPaginationResult<BookCardRecord>>;
+  findRecentBooks?(filters?: BasicAPIPagination): CanBePromise<BookCardRecord[]>;
 }

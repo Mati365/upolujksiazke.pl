@@ -22,10 +22,11 @@
     width: 18px;
     height: 18px;
     margin-right: 7px;
+    padding: 2px;
+    flex-shrink: 0;
+    overflow: hidden;
     border: 2px solid #000;
     border-radius: 100%;
-    overflow: hidden;
-    padding: 2px;
     cursor: pointer;
     transition: 150ms ease-in-out;
     transition-property: border-color;

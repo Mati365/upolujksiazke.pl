@@ -145,6 +145,16 @@ export class BookDbLoaderService implements MetadataDbLoader {
       attrs.skipCacheLookup = true;
     }
 
+    const {
+      matchedItems,
+      notMatchedInScrappers,
+    } = await scrapperMatcherService.searchRemoteRecord<CreateBookDto>(
+      {
+        kind: ScrapperMetadataKind.BOOK,
+        data: book,
+      },
+    );
+
     const matchedBooks = R.map(
       ({result, scrappersGroup}) => new CreateBookDto(
         {
@@ -152,12 +162,7 @@ export class BookDbLoaderService implements MetadataDbLoader {
           scrappersIds: [scrappersGroup.id],
         },
       ),
-      await scrapperMatcherService.searchRemoteRecord<CreateBookDto>(
-        {
-          kind: ScrapperMetadataKind.BOOK,
-          data: book,
-        },
-      ),
+      matchedItems,
     );
 
     if (R.isEmpty(matchedBooks)) {
@@ -165,7 +170,11 @@ export class BookDbLoaderService implements MetadataDbLoader {
       return null;
     }
 
+    // make sure that even empty scrappers results saved their ids
     const [firstBook, ...restBooks] = matchedBooks;
+    if (notMatchedInScrappers.length)
+      firstBook.scrappersIds.push(...R.pluck('id', notMatchedInScrappers));
+
     const extractedBooks = await this.extractVolumeGroupedBooks(
       [
         mergeBooks(

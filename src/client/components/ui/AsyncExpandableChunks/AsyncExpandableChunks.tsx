@@ -29,7 +29,10 @@ export function AsyncExpandableChunks<T extends {id: any}>(
     totalItems,
     renderChunkFn,
     renderExpandToolbarFn = (attrs) => (
-      <DefaultAsyncExpandableToolbar {...attrs} />
+      <DefaultAsyncExpandableToolbar
+        {...attrs}
+        tag='li'
+      />
     ),
     ...props
   }: AsyncExpandableChunksProps<T>,

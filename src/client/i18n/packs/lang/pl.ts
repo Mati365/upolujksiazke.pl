@@ -118,7 +118,7 @@ export const PL_LANG_PACK = {
     created_by: 'Autor',
     no_description: 'Brak opisu :(',
     book_description: 'Opis książki',
-    volumes: 'Tomy książki',
+    volumes: 'Seria książek',
     releases: 'Wydania książki',
     about_school_book: 'O lekturze',
     filters: {

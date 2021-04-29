@@ -6,16 +6,23 @@ import {TextButton} from '../TextButton';
 export type AsyncExpandableToolbarProps = {
   remain: number,
   loaded: number,
+  tag?: any,
   onExpand: VoidFunction,
 };
 
-export const DefaultAsyncExpandableToolbar = ({remain, onExpand}) => {
+export const DefaultAsyncExpandableToolbar = (
+  {
+    remain,
+    onExpand,
+    tag: Tag = 'div',
+  }: AsyncExpandableToolbarProps,
+) => {
   const t = useI18n();
   if (!remain)
     return null;
 
   return (
-    <div className='mt-3 c-flex-center'>
+    <Tag className='mt-3 c-flex-center'>
       <TextButton
         type='primary'
         className='is-text-tiny is-text-semibold'
@@ -23,7 +30,7 @@ export const DefaultAsyncExpandableToolbar = ({remain, onExpand}) => {
       >
         {`${t('shared.titles.more')} (${remain})`}
       </TextButton>
-    </div>
+    </Tag>
   );
 };
 

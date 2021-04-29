@@ -203,6 +203,15 @@ Spiders:
  gulp scrapper:spider:run
 ```
 
+Scrappers:
+
+Refresh all books from all websites:
+
+```bash
+ node_modules/.bin/gulp scrapper:refresh:all --kind BOOK_REVIEW --initialPage 1 --website wykop.pl
+ node_modules/.bin/gulp scrapper:refresh:all --kind BOOK_REVIEW --website hrosskar.blogspot.com
+```
+
 ### Importers
 
 #### Flow

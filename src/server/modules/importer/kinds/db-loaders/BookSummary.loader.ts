@@ -55,16 +55,14 @@ export class BookSummaryDbLoaderService implements MetadataDbLoader {
       scrapperMatcherService,
     } = this;
 
-    const matchedSummaries = R.pluck(
-      'result',
-      await scrapperMatcherService.searchRemoteRecord<CreateBookSummaryDto>(
-        {
-          kind: ScrapperMetadataKind.BOOK_SUMMARY,
-          data: summary,
-        },
-      ),
+    const {matchedItems} = await scrapperMatcherService.searchRemoteRecord<CreateBookSummaryDto>(
+      {
+        kind: ScrapperMetadataKind.BOOK_SUMMARY,
+        data: summary,
+      },
     );
 
+    const matchedSummaries = R.pluck('result', matchedItems);
     const websites = await scrapperService.findOrCreateWebsitesByUrls(
       R.map(
         (item) => item.url,

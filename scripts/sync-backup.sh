@@ -8,7 +8,7 @@ BACKUP_FILENAME="dump-$(date +%Y%m%d%H%M%S).tar.gz"
 BACKUP_HISTORY=5
 
 REMOTE_NAME="mega_remote"
-REMOTE_BACKUP_DIR="backup/bookmeter.org"
+REMOTE_BACKUP_DIR="backup/upolujksiazke.pl"
 
 if [ -d "$WORKING_DIR" ]; then rm -Rf $WORKING_DIR; fi
 mkdir -p "$WORKING_DIR"

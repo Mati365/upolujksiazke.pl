@@ -47,6 +47,16 @@
     &__content {
       font-size: .85rem;
     }
+
+    .c-expandable-checkox-list {
+      .c-checkbox-group__title {
+        max-width: calc(100% - 24px);
+
+        > span {
+          @include text-ellipsis;
+        }
+      }
+    }
   }
 
   &-small-counter {

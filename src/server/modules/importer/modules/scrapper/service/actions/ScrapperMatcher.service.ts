@@ -1,11 +1,17 @@
 import {Injectable, Logger} from '@nestjs/common';
 import pMap from 'p-map';
 import chalk from 'chalk';
+import * as R from 'ramda';
 
 import {SentryService} from '@server/modules/sentry/Sentry.service';
 import {ScrapperService} from '../Scrapper.service';
 import {ScrapperMatcherResult} from '../shared/ScrapperMatcher';
-import {MatchRecordAttrs} from '../shared';
+import {MatchRecordAttrs, WebsiteScrappersGroup} from '../shared';
+
+type ServiceMatcherResult<R> = {
+  matchedItems: ScrapperMatcherResult<R>[],
+  notMatchedInScrappers: WebsiteScrappersGroup[],
+};
 
 @Injectable()
 export class ScrapperMatcherService {
@@ -20,11 +26,11 @@ export class ScrapperMatcherService {
    * Iterate sequentially over scrappers and tries
    *
    * @template R
-   * @param {MatchRecordAttrs} attrs
-   * @returns {Promise<ScrapperMatcherResult<R>[]>}
+   * @param {MatcherSearchAttrs} attrs
+   * @returns {Promise<ServiceMatcherResult<R>>}
    * @memberof ScrapperMatcherService
    */
-  async searchRemoteRecord<R>(attrs: MatchRecordAttrs): Promise<ScrapperMatcherResult<R>[]> {
+  async searchRemoteRecord<R>(attrs: MatchRecordAttrs): Promise<ServiceMatcherResult<R>> {
     const {
       logger,
       sentryService,
@@ -37,8 +43,6 @@ export class ScrapperMatcherService {
       async (group) => {
         try {
           const result = await group.searchRemoteRecord(attrs);
-          if (!result)
-            return null;
 
           return {
             ...result,
@@ -55,6 +59,21 @@ export class ScrapperMatcherService {
       },
     );
 
-    return items.filter((item) => !!item?.result);
+    const {matched, notMatched} = R.groupBy(
+      (item) => (
+        item?.result
+          ? 'matched'
+          : 'notMatched'
+      ),
+      items,
+    );
+
+    return {
+      matchedItems: matched,
+      notMatchedInScrappers: R.map(
+        ({scrappersGroup}) => scrappersGroup,
+        (notMatched || []).filter(Boolean),
+      ),
+    };
   }
 }

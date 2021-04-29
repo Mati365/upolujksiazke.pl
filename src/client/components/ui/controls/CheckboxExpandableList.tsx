@@ -1,4 +1,5 @@
 import React from 'react';
+import c from 'classnames';
 
 import {ListItem} from '@shared/types';
 import {CheckboxList, CheckboxListProps} from './CheckboxList';
@@ -15,6 +16,7 @@ type CheckboxExpandableListProps<T extends ListItem> = Omit<AsyncExpandableChunk
 
 export function CheckboxExpandableList<T extends ListItem>(
   {
+    className,
     checkboxListProps,
     listComponent: ListComponent = CheckboxList,
     ...props
@@ -23,6 +25,10 @@ export function CheckboxExpandableList<T extends ListItem>(
   return (
     <AsyncExpandableChunks<T>
       {...props}
+      className={c(
+        'c-expandable-checkox-list',
+        className,
+      )}
       renderChunkFn={
         (attr) => (
           <ListComponent

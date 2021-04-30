@@ -78,7 +78,7 @@ const {
   DB_PASS,
   DB_PORT,
   APP_ENV = 'development',
-  APP_INSTANCES = 1,
+  APP_INSTANCES = 2,
   APP_PORT = 3000,
   APP_LISTEN_ADDRESS = 'localhost',
   HTTPS_KEY_PATH,

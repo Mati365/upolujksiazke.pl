@@ -1,5 +1,5 @@
 import {
-  Column, Entity,
+  Column, Entity, Index,
   JoinColumn, OneToOne, RelationId,
 } from 'typeorm';
 
@@ -13,6 +13,7 @@ export {
 };
 
 @Entity('image_attachments')
+@Index(['version'])
 export class ImageAttachmentEntity extends DatedRecordEntity {
   @Column(
     {

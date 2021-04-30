@@ -6,9 +6,10 @@ import {
 
 import * as R from 'ramda';
 
+import {CanBePromise} from '@shared/types';
 import {useMountedIndicatorRef} from './useMounted';
 
-type PromiseFn = (...args: any[]) => Promise<any>;
+type PromiseFn = (...args: any[]) => CanBePromise<any>;
 
 export type PromiseState<T> = {
   result?: T,
@@ -94,6 +95,7 @@ export const usePromiseCallback = <T> (
       afterExecFn(!!resultErrors, result);
       return result;
     } catch (e) {
+      console.error(e);
       afterExecFn(true, null, e);
 
       if (mountedRef.current && !silent) {

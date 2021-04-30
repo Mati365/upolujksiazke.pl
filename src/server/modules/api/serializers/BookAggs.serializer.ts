@@ -1,6 +1,6 @@
 import {Expose} from 'class-transformer';
 
-import {BookAggs} from '@api/repo';
+import {BookCountedAggs} from '@api/repo';
 import {APICountedBucket} from '@api/APIRecord';
 import {BookType} from '@shared/enums';
 import {BucketType} from './AggsBucket.serializer';
@@ -12,7 +12,7 @@ import {BookGenreSerializer} from './BookGenre.serializer';
 import {BookEraSerializer} from './BookEra.serializer';
 import {BookPublisherSerializer} from './BookPublisher.serializer';
 
-export class BookAggsSerializer implements Required<BookAggs> {
+export class BookAggsSerializer implements Required<BookCountedAggs> {
   @Expose()
   @BucketType(() => BookCategorySerializer)
   categories: APICountedBucket<BookCategorySerializer>;

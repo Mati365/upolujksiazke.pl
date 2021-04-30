@@ -6,3 +6,4 @@ export * from './useModal';
 export * from './useToggleableModal';
 export * from './useInputLink';
 export * from './useSafeCallback';
+export * from './useDebounce';

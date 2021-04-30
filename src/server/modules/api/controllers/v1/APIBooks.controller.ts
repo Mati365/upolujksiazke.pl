@@ -13,6 +13,29 @@ export class APIBooksController {
 
   /* eslint-disable @typescript-eslint/indent */
   /**
+   * Find all books that matches criteria
+   *
+   * @param {Response} res
+   * @param {string} name
+   * @param {BooksFiltersDto} {limit, offset, ...filters}
+   * @memberof APIBooksController
+   */
+  @Accepts('application/json')
+  @Get()
+  async aggs(
+    @Res() res: Response,
+    @Query() filters: BooksFiltersDto,
+  ) {
+    const {client: {repo}} = this.apiClientService;
+
+    res.json(
+      await repo.books.findAggregatedBooks(filters),
+    );
+  }
+  /* eslint-enable @typescript-eslint/indent */
+
+  /* eslint-disable @typescript-eslint/indent */
+  /**
    * Returns paginated aggregation for filters group
    *
    * @param {Response} res

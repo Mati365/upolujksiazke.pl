@@ -7,7 +7,7 @@ import {linkInputs, LinkProps} from '@client/decorators/linkInput';
 import {CleanList, CleanListProps} from '../CleanList';
 import {CheckboxGroup} from './CheckboxGroup';
 
-type CheckboxesValuesMap = Record<string, boolean>;
+type CheckboxesValuesMap = Record<string, any>;
 
 export type CheckboxListProps<T extends ListItem = ListItem> = CleanListProps & LinkProps<CheckboxesValuesMap> & {
   className?: string,
@@ -45,7 +45,15 @@ export const CheckboxList = linkInputs<CheckboxesValuesMap>(
     {items?.map(
       (item) => (
         <li key={item.id}>
-          <CheckboxGroup {...l.input(item.id)}>
+          <CheckboxGroup
+            {...l.input(
+              item.id,
+              {
+                assignValueParserFn: (val) => !!val,
+                valueParserFn: (val) => (val ? item : null),
+              },
+            )}
+          >
             {renderNameFn(item)}
           </CheckboxGroup>
         </li>

@@ -1,10 +1,38 @@
 import {CanBePromise} from '@shared/types';
 
-import {APIPaginationResult} from '@api/APIClient';
-import {BooksRepo, SingleAggBookFilters} from '@api/repo';
+import {
+  BooksPaginationResultWithAggs,
+  BooksRepo,
+  AggsBooksFilters,
+  SingleAggBookFilters,
+} from '@api/repo';
+
 import {AjaxAPIClientChild} from '../AjaxAPIClientChild';
 
 export class BooksAjaxRepo extends AjaxAPIClientChild implements BooksRepo {
+  /**
+   * Find all books by filters
+   *
+   * @param {AggsBooksFilters} filters
+   * @returns {CanBePromise<BooksPaginationResultWithAggs>}
+   * @memberof BooksAjaxRepo
+   */
+  findAggregatedBooks(filters: AggsBooksFilters): CanBePromise<BooksPaginationResultWithAggs> {
+    return this.ajax.apiCall(
+      {
+        path: '/books',
+        urlParams: filters,
+      },
+    );
+  }
+
+  /**
+   * Find single filters aggregation items list
+   *
+   * @param {SingleAggBookFilters} attrs
+   * @returns {CanBePromise<BooksPaginationResultWithAggs>}
+   * @memberof BooksAjaxRepo
+   */
   findBooksAggsItems(
     {
       agg: {
@@ -12,7 +40,7 @@ export class BooksAjaxRepo extends AjaxAPIClientChild implements BooksRepo {
         pagination,
       },
       filters,
-    }: SingleAggBookFilters): CanBePromise<APIPaginationResult<any>> {
+    }: SingleAggBookFilters): CanBePromise<BooksPaginationResultWithAggs> {
     return this.ajax.apiCall(
       {
         path: `/books/filters/aggs/${name}`,

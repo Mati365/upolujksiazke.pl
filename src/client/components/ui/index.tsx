@@ -22,3 +22,4 @@ export * from './Tree';
 export * from './Grid';
 export * from './UnderlinedTitle';
 export * from './AsyncExpandableChunks';
+export * from './ErrorBoundary';

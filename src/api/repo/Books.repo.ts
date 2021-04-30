@@ -1,5 +1,4 @@
 import {CanBePromise} from '@shared/types';
-
 import {CreateCountedAggType} from '@api/APIRecord';
 import {
   APIPaginationResult,
@@ -25,7 +24,7 @@ export type AuthorsBooksFilters = BasicAPIPagination & {
   authorsIds: number[],
 };
 
-export type BookAggs = CreateCountedAggType<{
+export type BookCountedAggs = CreateCountedAggType<{
   categories: BookCategoryRecord,
   authors: BookAuthorRecord,
   types: BookType,
@@ -37,14 +36,14 @@ export type BookAggs = CreateCountedAggType<{
 }>;
 
 export type BooksFilters = BasicAPIPagination & {
+  types?: BookType[],
+  schoolBook?: boolean,
   categoriesIds?: number[],
   authorsIds?: number[],
-  types?: BookType[],
   prizesIds?: number[],
   genresIds?: number[],
   erasIds?: number[],
   publishersIds?: number[],
-  schoolBook?: boolean,
 };
 
 export type SingleAggBookFilters = {
@@ -57,13 +56,13 @@ export type SingleAggBookFilters = {
 
 export type AggsBooksFilters = BooksFilters & {
   skipBooksLoading?: boolean,
-  aggs?: Record<keyof BookAggs, {
+  aggs?: Record<keyof BookCountedAggs, {
     limit?: number,
     offset?: number,
   }>,
 };
 
-export type BooksPaginationResultWithAggs = APIPaginationResultWithAggs<BookCardRecord, BookAggs>;
+export type BooksPaginationResultWithAggs = APIPaginationResultWithAggs<BookCardRecord, BookCountedAggs>;
 
 export type BookFindOneAttrs = {
   reviewsCount?: number,

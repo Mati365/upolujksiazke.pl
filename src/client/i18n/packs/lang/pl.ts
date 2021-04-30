@@ -38,6 +38,10 @@ export const PL_LANG_PACK = {
     },
   },
   shared: {
+    fetch_state: {
+      loading: 'Wczytywanie...',
+      errors: 'Błąd :(',
+    },
     titles: {
       no_data: 'Brak danych',
       rating: 'Ocena',

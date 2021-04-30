@@ -8,7 +8,12 @@ export function TransformSeparatedArray(
   } = {},
 ) {
   return Transform(({value}) => {
-    const mapped = value?.split(',');
+    const mapped = (
+      Array.isArray(value)
+        ? value
+        : value?.split(',')
+    );
+
     if (integers)
       return mapped.map((n: any) => Number.parseInt(n, 10));
 

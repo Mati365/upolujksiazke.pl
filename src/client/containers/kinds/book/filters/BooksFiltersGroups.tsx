@@ -1,10 +1,12 @@
 import React from 'react';
 
+import {mapCountedRecordsToCountedListItems} from '@api/helpers/mapCountedRecordsToCountedListItems';
 import {useI18n} from '@client/i18n';
-import {mapCountedRecordsToCountedListItems} from '@client/modules/api/helpers/mapCountedRecordsToCountedListItems';
 import {useAjaxAPIClient} from '@client/modules/api/client/hooks/useAjaxAPIClient';
 
-import {BookAggs} from '@api/repo';
+import {LinkProps} from '@client/decorators/linkInput';
+import {BookCountedAggs} from '@api/repo';
+
 import {APICountedBucket} from '@api/APIRecord';
 import {CheckboxExpandableList} from '@client/components/ui/controls';
 import {
@@ -12,11 +14,11 @@ import {
   CountedCheckboxList,
 } from '@client/containers/filters';
 
-type BooksFiltersGroupsProps = {
-  aggs: BookAggs,
+type BooksFiltersGroupsProps = LinkProps<Partial<any>> & {
+  aggs: BookCountedAggs,
 };
 
-export const BooksFiltersGroups = ({aggs}: BooksFiltersGroupsProps) => {
+export const BooksFiltersGroups = ({aggs, l}: BooksFiltersGroupsProps) => {
   const api = useAjaxAPIClient();
   const t = useI18n('book.filters');
   const {
@@ -33,6 +35,7 @@ export const BooksFiltersGroups = ({aggs}: BooksFiltersGroupsProps) => {
     if (!agg)
       return null;
 
+    const inputProps = l.input(name);
     return (
       <FiltersGroup
         header={
@@ -47,6 +50,9 @@ export const BooksFiltersGroups = ({aggs}: BooksFiltersGroupsProps) => {
           totalItems={agg.total.bucket}
           firstChunk={
             mapCountedRecordsToCountedListItems(agg.items)
+          }
+          checkboxListProps={
+            () => inputProps
           }
           onRequestChunk={
             async ({totalLoaded, defaultChunkSize}) => {
@@ -82,6 +88,7 @@ export const BooksFiltersGroups = ({aggs}: BooksFiltersGroupsProps) => {
           total={t('types.total', [types.total.bucket])}
         >
           <CountedCheckboxList
+            {...l.input('types')}
             items={
               types.items.map(
                 ({record: type, count}) => ({

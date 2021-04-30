@@ -12,7 +12,7 @@ import {
 
 import {CreateCountedAggType} from '@api/APIRecord';
 import {APIPaginationResultWithAggs} from '@api/APIClient';
-import {AggsBooksFilters, BookAggs} from '@api/repo';
+import {AggsBooksFilters, BookCountedAggs} from '@api/repo';
 import {BookType} from '@shared/enums';
 
 import {EsBookIndex} from '../indexes/EsBook.index';
@@ -26,7 +26,7 @@ import {BookGenreEntity} from '../../modules/genre/BookGenre.entity';
 import {BookEraEntity} from '../../modules/era/BookEra.entity';
 import {BookPrizeEntity} from '../../modules/prize/BookPrize.entity';
 
-export type BookEntityAggs = Pick<BookAggs, 'types'|'schoolBook'> & CreateCountedAggType<{
+export type BookEntityAggs = Pick<BookCountedAggs, 'types'|'schoolBook'> & CreateCountedAggType<{
   categories: BookCategoryEntity,
   authors: BookAuthorEntity,
   prizes: BookPrizeEntity,

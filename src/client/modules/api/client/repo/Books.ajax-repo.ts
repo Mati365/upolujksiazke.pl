@@ -15,7 +15,7 @@ export class BooksAjaxRepo extends AjaxAPIClientChild implements BooksRepo {
     }: SingleAggBookFilters): CanBePromise<APIPaginationResult<any>> {
     return this.ajax.apiCall(
       {
-        path: `/filters/aggs/${name}`,
+        path: `/books/filters/aggs/${name}`,
         urlParams: {
           ...pagination,
           ...filters,

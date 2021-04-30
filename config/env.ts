@@ -275,14 +275,14 @@ export const GLOBAL_CONFIG: Record<string, AppEnv> = {
   development: {
     client: {
       apiConfig: {
-        url: `http://${APP_LISTEN_ADDRESS}:${APP_PORT}/api`,
+        url: `http://lvh.me:${APP_PORT}/api/v1`,
       },
     },
   },
   production: {
     client: {
       apiConfig: {
-        url: 'https://bookmeter.org/api',
+        url: 'https://upolujksiazke.pl/api/v1',
       },
     },
   },

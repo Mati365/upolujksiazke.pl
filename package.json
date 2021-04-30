@@ -1,5 +1,5 @@
 {
-  "name": "bookmeter.org",
+  "name": "upolujksiazke.pl",
   "version": "1.0.0",
   "private": true,
   "main": "index.js",
@@ -26,7 +26,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:Mati365/bookmeter.org.git"
+    "url": "git@github.com:upolujksiazke/upolujksiazke.pl.git"
   },
   "devDependencies": {
     "@babel/preset-react": "^7.12.13",

@@ -2,8 +2,10 @@ import React from 'react';
 
 import {useI18n} from '@client/i18n';
 import {mapCountedRecordsToCountedListItems} from '@client/modules/api/helpers/mapCountedRecordsToCountedListItems';
+import {useAjaxAPIClient} from '@client/modules/api/client/hooks/useAjaxAPIClient';
 
 import {BookAggs} from '@api/repo';
+import {APICountedBucket} from '@api/APIRecord';
 import {CheckboxExpandableList} from '@client/components/ui/controls';
 import {
   FiltersGroup,
@@ -15,6 +17,7 @@ type BooksFiltersGroupsProps = {
 };
 
 export const BooksFiltersGroups = ({aggs}: BooksFiltersGroupsProps) => {
+  const api = useAjaxAPIClient();
   const t = useI18n('book.filters');
   const {
     categories,
@@ -26,37 +29,52 @@ export const BooksFiltersGroups = ({aggs}: BooksFiltersGroupsProps) => {
     prizes,
   } = aggs;
 
+  const renderBucketGroup = (name: string, agg: APICountedBucket<any>) => {
+    if (!agg)
+      return null;
+
+    return (
+      <FiltersGroup
+        header={
+          t(`${name}.header`)
+        }
+        total={
+          t(`${name}.total`, [agg.total.bucket])
+        }
+      >
+        <CheckboxExpandableList
+          listComponent={CountedCheckboxList}
+          totalItems={agg.total.bucket}
+          firstChunk={
+            mapCountedRecordsToCountedListItems(agg.items)
+          }
+          onRequestChunk={
+            async ({totalLoaded, defaultChunkSize}) => {
+              const result = await api.repo.books.findBooksAggsItems(
+                {
+                  agg: {
+                    name,
+                    pagination: {
+                      offset: totalLoaded,
+                      limit: defaultChunkSize,
+                    },
+                  },
+                  filters: {},
+                },
+              );
+
+              return mapCountedRecordsToCountedListItems(result?.items);
+            }
+          }
+        />
+      </FiltersGroup>
+    );
+  };
+
   return (
     <>
-      {categories && (
-        <FiltersGroup
-          header={t('categories.header')}
-          total={t('categories.total', [categories.total.bucket])}
-        >
-          <CheckboxExpandableList
-            listComponent={CountedCheckboxList}
-            totalItems={categories.total.bucket}
-            firstChunk={
-              mapCountedRecordsToCountedListItems(categories.items)
-            }
-          />
-        </FiltersGroup>
-      )}
-
-      {authors && (
-        <FiltersGroup
-          header={t('authors.header')}
-          total={t('authors.total', [authors.total.bucket])}
-        >
-          <CheckboxExpandableList
-            listComponent={CountedCheckboxList}
-            totalItems={authors.total.bucket}
-            firstChunk={
-              mapCountedRecordsToCountedListItems(authors.items)
-            }
-          />
-        </FiltersGroup>
-      )}
+      {renderBucketGroup('categories', categories)}
+      {renderBucketGroup('authors', authors)}
 
       {types && (
         <FiltersGroup
@@ -77,65 +95,10 @@ export const BooksFiltersGroups = ({aggs}: BooksFiltersGroupsProps) => {
         </FiltersGroup>
       )}
 
-      {publishers && (
-        <FiltersGroup
-          header={t('publisher.header')}
-          total={t('publisher.total', [publishers.total.bucket])}
-        >
-          <CheckboxExpandableList
-            listComponent={CountedCheckboxList}
-            totalItems={authors.total.bucket}
-            firstChunk={
-              mapCountedRecordsToCountedListItems(publishers.items)
-            }
-          />
-        </FiltersGroup>
-      )}
-
-      {era && (
-        <FiltersGroup
-          header={t('era.header')}
-          total={t('era.total', [era.total.bucket])}
-        >
-          <CheckboxExpandableList
-            listComponent={CountedCheckboxList}
-            totalItems={era.total.bucket}
-            firstChunk={
-              mapCountedRecordsToCountedListItems(era.items)
-            }
-          />
-        </FiltersGroup>
-      )}
-
-      {genre && (
-        <FiltersGroup
-          header={t('genre.header')}
-          total={t('genre.total', [genre.total.bucket])}
-        >
-          <CheckboxExpandableList
-            listComponent={CountedCheckboxList}
-            totalItems={genre.total.bucket}
-            firstChunk={
-              mapCountedRecordsToCountedListItems(genre.items)
-            }
-          />
-        </FiltersGroup>
-      )}
-
-      {prizes && (
-        <FiltersGroup
-          header={t('prize.header')}
-          total={t('prizes.total', [prizes.total.bucket])}
-        >
-          <CheckboxExpandableList
-            listComponent={CountedCheckboxList}
-            totalItems={prizes.total.bucket}
-            firstChunk={
-              mapCountedRecordsToCountedListItems(prizes.items)
-            }
-          />
-        </FiltersGroup>
-      )}
+      {renderBucketGroup('publishers', publishers)}
+      {renderBucketGroup('era', era)}
+      {renderBucketGroup('genre', genre)}
+      {renderBucketGroup('prizes', prizes)}
 
       <FiltersGroup header={t('price.header')}>
         ABC

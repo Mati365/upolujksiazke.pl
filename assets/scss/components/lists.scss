@@ -53,6 +53,7 @@
         $spacing: $i * 5;
 
         &-#{$i}.is-inline {
+          &.is-last-spaced > li,
           > li:not(:last-child) {
             margin-right: #{$spacing}px;
           }
@@ -63,6 +64,7 @@
         }
 
         &-#{$i}:not(.is-inline) {
+          &.is-last-spaced > li,
           > li:not(:last-child) {
             margin-bottom: #{$spacing}px;
           }

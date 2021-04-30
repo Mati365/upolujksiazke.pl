@@ -1,9 +1,13 @@
 import React from 'react';
 import {StaticRouterProps} from 'react-router';
 
+import {ENV} from '@client/constants/env';
+
 import {AsyncRouterRouteInfo} from '@client/components/utils/asyncRouteUtils';
 import {ModalsContextProvider} from '@client/hooks/useModal';
 import {ProvideI18n} from '@client/i18n/ProvideI18n';
+import {AjaxAPIContext} from '@client/modules/api/client/hooks/useAjaxAPIClient';
+import {AjaxAPIClient} from '@client/modules/api/client/AjaxAPIClient';
 import {
   AsyncRouter,
   ViewDataProvider,
@@ -41,12 +45,22 @@ export const PageRoot = ({initialViewData, routerConfig}: PageRootProps) => (
         lang={viewData.lang.current}
         translations={viewData.lang.translations}
       >
-        <ModalsContextProvider>
-          <AsyncRouter
-            {...routerConfig}
-            routes={APP_ROUTES_LIST}
-          />
-        </ModalsContextProvider>
+        <AjaxAPIContext.Provider
+          value={
+            new AjaxAPIClient(
+              {
+                url: ENV.client.apiConfig.url,
+              },
+            )
+          }
+        >
+          <ModalsContextProvider>
+            <AsyncRouter
+              {...routerConfig}
+              routes={APP_ROUTES_LIST}
+            />
+          </ModalsContextProvider>
+        </AjaxAPIContext.Provider>
       </ProvideI18n>
     )}
   </ViewDataProvider>

@@ -18,8 +18,13 @@ import {APIClientService} from './services';
       RouterModule.forRoutes(
         [
           {
-            path: '/v1',
-            module: APIv1Module,
+            path: '/api',
+            childrens: [
+              {
+                path: '/v1',
+                module: APIv1Module,
+              },
+            ],
           },
         ],
       ),

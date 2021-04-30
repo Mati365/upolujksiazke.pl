@@ -1,7 +1,7 @@
 # upolujksiazke.pl
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg?style=flat-square)](https://www.gnu.org/licenses/gpl-3.0)
-![Website](https://img.shields.io/website?url=https%3A%2F%2Fbookmeter.org&style=flat-square)
+![Website](https://img.shields.io/website?url=https%3A%2F%2Fupolujksiazke.pl&style=flat-square)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 
 OpenSource book reviews aggregator, something like Metacritic / Digg for books. It allows to compare book price between different shops.

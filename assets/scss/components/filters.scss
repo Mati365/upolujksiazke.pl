@@ -54,6 +54,7 @@
 
         > span {
           @include text-ellipsis;
+          line-height: 1rem;
         }
       }
     }

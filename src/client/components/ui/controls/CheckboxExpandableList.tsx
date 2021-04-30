@@ -32,6 +32,7 @@ export function CheckboxExpandableList<T extends ListItem>(
       renderChunkFn={
         (attr) => (
           <ListComponent
+            lastSpaced
             items={attr.chunk}
             {...checkboxListProps?.(attr)}
           />

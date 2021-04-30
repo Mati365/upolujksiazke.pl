@@ -1,6 +1,9 @@
 import React, {ReactNode, useState, useMemo} from 'react';
 import * as R from 'ramda';
 
+import {usePromiseCallback} from '@client/hooks';
+
+import {CanBePromise} from '@shared/types';
 import {
   AsyncExpandableToolbarProps,
   DefaultAsyncExpandableToolbar,
@@ -21,6 +24,13 @@ export type AsyncExpandableChunksProps<T> = CleanListProps & {
   totalItems: number,
   renderChunkFn(attrs: AsyncChunkAttributes<T>): ReactNode,
   renderExpandToolbarFn?(attrs: AsyncExpandableToolbarProps): ReactNode,
+  onRequestChunk(
+    atrs: {
+      loadedChunks: T[][],
+      totalLoaded: number,
+      defaultChunkSize: number,
+    },
+  ): CanBePromise<T[]>,
 };
 
 export function AsyncExpandableChunks<T extends {id: any}>(
@@ -34,6 +44,7 @@ export function AsyncExpandableChunks<T extends {id: any}>(
         tag='li'
       />
     ),
+    onRequestChunk,
     ...props
   }: AsyncExpandableChunksProps<T>,
 ) {
@@ -45,12 +56,24 @@ export function AsyncExpandableChunks<T extends {id: any}>(
 
   const totalLoaded = useMemo(
     () => R.sum(R.map(R.length, allChunks)),
-    [allChunks],
+    [allChunks.length],
   );
 
-  const onExpand = () => {
-    console.info('abc');
-  };
+  const [onExpand] = usePromiseCallback(
+    async () => {
+      const chunk = await onRequestChunk(
+        {
+          loadedChunks: allChunks,
+          defaultChunkSize: firstChunk?.length,
+          totalLoaded,
+        },
+      );
+
+      // rerendered anyway
+      if (chunk?.length)
+        allChunks.push(chunk);
+    },
+  );
 
   return (
     <CleanList

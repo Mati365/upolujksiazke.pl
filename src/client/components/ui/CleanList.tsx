@@ -7,6 +7,7 @@ export type CleanListProps = BasicWrapperProps & {
   tag?: any,
   inline?: boolean,
   block?: boolean,
+  lastSpaced?: boolean,
   wrap?: boolean,
   spaced?: number,
   align?: string,
@@ -19,6 +20,7 @@ export const CleanList = (
     tag: Tag = 'ul',
     block = true,
     inline = true,
+    lastSpaced,
     separated,
     wrap,
     spaced,
@@ -38,6 +40,7 @@ export const CleanList = (
       align && `is-aligned-${align}`,
       justify && `is-justified-${justify}`,
       separated && 'is-separated',
+      lastSpaced && 'is-last-spaced',
       className,
     )}
     {...props}

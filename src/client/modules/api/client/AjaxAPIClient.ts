@@ -1,5 +1,6 @@
 import {APIClient} from '@api/APIClient';
 import {APIConfig, JwtAPIClient} from '@api/jwt';
+import {BooksAjaxRepo} from './repo';
 
 export class AjaxAPIClient extends APIClient {
   public readonly asyncCaller: JwtAPIClient;
@@ -7,9 +8,9 @@ export class AjaxAPIClient extends APIClient {
   constructor(config: APIConfig) {
     super(
       {
-        recentBooks: null,
-        books: null,
+        books: new BooksAjaxRepo,
         booksCategories: null,
+        recentBooks: null,
         tags: null,
       },
     );

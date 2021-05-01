@@ -16,3 +16,5 @@ for (;;) {
   console.info(`Remain bull jobs: ${remainJobs}! Waiting!`);
   await sleep(2000);
 }
+
+process.exit(0);

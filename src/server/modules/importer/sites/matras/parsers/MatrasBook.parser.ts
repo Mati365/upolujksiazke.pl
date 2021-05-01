@@ -68,7 +68,6 @@ export class MatrasBookParser
         authors: await this.extractAuthors(bookPage.$, shallowParse),
         defaultTitle: release.title,
         originalTitle: normalizeParsedText(detailsText.match(/Tytuł oryginalny:\s*([^\n]+)/)?.[1]),
-        originalPublishDate: normalizeParsedText(detailsText.match(/Data pierwszego wydania:\s*(\S+)/)?.[1]),
         releases: [
           release,
         ],
@@ -101,7 +100,10 @@ export class MatrasBookParser
           totalPages: (+detailsText.match(/Liczba stron:\s*(\d+)/)?.[1]) || null,
           edition: normalizeParsedText(detailsText.match(/Wydanie:\s*(\S+)/)?.[1]),
           format: normalizeParsedText(detailsText.match(/Format:\s*(\S+)/)?.[1]),
-          publishDate: normalizeParsedText(detailsText.match(/Rok wydania:\s*(\S+)/)?.[1]),
+          publishDate: normalizeParsedText(
+            detailsText.match(/Rok wydania:\s*(\S+)/)?.[1]
+              || detailsText.match(/Data pierwszego wydania:\s*(\S+)/)?.[1],
+          ),
           defaultPrice: normalizePrice(detailsText.match(/Cena katalogowa:\s*(\S+)/)?.[1])?.price,
           availability: (await this.parseAvailability(bookPage)).result,
           translator: (

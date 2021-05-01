@@ -1,4 +1,8 @@
-import {convertMinutesToMiliseconds, isDevMode} from '@shared/helpers';
+import {
+  convertMinutesToMiliseconds,
+  isDevMode,
+  PredefinedSeconds,
+} from '@shared/helpers';
 
 import {WrapMethod} from '@shared/helpers/decorators/WrapMethod';
 import {LRUCacheConfig, LRUMemCache} from '@shared/helpers/classes/LRUMemCache';
@@ -34,7 +38,11 @@ export function RedisMemoize(
   return WrapMethod(
     (decoratedFn) => async function wrapped(this: APIClientChild<ServerAPIClient>, ...args: any[]) {
       const {cacheManager} = this.api.services;
-      const {key, expire, disabled} = keyFn(...args);
+      const {
+        key,
+        disabled,
+        expire = PredefinedSeconds.ONE_DAY,
+      } = keyFn(...args);
 
       if (!disabled && !devMode) {
         const lruCached = lruCache?.get<any>(key);

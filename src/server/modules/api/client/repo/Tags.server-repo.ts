@@ -1,6 +1,5 @@
 import {plainToClass} from 'class-transformer';
 
-import {PredefinedSeconds} from '@shared/helpers';
 import {TagRecord} from '@api/types/Tag.record';
 import {MostPopularTagsFilters, TagsRepo} from '@api/repo';
 
@@ -17,7 +16,6 @@ export class TagsServerRepo extends ServerAPIClientChild implements TagsRepo {
     {
       keyFn: ({limit}) => ({
         key: `popular-tags-${limit}`,
-        expire: PredefinedSeconds.ONE_DAY,
       }),
     },
   )

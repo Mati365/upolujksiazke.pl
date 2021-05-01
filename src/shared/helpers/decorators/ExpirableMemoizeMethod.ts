@@ -13,7 +13,7 @@ export type ExpirableMemoizeCallAttrs = {
   cacheStore?: KeyExpirableCacheStore,
   keyFn: (...args: any[]) => {
     key: string,
-    expire: number,
+    expire?: number,
     disabled?: boolean,
   },
 };

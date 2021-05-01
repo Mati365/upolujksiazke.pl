@@ -1,6 +1,5 @@
 import {plainToClass} from 'class-transformer';
 
-import {PredefinedSeconds} from '@shared/helpers';
 import {BookCategoryRecord} from '@api/types/BookCategory.record';
 import {BooksCategoriesRepo, MostPopularCategoriesFilters} from '@api/repo';
 
@@ -17,7 +16,6 @@ export class BooksCategoriesServerRepo extends ServerAPIClientChild implements B
     {
       keyFn: ({limit}) => ({
         key: `popular-books-categories-${limit}`,
-        expire: PredefinedSeconds.ONE_DAY,
       }),
     },
   )

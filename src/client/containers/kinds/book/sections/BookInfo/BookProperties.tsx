@@ -29,9 +29,22 @@ export const BookProperties = memo(({book}: BookPropertiesProps) => {
   const {
     primaryRelease, prizes,
     avgRating, totalRatings,
+    releases,
   } = book;
 
-  const publishDate = book.originalPublishDate || primaryRelease.publishDate;
+  const firstRelease = useMemo(
+    () => R.sortBy(
+      (release) => +release.publishDate.match(/\d{4}/)?.[0],
+      releases.filter((release) => !!release.publishDate),
+    )[0],
+    [],
+  );
+
+  const publisher = firstRelease?.publisher || primaryRelease.publisher;
+  const publishDate = useMemo(
+    () => book.originalPublishDate || firstRelease?.publishDate,
+    [book],
+  );
 
   const t = useI18n('shared.book.props');
   const items = useMemo<IconPropertyInfo[]>(
@@ -45,12 +58,12 @@ export const BookProperties = memo(({book}: BookPropertiesProps) => {
         name: t('publisher'),
         icon: BuildingsIcon,
         autoWidth: true,
-        value: primaryRelease.publisher && (
+        value: publisher && (
           <PublisherLink
-            item={primaryRelease.publisher}
+            item={publisher}
             className='is-undecorated-link has-double-link-chevron'
           >
-            {primaryRelease.publisher.name}
+            {publisher.name}
           </PublisherLink>
         ),
       },

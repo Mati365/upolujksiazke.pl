@@ -8,6 +8,7 @@ import {CardBookSearchService} from '@server/modules/book/services/search/CardBo
 
 import {BookRoute} from '@client/routes/Book';
 import {HomeRoute} from '@client/routes/Home';
+import {BooksRoute} from '@client/routes/Books';
 
 @Injectable()
 export class RedisCacheWarmupCron {
@@ -24,6 +25,7 @@ export class RedisCacheWarmupCron {
     await this.warmupHomeCache();
     await this.warmupLayoutCache();
     await this.warmupBooksCache();
+    await this.warmupBookCache();
   }
 
   /**
@@ -33,6 +35,20 @@ export class RedisCacheWarmupCron {
    */
   async warmupLayoutCache() {
     await Layout.getInitialProps(
+      {
+        api: this.apiService.client,
+        match: null,
+      },
+    );
+  }
+
+  /**
+   * Warmup cache for books filters page
+   *
+   * @memberof RedisCacheWarmupCron
+   */
+  async warmupBooksCache() {
+    await BooksRoute.getInitialProps(
       {
         api: this.apiService.client,
         match: null,
@@ -59,7 +75,7 @@ export class RedisCacheWarmupCron {
    *
    * @memberof RedisCacheWarmup
    */
-  async warmupBooksCache() {
+  async warmupBookCache() {
     const {
       bookSearchService,
       apiService: {

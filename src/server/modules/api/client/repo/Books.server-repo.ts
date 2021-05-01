@@ -3,7 +3,7 @@ import * as R from 'ramda';
 import {plainToClass} from 'class-transformer';
 
 import {ID} from '@shared/types';
-import {objPropsToPromise, PredefinedSeconds} from '@shared/helpers';
+import {objPropsToPromise} from '@shared/helpers';
 import {BasicAPIPagination} from '@api/APIClient';
 import {
   AggsBooksFilters,
@@ -66,7 +66,6 @@ export class BooksServerRepo extends ServerAPIClientChild implements BooksRepo {
     {
       keyFn: (filters) => ({
         key: `authors-books-${JSON.stringify(filters)}`,
-        expire: PredefinedSeconds.ONE_DAY,
       }),
     },
   )
@@ -165,6 +164,14 @@ export class BooksServerRepo extends ServerAPIClientChild implements BooksRepo {
    * @param {AggsBooksFilters} filters
    * @memberof BooksServerRepo
    */
+  @MeasureCallDuration('findAggregatedBooks')
+  @RedisMemoize(
+    {
+      keyFn: (filters) => ({
+        key: `aggregated-books-${JSON.stringify(filters)}`,
+      }),
+    },
+  )
   async findAggregatedBooks(filters: AggsBooksFilters) {
     const {esCardBookSearchService} = this.services;
     const {meta, items, aggs} = await esCardBookSearchService.findFilteredBooks(
@@ -205,7 +212,6 @@ export class BooksServerRepo extends ServerAPIClientChild implements BooksRepo {
     {
       keyFn: ({limit, offset}) => ({
         key: `recent-books-${offset}-${limit}`,
-        expire: PredefinedSeconds.ONE_DAY,
       }),
     },
   )
@@ -235,7 +241,6 @@ export class BooksServerRepo extends ServerAPIClientChild implements BooksRepo {
     {
       keyFn: (id: ID) => ({
         key: `book-${id}`,
-        expire: PredefinedSeconds.ONE_DAY,
       }),
     },
   )

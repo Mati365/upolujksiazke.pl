@@ -1,4 +1,4 @@
-lock "~> 3.14.0"
+lock '~> 3.14.0'
 
 set :application, 'upolujksiazke.pl'
 set :repo_url, 'git@github.com:upolujksiazke/upolujksiazke.pl.git'

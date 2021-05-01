@@ -4,8 +4,8 @@ process.env.CMD_APP_INSTANCE = 'gulp';
 import 'isomorphic-fetch';
 import gulp from 'gulp';
 
-import {Website, Category} from './entity';
 import * as Scrapper from './scrapper';
+import {Website, Category} from './entity';
 
 // entities
 gulp.task('entity:website:fetch-missing-logos', Website.fetchMissingLogosTask);

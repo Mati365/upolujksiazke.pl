@@ -17,6 +17,7 @@
     "schema:migrate": "TS_NODE_FILES=true TS_NODE_TRANSPILE_ONLY=true node_modules/.bin/ts-node --project tsconfig.json -r tsconfig-paths/register ./node_modules/.bin/typeorm migration:run --config src/server/ormconfig.js",
     "seed:config": "node_modules/.bin/ts-node --project tsconfig.json -r tsconfig-paths/register ./node_modules/typeorm-seeding/dist/cli.js config --config src/server/ormconfig.js",
     "seed:run": "node_modules/.bin/ts-node --project tsconfig.json -r tsconfig-paths/register ./node_modules/typeorm-seeding/dist/cli.js seed --config src/server/ormconfig.js",
+    "bull:wait_if_has_jobs": "node scripts/wait-for-queue.mjs",
     "console": "NODE_REPL_HISTORY_FILE=$HOME/.node_history node ./dist/console.js"
   },
   "husky": {

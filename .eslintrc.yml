@@ -3,6 +3,7 @@
   parser: '@typescript-eslint/parser'
   parserOptions:
     ecmaVersion: 6
+    extraFileExtensions: ['.mjs']
     sourceType: module
     project: ./tsconfig.json
   settings:

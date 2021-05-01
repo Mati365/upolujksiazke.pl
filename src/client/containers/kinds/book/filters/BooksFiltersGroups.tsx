@@ -8,6 +8,7 @@ import {LinkProps} from '@client/decorators/linkInput';
 import {BookCountedAggs} from '@api/repo';
 
 import {APICountedBucket} from '@api/APIRecord';
+import {CachedRender} from '@client/components/functional';
 import {CheckboxExpandableList} from '@client/components/ui/controls';
 import {
   FiltersGroup,
@@ -37,43 +38,48 @@ export const BooksFiltersGroups = ({aggs, l}: BooksFiltersGroupsProps) => {
 
     const inputProps = l.input(name);
     return (
-      <FiltersGroup
-        header={
-          t(`${name}.header`)
-        }
-        total={
-          t(`${name}.total`, [agg.total.bucket])
-        }
-      >
-        <CheckboxExpandableList
-          listComponent={CountedCheckboxList}
-          totalItems={agg.total.bucket}
-          firstChunk={
-            mapCountedRecordsToCountedListItems(agg.items)
-          }
-          checkboxListProps={
-            () => inputProps
-          }
-          onRequestChunk={
-            async ({totalLoaded, defaultChunkSize}) => {
-              const result = await api.repo.books.findBooksAggsItems(
-                {
-                  agg: {
-                    name,
-                    pagination: {
-                      offset: totalLoaded,
-                      limit: defaultChunkSize,
-                    },
-                  },
-                  filters: {},
-                },
-              );
-
-              return mapCountedRecordsToCountedListItems(result?.items);
+      <CachedRender cacheKey={agg}>
+        {() => (
+          <FiltersGroup
+            header={
+              t(`${name}.header`)
             }
-          }
-        />
-      </FiltersGroup>
+            total={
+              t(`${name}.total`, [agg.total.bucket])
+            }
+          >
+            <CheckboxExpandableList
+              resetKey={agg}
+              listComponent={CountedCheckboxList}
+              totalItems={agg.total.bucket}
+              firstChunk={
+                mapCountedRecordsToCountedListItems(agg.items)
+              }
+              checkboxListProps={
+                () => inputProps
+              }
+              onRequestChunk={
+                async ({totalLoaded, expandBy}) => {
+                  const result = await api.repo.books.findBooksAggsItems(
+                    {
+                      agg: {
+                        name,
+                        pagination: {
+                          offset: totalLoaded,
+                          limit: expandBy,
+                        },
+                      },
+                      filters: {},
+                    },
+                  );
+
+                  return mapCountedRecordsToCountedListItems(result?.items);
+                }
+              }
+            />
+          </FiltersGroup>
+        )}
+      </CachedRender>
     );
   };
 

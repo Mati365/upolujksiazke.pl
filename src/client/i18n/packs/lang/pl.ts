@@ -156,8 +156,8 @@ export const PL_LANG_PACK = {
         header: 'Nagrody',
         total: '%{} nagród',
       },
-      publisher: {
-        header: 'Wydawca',
+      publishers: {
+        header: 'Wydawcy',
         total: '%{} wydawców',
       },
     },

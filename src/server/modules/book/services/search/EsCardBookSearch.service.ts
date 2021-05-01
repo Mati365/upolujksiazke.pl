@@ -54,29 +54,40 @@ export class EsCardBookSearchService {
    */
   async findFilteredBooks(filters: AggsBooksFilters): Promise<APIPaginationResultWithAggs<BookEntity, BookEntityAggs>> {
     const {bookEsIndex, cardBookSearch} = this;
-    const {authorsIds, excludeIds} = filters;
+    const {authorsIds, categoriesIds, excludeIds} = filters;
     const meta = {
       limit: filters.limit,
       offset: filters.offset || 0,
     };
 
-    let esQuery: esb.Query = null;
-    if (authorsIds || excludeIds) {
+    let esQuery: esb.BoolQuery = null;
+    if (authorsIds || excludeIds || categoriesIds) {
       esQuery = esb.boolQuery();
 
       if (authorsIds) {
-        esQuery = (<esb.BoolQuery> esQuery).must(
+        esQuery = esQuery.must(
           [
             esb.nestedQuery(
-              esb.termsQuery('authors.id', filters.authorsIds),
+              esb.termsQuery('authors.id', authorsIds),
               'authors',
             ),
           ],
         );
       }
 
+      if (categoriesIds) {
+        esQuery = esQuery.must(
+          [
+            esb.nestedQuery(
+              esb.termsQuery('categories.id', categoriesIds),
+              'categories',
+            ),
+          ],
+        );
+      }
+
       if (excludeIds) {
-        esQuery = (<esb.BoolQuery> esQuery).mustNot(
+        esQuery = esQuery.mustNot(
           [
             esb.termsQuery('_id', excludeIds),
           ],

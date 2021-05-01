@@ -1,7 +1,10 @@
 import React, {ReactNode, useState, useMemo} from 'react';
 import * as R from 'ramda';
 
-import {usePromiseCallback} from '@client/hooks';
+import {
+  usePrevious,
+  usePromiseCallback,
+} from '@client/hooks';
 
 import {CanBePromise} from '@shared/types';
 import {
@@ -21,6 +24,7 @@ export type AsyncChunkAttributes<T> = {
 
 export type AsyncExpandableChunksProps<T> = CleanListProps & {
   firstChunk?: T[],
+  resetKey?: any,
   totalItems: number,
   renderChunkFn(attrs: AsyncChunkAttributes<T>): ReactNode,
   renderExpandToolbarFn?(attrs: AsyncExpandableToolbarProps): ReactNode,
@@ -28,13 +32,14 @@ export type AsyncExpandableChunksProps<T> = CleanListProps & {
     atrs: {
       loadedChunks: T[][],
       totalLoaded: number,
-      defaultChunkSize: number,
+      expandBy: number,
     },
   ): CanBePromise<T[]>,
 };
 
 export function AsyncExpandableChunks<T extends {id: any}>(
   {
+    resetKey,
     firstChunk,
     totalItems,
     renderChunkFn,
@@ -48,7 +53,8 @@ export function AsyncExpandableChunks<T extends {id: any}>(
     ...props
   }: AsyncExpandableChunksProps<T>,
 ) {
-  const [allChunks] = useState<T[][]>(
+  const prevResetKey = usePrevious(resetKey);
+  const [allChunks, setAllChunks] = useState<T[][]>(
     firstChunk
       ? [firstChunk]
       : [],
@@ -59,12 +65,13 @@ export function AsyncExpandableChunks<T extends {id: any}>(
     [allChunks.length],
   );
 
+  const remain = totalItems - totalLoaded;
   const [onExpand] = usePromiseCallback(
     async () => {
       const chunk = await onRequestChunk(
         {
           loadedChunks: allChunks,
-          defaultChunkSize: firstChunk?.length,
+          expandBy: Math.min(remain, firstChunk?.length || 0),
           totalLoaded,
         },
       );
@@ -74,6 +81,9 @@ export function AsyncExpandableChunks<T extends {id: any}>(
         allChunks.push(chunk);
     },
   );
+
+  if (prevResetKey !== null && !R.isNil(resetKey) && prevResetKey !== resetKey)
+    setAllChunks([firstChunk]);
 
   return (
     <CleanList
@@ -101,7 +111,7 @@ export function AsyncExpandableChunks<T extends {id: any}>(
       {renderExpandToolbarFn(
         {
           loaded: totalLoaded,
-          remain: totalItems - totalLoaded,
+          remain,
           onExpand,
         },
       )}

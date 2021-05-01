@@ -19,7 +19,7 @@ import {APIClientService} from './services';
         [
           {
             path: '/api',
-            childrens: [
+            children: [
               {
                 path: '/v1',
                 module: APIv1Module,

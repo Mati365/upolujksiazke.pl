@@ -9,7 +9,7 @@ import {APICallConfig} from '@api/jwt/JwtAPIClient';
 import {
   QueryLoadingSpinner,
   QueryErrorMessage,
-} from './DefaultLoaders';
+} from '@client/containers/parts/DefaultLoaders';
 
 import {useAjaxAPIClient} from '../hooks/useAjaxAPIClient';
 import {AjaxAPIClient} from '../AjaxAPIClient';

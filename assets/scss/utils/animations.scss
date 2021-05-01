@@ -15,6 +15,15 @@
   }
 }
 
+@keyframes spin-around {
+	0% {
+		transform: rotate(0deg);
+	}
+
+	100% {
+		transform: rotate(360deg);
+	}
+}
 
 .is {
   $default-anim-duration: 500ms;

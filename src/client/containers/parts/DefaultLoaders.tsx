@@ -2,16 +2,19 @@ import React, {CSSProperties, ReactNode} from 'react';
 import c from 'classnames';
 
 import {useI18n} from '@client/i18n/hooks/useI18n';
+import {Spinner} from '@client/components/ui';
 
 type QueryLoadingSpinnerProps = {
   style?: CSSProperties,
   className?: string,
   title?: ReactNode,
+  layer?: boolean,
 };
 
 export const QueryLoadingSpinner = (
   {
-    style, className, title,
+    style, className,
+    layer, title,
   }: QueryLoadingSpinnerProps,
 ) => {
   const t = useI18n();
@@ -19,14 +22,17 @@ export const QueryLoadingSpinner = (
   return (
     <div
       className={c(
-        'loading-layer',
+        'c-loading-layer',
+        layer && 'is-layer',
         className,
       )}
       style={style}
     >
-      <div className='loading-layer__progress' />
-      <div className='loading-layer__title'>
-        {title ?? t('shared.fetch_state.loading')}
+      <div className='c-loading-layer__content'>
+        <Spinner className='c-loading-layer__progress' />
+        <div className='c-loading-layer__title'>
+          {title ?? t('shared.fetch_state.loading')}
+        </div>
       </div>
     </div>
   );
@@ -37,7 +43,7 @@ export const QueryErrorMessage = ({style}: QueryLoadingSpinnerProps) => {
 
   return (
     <div
-      className='loading-layer text-muted'
+      className='c-loading-layer text-muted'
       style={style}
     >
       {t('shared.fetch_state.errors')}

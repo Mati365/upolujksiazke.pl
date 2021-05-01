@@ -23,3 +23,4 @@ export * from './Grid';
 export * from './UnderlinedTitle';
 export * from './AsyncExpandableChunks';
 export * from './ErrorBoundary';
+export * from './Spinner';

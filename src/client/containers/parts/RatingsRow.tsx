@@ -18,6 +18,7 @@ type RatingsRowProps = {
   showTextValue?: boolean,
   totalStars?: number,
   totalRatings?: number,
+  truncateRatingsCount?: number,
   size?: string,
   value: number,
 };
@@ -29,6 +30,7 @@ export const RatingsRow = (
     totalRatings,
     textOnly,
     showTextValue,
+    truncateRatingsCount = 999,
     size = 'normal',
     totalStars = 5,
   }: RatingsRowProps,
@@ -64,6 +66,10 @@ export const RatingsRow = (
     totalStars,
   );
 
+  const ratingsTitle = !R.isNil(totalRatings) && (
+    totalRatings > truncateRatingsCount ? `${truncateRatingsCount}+` : (totalRatings || 0)
+  );
+
   return (
     <CleanList
       tag='div'
@@ -79,9 +85,9 @@ export const RatingsRow = (
           {`${toFixedIfFloating(normalizedValue, 1)} / ${totalStars}`}
         </span>
       )}
-      {!R.isNil(totalRatings) && (
+      {ratingsTitle && (
         <span className='c-ratings-row__total'>
-          {`(${totalRatings || 0} ${t('shared.book.total_ratings')})`}
+          {`(${ratingsTitle} ${t('shared.book.total_ratings')})`}
         </span>
       )}
     </CleanList>

@@ -41,8 +41,9 @@ export const BooksFiltersContainer = ({initialBooks}: BooksFiltersContainerProps
       }
       ignoreFirstRenderFetch
     >
-      {({result}) => (
+      {({result, loading}) => (
         <FiltersContainer
+          loading={loading}
           className='c-books-filters-section'
           sidebar={(
             <BooksFiltersGroups

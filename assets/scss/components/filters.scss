@@ -18,6 +18,19 @@
         font-weight: 700;
       }
     }
+
+    &__content {
+      position: relative;
+
+      .c-loading-layer {
+        background: rgba(255, 255, 255, .65);
+
+        &__content {
+          position: absolute;
+          top: 300px;
+        }
+      }
+    }
   }
 
   &-group {

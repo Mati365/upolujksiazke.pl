@@ -67,6 +67,7 @@ export const usePromiseCallback = <T> (
       if (!silent && (!promiseState.loading || promiseState.errors)) {
         setPromiseState(
           {
+            ...promiseState,
             errors: false,
             loading: true,
           },

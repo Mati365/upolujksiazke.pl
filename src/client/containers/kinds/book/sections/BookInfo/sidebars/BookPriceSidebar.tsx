@@ -1,7 +1,10 @@
 import React, {Fragment, useMemo} from 'react';
 import * as R from 'ramda';
 
+import {findById} from '@shared/helpers';
+
 import {Divider} from '@client/components/ui';
+import {BooksAuthorsGroupedBooks} from '@api/repo';
 import {
   BookAuthorRecord,
   BookCardRecord,
@@ -14,35 +17,18 @@ import {BookTags} from '../BookTags';
 
 type BookPriceSidebarProps = {
   book: BookFullInfoRecord,
-  authorsBooks?: BookCardRecord[],
+  authorsBooks?: BooksAuthorsGroupedBooks,
 };
 
 export const BookPriceSidebar = ({book, authorsBooks}: BookPriceSidebarProps) => {
-  const {tags} = book;
-  const groupedAuthorsBooks = useMemo(
-    () => {
-      const groupedBooks: [BookAuthorRecord, BookCardRecord[]][] = [];
-      const stack = [...authorsBooks];
-
-      book.authors.forEach((author) => {
-        const authorBooks: BookCardRecord[] = [];
-
-        for (let i = 0; i < stack.length;) {
-          const stackBook = stack[i];
-
-          if (R.any(({id}) => id === author.id, stackBook.authors)) {
-            authorBooks.push(stackBook);
-            stack.splice(i, 1);
-          } else
-            ++i;
-        }
-
-        if (authorBooks.length)
-          groupedBooks.push([author, authorBooks]);
-      });
-
-      return groupedBooks;
-    },
+  const {tags, authors} = book;
+  const groupedAuthorsBooks = useMemo<[BookAuthorRecord, BookCardRecord[]][]>(
+    () => R.toPairs(authorsBooks).map(
+      ([authorId, card]) => [
+        findById(+authorId)(authors),
+        card,
+      ],
+    ),
     [authorsBooks],
   );
 
@@ -51,10 +37,10 @@ export const BookPriceSidebar = ({book, authorsBooks}: BookPriceSidebarProps) =>
       className='c-book-info-section__price-box'
       book={book}
     >
-      {groupedAuthorsBooks?.length > 0 && (
+      {groupedAuthorsBooks.length > 0 && (
         <>
           {groupedAuthorsBooks.map(
-            ([author, books], index) => (
+            ([author, books], index) => books?.length > 0 && (
               <Fragment key={author.id}>
                 <AuthorOtherBooks
                   author={author}

@@ -1,12 +1,15 @@
+import * as R from 'ramda';
+
 import {plainToClass} from 'class-transformer';
 
 import {ID} from '@shared/types';
-import {PredefinedSeconds} from '@shared/helpers';
+import {objPropsToPromise, PredefinedSeconds} from '@shared/helpers';
 import {BasicAPIPagination} from '@api/APIClient';
 import {
   AggsBooksFilters,
   AuthorsBooksFilters,
   BookFindOneAttrs,
+  BooksAuthorsGroupedBooks,
   BooksFilters,
   BooksRepo,
   SingleAggBookFilters,
@@ -67,8 +70,24 @@ export class BooksServerRepo extends ServerAPIClientChild implements BooksRepo {
       }),
     },
   )
-  findAuthorsBooks(filters: AuthorsBooksFilters) {
-    return this.findAll(filters);
+  async findGroupedAuthorsBooks(filters: AuthorsBooksFilters): Promise<BooksAuthorsGroupedBooks> {
+    const authorsBooksPairs: [number, Promise<any>][] = filters.authorsIds.map(
+      (authorId) => [
+        authorId,
+        this
+          .findAll(
+            {
+              ...filters,
+              authorsIds: [authorId],
+            },
+          )
+          .then((r) => r.items),
+      ],
+    );
+
+    return objPropsToPromise(
+      R.fromPairs(authorsBooksPairs),
+    );
   }
 
   /**

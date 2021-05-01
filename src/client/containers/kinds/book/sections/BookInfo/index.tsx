@@ -5,7 +5,8 @@ import {formatBookTitle} from '@client/helpers/logic';
 import {useUA} from '@client/modules/ua';
 import {useI18n} from '@client/i18n';
 
-import {BookCardRecord, BookFullInfoRecord} from '@api/types';
+import {BookFullInfoRecord} from '@api/types';
+import {BooksAuthorsGroupedBooks} from '@api/repo';
 import {CategoryLink} from '@client/routes/Links';
 
 import {
@@ -27,7 +28,7 @@ import {
 
 type BookInfoProps = {
   book: BookFullInfoRecord,
-  authorsBooks?: BookCardRecord[],
+  authorsBooks?: BooksAuthorsGroupedBooks,
   children?: ReactNode,
 };
 

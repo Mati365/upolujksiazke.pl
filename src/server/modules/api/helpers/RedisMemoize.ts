@@ -19,8 +19,9 @@ export function RedisMemoize(
     },
   }: RedisMemoizeAttrs,
 ) {
+  const devMode = isDevMode();
   const lruCache = (
-    !isDevMode() && lru
+    lru
       ? new LRUMemCache(
         {
           ...lru,
@@ -35,7 +36,7 @@ export function RedisMemoize(
       const {cacheManager} = this.api.services;
       const {key, expire, disabled} = keyFn(...args);
 
-      if (!disabled) {
+      if (!disabled && !devMode) {
         const lruCached = lruCache?.get<any>(key);
         if (lruCached)
           return lruCached;
@@ -49,7 +50,7 @@ export function RedisMemoize(
       }
 
       const result = await decoratedFn(...args);
-      if (!disabled) {
+      if (!disabled && !devMode) {
         lruCache?.set(key, result);
 
         await cacheManager.set<string>(

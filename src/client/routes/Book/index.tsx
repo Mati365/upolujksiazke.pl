@@ -13,8 +13,8 @@ import {useI18n} from '@client/i18n';
 
 import {AsyncRoute} from '@client/components/utils/asyncRouteUtils';
 import {Breadcrumbs} from '@client/containers/Breadcrumbs';
+import {BooksAuthorsGroupedBooks} from '@api/repo';
 import {
-  BookCardRecord,
   BookFullInfoRecord,
   CategoryBooksGroup,
 } from '@api/types';
@@ -40,7 +40,7 @@ import {
 type BookRouteViewData = {
   layoutData: LayoutViewData,
   book: BookFullInfoRecord,
-  authorsBooks: BookCardRecord[],
+  authorsBooks: BooksAuthorsGroupedBooks,
   popularCategoriesBooks: CategoryBooksGroup[],
 };
 
@@ -140,7 +140,12 @@ BookRoute.route = {
  */
 BookRoute.getInitialProps = async (attrs) => {
   const {api: {repo}, match} = attrs;
-  const book = await repo.books.findOne(match.params.id);
+  const {layoutData, book} = await objPropsToPromise(
+    {
+      layoutData: Layout.getInitialProps(attrs),
+      book: repo.books.findOne(match.params.id),
+    },
+  );
 
   if (!book)
     return {};
@@ -155,11 +160,9 @@ BookRoute.getInitialProps = async (attrs) => {
 
   const {
     authorsBooks,
-    layoutData,
     popularCategoriesBooks,
   } = await objPropsToPromise(
     {
-      layoutData: Layout.getInitialProps(attrs),
       popularCategoriesBooks: repo.recentBooks.findCategoriesPopularBooks(
         {
           categoriesIds: R.take(5, categoriesIds),
@@ -168,7 +171,7 @@ BookRoute.getInitialProps = async (attrs) => {
           itemsPerGroup: 7,
         },
       ),
-      authorsBooks: repo.books.findAuthorsBooks(
+      authorsBooks: repo.books.findGroupedAuthorsBooks(
         {
           excludeIds: [book.id],
           limit: 4,
@@ -179,7 +182,7 @@ BookRoute.getInitialProps = async (attrs) => {
   );
 
   return {
-    authorsBooks: authorsBooks.items,
+    authorsBooks,
     popularCategoriesBooks,
     book,
     layoutData,

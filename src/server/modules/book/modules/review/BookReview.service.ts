@@ -1,5 +1,5 @@
 import {Inject, Injectable, forwardRef} from '@nestjs/common';
-import {Connection, EntityManager} from 'typeorm';
+import {Connection, EntityManager, IsNull, Not} from 'typeorm';
 import pMap from 'p-map';
 import * as R from 'ramda';
 
@@ -85,6 +85,7 @@ export class BookReviewService {
         .select(BookReviewService.REVIEW_CARD_FIELDS)
         .where(
           {
+            description: Not(IsNull()),
             bookId,
           },
         )

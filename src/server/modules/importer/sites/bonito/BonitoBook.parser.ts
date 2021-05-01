@@ -139,12 +139,6 @@ export class BonitoBookParser
     if (!url)
       return null;
 
-    return (
-      normalizeURL(
-        url
-          .replace('cache/', 'zdjecia/')
-          .replace('_200.', '.'),
-      )
-    );
+    return normalizeURL(url.replace('_200.', '_400.'));
   }
 }

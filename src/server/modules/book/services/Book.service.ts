@@ -3,6 +3,7 @@ import {Connection, EntityManager, In} from 'typeorm';
 import pMap from 'p-map';
 import * as R from 'ramda';
 
+import {findByProp} from '@shared/helpers';
 import {
   forwardTransaction,
   runTransactionWithPostHooks,
@@ -27,7 +28,6 @@ import {CreateBookReleaseDto} from '../modules/release/dto/CreateBookRelease.dto
 import {BookEntity} from '../entity/Book.entity';
 import {BookVolumeEntity} from '../modules/volume/BookVolume.entity';
 import {BookReviewEntity} from '../modules/review/BookReview.entity';
-import {BookReleaseEntity} from '../modules/release/BookRelease.entity';
 import {BookStatsService} from '../modules/stats/services/BookStats.service';
 import {BookTagsTextHydratorService} from '../modules/seo/service/BookTagsTextHydrator.service';
 import {BookGenreService} from '../modules/genre/BookGenre.service';
@@ -290,19 +290,22 @@ export class BookService {
 
       // get most popular release
       const primaryRelease = R.reduce(
-        (acc, item) => (
-          (acc?.availability?.length || 0) < (item.availability?.length || 0)
-            ? item
+        (acc, releaseDto) => (
+          !acc
+            || (acc.availability?.length || 0) < (releaseDto.availability?.length || 0)
+            || !acc.description
+            || !releaseDto.cover
+            ? releaseDto
             : acc
         ),
-        null as BookReleaseEntity,
-        upsertedReleases,
+        null as CreateBookReleaseDto,
+        dto.releases,
       );
 
       const primaryReleaseId = (
         dto.primaryReleaseId
           ?? book.primaryReleaseId
-          ?? primaryRelease?.id
+          ?? (primaryRelease && findByProp('isbn')(primaryRelease.isbn)(upsertedReleases))
       );
 
       const description = (

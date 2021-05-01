@@ -95,7 +95,7 @@ export class IbukBookParser
         ),
         cover: new CreateImageAttachmentDto(
           {
-            originalUrl: $section.find('.item__cover .item__img .img-responsive[itemprop="image"]').attr('src'),
+            originalUrl: $section.find('.item__cover .item__img .img-responsive[itemprop="image"]').attr('data-src'),
           },
         ),
       },

@@ -283,7 +283,7 @@ export class ImageAttachmentService {
           `source${path.extname(extractNonSearchParamsURL(originalUrl))}`,
         ),
         headerValidatorFn: ({size: {kilobytes}, type}) => (
-          kilobytes < 5_000 && isImageMimeType(type)
+          kilobytes < 6_000 && isImageMimeType(type)
         ),
       },
     );

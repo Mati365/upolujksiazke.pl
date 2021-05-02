@@ -167,6 +167,7 @@ export abstract class EntityIndex<E extends {id: number}, I = E> implements OnMo
     return {
       ids: R.pluck('_id' as any, result.hits?.hits || []),
       aggs: result.aggregations,
+      total: result.hits?.total?.value,
     };
   }
 

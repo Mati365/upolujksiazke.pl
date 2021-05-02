@@ -120,7 +120,7 @@ export class BooksServerRepo extends ServerAPIClientChild implements BooksRepo {
    */
   async findBooksAggsItems({agg, filters}: SingleAggBookFilters) {
     const {esCardBookSearchService} = this.services;
-    const {aggs} = await esCardBookSearchService.findFilteredBooks(
+    const {aggs, meta} = await esCardBookSearchService.findFilteredBooks(
       {
         ...filters,
         limit: 0,
@@ -151,10 +151,7 @@ export class BooksServerRepo extends ServerAPIClientChild implements BooksRepo {
 
     return {
       items,
-      meta: {
-        limit: agg.pagination.limit,
-        offset: agg.pagination.offset || 0,
-      },
+      meta,
     };
   }
 

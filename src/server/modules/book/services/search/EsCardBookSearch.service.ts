@@ -81,7 +81,9 @@ export class EsCardBookSearchService {
     if (query && !filters.skipBooksLoading)
       esSearchBody = esSearchBody.query(query);
 
-    if (!R.isNil(meta.limit))
+    if (filters.skipBooksLoading)
+      esSearchBody = esSearchBody.size(0);
+    else if (!R.isNil(meta.limit))
       esSearchBody = esSearchBody.size(meta.limit);
 
     if (meta.offset)
@@ -113,7 +115,10 @@ export class EsCardBookSearchService {
 
     return {
       items: books,
-      meta,
+      meta: {
+        totalItems: result.total,
+        ...meta,
+      },
       aggs,
     };
   }

@@ -1,0 +1,23 @@
+.c-arrows-paginate {
+  &__relative-btn {
+    font-size: 1.1em;
+  }
+
+  &__absolute-btn,
+  &__relative-btn {
+    color: color(gray-4);
+  }
+
+  &__input-item {
+    position: relative;
+    top: -2px;
+
+    .c-input {
+      width: 64px;
+    }
+  }
+
+  &__of {
+    margin: 0 7px;
+  }
+}

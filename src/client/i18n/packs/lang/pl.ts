@@ -43,6 +43,7 @@ export const PL_LANG_PACK = {
       errors: 'Błąd :(',
     },
     titles: {
+      of: 'z',
       no_data: 'Brak danych',
       rating: 'Ocena',
       keywords: 'Słowa kluczowe',

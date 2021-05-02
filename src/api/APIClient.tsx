@@ -1,8 +1,10 @@
 import * as R from 'ramda';
 
-import type {PaginationResult} from '@server/common/helpers/db';
+import {
+  SortKeys,
+  PaginationResult,
+} from '@shared/types';
 
-import {SortKeys} from '@shared/types';
 import {
   RecentBooksRepo,
   BooksRepo,
@@ -18,8 +20,6 @@ export type BasicAPIPagination = {
 
 export type APIPaginationFilters<F = {}> = BasicAPIPagination & F & {
   phrase?: string,
-  totalPages?: number,
-  totalItems?: number,
   sort?: SortKeys,
 };
 

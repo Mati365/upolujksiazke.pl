@@ -55,6 +55,22 @@ export type Duration<T = Date> = {
   end?: T,
 };
 
+export type BasicLimitPaginationOptions = {
+  offset?: number,
+  limit?: number,
+};
+
+export type PaginationMeta = BasicLimitPaginationOptions & {
+  page?: number,
+  totalItems?: number,
+  totalPages?: number,
+};
+
+export type PaginationResult<T> = {
+  items: (Record<string, any> | T)[],
+  meta: PaginationMeta,
+};
+
 export enum SortDirection {
   DESC = 'desc',
   ASC = 'asc',

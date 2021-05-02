@@ -2,11 +2,15 @@ import {OrderByCondition, SelectQueryBuilder} from 'typeorm';
 import {classToPlain} from 'class-transformer';
 import * as R from 'ramda';
 
-import {ID} from '@shared/types';
+import {
+  ID,
+  BasicLimitPaginationOptions,
+  PaginationResult,
+} from '@shared/types';
 
-export type BasicLimitPaginationOptions = {
-  offset?: number,
-  limit?: number,
+export {
+  BasicLimitPaginationOptions,
+  PaginationResult,
 };
 
 export type PaginationOptions = BasicLimitPaginationOptions & {
@@ -20,17 +24,6 @@ export type PaginationDangerousOptions = PaginationOptions & {
   unsafe?: {
     order?: OrderByCondition,
     phraseColumn: string,
-  },
-};
-
-export type PaginationResult<T> = {
-  items: (Record<string, any> | T)[],
-  meta: {
-    limit: number,
-    offset: number,
-    page?: number,
-    totalItems?: number,
-    totalPages?: number,
   },
 };
 

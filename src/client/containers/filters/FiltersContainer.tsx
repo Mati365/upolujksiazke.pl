@@ -9,6 +9,7 @@ type FiltersContainerProps = {
   sidebar: ReactNode,
   className?: string,
   loading?: boolean,
+  toolbarRenderFn?(): ReactNode,
 };
 
 export const FiltersContainer = (
@@ -17,9 +18,15 @@ export const FiltersContainer = (
     sidebar,
     className,
     loading,
+    toolbarRenderFn,
   }: FiltersContainerProps,
 ) => {
   const t = useI18n('shared.filters');
+  const toolbar = toolbarRenderFn && (
+    <div className='c-filters-section__toolbar'>
+      {toolbarRenderFn()}
+    </div>
+  );
 
   return (
     <section
@@ -42,10 +49,12 @@ export const FiltersContainer = (
           loading && 'is-loading',
         )}
       >
+        {toolbar}
         {children}
         {loading && (
           <QueryLoadingSpinner layer />
         )}
+        {toolbar}
       </div>
     </section>
   );

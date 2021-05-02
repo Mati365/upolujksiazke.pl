@@ -2,7 +2,11 @@ import {BooksFilters} from '@api/repo';
 import {safePluckObjIds} from '@shared/helpers';
 
 export function serializeAggsToSearchParams(aggs: any): BooksFilters {
+  const {meta = {}} = aggs;
+
   return {
+    offset: meta.offset || 0,
+    limit: meta.limit || 30,
     schoolBook: aggs.schoolBook,
     types: safePluckObjIds(aggs.types),
     categoriesIds: safePluckObjIds(aggs.categories),

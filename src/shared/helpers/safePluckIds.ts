@@ -6,3 +6,10 @@ export function safePluckIds<T>(array: T[]): number[] {
 
   return R.pluck('id' as any, array) as any;
 }
+
+export function safePluckObjIds(obj: any) {
+  if (!obj)
+    return null;
+
+  return safePluckIds(R.values(obj).filter(Boolean));
+}

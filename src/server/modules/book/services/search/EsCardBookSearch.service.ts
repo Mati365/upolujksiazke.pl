@@ -5,15 +5,20 @@ import * as R from 'ramda';
 import {objPropsToPromise} from '@shared/helpers';
 import {
   createNestedIdsAgg,
+  wrapWithFilteredGlobalAgg,
   extractBucket,
   fetchDbAggsRecords,
   mapBucketItems,
+  extractGlobalAgg,
 } from '@server/modules/elasticsearch/helpers';
 
 import {CreateCountedAggType} from '@api/APIRecord';
 import {APIPaginationResultWithAggs} from '@api/APIClient';
-import {AggsBooksFilters, BookCountedAggs} from '@api/repo';
 import {BookType} from '@shared/enums';
+import {
+  AggsBooksFilters,
+  BookCountedAggs,
+} from '@api/repo';
 
 import {EsBookIndex} from '../indexes/EsBook.index';
 import {BookEntity} from '../../entity/Book.entity';
@@ -35,8 +40,15 @@ export type BookEntityAggs = Pick<BookCountedAggs, 'types'|'schoolBook'> & Creat
   publishers: BookPublisherEntity,
 }>;
 
+export type BookAggsNestedQueriesMap = Partial<Record<keyof BookEntityAggs, esb.Query>>;
+
 @Injectable()
 export class EsCardBookSearchService {
+  static readonly BOOKS_IDS_AGGS: (keyof BookEntityAggs)[] = [
+    'publishers', 'categories', 'authors',
+    'genre', 'era', 'prizes',
+  ];
+
   constructor(
     @Inject(forwardRef(() => EsBookIndex))
     private readonly bookEsIndex: EsBookIndex,
@@ -54,52 +66,20 @@ export class EsCardBookSearchService {
    */
   async findFilteredBooks(filters: AggsBooksFilters): Promise<APIPaginationResultWithAggs<BookEntity, BookEntityAggs>> {
     const {bookEsIndex, cardBookSearch} = this;
-    const {authorsIds, categoriesIds, excludeIds} = filters;
     const meta = {
       limit: filters.limit,
       offset: filters.offset || 0,
     };
 
-    let esQuery: esb.BoolQuery = null;
-    if (authorsIds || excludeIds || categoriesIds) {
-      esQuery = esb.boolQuery();
-
-      if (authorsIds) {
-        esQuery = esQuery.must(
-          [
-            esb.nestedQuery(
-              esb.termsQuery('authors.id', authorsIds),
-              'authors',
-            ),
-          ],
-        );
-      }
-
-      if (categoriesIds) {
-        esQuery = esQuery.must(
-          [
-            esb.nestedQuery(
-              esb.termsQuery('categories.id', categoriesIds),
-              'categories',
-            ),
-          ],
-        );
-      }
-
-      if (excludeIds) {
-        esQuery = esQuery.mustNot(
-          [
-            esb.termsQuery('_id', excludeIds),
-          ],
-        );
-      }
-    }
-
+    const {query, filtersNestedQueries} = this.createNestedEsFiltersQuery(filters);
     let esSearchBody = (
       esb
         .requestBodySearch()
         .source(['_id'])
     );
+
+    if (query && !filters.skipBooksLoading)
+      esSearchBody = esSearchBody.query(query);
 
     if (!R.isNil(meta.limit))
       esSearchBody = esSearchBody.size(meta.limit);
@@ -107,12 +87,14 @@ export class EsCardBookSearchService {
     if (meta.offset)
       esSearchBody = esSearchBody.from(meta.offset);
 
-    if (esQuery)
-      esSearchBody = esSearchBody.query(esQuery);
-
     if (filters.aggs) {
       esSearchBody = esSearchBody.aggs(
-        this.createFilteredBooksAggsEsQueries(filters),
+        this.createFilteredBooksAggsEsQueries(
+          {
+            filtersNestedQueries,
+            filters,
+          },
+        ),
       );
     }
 
@@ -122,7 +104,7 @@ export class EsCardBookSearchService {
 
     const [aggs, books] = await Promise.all(
       [
-        this.fetchBooksAggs(result.aggs),
+        this.fetchBooksAggsFromDB(result.aggs),
         filters.skipBooksLoading
           ? null
           : cardBookSearch.findBooksByIds(result.ids),
@@ -137,6 +119,129 @@ export class EsCardBookSearchService {
   }
 
   /**
+   * Gen filters used in query and aggs
+   *
+   * @private
+   * @param {AggsBooksFilters} filters
+   * @returns
+   * @memberof EsCardBookSearchService
+   */
+  private createNestedEsFiltersQuery(filters: AggsBooksFilters) {
+    const {
+      authorsIds, categoriesIds,
+      genresIds, prizesIds, publishersIds,
+      erasIds, types, excludeIds,
+    } = filters;
+
+    const filtersNestedQueries: BookAggsNestedQueriesMap = {};
+    let esQuery: esb.BoolQuery = null;
+
+    if (authorsIds || categoriesIds || genresIds
+        || prizesIds || publishersIds || erasIds
+        || excludeIds || types) {
+      esQuery = esb.boolQuery();
+
+      const createNestedIdQuery = (name: string, ids: number[]) => esb.nestedQuery(
+        esb.termsQuery(`${name}.id`, ids),
+        name,
+      );
+
+      if (authorsIds)
+        filtersNestedQueries.authors = createNestedIdQuery('authors', authorsIds);
+
+      if (categoriesIds)
+        filtersNestedQueries.categories = createNestedIdQuery('categories', categoriesIds);
+
+      if (genresIds)
+        filtersNestedQueries.genre = createNestedIdQuery('genre', genresIds);
+
+      if (prizesIds)
+        filtersNestedQueries.prizes = createNestedIdQuery('prizes', prizesIds);
+
+      if (publishersIds)
+        filtersNestedQueries.publishers = createNestedIdQuery('publishers', publishersIds);
+
+      if (erasIds)
+        filtersNestedQueries.era = createNestedIdQuery('era', erasIds);
+
+      if (types)
+        filtersNestedQueries.types = esb.termsQuery('allTypes', types);
+
+      if (excludeIds) {
+        esQuery = esQuery.mustNot(
+          esb.termsQuery('_id', excludeIds),
+        );
+      }
+    }
+
+    if (esQuery) {
+      const queries = R.values(filtersNestedQueries);
+      if (!R.isEmpty(queries))
+        esQuery = esQuery.filter(queries);
+    }
+
+    return {
+      query: esQuery,
+      filtersNestedQueries,
+    };
+  }
+
+  /**
+   * Create elasticsearch aggs query
+   *
+   * @private
+   * @param {Object} attrs
+   * @returns {esb.Aggregation[]}
+   * @memberof EsCardBookSearchService
+   */
+  private createFilteredBooksAggsEsQueries(
+    {
+      filters,
+      filtersNestedQueries,
+    }: {
+      filters: AggsBooksFilters,
+      filtersNestedQueries: BookAggsNestedQueriesMap,
+    },
+  ): esb.Aggregation[] {
+    const {BOOKS_IDS_AGGS} = EsCardBookSearchService;
+    const {aggs} = filters;
+
+    if (!aggs || R.isEmpty(aggs))
+      return null;
+
+    const queries: esb.Aggregation[] = [];
+    if (aggs.types)
+      queries.push(esb.termsAggregation('types', 'allTypes'));
+
+    queries.push(
+      ...BOOKS_IDS_AGGS
+        .flatMap((aggName) => {
+          if (!R.has(aggName, aggs))
+            return null;
+
+          const filterQueries = R.values(R.omit([aggName], filtersNestedQueries));
+
+          return wrapWithFilteredGlobalAgg(
+            {
+              name: aggName,
+              aggs: [
+                createNestedIdsAgg(aggName, aggs[aggName]),
+              ],
+              filterQuery: !R.isEmpty(filterQueries) && (
+                esb
+                  .boolQuery()
+                  .filter(filterQueries)
+              ),
+            },
+          );
+        })
+        .filter(Boolean),
+    );
+
+    return queries;
+  }
+
+  /**
    * Fetches all aggregations records
    *
    * @private
@@ -144,9 +249,19 @@ export class EsCardBookSearchService {
    * @returns {Promise<BookEntityAggs>}
    * @memberof EsCardBookSearchService
    */
-  private async fetchBooksAggs(aggs: any): Promise<BookEntityAggs> {
+  private async fetchBooksAggsFromDB(aggs: any): Promise<BookEntityAggs> {
     if (!aggs)
       return null;
+
+    const extractIdsAgg = (name: string, resolverClass: any) => fetchDbAggsRecords(
+      {
+        bucket: extractBucket(
+          extractGlobalAgg(aggs[name], name),
+          `${name}_ids`,
+        ),
+        fetchFn: (ids) => resolverClass.findByIds(ids),
+      },
+    );
 
     return objPropsToPromise(
       {
@@ -157,79 +272,13 @@ export class EsCardBookSearchService {
           }),
           extractBucket(aggs.types),
         ),
-        publishers: fetchDbAggsRecords(
-          {
-            bucket: extractBucket(aggs.publishers, 'publishers_ids'),
-            fetchFn: (ids) => BookPublisherEntity.findByIds(ids),
-          },
-        ),
-        categories: fetchDbAggsRecords(
-          {
-            bucket: extractBucket(aggs.categories, 'categories_ids'),
-            fetchFn: (ids) => BookCategoryEntity.findByIds(ids),
-          },
-        ),
-        authors: fetchDbAggsRecords(
-          {
-            bucket: extractBucket(aggs.authors, 'authors_ids'),
-            fetchFn: (ids) => BookAuthorEntity.findByIds(ids),
-          },
-        ),
-        genre: fetchDbAggsRecords(
-          {
-            bucket: extractBucket(aggs.genre, 'genre_ids'),
-            fetchFn: (ids) => BookGenreEntity.findByIds(ids),
-          },
-        ),
-        era: fetchDbAggsRecords(
-          {
-            bucket: extractBucket(aggs.era, 'era_ids'),
-            fetchFn: (ids) => BookEraEntity.findByIds(ids),
-          },
-        ),
-        prizes: fetchDbAggsRecords(
-          {
-            bucket: extractBucket(aggs.prizes, 'prizes_ids'),
-            fetchFn: (ids) => BookPrizeEntity.findByIds(ids),
-          },
-        ),
+        publishers: extractIdsAgg('publishers', BookPublisherEntity),
+        categories: extractIdsAgg('categories', BookCategoryEntity),
+        authors: extractIdsAgg('authors', BookAuthorEntity),
+        genre: extractIdsAgg('genre', BookGenreEntity),
+        era: extractIdsAgg('era', BookEraEntity),
+        prizes: extractIdsAgg('prizes', BookPrizeEntity),
       },
     );
-  }
-
-  /**
-   * Create elasticsearch aggs query
-   *
-   * @private
-   * @param {AggsBooksFilters} filters
-   * @returns {esb.Aggregation[]}
-   * @memberof EsCardBookSearchService
-   */
-  private createFilteredBooksAggsEsQueries(filters: AggsBooksFilters): esb.Aggregation[] {
-    const {aggs} = filters;
-
-    if (!aggs || R.isEmpty(aggs))
-      return null;
-
-    const queries: esb.Aggregation[] = [];
-    if (aggs.types)
-      queries.push(esb.termsAggregation('types', 'allTypes'));
-
-    if (aggs.publishers)
-      queries.push(createNestedIdsAgg('publishers', aggs.publishers));
-
-    if (aggs.categories)
-      queries.push(createNestedIdsAgg('categories', aggs.categories));
-
-    if (aggs.authors)
-      queries.push(createNestedIdsAgg('authors', aggs.authors));
-
-    if (aggs.genre)
-      queries.push(createNestedIdsAgg('genre', aggs.genre));
-
-    if (aggs.era)
-      queries.push(createNestedIdsAgg('era', aggs.era));
-
-    return queries;
   }
 }

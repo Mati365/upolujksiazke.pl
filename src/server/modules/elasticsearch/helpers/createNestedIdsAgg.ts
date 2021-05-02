@@ -1,5 +1,14 @@
 import esb from 'elastic-builder';
 
+/**
+ * Create nested aggregation with ids field
+ * and limit / offset / sort support
+ *
+ * @export
+ * @param {string} name
+ * @param {Object} attrs
+ * @returns
+ */
 export function createNestedIdsAgg(
   name: string,
   {

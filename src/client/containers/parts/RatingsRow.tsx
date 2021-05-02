@@ -12,6 +12,14 @@ import {
   StarIcon,
 } from '@client/components/svg/Stars';
 
+function truncateNumber(max: number, number: number) {
+  return (
+    number > max
+      ? `${max}+`
+      : (number || 0)
+  );
+}
+
 type RatingsRowProps = {
   className?: string,
   textOnly?: boolean,
@@ -66,8 +74,10 @@ export const RatingsRow = (
     totalStars,
   );
 
-  const ratingsTitle = !R.isNil(totalRatings) && (
-    totalRatings > truncateRatingsCount ? `${truncateRatingsCount}+` : (totalRatings || 0)
+  const ratingsTitle = (
+    R.isNil(totalRatings)
+      ? null
+      : truncateNumber(truncateRatingsCount, totalRatings)
   );
 
   return (
@@ -85,7 +95,7 @@ export const RatingsRow = (
           {`${toFixedIfFloating(normalizedValue, 1)} / ${totalStars}`}
         </span>
       )}
-      {ratingsTitle && (
+      {ratingsTitle !== null && (
         <span className='c-ratings-row__total'>
           {`(${ratingsTitle} ${t('shared.book.total_ratings')})`}
         </span>

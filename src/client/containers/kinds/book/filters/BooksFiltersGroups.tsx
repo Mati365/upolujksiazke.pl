@@ -15,6 +15,8 @@ import {
   CountedCheckboxList,
 } from '@client/containers/filters';
 
+import {serializeAggsToSearchParams} from './helpers/serializeAggsToSearchParams';
+
 type BooksFiltersGroupsProps = LinkProps<Partial<any>> & {
   aggs: BookCountedAggs,
 };
@@ -69,7 +71,7 @@ export const BooksFiltersGroups = ({aggs, l}: BooksFiltersGroupsProps) => {
                           limit: expandBy,
                         },
                       },
-                      filters: {},
+                      filters: serializeAggsToSearchParams(l.value),
                     },
                   );
 

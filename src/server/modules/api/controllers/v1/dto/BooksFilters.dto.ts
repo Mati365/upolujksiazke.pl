@@ -10,6 +10,7 @@ import {BooksFilters} from '@api/repo';
 
 export class BooksFiltersDto extends APIPaginationDto implements Required<BooksFilters> {
   @IsOptional()
+  @TransformSeparatedArray()
   @IsEnum(BookType, {each: true})
   types: BookType[];
 

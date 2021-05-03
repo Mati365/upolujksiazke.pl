@@ -9,7 +9,12 @@ import {BookCountedAggs} from '@api/repo';
 
 import {APICountedBucket} from '@api/APIRecord';
 import {CachedRender} from '@client/components/functional';
-import {CheckboxExpandableList} from '@client/components/ui/controls';
+
+import {
+  CheckboxExpandableList,
+  PriceRange,
+} from '@client/components/ui/controls';
+
 import {
   FiltersGroup,
   CountedCheckboxList,
@@ -91,6 +96,10 @@ export const BooksFiltersGroups = ({aggs, l}: BooksFiltersGroupsProps) => {
       {renderBucketGroup('categories', categories)}
       {renderBucketGroup('authors', authors)}
 
+      <FiltersGroup header={t('price.header')}>
+        <PriceRange {...l.input('price')} />
+      </FiltersGroup>
+
       {types?.items.length > 0 && (
         <FiltersGroup
           header={t('types.header')}
@@ -133,10 +142,6 @@ export const BooksFiltersGroups = ({aggs, l}: BooksFiltersGroupsProps) => {
       {renderBucketGroup('era', era)}
       {renderBucketGroup('genre', genre)}
       {renderBucketGroup('prizes', prizes)}
-
-      <FiltersGroup header={t('price.header')}>
-        ABC
-      </FiltersGroup>
     </>
   );
 };

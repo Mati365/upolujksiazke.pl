@@ -44,6 +44,8 @@ export type BooksFilters = BasicAPIPagination & {
   genresIds?: number[],
   erasIds?: number[],
   publishersIds?: number[],
+  lowestPrice?: number,
+  highestPrice?: number,
 };
 
 export type SingleAggBookFilters = {

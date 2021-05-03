@@ -1,4 +1,5 @@
 import {IsEnum, IsNumber, IsOptional} from 'class-validator';
+import {Transform} from 'class-transformer';
 
 import {APIPaginationDto} from '@server/modules/api/dto/APIPagination.dto';
 import {TransformSeparatedArray} from '@server/common/transformers/TransformSeparatedArray.transform';
@@ -9,45 +10,55 @@ export class BooksFiltersDto extends APIPaginationDto implements Required<BooksF
   @IsOptional()
   @TransformSeparatedArray()
   @IsEnum(BookType, {each: true})
-  types: BookType[];
+  readonly types: BookType[];
 
   @IsOptional()
   @TransformSeparatedArray()
   @IsNumber({}, {each: true})
-  excludeIds: number[];
+  readonly excludeIds: number[];
 
   @IsOptional()
   @TransformSeparatedArray()
   @IsNumber({}, {each: true})
-  categoriesIds: number[];
+  readonly categoriesIds: number[];
 
   @IsOptional()
   @TransformSeparatedArray()
   @IsNumber({}, {each: true})
-  authorsIds: number[];
+  readonly authorsIds: number[];
 
   @IsOptional()
   @TransformSeparatedArray()
   @IsNumber({}, {each: true})
-  prizesIds: number[];
+  readonly prizesIds: number[];
 
   @IsOptional()
   @TransformSeparatedArray()
   @IsNumber({}, {each: true})
-  genresIds: number[];
+  readonly genresIds: number[];
 
   @IsOptional()
   @TransformSeparatedArray()
   @IsNumber({}, {each: true})
-  erasIds: number[];
+  readonly erasIds: number[];
 
   @IsOptional()
   @TransformSeparatedArray()
   @IsNumber({}, {each: true})
-  publishersIds: number[];
+  readonly publishersIds: number[];
 
   @IsOptional()
   @TransformSeparatedArray()
   @IsEnum(BookSchoolLevel, {each: true})
-  schoolLevels: BookSchoolLevel[];
+  readonly schoolLevels: BookSchoolLevel[];
+
+  @IsOptional()
+  @Transform(({value}) => parseInt(value, 10))
+  @IsNumber()
+  readonly lowestPrice: number;
+
+  @IsOptional()
+  @Transform(({value}) => parseInt(value, 10))
+  @IsNumber()
+  readonly highestPrice: number;
 }

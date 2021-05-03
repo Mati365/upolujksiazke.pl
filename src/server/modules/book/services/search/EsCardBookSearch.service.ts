@@ -40,7 +40,7 @@ export type BookEntityAggs = Pick<BookCountedAggs, 'types'|'schoolLevels'> & Cre
   publishers: BookPublisherEntity,
 }>;
 
-export type BookAggsNestedQueriesMap = Partial<Record<keyof BookEntityAggs, esb.Query>>;
+export type BookAggsNestedQueriesMap = Partial<Record<string, esb.Query>>;
 
 @Injectable()
 export class EsCardBookSearchService {
@@ -136,16 +136,21 @@ export class EsCardBookSearchService {
       authorsIds, categoriesIds,
       genresIds, prizesIds, publishersIds,
       erasIds, types, excludeIds, schoolLevels,
+      lowestPrice, highestPrice,
     } = filters;
 
     const filtersNestedQueries: BookAggsNestedQueriesMap = {};
     let esQuery: esb.BoolQuery = null;
 
+    if (!R.isNil(lowestPrice))
+      filtersNestedQueries.lowestPrice = esb.rangeQuery('lowestPrice').gt(lowestPrice);
+
+    if (!R.isNil(highestPrice))
+      filtersNestedQueries.highestPrice = esb.rangeQuery('highestPrice').lt(highestPrice);
+
     if (authorsIds || categoriesIds || genresIds
         || prizesIds || publishersIds || erasIds
         || excludeIds || types || schoolLevels) {
-      esQuery = esb.boolQuery();
-
       const createNestedIdQuery = (name: string, ids: number[]) => esb.nestedQuery(
         esb.termsQuery(`${name}.id`, ids),
         name,
@@ -180,16 +185,17 @@ export class EsCardBookSearchService {
       }
 
       if (excludeIds) {
+        esQuery ??= esb.boolQuery();
         esQuery = esQuery.mustNot(
           esb.termsQuery('_id', excludeIds),
         );
       }
     }
 
-    if (esQuery) {
-      const queries = R.values(filtersNestedQueries);
-      if (!R.isEmpty(queries))
-        esQuery = esQuery.filter(queries);
+    const queries = R.values(filtersNestedQueries);
+    if (!R.isEmpty(queries)) {
+      esQuery ??= esb.boolQuery();
+      esQuery = esQuery.filter(queries);
     }
 
     return {

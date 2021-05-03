@@ -14,6 +14,7 @@ export type LinkPropertyWatchers<T> = PropertyWatchersMap | ((value: T) => Prope
 
 export type LinkInputConfig<T> = {
   initialData?: T | (() => T),
+  effectFn?(prevValue: T, newValue: T): T,
   value?: T,
   valuePropWatchers?: LinkPropertyWatchers<T>,
   onChange?(val: T): void,
@@ -71,6 +72,7 @@ export const pickEventValue = R.unless(
 export const useInputLink = <T>(
   {
     value: forwardedValue,
+    effectFn,
     valuePropWatchers,
     initialData,
     onChange,
@@ -95,6 +97,9 @@ export const useInputLink = <T>(
 
   const valueRef = useRef<typeof outerValue>();
   const setValue = (newValue: T, noRerender?: boolean) => {
+    if (effectFn)
+      newValue = effectFn(outerValue.value, newValue);
+
     valueRef.current.value = newValue;
 
     if (noRerender) {

@@ -55,6 +55,11 @@ export type Duration<T = Date> = {
   end?: T,
 };
 
+export type MinMaxRange = {
+  min?: number,
+  max?: number,
+};
+
 export type BasicLimitPaginationOptions = {
   offset?: number,
   limit?: number,

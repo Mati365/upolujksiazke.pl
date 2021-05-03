@@ -1,4 +1,5 @@
 import React from 'react';
+import * as R from 'ramda';
 
 import {useInputLink} from '@client/hooks';
 
@@ -24,6 +25,12 @@ export const BooksFiltersContainer = ({initialBooks}: BooksFiltersContainerProps
     {
       initialData: {
         limit: BOOKS_FILTERS_CONTAINER_BOOKS_COUNT,
+      },
+      effectFn(prevValue, value) {
+        if (prevValue?.meta !== value?.meta)
+          return value;
+
+        return R.omit(['meta'], value);
       },
     },
   );
@@ -57,7 +64,12 @@ export const BooksFiltersContainer = ({initialBooks}: BooksFiltersContainerProps
             toolbarRenderFn={
               () => (
                 <ArrowsPagination
-                  {...l.input('meta', {defaultValue: initialBooks.meta})}
+                  {...l.input(
+                    'meta',
+                    {
+                      defaultValue: safeResult.meta,
+                    },
+                  )}
                 />
               )
             }

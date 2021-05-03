@@ -65,15 +65,21 @@
 
       margin-bottom: .85rem;
       font-size: $text-small;
-      color: color(muted-text);
+      font-weight: 600;
+      color: #000;
 
       .c-filters-small-counter {
+        color: color(muted-text);
         font-weight: 600;
       }
     }
 
     &__content {
       font-size: .85rem;
+    }
+
+    .c-price-range {
+      width: 100%;
     }
 
     .c-expandable-checkox-list {

@@ -1,9 +1,25 @@
-.c-input {
-  padding: 5px 10px;
-  margin: 0;
-  border: 1px solid color(gray-2);
-  border-radius: 5px;
-  outline: 0;
-  background: initial;
-  cursor: pointer;
+.c {
+  &-input {
+    padding: 5px 10px;
+    margin: 0;
+    border: 1px solid color(gray-2);
+    border-radius: 5px;
+    outline: 0;
+    background: initial;
+    cursor: pointer;
+  }
+
+  &-price-range {
+    @include flex-list;
+    max-width: 200px;
+
+    &__separator {
+      margin: 0 5px;
+    }
+
+    > input {
+      flex: 1;
+      width: inherit;
+    }
+  }
 }

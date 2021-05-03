@@ -86,6 +86,10 @@ export const BooksFiltersContainer = ({initialBooks, initialFilters}: BooksFilte
                     'meta',
                     {
                       defaultValue: safeResult.meta,
+                      assignValueParserFn: (val) => ({
+                        ...safeResult.meta,
+                        ...val,
+                      }),
                     },
                   )}
                 />

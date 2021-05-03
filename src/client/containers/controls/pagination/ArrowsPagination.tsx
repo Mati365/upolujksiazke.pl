@@ -29,7 +29,26 @@ export const ArrowsPagination = linkInputs<PaginationMeta>(
   ({l, value}: ArrowsPaginationProps) => {
     const t = useI18n('shared');
     const {page, totalPages} = calcPaginationMetaFromFilters(value);
-    const [firstPage, lastPage] = [!page, page >= totalPages];
+    const [firstPage, lastPage] = [!page, page + 1 >= totalPages];
+
+    if (totalPages <= 1)
+      return null;
+
+    const setPage = (newPage: number, resetScroll: boolean = true, offset?: boolean) => {
+      l.setValue(
+        {
+          ...value,
+          offset: (
+            offset
+              ? newPage
+              : calcPageOffset(value, newPage)
+          ),
+        },
+      );
+
+      if (resetScroll)
+        window.scrollTo(0, 0);
+    };
 
     return (
       <CleanList
@@ -41,14 +60,7 @@ export const ArrowsPagination = linkInputs<PaginationMeta>(
           <TextButton
             className='c-arrows-paginate__absolute-btn'
             disabled={firstPage}
-            onClick={() => {
-              l.setValue(
-                {
-                  ...value,
-                  offset: 0,
-                },
-              );
-            }}
+            onClick={() => setPage(0)}
           >
             <ChevronsLeftIcon />
           </TextButton>
@@ -58,14 +70,7 @@ export const ArrowsPagination = linkInputs<PaginationMeta>(
           <TextButton
             className='c-arrows-paginate__relative-btn'
             disabled={firstPage}
-            onClick={() => {
-              l.setValue(
-                {
-                  ...value,
-                  offset: calcPageOffset(value, page - 1),
-                },
-              );
-            }}
+            onClick={() => setPage(page - 1)}
           >
             <ChevronLeftIcon />
           </TextButton>
@@ -75,14 +80,7 @@ export const ArrowsPagination = linkInputs<PaginationMeta>(
           <Input
             value={page + 1}
             onChange={
-              (e) => {
-                l.setValue(
-                  {
-                    ...value,
-                    offset: calcPageOffset(value, +pickEventValue(e) - 1),
-                  },
-                );
-              }
+              (e) => setPage(+pickEventValue(e) - 1, false)
             }
           />
           <span className='c-arrows-paginate__of'>
@@ -95,14 +93,7 @@ export const ArrowsPagination = linkInputs<PaginationMeta>(
           <TextButton
             className='c-arrows-paginate__relative-btn'
             disabled={lastPage}
-            onClick={() => {
-              l.setValue(
-                {
-                  ...value,
-                  offset: calcPageOffset(value, page + 1),
-                },
-              );
-            }}
+            onClick={() => setPage(page + 1)}
           >
             <ChevronRightIcon />
           </TextButton>
@@ -112,14 +103,13 @@ export const ArrowsPagination = linkInputs<PaginationMeta>(
           <TextButton
             className='c-arrows-paginate__absolute-btn'
             disabled={lastPage}
-            onClick={() => {
-              l.setValue(
-                {
-                  ...value,
-                  offset: calcPageOffset(value, totalPages - 1),
-                },
-              );
-            }}
+            onClick={
+              () => setPage(
+                value.totalItems - value.limit - 1,
+                true,
+                true,
+              )
+            }
           >
             <ChevronsRightIcon />
           </TextButton>

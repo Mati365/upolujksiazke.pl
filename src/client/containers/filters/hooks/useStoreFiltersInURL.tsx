@@ -69,7 +69,12 @@ export function useStoreFiltersInURL(
   const assignFiltersToURL = (filters: any) => {
     history.replace(
       {
-        search: serializeUrlFilters(filters || {}),
+        search: serializeUrlFilters(
+          {
+            ...filters,
+            meta: R.pick(['limit', 'offset'], filters?.meta || {}),
+          },
+        ),
       },
     );
   };

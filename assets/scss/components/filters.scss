@@ -38,6 +38,10 @@
       justify-content: flex-end;
       width: 100%;
 
+      &:empty {
+        display: none;
+      }
+
       &:first-child {
         margin-bottom: 20px;
       }

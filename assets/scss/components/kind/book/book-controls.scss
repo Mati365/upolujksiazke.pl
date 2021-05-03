@@ -37,6 +37,11 @@
       #{$self}__content {
         grid-area: content;
       }
+
+      @include mobile {
+        grid-template-columns: 1fr auto;
+        grid-template-areas: "content sidebar";
+      }
     }
 
     &__thumb {

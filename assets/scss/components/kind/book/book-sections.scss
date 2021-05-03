@@ -179,7 +179,9 @@
     &__price-wrapper {
       @extend .c-layer-box;
 
-      margin-bottom: 1.25rem;
+      &:not(:last-child) {
+        margin-bottom: 1.25rem;
+      }
     }
 
     &__current-price {

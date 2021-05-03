@@ -82,22 +82,24 @@ export const BookPriceBox = (
         )}
       </div>
 
-      <BookCtaButton
-        className='c-book-price-box__buy-cta'
-        size={(
-          small
-            ? 'medium'
-            : 'big'
-        )}
-        title={
-          t('buy_cta')
-        }
-        disabled={
-          R.isNil(book.highestPrice)
-        }
-        expanded
-        onClick={onBuy}
-      />
+      {!small && (
+        <BookCtaButton
+          className='c-book-price-box__buy-cta'
+          size={(
+            small
+              ? 'medium'
+              : 'big'
+          )}
+          title={
+            t('buy_cta')
+          }
+          disabled={
+            R.isNil(book.highestPrice)
+          }
+          expanded
+          onClick={onBuy}
+        />
+      )}
 
       {children}
     </div>

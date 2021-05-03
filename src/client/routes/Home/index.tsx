@@ -35,8 +35,8 @@ export const HomeRoute: AsyncRoute = (
   <Layout {...layoutData}>
     <LazyHydrate>
       <Container className='c-sections-list'>
-        <RecentBooksSection items={recentBooks} />
         <CategoriesGroupsBooksSection items={popularCategoriesBooks} />
+        <RecentBooksSection items={recentBooks} />
       </Container>
     </LazyHydrate>
   </Layout>

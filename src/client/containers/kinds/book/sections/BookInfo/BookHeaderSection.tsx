@@ -65,21 +65,6 @@ export const BookHeaderSection = ({book, formattedTitle}: BookHeaderSectionProps
             showTextValue
           />
         </BookHeaderAttribute>
-
-        {ua.mobile && book.hierarchy?.length > 0 && (
-          <BookHeaderAttribute
-            className='c-book-info-section__volumes'
-            label={
-              `${t('book.volumes')}:`
-            }
-          >
-            <BookSeriesTree
-              size='small'
-              activeBookId={book.id}
-              items={book.hierarchy}
-            />
-          </BookHeaderAttribute>
-        )}
       </div>
     </>
   );
@@ -101,6 +86,21 @@ export const BookHeaderSection = ({book, formattedTitle}: BookHeaderSectionProps
             small
           />
         </div>
+
+        {book.hierarchy?.length > 0 && (
+          <BookHeaderAttribute
+            className='c-book-info-section__volumes'
+            label={
+              `${t('book.volumes')}:`
+            }
+          >
+            <BookSeriesTree
+              size='small'
+              activeBookId={book.id}
+              items={book.hierarchy}
+            />
+          </BookHeaderAttribute>
+        )}
       </>
     );
   }

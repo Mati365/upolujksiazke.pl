@@ -41,7 +41,9 @@
     border-bottom: 1px solid color(grid-items-border);
 
     &__info {
-      min-height: 80px;
+      @include except-mobile {
+        min-height: 80px;
+      }
     }
 
     &__types {

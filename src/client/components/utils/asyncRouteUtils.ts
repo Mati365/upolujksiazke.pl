@@ -14,6 +14,7 @@ export type AsyncRouterRouteInfo = {
 
 export type AsyncRouteContext = {
   match: match<any>,
+  search?: object,
   api: APIClient,
 };
 
@@ -67,11 +68,13 @@ export function isAsyncRoute(obj: any): obj is AsyncRoute<any> {
 export async function preloadAsyncRouteProps(
   {
     routes,
+    search,
     path,
     ctx,
   }: {
     routes: AsyncRouterRouteInfo[],
     path: string,
+    search?: object,
     ctx: Omit<AsyncRouteContext, 'match'>,
   },
 ) {
@@ -105,6 +108,7 @@ export async function preloadAsyncRouteProps(
     props: await result.component.getInitialProps(
       {
         ...ctx,
+        search,
         match: result.matched,
       },
     ),

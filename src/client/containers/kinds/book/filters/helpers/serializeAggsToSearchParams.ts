@@ -4,6 +4,9 @@ import {validateMinMaxRange} from '@client/helpers/logic';
 import {safePluckObjIds} from '@shared/helpers';
 
 export function serializeAggsToSearchParams(aggs: any): BooksFilters {
+  if (!aggs)
+    return null;
+
   const {meta = {}} = aggs;
   const price = validateMinMaxRange(aggs.price);
 

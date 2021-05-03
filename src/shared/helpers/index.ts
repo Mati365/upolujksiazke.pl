@@ -43,3 +43,4 @@ export * from './findKeyByValue';
 export * from './toFixedIfFloating';
 export * from './concatUrls';
 export * from './safePluckIds';
+export * from './flattenObject';

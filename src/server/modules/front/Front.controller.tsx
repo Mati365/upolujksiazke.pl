@@ -50,6 +50,7 @@ export class FrontController {
     const preloadedRouteData = await preloadAsyncRouteProps(
       {
         routes: APP_ROUTES_LIST,
+        search: req.query,
         path: req.path,
         ctx: {
           api: client,

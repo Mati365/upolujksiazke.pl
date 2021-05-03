@@ -1,6 +1,9 @@
 import React from 'react';
 
 import {objPropsToPromise} from '@shared/helpers';
+import {deserializeUrlFilters} from '@client/containers/filters/hooks/useStoreFiltersInURL';
+import {serializeAggsToSearchParams} from '@client/containers/kinds/book/filters/helpers/serializeAggsToSearchParams';
+
 import {useI18n} from '@client/i18n';
 
 import {AsyncRoute} from '@client/components/utils/asyncRouteUtils';
@@ -19,12 +22,14 @@ import {BOOKS_PATH} from '../Links';
 type BooksRouteViewData = {
   layoutData: LayoutViewData,
   initialBooks: BooksPaginationResultWithAggs,
+  initialFilters: any,
 };
 
 export const BooksRoute: AsyncRoute<BooksRouteViewData> = (
   {
     layoutData,
     initialBooks,
+    initialFilters,
   },
 ) => {
   const t = useI18n();
@@ -41,7 +46,10 @@ export const BooksRoute: AsyncRoute<BooksRouteViewData> = (
           ]}
         />
 
-        <BooksFiltersContainer initialBooks={initialBooks} />
+        <BooksFiltersContainer
+          initialBooks={initialBooks}
+          initialFilters={initialFilters}
+        />
       </Container>
     </Layout>
   );
@@ -54,7 +62,12 @@ BooksRoute.route = {
 };
 
 BooksRoute.getInitialProps = async (attrs) => {
-  const {api: {repo}} = attrs;
+  const {
+    api: {repo},
+    search,
+  } = attrs;
+
+  const initialFilters = deserializeUrlFilters(search);
   const {
     initialBooks,
     layoutData,
@@ -64,6 +77,7 @@ BooksRoute.getInitialProps = async (attrs) => {
       initialBooks: repo.books.findAggregatedBooks(
         {
           limit: BOOKS_FILTERS_CONTAINER_BOOKS_COUNT,
+          ...serializeAggsToSearchParams(initialFilters),
         },
       ),
     },
@@ -71,6 +85,7 @@ BooksRoute.getInitialProps = async (attrs) => {
 
   return {
     initialBooks,
+    initialFilters,
     layoutData,
   } as BooksRouteViewData;
 };

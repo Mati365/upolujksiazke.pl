@@ -2,7 +2,7 @@ import * as R from 'ramda';
 
 type EncodeValue = Parameters<typeof encodeURIComponent>[0];
 
-export const decodeUrlParameters = R.ifElse(
+export const decodeUrlParams = R.ifElse(
   R.either(R.isNil, R.isEmpty),
   R.always({}),
   R.compose(
@@ -30,7 +30,7 @@ export const pickURLParameters = R.compose(
     R.isEmpty,
     R.always({}),
     R.compose(
-      decodeUrlParameters,
+      decodeUrlParams,
       R.nth(1),
     ),
   ),

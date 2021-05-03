@@ -1,7 +1,8 @@
 import React from 'react';
 import * as R from 'ramda';
 
-import {useInputLink} from '@client/hooks';
+import {useInputLink, useUpdateEffect} from '@client/hooks';
+import {useStoreFiltersInURL} from '@client/containers/filters/hooks/useStoreFiltersInURL';
 
 import {APIQuery} from '@client/modules/api/client/components';
 import {FiltersContainer} from '@client/containers/filters';
@@ -18,12 +19,22 @@ export const BOOKS_FILTERS_CONTAINER_BOOKS_COUNT = 30;
 
 type BooksFiltersContainerProps = {
   initialBooks: BooksPaginationResultWithAggs,
+  initialFilters?: any,
 };
 
-export const BooksFiltersContainer = ({initialBooks}: BooksFiltersContainerProps) => {
+export const BooksFiltersContainer = ({initialBooks, initialFilters}: BooksFiltersContainerProps) => {
+  const {
+    decodedInitialFilters,
+    assignFiltersToURL,
+  } = useStoreFiltersInURL(
+    {
+      initialFilters,
+    },
+  );
+
   const l = useInputLink<any>(
     {
-      initialData: {
+      initialData: decodedInitialFilters || {
         limit: BOOKS_FILTERS_CONTAINER_BOOKS_COUNT,
       },
       effectFn(prevValue, value) {
@@ -33,6 +44,13 @@ export const BooksFiltersContainer = ({initialBooks}: BooksFiltersContainerProps
         return R.omit(['meta'], value);
       },
     },
+  );
+
+  useUpdateEffect(
+    () => {
+      assignFiltersToURL(l.value);
+    },
+    [l.value],
   );
 
   return (

@@ -36,10 +36,10 @@ export class BooksServerRepo extends ServerAPIClientChild implements BooksRepo {
     categories: {limit: 10},
     authors: {limit: 5},
     publishers: {limit: 5},
+    schoolLevels: {limit: 10},
     era: {},
     genre: {},
     prizes: {},
-    schoolBook: {},
     types: {},
   };
 
@@ -50,7 +50,7 @@ export class BooksServerRepo extends ServerAPIClientChild implements BooksRepo {
     era: BookEraSerializer,
     genre: BookGenreSerializer,
     prizes: BookPrizeSerializer,
-    schoolBook: null,
+    schoolLevels: null,
     types: null,
   };
 

@@ -1,27 +1,31 @@
 import esb from 'elastic-builder';
 
 /**
- * Create nested aggregation with ids field
- * and limit / offset / sort support
+ * Creates aggregated paginated agg
  *
  * @export
- * @param {string} name
  * @param {Object} attrs
  * @returns
  */
-export function createNestedIdsAgg(
-  name: string,
+export function createNestedPaginatedAgg(
   {
+    aggName,
+    nestedDocName,
+    field,
     withRootDocs,
     limit,
     offset,
   }: {
+    aggName: string,
+    nestedDocName: string,
+    field: string,
     withRootDocs?: boolean,
     limit?: number,
     offset?: number,
-  } = {},
+  },
 ) {
-  let termsAgg = esb.termsAggregation(`${name}_ids`, `${name}.id`);
+  const fieldPath = `${nestedDocName}.${field}`;
+  let termsAgg = esb.termsAggregation(aggName, fieldPath);
 
   if (offset) {
     let bucketSort: esb.BucketSortAggregation = esb.bucketSortAggregation('limit');
@@ -39,13 +43,36 @@ export function createNestedIdsAgg(
 
   return (
     esb
-      .nestedAggregation(name, name)
+      .nestedAggregation(aggName, nestedDocName)
       .aggs([
         ...withRootDocs
           ? [esb.reverseNestedAggregation('parent_docs')]
           : [],
-        esb.cardinalityAggregation('bucket_size', `${name}.id`),
+        esb.cardinalityAggregation('bucket_size', fieldPath),
         termsAgg,
       ])
+  );
+}
+
+/**
+ * Create nested aggregation with ids field
+ * and limit / offset / sort support
+ *
+ * @export
+ * @param {string} name
+ * @param {Object} attrs
+ * @returns
+ */
+export function createNestedIdsAgg(
+  name: string,
+  attrs: Omit<Parameters<typeof createNestedPaginatedAgg>[0], 'aggName'|'nestedDocName'|'field'> = {},
+) {
+  return createNestedPaginatedAgg(
+    {
+      ...attrs,
+      aggName: `${name}_ids`,
+      nestedDocName: name,
+      field: 'id',
+    },
   );
 }

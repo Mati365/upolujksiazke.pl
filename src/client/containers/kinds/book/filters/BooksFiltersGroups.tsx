@@ -32,6 +32,7 @@ export const BooksFiltersGroups = ({aggs, l}: BooksFiltersGroupsProps) => {
     era,
     genre,
     prizes,
+    schoolLevels,
   } = aggs;
 
   const renderBucketGroup = (name: string, agg: APICountedBucket<any>) => {
@@ -90,7 +91,7 @@ export const BooksFiltersGroups = ({aggs, l}: BooksFiltersGroupsProps) => {
       {renderBucketGroup('categories', categories)}
       {renderBucketGroup('authors', authors)}
 
-      {types && (
+      {types?.items.length > 0 && (
         <FiltersGroup
           header={t('types.header')}
           total={t('types.total', [types.total.bucket])}
@@ -111,15 +112,29 @@ export const BooksFiltersGroups = ({aggs, l}: BooksFiltersGroupsProps) => {
       )}
 
       {renderBucketGroup('publishers', publishers)}
+
+      {schoolLevels?.items.length > 0 && (
+        <FiltersGroup header={t('school_levels.header')}>
+          <CountedCheckboxList
+            {...l.input('schoolLevels')}
+            items={
+              schoolLevels.items.map(
+                ({record: type, count}) => ({
+                  id: type,
+                  name: t(`shared.book.classLevel.${type}`),
+                  count,
+                }),
+              )
+            }
+          />
+        </FiltersGroup>
+      )}
+
       {renderBucketGroup('era', era)}
       {renderBucketGroup('genre', genre)}
       {renderBucketGroup('prizes', prizes)}
 
       <FiltersGroup header={t('price.header')}>
-        ABC
-      </FiltersGroup>
-
-      <FiltersGroup header={t('school_book.header')}>
         ABC
       </FiltersGroup>
     </>

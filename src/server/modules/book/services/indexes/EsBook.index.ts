@@ -62,6 +62,7 @@ export class EsBookIndex extends EntityIndex<BookEntity, BookIndexEntity> {
     schoolBook: {
       type: 'nested',
       properties: {
+        id: {type: 'integer'},
         classLevel: {type: 'integer'},
         obligatory: {type: 'boolean'},
       },

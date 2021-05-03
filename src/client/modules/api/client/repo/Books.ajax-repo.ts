@@ -45,8 +45,8 @@ export class BooksAjaxRepo extends AjaxAPIClientChild implements BooksRepo {
       {
         path: `/books/filters/aggs/${name}`,
         urlParams: {
-          ...pagination,
           ...filters,
+          ...pagination,
         },
       },
     );

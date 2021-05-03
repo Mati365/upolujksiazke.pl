@@ -8,13 +8,13 @@ import {
   wrapWithFilteredGlobalAgg,
   extractBucket,
   fetchDbAggsRecords,
-  mapBucketItems,
+  extractAndMapIdsBucketItems,
   extractGlobalAgg,
+  createNestedPaginatedAgg,
 } from '@server/modules/elasticsearch/helpers';
 
 import {CreateCountedAggType} from '@api/APIRecord';
 import {APIPaginationResultWithAggs} from '@api/APIClient';
-import {BookType} from '@shared/enums';
 import {
   AggsBooksFilters,
   BookCountedAggs,
@@ -31,7 +31,7 @@ import {BookGenreEntity} from '../../modules/genre/BookGenre.entity';
 import {BookEraEntity} from '../../modules/era/BookEra.entity';
 import {BookPrizeEntity} from '../../modules/prize/BookPrize.entity';
 
-export type BookEntityAggs = Pick<BookCountedAggs, 'types'|'schoolBook'> & CreateCountedAggType<{
+export type BookEntityAggs = Pick<BookCountedAggs, 'types'|'schoolLevels'> & CreateCountedAggType<{
   categories: BookCategoryEntity,
   authors: BookAuthorEntity,
   prizes: BookPrizeEntity,
@@ -135,7 +135,7 @@ export class EsCardBookSearchService {
     const {
       authorsIds, categoriesIds,
       genresIds, prizesIds, publishersIds,
-      erasIds, types, excludeIds,
+      erasIds, types, excludeIds, schoolLevels,
     } = filters;
 
     const filtersNestedQueries: BookAggsNestedQueriesMap = {};
@@ -143,7 +143,7 @@ export class EsCardBookSearchService {
 
     if (authorsIds || categoriesIds || genresIds
         || prizesIds || publishersIds || erasIds
-        || excludeIds || types) {
+        || excludeIds || types || schoolLevels) {
       esQuery = esb.boolQuery();
 
       const createNestedIdQuery = (name: string, ids: number[]) => esb.nestedQuery(
@@ -171,6 +171,13 @@ export class EsCardBookSearchService {
 
       if (types)
         filtersNestedQueries.types = esb.termsQuery('allTypes', types);
+
+      if (schoolLevels) {
+        filtersNestedQueries.schoolLevels = esb.nestedQuery(
+          esb.termsQuery('schoolBook.classLevel', schoolLevels),
+          'schoolBook',
+        );
+      }
 
       if (excludeIds) {
         esQuery = esQuery.mustNot(
@@ -218,6 +225,19 @@ export class EsCardBookSearchService {
     if (aggs.types)
       queries.push(esb.termsAggregation('types', 'allTypes'));
 
+    if (aggs.schoolLevels) {
+      queries.push(
+        createNestedPaginatedAgg(
+          {
+            ...aggs.schoolLevels,
+            aggName: 'schoolLevels',
+            nestedDocName: 'schoolBook',
+            field: 'classLevel',
+          },
+        ),
+      );
+    }
+
     queries.push(
       ...BOOKS_IDS_AGGS
         .flatMap((aggName) => {
@@ -261,7 +281,7 @@ export class EsCardBookSearchService {
     const extractIdsAgg = (name: string, resolverClass: any) => fetchDbAggsRecords(
       {
         bucket: extractBucket(
-          extractGlobalAgg(aggs[name], name),
+          extractGlobalAgg(aggs[name], `${name}_ids`),
           `${name}_ids`,
         ),
         fetchFn: (ids) => resolverClass.findByIds(ids),
@@ -270,13 +290,11 @@ export class EsCardBookSearchService {
 
     return objPropsToPromise(
       {
-        types: mapBucketItems(
-          ({count, record}) => ({
-            record: +record.id as BookType,
-            count,
-          }),
-          extractBucket(aggs.types),
+        schoolLevels: extractAndMapIdsBucketItems(
+          extractGlobalAgg(aggs.schoolLevels),
+          'schoolLevels',
         ),
+        types: extractAndMapIdsBucketItems(aggs.types),
         publishers: extractIdsAgg('publishers', BookPublisherEntity),
         categories: extractIdsAgg('categories', BookCategoryEntity),
         authors: extractIdsAgg('authors', BookAuthorEntity),

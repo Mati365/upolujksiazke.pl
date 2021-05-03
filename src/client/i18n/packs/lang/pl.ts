@@ -27,8 +27,8 @@ const PL_BOOK_SCHOOL_LEVEL_PACK: Record<BookSchoolLevel, string> = {
   [BookSchoolLevel.I_III]: '1 - 3 klasa',
   [BookSchoolLevel.IV_VI]: '4 - 6 klasa',
   [BookSchoolLevel.VII_VIII]: '7 - 8 klasa',
-  [BookSchoolLevel.HIGH_SCHOOL]: 'Liceum (poziom podstawowy)',
-  [BookSchoolLevel.HIGH_SCHOOL_EXPANDED]: 'Liceum (poziom rozszerzony)',
+  [BookSchoolLevel.HIGH_SCHOOL]: 'Liceum (podstawa)',
+  [BookSchoolLevel.HIGH_SCHOOL_EXPANDED]: 'Liceum (rozszerzenie)',
 };
 
 export const PL_LANG_PACK = {
@@ -150,8 +150,8 @@ export const PL_LANG_PACK = {
         header: 'Gatunek',
         total: '%{} gatunków',
       },
-      school_book: {
-        header: 'Szkoła',
+      school_levels: {
+        header: 'Poziomy nauczania',
       },
       prizes: {
         header: 'Nagrody',

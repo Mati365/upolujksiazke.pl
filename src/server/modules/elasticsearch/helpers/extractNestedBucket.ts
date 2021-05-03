@@ -29,6 +29,7 @@ export function mapEsBucketsItems(buckets: any[]): CountedEsKeyRecord[] {
  *
  * @export
  * @param {*} bucket
+ * @param {String} path
  * @returns {CountedBucketValue}
  */
 export function extractBucket(bucket: any, path?: string): CountedBucketValue {
@@ -70,4 +71,22 @@ export function mapBucketItems<R>(
     items: items.map(fn),
     total,
   };
+}
+
+/**
+ * Picks id fields to record in bucket
+ *
+ * @export
+ * @param {*} agg
+ * @param {String} path
+ * @returns
+ */
+export function extractAndMapIdsBucketItems(agg: any, path?: string) {
+  return mapBucketItems(
+    ({count, record}) => ({
+      record: +record.id,
+      count,
+    }),
+    extractBucket(agg, path),
+  );
 }

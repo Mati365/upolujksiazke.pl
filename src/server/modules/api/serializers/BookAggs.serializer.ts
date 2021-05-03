@@ -2,7 +2,7 @@ import {Expose} from 'class-transformer';
 
 import {BookCountedAggs} from '@api/repo';
 import {APICountedBucket} from '@api/APIRecord';
-import {BookType} from '@shared/enums';
+import {BookSchoolLevel, BookType} from '@shared/enums';
 import {BucketType} from './AggsBucket.serializer';
 
 import {BookCategorySerializer} from './BookCategory.serializer';
@@ -42,6 +42,6 @@ export class BookAggsSerializer implements Required<BookCountedAggs> {
   publishers: APICountedBucket<BookPublisherSerializer>;
 
   @Expose()
-  @BucketType(() => Boolean)
-  schoolBook: APICountedBucket<boolean>;
+  @BucketType(() => BookSchoolLevel)
+  schoolLevels: APICountedBucket<BookSchoolLevel>;
 }

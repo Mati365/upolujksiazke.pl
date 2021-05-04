@@ -1,7 +1,12 @@
 import React, {useMemo} from 'react';
 import * as R from 'ramda';
 
-import {useInputLink, useUpdateEffect} from '@client/hooks';
+import {
+  useInputLink,
+  usePrevious,
+  useUpdateEffect,
+} from '@client/hooks';
+
 import {
   pickNonPaginationFilters,
   useStoreFiltersInURL,
@@ -56,6 +61,7 @@ export const BooksFiltersContainer = ({initialBooks, initialFilters}: BooksFilte
     },
   );
 
+  const prevValue = usePrevious(l.value);
   const {emptyFilters, serializedValue} = useMemo(
     () => ({
       emptyFilters: R.isEmpty(pickNonPaginationFilters(l.value)),
@@ -73,6 +79,12 @@ export const BooksFiltersContainer = ({initialBooks, initialFilters}: BooksFilte
 
   return (
     <APIQuery<BooksPaginationResultWithAggs>
+      initialInstant
+      debounce={(
+        prevValue?.phrase !== l.value?.phrase
+          ? 400
+          : null
+      )}
       loadingComponent={null}
       promiseKey={serializedValue}
       promiseFn={

@@ -195,7 +195,17 @@ export class EsCardBookSearchService {
     if (phrase) {
       esQuery ??= esb.boolQuery();
       esQuery = esQuery.must(
-        esb.matchQuery('defaultTitle', phrase),
+        esb
+          .multiMatchQuery(
+            [
+              'isbns',
+              'defaultTitle.autocomplete',
+              'defaultTitle.autocomplete._2gram',
+              'defaultTitle.autocomplete._3gram',
+            ],
+            phrase,
+          )
+          .type('bool_prefix'),
       );
     }
 

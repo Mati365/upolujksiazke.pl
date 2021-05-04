@@ -42,7 +42,13 @@ export class EsBookIndex extends EntityIndex<BookEntity, BookIndexEntity> {
   static readonly BOOK_INDEX_MAPPING: Record<keyof BookIndexEntity, any> = {
     id: {type: 'integer'},
     originalTitle: {type: 'text'},
-    defaultTitle: {type: 'text'},
+    defaultTitle: {
+      type: 'text',
+      fields: {
+        raw: {type: 'keyword'},
+        autocomplete: {type: 'search_as_you_type'},
+      },
+    },
     allTypes: {type: 'keyword'},
     lowestPrice: {type: 'float'},
     highestPrice: {type: 'float'},

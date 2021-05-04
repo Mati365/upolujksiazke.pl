@@ -9,7 +9,7 @@ import {
 
 import {useI18n} from '@client/i18n/hooks/useI18n';
 
-import {PaginationMeta} from '@shared/types';
+import {BasicLimitPaginationOptions} from '@shared/types';
 import {CleanList, TextButton} from '@client/components/ui';
 import {Input} from '@client/components/ui/controls';
 import {
@@ -19,18 +19,25 @@ import {
   ChevronRightIcon,
 } from '@client/components/svg/Icons';
 
-export type ArrowsPaginationProps = LinkProps<PaginationMeta>;
+export type ArrowsPaginationProps = LinkProps<BasicLimitPaginationOptions> & {
+  totalItems: number,
+};
 
-export const ArrowsPagination = linkInputs<PaginationMeta>(
+export const ArrowsPagination = linkInputs<BasicLimitPaginationOptions>(
   {
     initialData: {},
   },
 )(
-  ({l, value}: ArrowsPaginationProps) => {
+  ({l, value, totalItems}: ArrowsPaginationProps) => {
     const t = useI18n('shared');
-    const {page, totalPages} = calcPaginationMetaFromFilters(value);
-    const [firstPage, lastPage] = [!page, page + 1 >= totalPages];
+    const {page, totalPages} = calcPaginationMetaFromFilters(
+      {
+        ...value,
+        totalItems,
+      },
+    );
 
+    const [firstPage, lastPage] = [!page, page + 1 >= totalPages];
     if (totalPages <= 1)
       return null;
 
@@ -105,7 +112,7 @@ export const ArrowsPagination = linkInputs<PaginationMeta>(
             disabled={lastPage}
             onClick={
               () => setPage(
-                value.totalItems - value.limit - 1,
+                totalItems - value.limit - 1,
                 true,
                 true,
               )

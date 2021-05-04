@@ -14,7 +14,7 @@ import {Layout, LayoutViewData} from '@client/containers/layout';
 import {BooksPaginationResultWithAggs} from '@api/repo';
 import {
   BooksFiltersContainer,
-  BOOKS_FILTERS_CONTAINER_BOOKS_COUNT,
+  getDefaultBooksFilters,
 } from '@client/containers/kinds/book/filters/BooksFiltersContainer';
 
 import {BOOKS_PATH} from '../Links';
@@ -76,7 +76,7 @@ BooksRoute.getInitialProps = async (attrs) => {
       layoutData: Layout.getInitialProps(attrs),
       initialBooks: repo.books.findAggregatedBooks(
         {
-          limit: BOOKS_FILTERS_CONTAINER_BOOKS_COUNT,
+          ...getDefaultBooksFilters(),
           ...serializeAggsToSearchParams(initialFilters),
         },
       ),

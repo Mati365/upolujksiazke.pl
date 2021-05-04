@@ -7,12 +7,10 @@ export function serializeAggsToSearchParams(aggs: any): BooksFilters {
   if (!aggs)
     return null;
 
-  const {meta = {}} = aggs;
   const price = validateMinMaxRange(aggs.price);
-
   return {
-    offset: meta.offset || 0,
-    limit: meta.limit || 30,
+    offset: aggs.offset || 0,
+    limit: aggs.limit || 30,
     schoolLevels: safePluckObjIds(aggs.schoolLevels),
     types: safePluckObjIds(aggs.types),
     categoriesIds: safePluckObjIds(aggs.categories),

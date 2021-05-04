@@ -13,6 +13,10 @@
       border-right: 1px solid color(divider);
 
       &-header {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-end;
+        justify-content: space-between;
         margin-top: 0;
         margin-bottom: 1.5rem;
         font-weight: 700;
@@ -33,9 +37,7 @@
     }
 
     &__toolbar {
-      display: flex;
-      flex-direction: row;
-      justify-content: flex-end;
+      @include flex-list(flex, flex-start);
       width: 100%;
 
       &:empty {
@@ -48,6 +50,12 @@
 
       &:last-child {
         margin-top: 20px;
+      }
+
+      .c-arrows-paginate {
+        margin-left: auto;
+        padding-left: 10px;
+        flex-shrink: 0;
       }
     }
   }
@@ -74,7 +82,7 @@
 
       .c-filters-small-counter {
         color: color(muted-text);
-        font-weight: 600;
+        font-weight: 500;
       }
     }
 
@@ -102,5 +110,43 @@
     margin-left: auto;
     font-size: $text-tiny;
     font-weight: 300;
+  }
+
+  &-badges {
+    align-items: flex-start;
+
+    &__item {
+      position: relative;
+      margin-bottom: 7px;
+      padding: 6px 32px 6px 9px;
+      overflow: hidden;
+      background: color(layer-box);
+      border-radius: 5px;
+      font-size: $text-small;
+
+      &-title > strong {
+        margin-right: 5px;
+      }
+
+      &-delete {
+        @include flex-centered;
+
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 20px;
+        height: 100%;
+        background: rgba(0, 0, 0, .05);
+
+        &:hover {
+          background: rgba(0, 0, 0, .08);
+        }
+
+        svg {
+          width: 16px;
+          height: 16px;
+        }
+      }
+    }
   }
 }

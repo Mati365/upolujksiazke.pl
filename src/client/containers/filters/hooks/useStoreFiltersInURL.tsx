@@ -9,6 +9,10 @@ import {
   unflattenObject,
 } from '@shared/helpers';
 
+export function pickNonPaginationFilters(obj: any) {
+  return R.omit(['offset', 'limit'], obj);
+}
+
 export function serializeUrlFilters(obj: any) {
   const mapper = R.cond(
     [
@@ -66,17 +70,17 @@ export function useStoreFiltersInURL(
     [],
   );
 
-  const assignFiltersToURL = (filters: any) => {
-    history.replace(
-      {
-        search: serializeUrlFilters(
-          {
-            ...filters,
-            meta: R.pick(['limit', 'offset'], filters?.meta || {}),
-          },
-        ),
-      },
-    );
+  const assignFiltersToURL = (filters: any, reactRouterHistory: boolean = false) => {
+    const searchParams = serializeUrlFilters(filters);
+
+    if (reactRouterHistory) {
+      history.replace(
+        {
+          search: searchParams,
+        },
+      );
+    } else
+      window.history.replaceState(null, null, `?${searchParams}`);
   };
 
   return {

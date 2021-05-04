@@ -1,9 +1,13 @@
-import React from 'react';
+import React, {useMemo} from 'react';
 import * as R from 'ramda';
 
 import {useInputLink, useUpdateEffect} from '@client/hooks';
-import {useStoreFiltersInURL} from '@client/containers/filters/hooks/useStoreFiltersInURL';
+import {
+  pickNonPaginationFilters,
+  useStoreFiltersInURL,
+} from '@client/containers/filters/hooks/useStoreFiltersInURL';
 
+import {FiltersBadges} from '@client/containers/filters/FiltersBadges';
 import {APIQuery} from '@client/modules/api/client/components';
 import {FiltersContainer} from '@client/containers/filters';
 import {BookCardRecord} from '@api/types';
@@ -15,7 +19,12 @@ import {BooksFiltersGroups} from './BooksFiltersGroups';
 
 import {serializeAggsToSearchParams} from './helpers/serializeAggsToSearchParams';
 
-export const BOOKS_FILTERS_CONTAINER_BOOKS_COUNT = 30;
+export function getDefaultBooksFilters() {
+  return {
+    offset: 0,
+    limit: 30,
+  };
+}
 
 type BooksFiltersContainerProps = {
   initialBooks: BooksPaginationResultWithAggs,
@@ -34,16 +43,25 @@ export const BooksFiltersContainer = ({initialBooks, initialFilters}: BooksFilte
 
   const l = useInputLink<any>(
     {
-      initialData: decodedInitialFilters || {
-        limit: BOOKS_FILTERS_CONTAINER_BOOKS_COUNT,
-      },
+      initialData: decodedInitialFilters || getDefaultBooksFilters(),
       effectFn(prevValue, value) {
-        if (prevValue?.meta !== value?.meta)
+        if (prevValue?.offset !== value?.offset)
           return value;
 
-        return R.omit(['meta'], value);
+        return {
+          ...value,
+          offset: 0,
+        };
       },
     },
+  );
+
+  const {emptyFilters, serializedValue} = useMemo(
+    () => ({
+      emptyFilters: R.isEmpty(pickNonPaginationFilters(l.value)),
+      serializedValue: serializeAggsToSearchParams(l.value),
+    }),
+    [l.value],
   );
 
   useUpdateEffect(
@@ -56,13 +74,9 @@ export const BooksFiltersContainer = ({initialBooks, initialFilters}: BooksFilte
   return (
     <APIQuery<BooksPaginationResultWithAggs>
       loadingComponent={null}
-      promiseKey={
-        JSON.stringify(l.value)
-      }
+      promiseKey={serializedValue}
       promiseFn={
-        ({api}) => api.repo.books.findAggregatedBooks(
-          serializeAggsToSearchParams(l.value),
-        )
+        ({api}) => api.repo.books.findAggregatedBooks(serializedValue)
       }
       ignoreFirstRenderFetch
     >
@@ -80,21 +94,24 @@ export const BooksFiltersContainer = ({initialBooks, initialFilters}: BooksFilte
               />
             )}
             toolbarRenderFn={
-              () => (
-                <ArrowsPagination
-                  {...l.input(
-                    'meta',
-                    {
-                      defaultValue: safeResult.meta,
-                      assignValueParserFn: (val) => ({
-                        ...safeResult.meta,
-                        ...val,
-                      }),
-                    },
+              (top) => (
+                <>
+                  {top && (
+                    <FiltersBadges
+                      {...l.input()}
+                      translationsPath='book.filters'
+                    />
                   )}
-                />
+                  <ArrowsPagination
+                    totalItems={safeResult.meta.totalItems}
+                    {...l.input()}
+                  />
+                </>
               )
             }
+            {...!emptyFilters && {
+              onClearFilters: () => l.setValue({}),
+            }}
           >
             <BooksGrid
               items={

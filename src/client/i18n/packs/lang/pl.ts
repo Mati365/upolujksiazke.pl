@@ -53,6 +53,7 @@ export const PL_LANG_PACK = {
       more: 'Więcej',
       less: 'Mniej',
       open: 'Otwórz',
+      delete: 'Usuń',
       yes: 'Tak',
       no: 'Nie',
       click_to_choose: 'Kliknij by wybrać',
@@ -114,6 +115,7 @@ export const PL_LANG_PACK = {
     },
     filters: {
       header: 'Filtry',
+      clear: 'Wyczyść filtry',
     },
   },
   author: {
@@ -128,36 +130,45 @@ export const PL_LANG_PACK = {
     about_school_book: 'O lekturze',
     filters: {
       categories: {
+        single: 'Kategoria',
         header: 'Kategorie',
         total: '%{} kategorii',
       },
       price: {
-        header: 'Cena',
+        single: 'Cena',
+        header: 'Ceny',
       },
       authors: {
+        single: 'Autor',
         header: 'Autorzy',
         total: '%{} autorów',
       },
       types: {
+        single: 'Typ',
         header: 'Typy',
         total: '%{} typów',
       },
       era: {
-        header: 'Epoka',
+        single: 'Epoka',
+        header: 'Epoki',
         total: '%{} epok',
       },
       genre: {
-        header: 'Gatunek',
+        single: 'Gatunek',
+        header: 'Gatunki',
         total: '%{} gatunków',
       },
       school_levels: {
+        single: 'Poziom nauczania',
         header: 'Poziomy nauczania',
       },
       prizes: {
+        single: 'Nagroda',
         header: 'Nagrody',
         total: '%{} nagród',
       },
       publishers: {
+        single: 'Wydawca',
         header: 'Wydawcy',
         total: '%{} wydawców',
       },

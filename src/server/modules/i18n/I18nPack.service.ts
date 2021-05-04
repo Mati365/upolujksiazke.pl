@@ -18,7 +18,7 @@ export class I18nPackService {
 
   constructor(@Inject(I18N_OPTIONS) options: I18nPackServiceOptions) {
     this.packs = options.packs;
-    this.fallbackLang = options.fallbackLang ?? 'en';
+    this.fallbackLang = options.fallbackLang ?? 'pl';
   }
 
   getPacks() {

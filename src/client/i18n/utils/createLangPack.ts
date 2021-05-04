@@ -52,6 +52,7 @@ export function createLangPack(pack: LangPack): LangTranslator {
     createTranslator: (lang: Lang, fallbackLang: string = 'pl') => {
       // try to load fallback if current language is not present
       let {[lang]: langPack} = pack;
+
       if (!langPack)
         langPack = pack[fallbackLang];
 

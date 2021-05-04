@@ -49,7 +49,7 @@ export function createLangPack(pack: LangPack): LangTranslator {
     pack,
 
     // translator behaves as same as format()
-    createTranslator: (lang: Lang, fallbackLang: string = 'en') => {
+    createTranslator: (lang: Lang, fallbackLang: string = 'pl') => {
       // try to load fallback if current language is not present
       let {[lang]: langPack} = pack;
       if (!langPack)

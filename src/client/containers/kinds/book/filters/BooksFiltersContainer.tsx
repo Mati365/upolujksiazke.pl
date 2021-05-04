@@ -48,7 +48,10 @@ export const BooksFiltersContainer = ({initialBooks, initialFilters}: BooksFilte
 
   const l = useInputLink<any>(
     {
-      initialData: decodedInitialFilters || getDefaultBooksFilters(),
+      initialData: () => ({
+        ...getDefaultBooksFilters(),
+        ...decodedInitialFilters,
+      }),
       effectFn(prevValue, value) {
         if (prevValue?.offset !== value?.offset)
           return value;

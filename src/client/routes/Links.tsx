@@ -1,3 +1,5 @@
+import {buildURL} from '@shared/helpers';
+
 import {UndecoratedLink} from '@client/components/ui/Link';
 import {BookSchoolLevel} from '@shared/enums';
 import {
@@ -15,6 +17,11 @@ export const HomeLink = UndecoratedLink.create(HOME_PATH);
 
 export const BOOKS_PATH = '/ksiazki';
 export const BooksLink = UndecoratedLink.create(BOOKS_PATH);
+
+export const genBooksSearchLink = (searchParams: any) => buildURL(
+  BOOKS_PATH,
+  searchParams,
+);
 
 export const BOOK_PATH = '/ksiazka/:slug,:id';
 export const BookLink = UndecoratedLink.create<Pick<BookCardRecord, 'parameterizedSlug'|'id'>>(

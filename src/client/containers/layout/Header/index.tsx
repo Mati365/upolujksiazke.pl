@@ -9,6 +9,7 @@ import {Container} from '@client/components/ui';
 import {WebsiteLogoIcon} from '@client/components/svg/Icons';
 import {HeaderToolbar} from './HeaderToolbar';
 import {HeaderPromoLinks, HeaderPromoLinksProps} from './HeaderPromoLinks';
+import {HeaderSearch} from './HeaderSearch';
 
 export type HeaderProps = {
   promoItems?: HeaderPromoLinksProps['items'],
@@ -38,9 +39,10 @@ export const Header = ({promoItems}: HeaderProps) => {
           </span>
         </HomeLink>
 
-        {!ua.mobile && (
-          <HeaderToolbar />
-        )}
+        {!ua.mobile && [
+          <HeaderSearch key='search' />,
+          <HeaderToolbar key='toolbar' />,
+        ]}
       </Container>
 
       {hasPromoBar && (

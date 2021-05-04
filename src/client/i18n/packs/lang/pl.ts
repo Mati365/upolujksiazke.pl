@@ -37,6 +37,9 @@ export const PL_LANG_PACK = {
       title: 'Upoluj książkę - sprawdź recenzje, opinie i porównaj ceny książek w większości księgarni w Polsce',
     },
   },
+  search: {
+    placeholder: 'Wyszukaj książkę, autora lub ISBN i wciśnij enter...',
+  },
   shared: {
     fetch_state: {
       loading: 'Wczytywanie...',

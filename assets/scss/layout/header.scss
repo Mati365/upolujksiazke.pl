@@ -40,7 +40,17 @@
 
   &__toolbar {
     margin-left: auto;
-    padding-left: 20px;
+    flex-shrink: 0
+  }
+
+  &__search {
+    margin: 0 25px 0 10px;
+
+    > input {
+      padding-right: 28px;
+      padding: 8px 10px;
+      border-radius: 8px;
+    }
   }
 
   &__link {
@@ -67,7 +77,8 @@
     }
 
     &-text {
-      font-weight: 300;
+      font-weight: 400;
+      font-size: .95rem;
     }
   }
 
@@ -84,7 +95,7 @@
       border-bottom-left-radius: 5px;
       border-bottom-right-radius: 5px;
       font-size: $text-small;
-      font-weight: 600;
+      font-weight: 500;
       border-bottom-width: 2px;
     }
   }

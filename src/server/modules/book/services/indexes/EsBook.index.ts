@@ -60,7 +60,19 @@ export class EsBookIndex extends EntityIndex<BookEntity, BookIndexEntity> {
       },
     ),
     publishers: PredefinedProperties.idNamePair,
-    authors: PredefinedProperties.idNamePair,
+    authors: {
+      type: 'nested',
+      properties: {
+        id: {type: 'keyword'},
+        parameterizedName: {type: 'keyword'},
+        name: {
+          type: 'keyword',
+          fields: {
+            autocomplete: {type: 'search_as_you_type'},
+          },
+        },
+      },
+    },
     tags: PredefinedProperties.idNamePair,
     era: PredefinedProperties.idNamePair,
     genre: PredefinedProperties.idNamePair,

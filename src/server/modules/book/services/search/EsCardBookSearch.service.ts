@@ -192,20 +192,38 @@ export class EsCardBookSearchService {
       }
     }
 
+    // by author name / isbn / book title
     if (phrase) {
       esQuery ??= esb.boolQuery();
-      esQuery = esQuery.must(
-        esb
-          .multiMatchQuery(
-            [
-              'isbns',
-              'defaultTitle.autocomplete',
-              'defaultTitle.autocomplete._2gram',
-              'defaultTitle.autocomplete._3gram',
-            ],
-            phrase,
-          )
-          .type('bool_prefix'),
+      esQuery = esQuery.minimumShouldMatch(1).should(
+        [
+          esb
+            .multiMatchQuery(
+              [
+                'isbns',
+                'defaultTitle.autocomplete',
+                'defaultTitle.autocomplete._2gram',
+                'defaultTitle.autocomplete._3gram',
+              ],
+              phrase,
+            )
+            .type('bool_prefix'),
+
+          esb
+            .nestedQuery(
+              esb
+                .multiMatchQuery(
+                  [
+                    'authors.name.autocomplete',
+                    'authors.name.autocomplete._2gram',
+                    'authors.name.autocomplete._3gram',
+                  ],
+                  phrase,
+                )
+                .type('bool_prefix'),
+              'authors',
+            ),
+        ],
       );
     }
 

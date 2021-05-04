@@ -270,9 +270,8 @@ export abstract class EntityIndex<E extends {id: number}, I = E> implements OnMo
       `${indexName}_${getCurrentTimestampSuffix()}`,
     );
 
-    for await (const ids of this.findEntitiesIds()) {
+    for await (const ids of this.findEntitiesIds())
       await this.reindexBulk(ids, clonedIndex.indexName);
-    }
 
     // change alias
     const {body: prevAlias} = await es.indices.getAlias(

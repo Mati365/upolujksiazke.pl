@@ -82,7 +82,7 @@ export const BooksFiltersContainer = ({initialBooks, initialFilters}: BooksFilte
       initialInstant
       debounce={(
         prevValue?.phrase !== l.value?.phrase
-          ? 400
+          ? 300
           : null
       )}
       loadingComponent={null}

@@ -1,14 +1,37 @@
-import React from 'react';
+import React, {ReactNode} from 'react';
 import c from 'classnames';
 
-export type InputProps = JSX.IntrinsicElements['input'];
+export type InputProps = JSX.IntrinsicElements['input'] & {
+  iconLeft?: ReactNode,
+  iconRight?: ReactNode,
+};
 
-export const Input = ({className, ...props}: InputProps) => (
-  <input
+export const Input = (
+  {
+    className,
+    iconLeft,
+    iconRight,
+    ...props
+  }: InputProps,
+) => (
+  <span
     className={c(
       'c-input',
+      iconLeft && 'has-icon-left',
+      iconRight && 'has-icon-right',
       className,
     )}
-    {...props}
-  />
+  >
+    {iconLeft && (
+      <span className='c-input__icon is-left'>
+        {iconLeft}
+      </span>
+    )}
+    <input {...props} />
+    {iconRight && (
+      <span className='c-input__icon is-right'>
+        {iconRight}
+      </span>
+    )}
+  </span>
 );

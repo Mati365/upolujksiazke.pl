@@ -129,6 +129,10 @@ export const PL_LANG_PACK = {
     releases: 'Wydania książki',
     about_school_book: 'O lekturze',
     filters: {
+      phrase: {
+        single: 'Fraza',
+        placeholder: 'Szukaj książki...',
+      },
       categories: {
         single: 'Kategoria',
         header: 'Kategorie',
@@ -136,7 +140,7 @@ export const PL_LANG_PACK = {
       },
       price: {
         single: 'Cena',
-        header: 'Ceny',
+        header: 'Ceny [PLN]',
       },
       authors: {
         single: 'Autor',

@@ -33,6 +33,7 @@ import GroupSVG from '@assets/icons/svg/group.svg';
 import CategorySVG from '@assets/icons/svg/category.svg';
 import TagSVG from '@assets/icons/svg/tag.svg';
 import TimesSVG from '@assets/icons/svg/times.svg';
+import SearchSVG from '@assets/icons/svg/search.svg';
 
 import {Icon} from '../ui/Icon';
 
@@ -71,3 +72,4 @@ export const GroupIcon = Icon.createFromSVG(GroupSVG);
 export const CategoryIcon = Icon.createFromSVG(CategorySVG);
 export const TagIcon = Icon.createFromSVG(TagSVG);
 export const TimesIcon = Icon.createFromSVG(TimesSVG);
+export const SearchIcon = Icon.createFromSVG(SearchSVG);

@@ -12,7 +12,11 @@ import {TimesIcon} from '@client/components/svg';
 
 import {pickNonPaginationFilters} from './hooks/useStoreFiltersInURL';
 
-const hasNestedObjectsValues = (nestedValue: any) => R.is(Object, nestedValue) && !R.has('id', nestedValue);
+const hasNestedObjectsValues = (nestedValue: any) => (
+  !R.is(String, nestedValue)
+    && R.is(Object, nestedValue)
+    && !R.has('id', nestedValue)
+);
 
 export type FiltersBadgesProps = LinkProps<any> & {
   translationsPath: string,
@@ -60,7 +64,7 @@ export const FiltersBadges = linkInputs<any>(
     );
 
     const onDeleteItem = (key: string, nestedValue: any) => {
-      if (hasNestedObjectsValues(value)) {
+      if (hasNestedObjectsValues(value[key])) {
         const nestedKey = findKeyByValue(nestedValue, value[key]);
         const newNestedValue = R.omit([nestedKey], value[key]);
 

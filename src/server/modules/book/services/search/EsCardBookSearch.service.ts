@@ -136,7 +136,7 @@ export class EsCardBookSearchService {
       authorsIds, categoriesIds,
       genresIds, prizesIds, publishersIds,
       erasIds, types, excludeIds, schoolLevels,
-      lowestPrice, highestPrice,
+      lowestPrice, highestPrice, phrase,
     } = filters;
 
     const filtersNestedQueries: BookAggsNestedQueriesMap = {};
@@ -190,6 +190,13 @@ export class EsCardBookSearchService {
           esb.termsQuery('_id', excludeIds),
         );
       }
+    }
+
+    if (phrase) {
+      esQuery ??= esb.boolQuery();
+      esQuery = esQuery.must(
+        esb.matchQuery('defaultTitle', phrase),
+      );
     }
 
     const queries = R.values(filtersNestedQueries);

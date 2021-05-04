@@ -16,8 +16,9 @@ import {
 } from '@client/components/ui/controls';
 
 import {
-  FiltersGroup,
   CountedCheckboxList,
+  FiltersGroup,
+  FiltersPhraseSearchInput,
 } from '@client/containers/filters';
 
 import {serializeAggsToSearchParams} from './helpers/serializeAggsToSearchParams';
@@ -93,6 +94,18 @@ export const BooksFiltersGroups = ({aggs, l}: BooksFiltersGroupsProps) => {
 
   return (
     <>
+      <FiltersPhraseSearchInput
+        placeholder={
+          t('phrase.placeholder')
+        }
+        {...l.input(
+          'phrase',
+          {
+            deleteFromParentIf: (inputValue) => !inputValue,
+          },
+        )}
+      />
+
       {renderBucketGroup('categories', categories)}
       {renderBucketGroup('authors', authors)}
 

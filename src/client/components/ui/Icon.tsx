@@ -1,7 +1,8 @@
-import React, {ComponentType} from 'react';
+import React, {ComponentType, CSSProperties} from 'react';
 import c from 'classnames';
 
 type IconProps = {
+  style?: CSSProperties,
   className?: string,
   size?: string,
   color?: string,
@@ -18,10 +19,12 @@ export const Icon = (
     title,
     viewBox,
     className,
+    style,
   }: IconProps,
 ) => (
   <i
     title={title}
+    style={style}
     className={c(
       'c-icon',
       `is-text-${size}`,

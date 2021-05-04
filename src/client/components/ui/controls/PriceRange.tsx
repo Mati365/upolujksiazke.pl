@@ -27,7 +27,12 @@ export const PriceRange = linkInputs<MinMaxRange>(
     )}
   >
     <Input
-      {...l.input('min')}
+      {...l.input(
+        'min',
+        {
+          deleteFromParentIf: (inputValue) => !inputValue,
+        },
+      )}
       placeholder='min zł'
       type='number'
     />
@@ -35,7 +40,12 @@ export const PriceRange = linkInputs<MinMaxRange>(
       -
     </span>
     <Input
-      {...l.input('max')}
+      {...l.input(
+        'max',
+        {
+          deleteFromParentIf: (inputValue) => !inputValue,
+        },
+      )}
       placeholder='max zł'
       type='number'
     />

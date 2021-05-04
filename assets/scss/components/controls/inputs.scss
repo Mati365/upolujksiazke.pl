@@ -1,12 +1,45 @@
 .c {
   &-input {
-    padding: 5px 10px;
-    margin: 0;
-    border: 1px solid color(gray-2);
-    border-radius: 5px;
-    outline: 0;
-    background: initial;
-    cursor: pointer;
+    display: inline-block;
+    position: relative;
+    width: inherit;
+
+    > input {
+      width: 100%;
+      padding: 5px 10px;
+      margin: 0;
+      font-size: .9rem;
+      border: 1px solid color(gray-2);
+      border-radius: 5px;
+      outline: 0;
+      background: initial;
+    }
+
+    &.has-icon {
+      &-right > input {
+        padding-right: 28px;
+      }
+
+      &-left > input {
+        padding-left: 28px;
+      }
+    }
+
+    &__icon {
+      @include flex-centered;
+
+      position: absolute;
+      top: 0;
+      height: 100%;
+
+      &.is-left {
+        left: 5px;
+      }
+
+      &.is-right {
+        right: 5px;
+      }
+    }
   }
 
   &-price-range {
@@ -17,7 +50,7 @@
       margin: 0 5px;
     }
 
-    > input {
+    > .c-input {
       flex: 1;
       width: inherit;
     }

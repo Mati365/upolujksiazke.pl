@@ -36,6 +36,7 @@ export type BookCountedAggs = CreateCountedAggType<{
 }>;
 
 export type BooksFilters = BasicAPIPagination & {
+  phrase?: string,
   types?: BookType[],
   schoolLevels?: BookSchoolLevel[],
   categoriesIds?: number[],

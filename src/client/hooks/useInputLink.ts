@@ -32,6 +32,7 @@ export type InputLinkerFn<T> = (
     defaultValue?: any,
     valueAttrName?: string,
     changeAttrName?: string,
+    deleteFromParentIf?(val: any, e: Event): boolean,
     relatedInputsFn?(newValue: any, value: any): Partial<T>,
     valueParserFn?(val: any): any,
     assignValueParserFn?(val: any): any,
@@ -173,6 +174,7 @@ export const useInputLink = <T>(
       relatedInputsFn = null,
       valueParserFn = R.identity,
       assignValueParserFn = R.identity,
+      deleteFromParentIf = R.F,
       valueAttrName = 'value',
       changeAttrName = 'onChange',
     } = {},
@@ -194,14 +196,22 @@ export const useInputLink = <T>(
       let newStateValue: T = newValue;
 
       if (name) {
-        newStateValue = R.set(
-          lensPath,
-          newValue,
-          {
-            ...outerValue.value,
-            ...relatedInputsFn && relatedInputsFn(newValue, inputValue),
-          },
-        );
+        //  todo: handle nested paths
+        if (deleteFromParentIf?.(newValue, e)) {
+          newStateValue = R.omit(
+            [name],
+            outerValue.value,
+          ) as T;
+        } else {
+          newStateValue = R.set(
+            lensPath,
+            newValue,
+            {
+              ...outerValue.value,
+              ...relatedInputsFn && relatedInputsFn(newValue, inputValue),
+            },
+          );
+        }
       } else if (R.equals(inputValue, newValue))
         return;
 

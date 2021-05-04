@@ -38,7 +38,6 @@
 
   &-card {
     padding-bottom: 1.5rem;
-    border-bottom: 1px solid color(grid-items-border);
 
     &__info {
       @include except-mobile {

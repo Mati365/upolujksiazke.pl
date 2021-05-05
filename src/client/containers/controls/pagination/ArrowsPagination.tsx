@@ -44,9 +44,6 @@ export const ArrowsPagination = linkInputs<BasicLimitPaginationOptions>(
     );
 
     const [firstPage, lastPage] = [!page, page + 1 >= totalPages];
-    if (totalPages <= 1)
-      return null;
-
     const setOffset = (offset: number, resetScroll: boolean = true) => {
       l.setValue(
         {
@@ -163,13 +160,6 @@ export const ArrowsPagination = linkInputs<BasicLimitPaginationOptions>(
           >
             <ChevronsRightIcon />
           </UndecoratedLink>
-        </li>
-
-        <li className='ml-auto'>
-          {/* <ItemsPerPageSelect
-            className='mb-0'
-            {...l.input('limit')}
-          /> */}
         </li>
       </CleanList>
     );

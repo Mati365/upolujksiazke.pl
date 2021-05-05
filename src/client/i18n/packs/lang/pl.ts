@@ -60,6 +60,7 @@ export const PL_LANG_PACK = {
       yes: 'Tak',
       no: 'Nie',
       click_to_choose: 'Kliknij by wybrać',
+      per_page: 'Na stronie:',
     },
     buttons: {
       more: 'pokaż więcej',

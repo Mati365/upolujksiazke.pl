@@ -10,6 +10,6 @@ export class APIPaginationDto {
   @IsOptional()
   @Transform(({value}) => Number.parseInt(value, 10))
   @IsNumber()
-  @Max(50)
+  @Max(70)
   limit: number = 10;
 }

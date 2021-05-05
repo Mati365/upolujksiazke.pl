@@ -3,7 +3,7 @@ import c from 'classnames';
 
 import {useI18n} from '@client/i18n';
 import {QueryLoadingSpinner} from '@client/containers/parts/DefaultLoaders';
-import {TextButton} from '@client/components/ui';
+import {CleanList, TextButton} from '@client/components/ui';
 
 type FiltersContainerProps = {
   children: ReactNode,
@@ -13,6 +13,17 @@ type FiltersContainerProps = {
   toolbarRenderFn?(top: boolean): ReactNode,
   onClearFilters?(): void,
 };
+
+export const FiltersPaginationToolbar = ({children}: {children: ReactNode}) => (
+  <CleanList
+    className='c-filters-section__pagination-toolbar'
+    spaced={4}
+    separated
+    inline
+  >
+    {children}
+  </CleanList>
+);
 
 export const FiltersContainer = (
   {

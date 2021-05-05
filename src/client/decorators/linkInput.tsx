@@ -13,9 +13,9 @@ export {
 
 export type LinkProps<T> = {
   l?: LinkInputAttachParams<T>,
-  value?: T,
   valuePropWatchers?: LinkPropertyWatchers<T>,
   initialData?: T,
+  value?: T,
   onChange?: (t: T) => void,
 };
 

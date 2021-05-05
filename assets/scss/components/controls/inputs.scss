@@ -33,12 +33,20 @@
       height: 100%;
 
       &.is-left {
-        left: 5px;
+        left: 6px;
       }
 
       &.is-right {
-        right: 5px;
+        right: 8px;
       }
+    }
+  }
+
+  &-input-label {
+    @include flex-list;
+
+    &__label {
+      margin-right: 10px;
     }
   }
 

@@ -12,22 +12,35 @@ import {
   useStoreFiltersInURL,
 } from '@client/containers/filters/hooks/useStoreFiltersInURL';
 
-import {FiltersBadges} from '@client/containers/filters/FiltersBadges';
 import {APIQuery} from '@client/modules/api/client/components';
-import {FiltersContainer} from '@client/containers/filters';
 import {BookCardRecord} from '@api/types';
 import {BooksPaginationResultWithAggs} from '@api/repo';
+
+import {FiltersBadges} from '@client/containers/filters/FiltersBadges';
 import {ArrowsPagination} from '@client/containers/controls/pagination/ArrowsPagination';
+import {
+  FiltersContainer,
+  FiltersPaginationToolbar,
+  PageSizeSelectInput,
+} from '@client/containers/filters';
 
 import {BooksGrid} from '../grids';
 import {BooksFiltersGroups} from './BooksFiltersGroups';
 
 import {serializeAggsToSearchParams} from './helpers/serializeAggsToSearchParams';
 
+const PAGE_SIZES = [
+  30,
+  36,
+  42,
+  48,
+  54,
+];
+
 export function getDefaultBooksFilters() {
   return {
     offset: 0,
-    limit: 30,
+    limit: PAGE_SIZES[0],
   };
 }
 
@@ -97,6 +110,33 @@ export const BooksFiltersContainer = ({initialBooks, initialFilters}: BooksFilte
     >
       {({result, loading}) => {
         const safeResult = result ?? initialBooks;
+        const toolbarRenderFn = (top: boolean) => (
+          <>
+            {top && (
+              <FiltersBadges
+                {...l.input()}
+                translationsPath='book.filters'
+              />
+            )}
+
+            <FiltersPaginationToolbar>
+              <li>
+                <PageSizeSelectInput
+                  {...l.input('limit')}
+                  sizes={PAGE_SIZES}
+                />
+              </li>
+
+              <li>
+                <ArrowsPagination
+                  urlSearchParams={serializedValue}
+                  totalItems={safeResult.meta.totalItems}
+                  {...l.input()}
+                />
+              </li>
+            </FiltersPaginationToolbar>
+          </>
+        );
 
         return (
           <FiltersContainer
@@ -108,23 +148,7 @@ export const BooksFiltersContainer = ({initialBooks, initialFilters}: BooksFilte
                 l={l}
               />
             )}
-            toolbarRenderFn={
-              (top) => (
-                <>
-                  {top && (
-                    <FiltersBadges
-                      {...l.input()}
-                      translationsPath='book.filters'
-                    />
-                  )}
-                  <ArrowsPagination
-                    urlSearchParams={serializedValue}
-                    totalItems={safeResult.meta.totalItems}
-                    {...l.input()}
-                  />
-                </>
-              )
-            }
+            toolbarRenderFn={toolbarRenderFn}
             {...!emptyFilters && {
               onClearFilters: () => l.setValue({}),
             }}

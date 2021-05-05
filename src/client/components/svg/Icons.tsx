@@ -34,6 +34,7 @@ import CategorySVG from '@assets/icons/svg/category.svg';
 import TagSVG from '@assets/icons/svg/tag.svg';
 import TimesSVG from '@assets/icons/svg/times.svg';
 import SearchSVG from '@assets/icons/svg/search.svg';
+import DownArrowSVG from '@assets/icons/svg/down-arrow.svg';
 
 import {Icon} from '../ui/Icon';
 
@@ -73,3 +74,4 @@ export const CategoryIcon = Icon.createFromSVG(CategorySVG);
 export const TagIcon = Icon.createFromSVG(TagSVG);
 export const TimesIcon = Icon.createFromSVG(TimesSVG);
 export const SearchIcon = Icon.createFromSVG(SearchSVG);
+export const DownArrowIcon = Icon.createFromSVG(DownArrowSVG);

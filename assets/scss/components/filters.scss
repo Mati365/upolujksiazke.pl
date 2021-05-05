@@ -51,12 +51,12 @@
       &:last-child {
         margin-top: 20px;
       }
+    }
 
-      .c-arrows-paginate {
-        margin-left: auto;
-        padding-left: 10px;
-        flex-shrink: 0;
-      }
+    &__pagination-toolbar {
+      margin-left: auto;
+      padding-left: 10px;
+      flex-shrink: 0;
     }
   }
 

@@ -1,4 +1,6 @@
 .c-arrows-paginate {
+  $self: &;
+
   &__relative-btn {
     font-size: 1.1em;
   }
@@ -8,16 +10,16 @@
     color: color(gray-4);
   }
 
-  &__input-item {
-    position: relative;
-    top: -2px;
-
-    .c-input {
-      width: 64px;
-    }
+  &__input-item .c-input {
+    width: 64px;
   }
 
   &__of {
     margin: 0 7px;
+  }
+
+  > li:not(#{$self}__input-item) {
+    position: relative;
+    top: 2px;
   }
 }

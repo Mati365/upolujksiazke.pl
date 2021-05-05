@@ -25,6 +25,59 @@
     }
   }
 
+  &-select-input {
+    position: relative;
+
+    &__field {
+      cursor: pointer;
+      user-select: none;
+
+      input {
+        cursor: inherit;
+      }
+
+      .c-input__icon {
+        opacity: 0.25;
+        font-size: .6rem;
+        transition: transform 200ms ease-in-out;
+      }
+    }
+
+    &__list {
+      position: absolute;
+      overflow: hidden;
+      top: calc(100% + 8px);
+      left: 0;
+      min-width: 100%;
+      z-index: 99;
+      background: #fff;
+      border-radius: 5px;
+      box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.17);
+      animation: fade-in 200ms normal forwards;
+
+      > li {
+        padding: 10px;
+        font-size: $text-small;
+        cursor: pointer;
+        transition: background 100ms ease-in-out;
+
+        &:hover {
+          background: rgba(0, 0, 0, .05);
+        }
+
+        &.is-active {
+          color: color(primary);
+          background: rgba($primary-red, .1);
+          font-weight: 700;
+        }
+      }
+    }
+
+    &.is-active .c-input__icon {
+      transform: rotate(180deg);
+    }
+  }
+
   &-mobile-options-list {
     &__item {
       > .c-text-button {

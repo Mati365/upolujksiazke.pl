@@ -11,6 +11,7 @@ export const Input = (
     className,
     iconLeft,
     iconRight,
+    onClick,
     ...props
   }: InputProps,
 ) => (
@@ -21,6 +22,7 @@ export const Input = (
       iconRight && 'has-icon-right',
       className,
     )}
+    onClick={onClick}
   >
     {iconLeft && (
       <span className='c-input__icon is-left'>

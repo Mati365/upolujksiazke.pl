@@ -8,3 +8,4 @@ export * from './useInputLink';
 export * from './useSafeCallback';
 export * from './useDebounce';
 export * from './usePrevious';
+export * from './useOutsideClickRef';

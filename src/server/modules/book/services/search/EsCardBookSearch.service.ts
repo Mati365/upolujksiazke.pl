@@ -13,6 +13,7 @@ import {
   createNestedPaginatedAgg,
 } from '@server/modules/elasticsearch/helpers';
 
+import {SortMode} from '@shared/enums';
 import {CreateCountedAggType} from '@api/APIRecord';
 import {APIPaginationResultWithAggs} from '@api/APIClient';
 import {
@@ -88,6 +89,13 @@ export class EsCardBookSearchService {
 
     if (meta.offset)
       esSearchBody = esSearchBody.from(meta.offset);
+
+    if (!R.isNil(filters.sort)) {
+      const sortQueries = EsCardBookSearchService.createSortQuery(filters.sort);
+
+      if (sortQueries)
+        esSearchBody = esSearchBody.sorts(sortQueries);
+    }
 
     if (filters.aggs) {
       esSearchBody = esSearchBody.aggs(
@@ -237,6 +245,29 @@ export class EsCardBookSearchService {
       query: esQuery,
       filtersNestedQueries,
     };
+  }
+
+  /**
+   * Create sort elasticsearch options based on mode
+   *
+   * @private
+   * @static
+   * @param {SortMode} mode
+   * @returns {esb.Sort[]}
+   * @memberof EsCardBookSearchService
+   */
+  private static createSortQuery(mode: SortMode): esb.Sort[] {
+    switch (mode) {
+      case SortMode.POPULARITY:
+        return [esb.sort('totalRatings', 'desc')];
+
+      case SortMode.ALPHABETIC:
+        return [esb.sort('defaultTitle.raw', 'asc')];
+
+      case SortMode.ACCURACY:
+      default:
+        return null;
+    }
   }
 
   /**

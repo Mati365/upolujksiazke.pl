@@ -15,6 +15,7 @@ import {
 import {APIQuery} from '@client/modules/api/client/components';
 import {BookCardRecord} from '@api/types';
 import {BooksPaginationResultWithAggs} from '@api/repo';
+import {SortMode} from '@shared/enums';
 
 import {FiltersBadges} from '@client/containers/filters/FiltersBadges';
 import {ArrowsPagination} from '@client/containers/controls/pagination/ArrowsPagination';
@@ -22,6 +23,7 @@ import {
   FiltersContainer,
   FiltersPaginationToolbar,
   PageSizeSelectInput,
+  SortSelectInput,
 } from '@client/containers/filters';
 
 import {BooksGrid} from '../grids';
@@ -40,6 +42,7 @@ const PAGE_SIZES = [
 export function getDefaultBooksFilters() {
   return {
     offset: 0,
+    sort: SortMode.POPULARITY,
     limit: PAGE_SIZES[0],
   };
 }
@@ -66,6 +69,9 @@ export const BooksFiltersContainer = ({initialBooks, initialFilters}: BooksFilte
         ...decodedInitialFilters,
       }),
       effectFn(prevValue, value) {
+        if (R.isEmpty(value))
+          return getDefaultBooksFilters();
+
         if (prevValue?.offset !== value?.offset)
           return value;
 
@@ -110,16 +116,15 @@ export const BooksFiltersContainer = ({initialBooks, initialFilters}: BooksFilte
     >
       {({result, loading}) => {
         const safeResult = result ?? initialBooks;
-        const toolbarRenderFn = (top: boolean) => (
+        const toolbarRenderFn = () => (
           <>
-            {top && (
-              <FiltersBadges
-                {...l.input()}
-                translationsPath='book.filters'
-              />
-            )}
-
             <FiltersPaginationToolbar>
+              <li>
+                <SortSelectInput {...l.input('sort')} />
+              </li>
+            </FiltersPaginationToolbar>
+
+            <FiltersPaginationToolbar className='ml-auto'>
               <li>
                 <PageSizeSelectInput
                   {...l.input('limit')}
@@ -153,6 +158,11 @@ export const BooksFiltersContainer = ({initialBooks, initialFilters}: BooksFilte
               onClearFilters: () => l.setValue({}),
             }}
           >
+            <FiltersBadges
+              {...l.input()}
+              translationsPath='book.filters'
+            />
+
             <BooksGrid
               items={
                 safeResult.items as BookCardRecord[]

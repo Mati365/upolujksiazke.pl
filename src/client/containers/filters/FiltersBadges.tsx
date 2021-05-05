@@ -87,6 +87,9 @@ export const FiltersBadges = linkInputs<any>(
       }
     };
 
+    if (!flattenFilters.length)
+      return null;
+
     return (
       <CleanList
         inline

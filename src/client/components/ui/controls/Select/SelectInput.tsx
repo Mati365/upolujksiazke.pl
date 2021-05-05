@@ -95,11 +95,14 @@ export const SelectInput = linkInputs<ListItem|ID>(
           items={items}
           selected={selected}
           onOptionSelected={
-            (item) => l.setValue(
-              returnOnlyId
-                ? item.id
-                : item,
-            )
+            (item) => {
+              setActive(false);
+              l.setValue(
+                returnOnlyId
+                  ? item.id
+                  : item,
+              );
+            }
           }
         />
       )}

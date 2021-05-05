@@ -1,7 +1,8 @@
-import {BooksFilters} from '@api/repo';
-
 import {validateMinMaxRange} from '@client/helpers/logic';
 import {safePluckObjIds} from '@shared/helpers';
+
+import {BooksFilters} from '@api/repo';
+import {SortMode} from '@shared/enums';
 
 export function serializeAggsToSearchParams(aggs: any): BooksFilters {
   if (!aggs)
@@ -9,6 +10,7 @@ export function serializeAggsToSearchParams(aggs: any): BooksFilters {
 
   const price = validateMinMaxRange(aggs.price);
   return {
+    sort: aggs.sort ?? SortMode.ACCURACY,
     offset: aggs.offset || 0,
     limit: aggs.limit || 30,
     phrase: aggs.phrase,

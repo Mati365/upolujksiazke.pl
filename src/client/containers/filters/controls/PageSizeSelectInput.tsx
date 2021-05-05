@@ -25,7 +25,7 @@ export const PageSizeSelectInput = ({sizes, ...props}: PageSizeSelectInputProps)
   return (
     <InputLabel
       label={
-        t('shared.titles.per_page')
+        t('shared.filters.per_page')
       }
     >
       <SelectInput

@@ -10,7 +10,7 @@ import {
 } from '@shared/helpers';
 
 export function pickNonPaginationFilters(obj: any) {
-  return R.omit(['offset', 'limit'], obj);
+  return R.omit(['offset', 'limit', 'sort'], obj);
 }
 
 export function serializeUrlFilters(obj: any) {

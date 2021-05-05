@@ -6,10 +6,15 @@ import {
 
 import {APIPaginationDto} from '@server/modules/api/dto/APIPagination.dto';
 import {TransformSeparatedArray} from '@server/common/transformers/TransformSeparatedArray.transform';
-import {BookSchoolLevel, BookType} from '@shared/enums';
+import {BookSchoolLevel, BookType, SortMode} from '@shared/enums';
 import {BooksFilters} from '@api/repo';
 
 export class BooksFiltersDto extends APIPaginationDto implements Required<BooksFilters> {
+  @IsOptional()
+  @Transform(({value}) => parseInt(value, 10))
+  @IsEnum(BookSchoolLevel)
+  readonly sort: SortMode;
+
   @IsOptional()
   @IsString()
   readonly phrase: string;

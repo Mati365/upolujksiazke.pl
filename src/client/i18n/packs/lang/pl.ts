@@ -4,6 +4,7 @@ import {
   BookProtection,
   BookSchoolLevel,
   BookType,
+  SortMode,
 } from '@shared/enums';
 
 const PL_BOOK_BINDING_PACK: Record<BookBindingKind, string> = {
@@ -29,6 +30,12 @@ const PL_BOOK_SCHOOL_LEVEL_PACK: Record<BookSchoolLevel, string> = {
   [BookSchoolLevel.VII_VIII]: '7 - 8 klasa',
   [BookSchoolLevel.HIGH_SCHOOL]: 'Liceum (podstawa)',
   [BookSchoolLevel.HIGH_SCHOOL_EXPANDED]: 'Liceum (rozszerzenie)',
+};
+
+const PL_SORT_MODES_PACK: Record<SortMode, string> = {
+  [SortMode.ACCURACY]: 'Trafność',
+  [SortMode.ALPHABETIC]: 'Alfabetycznie',
+  [SortMode.POPULARITY]: 'Popularność',
 };
 
 export const PL_LANG_PACK = {
@@ -60,7 +67,6 @@ export const PL_LANG_PACK = {
       yes: 'Tak',
       no: 'Nie',
       click_to_choose: 'Kliknij by wybrać',
-      per_page: 'Na stronie:',
     },
     buttons: {
       more: 'pokaż więcej',
@@ -120,6 +126,9 @@ export const PL_LANG_PACK = {
     filters: {
       header: 'Filtry',
       clear: 'Wyczyść filtry',
+      per_page: 'Na stronie:',
+      sort_by: 'Sortuj wg.:',
+      modes: PL_SORT_MODES_PACK,
     },
   },
   author: {

@@ -6,7 +6,7 @@ import {
   BasicAPIPagination,
 } from '@api/APIClient';
 
-import {BookSchoolLevel, BookType} from '@shared/enums';
+import {BookSchoolLevel, BookType, SortMode} from '@shared/enums';
 import {
   BookAuthorRecord,
   BookCardRecord,
@@ -36,6 +36,7 @@ export type BookCountedAggs = CreateCountedAggType<{
 }>;
 
 export type BooksFilters = BasicAPIPagination & {
+  sort?: SortMode,
   phrase?: string,
   types?: BookType[],
   schoolLevels?: BookSchoolLevel[],

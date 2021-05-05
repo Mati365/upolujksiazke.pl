@@ -14,9 +14,12 @@ type FiltersContainerProps = {
   onClearFilters?(): void,
 };
 
-export const FiltersPaginationToolbar = ({children}: {children: ReactNode}) => (
+export const FiltersPaginationToolbar = ({children, className}: {children: ReactNode, className?: string}) => (
   <CleanList
-    className='c-filters-section__pagination-toolbar'
+    className={c(
+      'c-filters-section__pagination-toolbar',
+      className,
+    )}
     spaced={4}
     separated
     inline
@@ -37,7 +40,12 @@ export const FiltersContainer = (
 ) => {
   const t = useI18n('shared.filters');
   const renderToolbar = (top: boolean) => toolbarRenderFn && (
-    <div className='c-filters-section__toolbar'>
+    <div
+      className={c(
+        'c-filters-section__toolbar',
+        `is-${top ? 'top' : 'bottom'}`,
+      )}
+    >
       {toolbarRenderFn(top)}
     </div>
   );
@@ -73,7 +81,11 @@ export const FiltersContainer = (
         )}
       >
         {renderToolbar(true)}
-        {children}
+
+        <div className='c-filters-section__items'>
+          {children}
+        </div>
+
         {loading && (
           <QueryLoadingSpinner layer />
         )}

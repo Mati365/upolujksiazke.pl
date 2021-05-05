@@ -23,6 +23,31 @@
       }
     }
 
+    &__toolbar {
+      @include flex-list(flex, flex-start);
+      width: 100%;
+
+      &:empty {
+        display: none;
+      }
+
+      &.is-top {
+        margin-bottom: 20px;
+      }
+
+      &.is-bottom {
+        margin-top: 20px;
+      }
+    }
+
+    &__pagination-toolbar {
+      flex-shrink: 0;
+    }
+
+    &__items {
+      margin-top: 15px;
+    }
+
     &__content {
       position: relative;
 
@@ -34,29 +59,6 @@
           top: 300px;
         }
       }
-    }
-
-    &__toolbar {
-      @include flex-list(flex, flex-start);
-      width: 100%;
-
-      &:empty {
-        display: none;
-      }
-
-      &:first-child {
-        margin-bottom: 20px;
-      }
-
-      &:last-child {
-        margin-top: 20px;
-      }
-    }
-
-    &__pagination-toolbar {
-      margin-left: auto;
-      padding-left: 10px;
-      flex-shrink: 0;
     }
   }
 
@@ -114,6 +116,7 @@
 
   &-badges {
     align-items: flex-start;
+    margin-bottom: 10px;
 
     &__item {
       position: relative;

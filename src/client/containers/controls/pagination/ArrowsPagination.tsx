@@ -1,7 +1,10 @@
-import React from 'react';
+import React, {MouseEventHandler} from 'react';
+import {useLocation} from 'react-router';
 
 import {linkInputs, LinkProps} from '@client/decorators/linkInput';
 import {pickEventValue} from '@client/hooks/useInputLink';
+
+import {suppressEvent} from '@client/helpers/html';
 import {
   calcPageOffset,
   calcPaginationMetaFromFilters,
@@ -10,7 +13,7 @@ import {
 import {useI18n} from '@client/i18n/hooks/useI18n';
 
 import {BasicLimitPaginationOptions} from '@shared/types';
-import {CleanList, TextButton} from '@client/components/ui';
+import {CleanList, UndecoratedLink} from '@client/components/ui';
 import {Input} from '@client/components/ui/controls';
 import {
   ChevronsLeftIcon,
@@ -21,6 +24,7 @@ import {
 
 export type ArrowsPaginationProps = LinkProps<BasicLimitPaginationOptions> & {
   totalItems: number,
+  urlSearchParams?: any,
 };
 
 export const ArrowsPagination = linkInputs<BasicLimitPaginationOptions>(
@@ -28,8 +32,10 @@ export const ArrowsPagination = linkInputs<BasicLimitPaginationOptions>(
     initialData: {},
   },
 )(
-  ({l, value, totalItems}: ArrowsPaginationProps) => {
+  ({l, value, totalItems, urlSearchParams}: ArrowsPaginationProps) => {
+    const location = useLocation();
     const t = useI18n('shared');
+
     const {page, totalPages} = calcPaginationMetaFromFilters(
       {
         ...value,
@@ -41,21 +47,34 @@ export const ArrowsPagination = linkInputs<BasicLimitPaginationOptions>(
     if (totalPages <= 1)
       return null;
 
-    const setPage = (newPage: number, resetScroll: boolean = true, offset?: boolean) => {
+    const setOffset = (offset: number, resetScroll: boolean = true) => {
       l.setValue(
         {
           ...value,
-          offset: (
-            offset
-              ? newPage
-              : calcPageOffset(value, newPage)
-          ),
+          offset,
         },
       );
 
       if (resetScroll)
         window.scrollTo(0, 0);
     };
+
+    const onHandleOffsetAnchor = (offset: number): MouseEventHandler => (e) => {
+      setOffset(offset);
+      suppressEvent(e);
+    };
+
+    const [
+      firstOffset,
+      prevOffset,
+      nextOffset,
+      lastOffset,
+    ] = [
+      0,
+      calcPageOffset(value, page - 1),
+      calcPageOffset(value, page + 1),
+      (totalPages - 1) * value.limit,
+    ];
 
     return (
       <CleanList
@@ -64,30 +83,45 @@ export const ArrowsPagination = linkInputs<BasicLimitPaginationOptions>(
         inline
       >
         <li>
-          <TextButton
+          <UndecoratedLink
             className='c-arrows-paginate__absolute-btn'
+            href={location.pathname}
+            searchParams={{
+              ...urlSearchParams,
+              offset: firstOffset,
+            }}
             disabled={firstPage}
-            onClick={() => setPage(0)}
+            onClick={
+              onHandleOffsetAnchor(firstOffset)
+            }
           >
             <ChevronsLeftIcon />
-          </TextButton>
+          </UndecoratedLink>
         </li>
 
         <li>
-          <TextButton
+          <UndecoratedLink
             className='c-arrows-paginate__relative-btn'
+            href={location.pathname}
+            rel='prev'
+            searchParams={{
+              ...urlSearchParams,
+              offset: prevOffset,
+            }}
             disabled={firstPage}
-            onClick={() => setPage(page - 1)}
+            onClick={
+              onHandleOffsetAnchor(prevOffset)
+            }
           >
             <ChevronLeftIcon />
-          </TextButton>
+          </UndecoratedLink>
         </li>
 
         <li className='c-arrows-paginate__input-item'>
           <Input
             value={page + 1}
             onChange={
-              (e) => setPage(+pickEventValue(e) - 1, false)
+              (e) => setOffset(calcPageOffset(value, +pickEventValue(e)) - 1, false)
             }
           />
           <span className='c-arrows-paginate__of'>
@@ -97,29 +131,38 @@ export const ArrowsPagination = linkInputs<BasicLimitPaginationOptions>(
         </li>
 
         <li>
-          <TextButton
+          <UndecoratedLink
             className='c-arrows-paginate__relative-btn'
+            href={location.pathname}
+            rel='next'
+            searchParams={{
+              ...urlSearchParams,
+              offset: nextOffset,
+            }}
             disabled={lastPage}
-            onClick={() => setPage(page + 1)}
+            onClick={
+              onHandleOffsetAnchor(nextOffset)
+            }
           >
             <ChevronRightIcon />
-          </TextButton>
+          </UndecoratedLink>
         </li>
 
         <li>
-          <TextButton
+          <UndecoratedLink
             className='c-arrows-paginate__absolute-btn'
             disabled={lastPage}
+            href={location.pathname}
+            searchParams={{
+              ...urlSearchParams,
+              offset: lastOffset,
+            }}
             onClick={
-              () => setPage(
-                totalItems - value.limit - 1,
-                true,
-                true,
-              )
+              onHandleOffsetAnchor(lastOffset)
             }
           >
             <ChevronsRightIcon />
-          </TextButton>
+          </UndecoratedLink>
         </li>
 
         <li className='ml-auto'>

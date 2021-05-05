@@ -21,6 +21,7 @@ export type UndecoratedLinkProps<I = {}, P = {}> = P & {
   state?: object,
   absolute?: boolean,
   underline?: boolean,
+  disabled?: boolean,
   href?: string,
   hash?: string,
   rel?: string,
@@ -38,6 +39,7 @@ export function UndecoratedLink<I = {}, P = {}>(
     activeClassName, additionalClassName,
     searchParams, state, absolute, action,
     href, hash, utm, item, className, spaMode,
+    disabled, rel,
     ...props
   }: UndecoratedLinkProps<I, P>,
 ) {
@@ -90,14 +92,18 @@ export function UndecoratedLink<I = {}, P = {}>(
       generatedClassName,
       additionalClassName,
       active && activeClassName,
+      disabled && 'is-disabled',
     );
 
     if (!spaMode && typeof to === 'string') {
       return (
         // eslint-disable-next-line jsx-a11y/anchor-has-content
         <a
-          href={to}
           className={mergedClassName}
+          {...!disabled && {
+            href: to,
+            rel,
+          }}
           {...props}
         />
       );
@@ -107,6 +113,7 @@ export function UndecoratedLink<I = {}, P = {}>(
       <Link
         to={to}
         className={mergedClassName}
+        rel={rel}
         {...props}
       />
     );

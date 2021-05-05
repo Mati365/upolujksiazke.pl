@@ -19,5 +19,7 @@ export function calcPaginationMetaFromFilters(filters: PaginationMeta) {
 }
 
 export function calcPageOffset(filters: PaginationMeta, page: number) {
-  return R.clamp(0, filters.totalItems, page * filters.limit);
+  const {totalPages} = calcPaginationMetaFromFilters(filters);
+
+  return R.clamp(0, totalPages - 1, page) * filters.limit;
 }

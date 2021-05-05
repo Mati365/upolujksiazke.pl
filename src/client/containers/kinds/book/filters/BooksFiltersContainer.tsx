@@ -118,6 +118,7 @@ export const BooksFiltersContainer = ({initialBooks, initialFilters}: BooksFilte
                     />
                   )}
                   <ArrowsPagination
+                    urlSearchParams={serializedValue}
                     totalItems={safeResult.meta.totalItems}
                     {...l.input()}
                   />

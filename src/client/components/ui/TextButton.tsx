@@ -7,7 +7,13 @@ export type TextButtonProps = Omit<JSX.IntrinsicElements['button'], 'type'> & {
 };
 
 export const TextButton = forwardRef<HTMLButtonElement, TextButtonProps>(
-  ({className, type, direction, ...props}, ref) => (
+  (
+    {
+      className, type, direction,
+      ...props
+    },
+    ref,
+  ) => (
     <button
       ref={ref}
       type='button'

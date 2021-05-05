@@ -2,7 +2,7 @@ import * as R from 'ramda';
 import {forwardRef, Inject, Injectable} from '@nestjs/common';
 import {Connection, EntityTarget, SelectQueryBuilder} from 'typeorm';
 
-import {objPropsToPromise} from '@shared/helpers';
+import {objPropsToPromise, preserveOrderByIds} from '@shared/helpers';
 import {paginatedAsyncIterator} from '@server/common/helpers/db/paginatedAsyncIterator';
 
 import {Awaited} from '@shared/types';
@@ -156,12 +156,17 @@ export class CardBookSearchService {
    * @returns
    * @memberof CardBookSearchService
    */
-  findBooksByIds(ids: any[]) {
-    return (
-      this
-        .createCardsQuery()
-        .whereInIds(ids)
-        .getMany()
+  async findBooksByIds(ids: any[]) {
+    return preserveOrderByIds(
+      {
+        ids,
+        items: await (
+          this
+            .createCardsQuery()
+            .whereInIds(ids)
+            .getMany()
+        ),
+      },
     );
   }
 

@@ -10,7 +10,7 @@ export function serializeAggsToSearchParams(aggs: any): BooksFilters {
 
   const price = validateMinMaxRange(aggs.price);
   return {
-    sort: aggs.sort ?? SortMode.ACCURACY,
+    sort: +(aggs.sort ?? SortMode.ACCURACY),
     offset: aggs.offset || 0,
     limit: aggs.limit || 30,
     phrase: aggs.phrase,

@@ -22,13 +22,18 @@ type BookPriceSidebarProps = {
 
 export const BookPriceSidebar = ({book, authorsBooks}: BookPriceSidebarProps) => {
   const {tags, authors} = book;
-  const groupedAuthorsBooks = useMemo<[BookAuthorRecord, BookCardRecord[]][]>(
-    () => R.toPairs(authorsBooks).map(
-      ([authorId, card]) => [
-        findById(+authorId)(authors),
-        card,
-      ],
-    ),
+  const groupedAuthorsBooks = useMemo(
+    () => (
+      R
+        .toPairs(authorsBooks)
+        .map(
+          ([authorId, card]) => [
+            findById(+authorId)(authors),
+            card,
+          ],
+        )
+        .filter(([, books]) => (books as any[])?.length > 0)
+    ) as [BookAuthorRecord, BookCardRecord[]][],
     [authorsBooks],
   );
 
@@ -40,7 +45,7 @@ export const BookPriceSidebar = ({book, authorsBooks}: BookPriceSidebarProps) =>
       {groupedAuthorsBooks.length > 0 && (
         <>
           {groupedAuthorsBooks.map(
-            ([author, books], index) => books?.length > 0 && (
+            ([author, books], index) => (
               <Fragment key={author.id}>
                 <AuthorOtherBooks
                   author={author}

@@ -293,12 +293,34 @@ export class EsCardBookSearchService {
     if (!aggs || R.isEmpty(aggs))
       return null;
 
-    const queries: esb.Aggregation[] = [];
-    if (aggs.types)
-      queries.push(esb.termsAggregation('types', 'allTypes'));
+    const createNestedGlobalAgg = (aggName: string, nestedAggs: esb.Aggregation[]) => {
+      if (!R.has(aggName, aggs))
+        return null;
 
-    if (aggs.schoolLevels) {
-      queries.push(
+      const filterQueries = R.values(R.omit([aggName], filtersNestedQueries));
+      return wrapWithFilteredGlobalAgg(
+        {
+          name: aggName,
+          aggs: nestedAggs,
+          filterQuery: !R.isEmpty(filterQueries) && (
+            esb
+              .boolQuery()
+              .filter(filterQueries)
+          ),
+        },
+      );
+    };
+
+    const queries: esb.Aggregation[] = [];
+
+    queries.push(
+      createNestedGlobalAgg('types', [
+        esb.termsAggregation('types', 'allTypes'),
+      ]),
+    );
+
+    queries.push(
+      createNestedGlobalAgg('schoolLevels', [
         createNestedPaginatedAgg(
           {
             ...aggs.schoolLevels,
@@ -307,35 +329,19 @@ export class EsCardBookSearchService {
             field: 'classLevel',
           },
         ),
-      );
-    }
-
-    queries.push(
-      ...BOOKS_IDS_AGGS
-        .flatMap((aggName) => {
-          if (!R.has(aggName, aggs))
-            return null;
-
-          const filterQueries = R.values(R.omit([aggName], filtersNestedQueries));
-
-          return wrapWithFilteredGlobalAgg(
-            {
-              name: aggName,
-              aggs: [
-                createNestedIdsAgg(aggName, aggs[aggName]),
-              ],
-              filterQuery: !R.isEmpty(filterQueries) && (
-                esb
-                  .boolQuery()
-                  .filter(filterQueries)
-              ),
-            },
-          );
-        })
-        .filter(Boolean),
+      ]),
     );
 
-    return queries;
+    queries.push(
+      ...BOOKS_IDS_AGGS.flatMap((aggName) => createNestedGlobalAgg(
+        aggName,
+        [
+          createNestedIdsAgg(aggName, aggs[aggName]),
+        ],
+      )),
+    );
+
+    return queries.filter(Boolean);
   }
 
   /**
@@ -363,10 +369,12 @@ export class EsCardBookSearchService {
     return objPropsToPromise(
       {
         schoolLevels: extractAndMapIdsBucketItems(
-          extractGlobalAgg(aggs.schoolLevels),
+          extractGlobalAgg(aggs.schoolLevels, 'schoolLevels'),
           'schoolLevels',
         ),
-        types: extractAndMapIdsBucketItems(aggs.types),
+        types: extractAndMapIdsBucketItems(
+          extractGlobalAgg(aggs.types, 'types'),
+        ),
         publishers: extractIdsAgg('publishers', BookPublisherEntity),
         categories: extractIdsAgg('categories', BookCategoryEntity),
         authors: extractIdsAgg('authors', BookAuthorEntity),

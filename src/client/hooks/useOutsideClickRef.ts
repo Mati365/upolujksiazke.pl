@@ -1,8 +1,6 @@
 import {useRef, useEffect, Ref} from 'react';
 import * as R from 'ramda';
 
-import {suppressEvent} from '@client/helpers/html/suppressEvent';
-
 export const useOutsideClickRef = <T extends HTMLElement = HTMLElement>(callback: VoidFunction): Ref<T> => {
   const nodeRef = useRef<T>();
   const callbackRef = useRef<typeof callback>();
@@ -16,10 +14,8 @@ export const useOutsideClickRef = <T extends HTMLElement = HTMLElement>(callback
         if (!node)
           return;
 
-        if (!node.contains(<HTMLElement> e.target)) {
+        if (!node.contains(<HTMLElement> e.target))
           callbackRef.current();
-          suppressEvent(e);
-        }
       };
 
       document.body.addEventListener('click', handleClick);

@@ -24,6 +24,9 @@ jobs:
       with:
         node-version: '16.x'
 
+    - name: Install prsync
+      run: sudo apt-get -y install prsync
+
     - uses: miloserdow/capistrano-deploy@master
       with:
         target: production

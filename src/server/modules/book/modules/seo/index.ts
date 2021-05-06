@@ -1,2 +1,2 @@
 export * from './helpers/hydrateTextWithLinks';
-export * from './BookSEO';
+export * from './BookSEO.module';

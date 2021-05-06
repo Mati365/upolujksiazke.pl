@@ -4,7 +4,7 @@ import * as R from 'ramda';
 
 import {BookEntity} from '@server/modules/book/entity/Book.entity';
 import {BookVolumeEntity} from '../../volume/BookVolume.entity';
-import {EsFuzzyBookSearchService} from '../../../services/search/EsFuzzyBookSearch.service';
+import {EsFuzzyBookSearchService} from '../../search/service/EsFuzzyBookSearch.service';
 import {CreateBookSeriesDto} from '../dto/CreateBookSeries.dto';
 import {BookSeriesService} from './BookSeries.service';
 

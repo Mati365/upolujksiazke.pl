@@ -7,9 +7,14 @@ import gulp from 'gulp';
 import * as Scrapper from './scrapper';
 import {Website, Category} from './entity';
 
+import {reindexAllTask} from './es/reindex.task';
+
 // entities
 gulp.task('entity:website:fetch-missing-logos', Website.fetchMissingLogosTask);
 gulp.task('entity:category:refresh-ranking', Category.refreshCategoriesRanking);
+
+// indexer
+gulp.task('entity:reindex:all', reindexAllTask);
 
 // scrapper
 gulp.task('scrapper:refresh:single', Scrapper.refreshSingleTask);

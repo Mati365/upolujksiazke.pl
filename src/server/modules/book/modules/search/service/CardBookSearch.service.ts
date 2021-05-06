@@ -1,5 +1,5 @@
 import * as R from 'ramda';
-import {forwardRef, Inject, Injectable} from '@nestjs/common';
+import {Inject, Injectable, forwardRef} from '@nestjs/common';
 import {Connection, EntityTarget, SelectQueryBuilder} from 'typeorm';
 
 import {objPropsToPromise, preserveOrderByIds} from '@shared/helpers';
@@ -10,17 +10,19 @@ import {BasicAPIPagination} from '@api/APIClient';
 import {BooksGroupsFilters} from '@api/repo/RecentBooks.repo';
 
 import {ImageVersion} from '@shared/enums';
-import {BookReleaseService} from '../../modules/release/BookRelease.service';
-import {BookCategoryEntity, BookCategoryService} from '../../modules/category';
-import {BookPrizeService} from '../../modules/prize/BookPrize.service';
-import {BookHierarchySeriesService} from '../../modules/series/services';
+import {BookReleaseService} from '../../release/BookRelease.service';
+import {BookCategoryService} from '../../category/services/BookCategory.service';
+import {BookCategoryEntity} from '../../category/BookCategory.entity';
 
-import {BookEntity} from '../../entity/Book.entity';
-import {BookReviewService} from '../../modules/review/BookReview.service';
-import {BookGenreService} from '../../modules/genre/BookGenre.service';
-import {BookEraService} from '../../modules/era/BookEra.service';
-import {BookTagsService} from '../BookTags.service';
-import {BookSummaryService} from '../../modules/summary/BookSummary.service';
+import {BookPrizeService} from '../../prize/BookPrize.service';
+import {BookHierarchySeriesService} from '../../series/services';
+
+import {BookEntity} from '../../../entity/Book.entity';
+import {BookTagsService} from '../../tags/BookTags.service';
+import {BookReviewService} from '../../review/BookReview.service';
+import {BookGenreService} from '../../genre/BookGenre.service';
+import {BookEraService} from '../../era/BookEra.service';
+import {BookSummaryService} from '../../summary/BookSummary.service';
 
 export type FullCardEntity = Awaited<ReturnType<CardBookSearchService['findFullCard']>>;
 
@@ -49,13 +51,14 @@ export class CardBookSearchService {
   ];
 
   constructor(
-    @Inject(forwardRef(() => BookCategoryService))
-    private readonly categoryService: BookCategoryService,
     private readonly connection: Connection,
+
+    @Inject(forwardRef(() => BookReviewService))
+    private readonly reviewsService: BookReviewService,
+    private readonly categoryService: BookCategoryService,
     private readonly bookTagService: BookTagsService,
     private readonly releaseService: BookReleaseService,
     private readonly prizeService: BookPrizeService,
-    private readonly reviewsService: BookReviewService,
     private readonly hierarchyService: BookHierarchySeriesService,
     private readonly genreService: BookGenreService,
     private readonly eraService: BookEraService,

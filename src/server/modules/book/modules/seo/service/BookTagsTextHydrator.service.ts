@@ -7,11 +7,13 @@ import {genTagLink} from '@client/routes/Links';
 import {paginatedAsyncIterator} from '@server/common/helpers/db';
 import {objPropsToPromise} from '@shared/helpers';
 
-import {BookService, BookTagsService} from '@server/modules/book/services';
 import {TagEntity} from '@server/modules/tag/Tag.entity';
+import {BookService} from '@server/modules/book/services';
+import {BookTagsStatsService} from '../../stats/services';
+import {BookTagsService} from '../../tags/BookTags.service';
+
 import {LinkHydrateAttrs, hydrateTextWithLinks} from '../helpers/hydrateTextWithLinks';
 import {BookEntity} from '../../../entity/Book.entity';
-import {BookTagsStatsService} from '../../stats/services';
 import {BookTagStatDAO} from '../../stats/dao/BookTagStat.dao';
 
 type BookTagHydratorAttrs = Optional<Omit<LinkHydrateAttrs<BookTagStatDAO>, 'linkGeneratorFn'>, 'tags'>;
@@ -21,8 +23,6 @@ export class BookTagsTextHydratorService {
   constructor(
     @Inject(forwardRef(() => BookTagsStatsService))
     private readonly bookTagsStats: BookTagsStatsService,
-
-    @Inject(forwardRef(() => BookTagsService))
     private readonly bookTags: BookTagsService,
 
     @Inject(forwardRef(() => BookService))

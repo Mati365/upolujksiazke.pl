@@ -14,7 +14,6 @@ import {
 
 import {DatabaseModule} from './database/Database.module';
 import {RemoteModule} from './remote/Remote.module';
-import {FrontModule} from './front';
 import {ManifestModule} from './manifest';
 import {AttachmentModule} from './attachment';
 import {ImporterModule} from './importer';
@@ -23,6 +22,7 @@ import {SentryModule} from './sentry';
 import {RedisCacheModule} from './cache';
 import {APIModule} from './api';
 import {ElasticsearchConnectionModule} from './elasticsearch';
+import {FrontModule} from './front';
 
 @Module(
   {

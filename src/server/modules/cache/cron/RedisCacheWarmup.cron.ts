@@ -4,7 +4,7 @@ import pMap from 'p-map';
 
 import {Layout} from '@client/containers/layout';
 import {APIClientService} from '@server/modules/api/services';
-import {CardBookSearchService} from '@server/modules/book/services/search/CardBookSearch.service';
+import {CardBookSearchService} from '@server/modules/book/modules/search/service/CardBookSearch.service';
 
 import {BookRoute} from '@client/routes/Book';
 import {HomeRoute} from '@client/routes/Home';

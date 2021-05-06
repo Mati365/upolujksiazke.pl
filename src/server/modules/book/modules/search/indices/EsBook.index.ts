@@ -12,15 +12,15 @@ import {
   PredefinedProperties,
 } from '@server/modules/elasticsearch/classes/EntityIndex';
 
-import {CardBookSearchService} from '../search/CardBookSearch.service';
-import {BookEntity} from '../../entity/Book.entity';
-import {BookEraService} from '../../modules/era/BookEra.service';
-import {BookGenreService} from '../../modules/genre/BookGenre.service';
-import {BookTagsService} from '../BookTags.service';
-import {BookCategoryService} from '../../modules/category/services/BookCategory.service';
-import {BookPrizeService} from '../../modules/prize/BookPrize.service';
-import {BookAuthorService} from '../../modules/author/BookAuthor.service';
-import {BookReleaseService} from '../../modules/release/BookRelease.service';
+import {CardBookSearchService} from '../service/CardBookSearch.service';
+import {BookEntity} from '../../../entity/Book.entity';
+import {BookTagsService} from '../../tags/BookTags.service';
+import {BookEraService} from '../../era/BookEra.service';
+import {BookGenreService} from '../../genre/BookGenre.service';
+import {BookCategoryService} from '../../category/services/BookCategory.service';
+import {BookPrizeService} from '../../prize/BookPrize.service';
+import {BookAuthorService} from '../../author/BookAuthor.service';
+import {BookReleaseService} from '../../release/BookRelease.service';
 
 export type BookIndexEntity = Pick<
 /* eslint-disable @typescript-eslint/indent */

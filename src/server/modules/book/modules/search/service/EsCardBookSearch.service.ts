@@ -21,16 +21,16 @@ import {
   BookCountedAggs,
 } from '@api/repo';
 
-import {EsBookIndex} from '../indexes/EsBook.index';
-import {BookEntity} from '../../entity/Book.entity';
+import {BookEntity} from '../../../entity/Book.entity';
 import {CardBookSearchService} from './CardBookSearch.service';
 
-import {BookPublisherEntity} from '../../modules/publisher/BookPublisher.entity';
-import {BookCategoryEntity} from '../../modules/category/BookCategory.entity';
-import {BookAuthorEntity} from '../../modules/author/BookAuthor.entity';
-import {BookGenreEntity} from '../../modules/genre/BookGenre.entity';
-import {BookEraEntity} from '../../modules/era/BookEra.entity';
-import {BookPrizeEntity} from '../../modules/prize/BookPrize.entity';
+import {BookPublisherEntity} from '../../publisher/BookPublisher.entity';
+import {BookCategoryEntity} from '../../category/BookCategory.entity';
+import {BookAuthorEntity} from '../../author/BookAuthor.entity';
+import {BookGenreEntity} from '../../genre/BookGenre.entity';
+import {BookEraEntity} from '../../era/BookEra.entity';
+import {BookPrizeEntity} from '../../prize/BookPrize.entity';
+import {EsBookIndex} from '../indices/EsBook.index';
 
 export type BookEntityAggs = Pick<BookCountedAggs, 'types'|'schoolLevels'> & CreateCountedAggType<{
   categories: BookCategoryEntity,

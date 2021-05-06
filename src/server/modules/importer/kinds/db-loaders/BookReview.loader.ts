@@ -7,7 +7,7 @@ import chalk from 'chalk';
 import {BookEntity} from '@server/modules/book/entity/Book.entity';
 import {CreateBookReviewDto} from '@server/modules/book/modules/review/dto/CreateBookReview.dto';
 import {InlineMetadataObject, MetadataDbLoader} from '@db-loader/MetadataDbLoader.interface';
-import {EsFuzzyBookSearchService} from '@server/modules/book/services/search';
+import {EsFuzzyBookSearchService} from '@server/modules/book/modules/search/service';
 import {BookReviewService} from '@server/modules/book/modules/review/BookReview.service';
 import {ScrapperService} from '../../modules/scrapper/service/Scrapper.service';
 import {BookDbLoaderService} from './Book.loader';
@@ -20,18 +20,22 @@ export class BookReviewDbLoaderService implements MetadataDbLoader {
   private readonly logger = new Logger(BookReviewDbLoaderService.name);
 
   constructor(
+    private readonly eventEmitter: EventEmitter2,
     private readonly scrapperService: ScrapperService,
     private readonly bookDbLoader: BookDbLoaderService,
     private readonly esFuzzyBookSearchService: EsFuzzyBookSearchService,
     private readonly bookReviewService: BookReviewService,
-    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   /**
    * @inheritdoc
    */
   async extractMetadataToDb(metadata: InlineMetadataObject) {
-    const {logger, bookReviewService, eventEmitter} = this;
+    const {
+      logger,
+      bookReviewService,
+      eventEmitter,
+    } = this;
 
     if (!metadata?.content) {
       logger.warn('Missing metadata content!');

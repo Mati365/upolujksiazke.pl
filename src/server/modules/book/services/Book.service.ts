@@ -32,7 +32,7 @@ import {BookStatsService} from '../modules/stats/services/BookStats.service';
 import {BookTagsTextHydratorService} from '../modules/seo/service/BookTagsTextHydrator.service';
 import {BookGenreService} from '../modules/genre/BookGenre.service';
 import {BookSummaryService} from '../modules/summary/BookSummary.service';
-import {EsBookIndex} from './indexes/EsBook.index';
+import {EsBookIndex} from '../modules/search/indices/EsBook.index';
 import {SchoolBookEntity} from '../entity/SchoolBook.entity';
 
 /**

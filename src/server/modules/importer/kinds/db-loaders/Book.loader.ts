@@ -14,13 +14,13 @@ import {parameterize} from '@shared/helpers/parameterize';
 import {pickLongestArrayItem, safeToString} from '@shared/helpers';
 import {trimBorderSpecialCharacters} from '@server/common/helpers/text/trimBorderSpecialCharacters';
 
+import {EsFuzzyBookSearchService} from '@server/modules/book/modules/search/service';
 import {BookService} from '@server/modules/book/services/Book.service';
 import {BookPublisherService} from '@server/modules/book/modules/publisher/BookPublisher.service';
 
 import {
   BookEntity,
   CreateBookDto,
-  EsFuzzyBookSearchService,
 } from '@server/modules/book';
 
 import {CreateBookSeriesDto} from '@server/modules/book/modules/series/dto/CreateBookSeries.dto';

@@ -2,8 +2,8 @@ import {forwardRef, Inject, Injectable} from '@nestjs/common';
 import {EntityManager} from 'typeorm';
 import pMap from 'p-map';
 
-import {EsBookIndex} from '@server/modules/book/services/indexes/EsBook.index';
-import {CardBookSearchService} from '@server/modules/book/services/search/CardBookSearch.service';
+import {EsBookIndex} from '../../search/indices/EsBook.index';
+import {CardBookSearchService} from '../../search/service/CardBookSearch.service';
 import {BookEntity} from '../../../entity/Book.entity';
 
 type BookStats = Pick<BookEntity, 'avgRating'|'totalRatings'|'lowestPrice'|'highestPrice'|'allTypes'>;
@@ -11,10 +11,13 @@ type BookStats = Pick<BookEntity, 'avgRating'|'totalRatings'|'lowestPrice'|'high
 @Injectable()
 export class BookStatsService {
   constructor(
+    private readonly entityManager: EntityManager,
+
     @Inject(forwardRef(() => CardBookSearchService))
     private readonly bookSearchService: CardBookSearchService,
+
+    @Inject(forwardRef(() => EsBookIndex))
     private readonly bookEsIndex: EsBookIndex,
-    private readonly entityManager: EntityManager,
   ) {}
 
   /**

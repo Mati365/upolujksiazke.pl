@@ -6,27 +6,44 @@ import {BookAuthorModule} from './modules/author/BookAuthor.module';
 import {BookReviewerModule} from './modules/reviewer/BookReviewer.module';
 import {BookCategoryModule} from './modules/category/BookCategory.module';
 import {BookReviewModule} from './modules/review/BookReview.module';
-import {BookKindModule} from './modules/kind';
-import {BookReleaseModule} from './modules/release';
-import {BookPublisherModule} from './modules/publisher';
-import {BookAvailabilityModule} from './modules/availability';
-import {BookVolumeModule} from './modules/volume';
-import {BookPrizeModule} from './modules/prize';
-import {BookSeriesModule} from './modules/series';
-import {BookStatsModule} from './modules/stats';
-import {BookSEOModule} from './modules/seo';
-import {BookEraModule} from './modules/era';
-import {BookGenreModule} from './modules/genre';
-import {BookSummaryModule} from './modules/summary';
+import {BookKindModule} from './modules/kind/BookKind.module';
+import {BookReleaseModule} from './modules/release/BookRelease.module';
+import {BookPublisherModule} from './modules/publisher/BookPublisher.module';
+import {BookAvailabilityModule} from './modules/availability/BookAvailability.module';
+import {BookVolumeModule} from './modules/volume/BookVolume.module';
+import {BookPrizeModule} from './modules/prize/BookPrize.module';
+import {BookSeriesModule} from './modules/series/BookSeries.module';
+import {BookStatsModule} from './modules/stats/BookStats.module';
+import {BookSEOModule} from './modules/seo/BookSEO.module';
+import {BookEraModule} from './modules/era/BookEra.module';
+import {BookGenreModule} from './modules/genre/BookGenre.module';
+import {BookSummaryModule} from './modules/summary/BookSummary.module';
+import {BookSearchModule} from './modules/search/BookSearch.module';
+import {BookTagsModule} from './modules/tags/BookTags.module';
+import {BookService} from './services';
 
-import {EsBookIndex} from './services/indexes/EsBook.index';
-import {
-  CardBookSearchService,
-  EsCardBookSearchService,
-  BookService,
-  BookTagsService,
-  EsFuzzyBookSearchService,
-} from './services';
+console.info([
+  ElasticsearchConnectionModule,
+  BookAvailabilityModule,
+  BookPublisherModule,
+  BookReleaseModule,
+  BookAuthorModule,
+  BookReviewerModule,
+  BookReviewModule,
+  BookCategoryModule,
+  BookVolumeModule,
+  BookKindModule,
+  BookPrizeModule,
+  BookSeriesModule,
+  BookStatsModule,
+  BookSEOModule,
+  BookEraModule,
+  BookGenreModule,
+  BookSummaryModule,
+  BookSearchModule,
+  BookTagsModule,
+  TagModule,
+]);
 
 @Module(
   {
@@ -48,21 +65,15 @@ import {
       BookEraModule,
       BookGenreModule,
       BookSummaryModule,
+      BookSearchModule,
+      BookTagsModule,
       TagModule,
     ],
     providers: [
-      EsBookIndex,
       BookService,
-      BookTagsService,
-      EsFuzzyBookSearchService,
-      CardBookSearchService,
-      EsCardBookSearchService,
     ],
     exports: [
-      EsBookIndex,
-      EsFuzzyBookSearchService,
       BookService,
-      BookTagsService,
       BookAvailabilityModule,
       BookStatsModule,
       BookPublisherModule,
@@ -77,8 +88,10 @@ import {
       BookSeriesModule,
       BookSEOModule,
       BookSummaryModule,
-      CardBookSearchService,
-      EsCardBookSearchService,
+      BookSearchModule,
+      BookGenreModule,
+      BookEraModule,
+      BookTagsModule,
     ],
   },
 )

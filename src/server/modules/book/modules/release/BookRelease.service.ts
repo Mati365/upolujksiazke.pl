@@ -1,4 +1,4 @@
-import {Injectable} from '@nestjs/common';
+import {Injectable, Inject, forwardRef} from '@nestjs/common';
 import {Connection, EntityManager, In, SelectQueryBuilder} from 'typeorm';
 import pMap from 'p-map';
 import * as R from 'ramda';
@@ -48,9 +48,11 @@ export class BookReleaseService {
 
   constructor(
     private readonly connection: Connection,
+
+    @Inject(forwardRef(() => BookReviewService))
+    private readonly reviewsService: BookReviewService,
     private readonly publisherService: BookPublisherService,
     private readonly availabilityService: BookAvailabilityService,
-    private readonly reviewsService: BookReviewService,
     private readonly imageAttachmentService: ImageAttachmentService,
   ) {}
 

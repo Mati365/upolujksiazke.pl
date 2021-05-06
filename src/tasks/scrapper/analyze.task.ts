@@ -8,8 +8,8 @@ import {safeToNumber, safeToString} from '@shared/helpers';
 import {AppModule} from '@server/modules/App.module';
 import {ScrapperModule} from '@scrapper/Scrapper.module';
 import {ScrapperReanalyzerService} from '@scrapper/service/actions';
-import {ScrapperMetadataKind} from '@server/modules/importer/modules/scrapper/entity';
-import {ScrapperService} from '@server/modules/importer/modules/scrapper/service';
+import {ScrapperMetadataKind} from '@importer/modules/scrapper/entity';
+import {ScrapperService} from '@importer/modules/scrapper/service';
 
 /**
  * Iterates over all records and parses them again,

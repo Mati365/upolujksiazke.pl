@@ -5,14 +5,14 @@ import * as R from 'ramda';
 
 import {parameterize} from '@shared/helpers';
 
-import {BookEntity} from '../../entity/Book.entity';
-import {BookVolumeEntity} from '../../modules/volume/BookVolume.entity';
-import {BookAuthorEntity} from '../../modules/author/BookAuthor.entity';
-import {EsBookIndex} from '../indexes/EsBook.index';
+import {BookEntity} from '../../../entity/Book.entity';
+import {BookVolumeEntity} from '../../volume/BookVolume.entity';
+import {BookAuthorEntity} from '../../author/BookAuthor.entity';
+import {EsBookIndex} from '../indices/EsBook.index';
 
-import {CreateBookDto} from '../../dto/CreateBook.dto';
-import {CreateBookReviewDto} from '../../modules/review/dto/CreateBookReview.dto';
-import {CreateBookReleaseDto} from '../../modules/release/dto/CreateBookRelease.dto';
+import {CreateBookDto} from '../../../dto/CreateBook.dto';
+import {CreateBookReviewDto} from '../../review/dto/CreateBookReview.dto';
+import {CreateBookReleaseDto} from '../../release/dto/CreateBookRelease.dto';
 
 /**
  * Instead of EsCardBookSearchService it performs search

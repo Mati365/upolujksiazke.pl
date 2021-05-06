@@ -5,14 +5,14 @@ import {SERVER_ENV} from '@server/constants/env';
 
 import {RedisCacheWarmupCron} from './cron/RedisCacheWarmup.cron';
 import {APIModule} from '../api';
-import {BookModule} from '../book/Book.module';
+import {BookSearchModule} from '../book/modules/search';
 
 @Global()
 @Module(
   {
     imports: [
       APIModule,
-      BookModule,
+      BookSearchModule,
       CacheModule.register(
         {
           store: redisStore,

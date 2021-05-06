@@ -1,4 +1,4 @@
-import {Module, forwardRef} from '@nestjs/common';
+import {Module} from '@nestjs/common';
 import {BullModule} from '@nestjs/bull';
 
 import {TagModule} from '@server/modules/tag';
@@ -27,7 +27,7 @@ import {ScrapperModule} from '../scrapper/Scrapper.module';
 @Module(
   {
     imports: [
-      forwardRef(() => BookModule),
+      BookModule,
       ScrapperModule,
       TagModule,
       BullModule.registerQueue(

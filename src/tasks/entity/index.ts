@@ -1,2 +1,2 @@
-export * as Category from './bookCategory';
-export * as Website from './website';
+export * as Category from './bookCategory.task';
+export * as Website from './website.task';

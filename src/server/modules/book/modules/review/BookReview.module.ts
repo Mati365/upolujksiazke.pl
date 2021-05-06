@@ -1,13 +1,14 @@
 import {Module, forwardRef} from '@nestjs/common';
-import {BookModule} from '../../Book.module';
+
 import {BookReviewerModule} from '../reviewer/BookReviewer.module';
+import {BookStatsModule} from '../stats/BookStats.module';
 import {BookReviewService} from './BookReview.service';
 
 @Module(
   {
     imports: [
-      BookReviewerModule,
-      forwardRef(() => BookModule),
+      forwardRef(() => BookReviewerModule),
+      forwardRef(() => BookStatsModule),
     ],
     providers: [
       BookReviewService,

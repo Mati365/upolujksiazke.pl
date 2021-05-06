@@ -5,15 +5,15 @@ import {Cache} from 'cache-manager';
 import {BookCategoryService} from '@server/modules/book/modules/category';
 import {TagService} from '@server/modules/tag/Tag.service';
 import {BookTagsStatsService} from '@server/modules/book/modules/stats/services/BookTagsStats.service';
+import {BookTagsService} from '@server/modules/book/modules/tags/BookTags.service';
+import {BookService} from '@server/modules/book';
+
 import {
   CardBookSearchService,
-  BookService,
-  BookTagsService,
   EsCardBookSearchService,
-} from '@server/modules/book';
+} from '@server/modules/book/modules/search/service';
 
 import {ServerAPIClient} from '../client/ServerAPIClient';
-
 @Injectable()
 export class APIClientService {
   public readonly client = new ServerAPIClient(this);

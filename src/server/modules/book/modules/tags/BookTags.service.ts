@@ -5,8 +5,8 @@ import * as R from 'ramda';
 
 import {groupRawMany} from '@server/common/helpers/db';
 
-import {TagEntity} from '../../tag/Tag.entity';
-import {BookGroupedSelectAttrs} from '../shared/types';
+import {TagEntity} from '../../../tag/Tag.entity';
+import {BookGroupedSelectAttrs} from '../../shared/types';
 
 @Injectable()
 export class BookTagsService {

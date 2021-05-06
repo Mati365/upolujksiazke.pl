@@ -20,6 +20,9 @@ jobs:
       with:
         node-version: '16.x'
 
+    - name: Install pssh
+      run: sudo apt-get -y install pssh
+
     - uses: miloserdow/capistrano-deploy@master
       with:
         target: production

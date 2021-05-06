@@ -27,4 +27,5 @@ jobs:
     - uses: miloserdow/capistrano-deploy@master
       with:
         target: production
+        enc_rsa_key_pth: config/keys/deploy_id_rsa_enc
         deploy_key: ${{ secrets.DEPLOY_ENC_KEY }}

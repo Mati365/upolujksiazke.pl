@@ -15,7 +15,7 @@ namespace :deploy do
   end
 
   task :rsync_build do
-    sh "parallel-rsync -h config/hosts/#{fetch(:stage)}.txt -a --recursive /tmp/#{fetch(:application)}/dist #{release_path}/"
+    sh "parallel-rsync -h config/hosts/#{fetch(:stage)}.txt -i \"-O StrictHostKeyChecking=no\" -a --recursive /tmp/#{fetch(:application)}/dist #{release_path}/"
   end
 
   task :cleanup_tmp do

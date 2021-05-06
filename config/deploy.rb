@@ -15,7 +15,7 @@ namespace :deploy do
   end
 
   task :rsync_build do
-    sh "rsync -v -a /tmp/#{fetch(:application)}/dist deploy@upolujksiazke.pl:#{release_path}/"
+    sh "rsync -e \"ssh -o StrictHostKeyChecking=no\" -v -a /tmp/#{fetch(:application)}/dist deploy@upolujksiazke.pl:#{release_path}/"
   end
 
   task :cleanup_tmp do

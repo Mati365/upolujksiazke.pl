@@ -29,3 +29,9 @@ jobs:
         target: production
         enc_rsa_key_pth: config/keys/deploy_id_rsa_enc
         deploy_key: ${{ secrets.DEPLOY_ENC_KEY }}
+      env:
+        SENTRY_LOG_LEVEL: info
+        SENTRY_ORG: upolujksiazkepl
+        SENTRY_PROJECT: upolujksiazkepl
+        SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+        SENTRY_DSN: ${{ secrets.SENTRY_DSN }}

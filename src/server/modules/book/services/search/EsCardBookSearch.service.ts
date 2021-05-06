@@ -311,15 +311,11 @@ export class EsCardBookSearchService {
       );
     };
 
-    const queries: esb.Aggregation[] = [];
-
-    queries.push(
+    return [
       createNestedGlobalAgg('types', [
         esb.termsAggregation('types', 'allTypes'),
       ]),
-    );
 
-    queries.push(
       createNestedGlobalAgg('schoolLevels', [
         createNestedPaginatedAgg(
           {
@@ -330,18 +326,14 @@ export class EsCardBookSearchService {
           },
         ),
       ]),
-    );
 
-    queries.push(
       ...BOOKS_IDS_AGGS.flatMap((aggName) => createNestedGlobalAgg(
         aggName,
         [
           createNestedIdsAgg(aggName, aggs[aggName]),
         ],
       )),
-    );
-
-    return queries.filter(Boolean);
+    ].filter(Boolean);
   }
 
   /**

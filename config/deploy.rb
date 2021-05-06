@@ -15,7 +15,7 @@ namespace :deploy do
   end
 
   task :rsync_build do
-    sh "prsync -h config/hosts/#{fetch(:stage)}.txt -a --recursive /tmp/#{fetch(:application)}/dist #{release_path}/"
+    sh "pssh -h config/hosts/#{fetch(:stage)}.txt -a --recursive /tmp/#{fetch(:application)}/dist #{release_path}/"
   end
 
   task :cleanup_tmp do

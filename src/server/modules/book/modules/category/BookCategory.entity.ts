@@ -14,6 +14,7 @@ import {BookEntity} from '../../entity/Book.entity';
   },
 )
 @Index(['parentCategory'])
+@Index(['root'])
 export class BookCategoryEntity extends DatedRecordEntity {
   @Column('text', {unique: true})
   parameterizedName: string;
@@ -29,6 +30,9 @@ export class BookCategoryEntity extends DatedRecordEntity {
 
   @Column('boolean', {default: false, nullable: true})
   promotionLock: boolean;
+
+  @Column('boolean', {default: false, nullable: true})
+  root: boolean;
 
   @Column({nullable: true})
   parentCategoryId: number;

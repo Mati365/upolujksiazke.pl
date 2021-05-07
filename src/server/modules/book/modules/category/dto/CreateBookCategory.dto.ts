@@ -1,6 +1,6 @@
 import {
   IsDefined, IsNotEmpty, IsNumber,
-  IsOptional, IsString,
+  IsOptional, IsString, IsBoolean,
 } from 'class-validator';
 
 import {IsUniqueValue} from '@server/common/validators/IsUniqueValue';
@@ -9,6 +9,10 @@ export class CreateBookCategoryDto {
   @IsOptional()
   @IsNumber()
   readonly id: number;
+
+  @IsOptional()
+  @IsBoolean()
+  readonly root: boolean;
 
   @IsOptional()
   @IsNumber()

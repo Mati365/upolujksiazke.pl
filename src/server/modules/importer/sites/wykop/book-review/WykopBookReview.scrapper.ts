@@ -13,7 +13,7 @@ import {CreateBookReviewerDto} from '@server/modules/book/modules/reviewer/dto/C
 import {VotingStatsEmbeddable} from '@server/modules/shared/VotingStats.embeddable';
 import {CreateImageAttachmentDto} from '@server/modules/attachment/dto';
 import {CreateBookDto} from '@server/modules/book/dto/CreateBook.dto';
-import {CreateBookCategoryDto} from '@server/modules/book/modules/category';
+import {CreateBookCategoryDto} from '@server/modules/book/modules/category/dto/CreateBookCategory.dto';
 import {CreateBookAuthorDto} from '@server/modules/book/modules/author/dto/CreateBookAuthor.dto';
 import {CreateBookReleaseDto} from '@server/modules/book/modules/release/dto/CreateBookRelease.dto';
 

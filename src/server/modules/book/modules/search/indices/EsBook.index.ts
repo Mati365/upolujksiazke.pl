@@ -93,13 +93,16 @@ export class EsBookIndex extends EntityIndex<BookEntity, BookIndexEntity> {
 
     @Inject(forwardRef(() => CardBookSearchService))
     private readonly bookSearchService: CardBookSearchService,
+
+    @Inject(forwardRef(() => BookReleaseService))
+    private readonly bookReleasesService: BookReleaseService,
+
     private readonly bookEraService: BookEraService,
     private readonly bookGenreService: BookGenreService,
     private readonly bookTagsService: BookTagsService,
     private readonly bookCategoriesService: BookCategoryService,
     private readonly bookPrizeService: BookPrizeService,
     private readonly bookAuthorService: BookAuthorService,
-    private readonly bookReleasesService: BookReleaseService,
   ) {
     super(
       esService,

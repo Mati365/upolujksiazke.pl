@@ -22,29 +22,6 @@ import {BookSearchModule} from './modules/search/BookSearch.module';
 import {BookTagsModule} from './modules/tags/BookTags.module';
 import {BookService} from './services';
 
-console.info([
-  ElasticsearchConnectionModule,
-  BookAvailabilityModule,
-  BookPublisherModule,
-  BookReleaseModule,
-  BookAuthorModule,
-  BookReviewerModule,
-  BookReviewModule,
-  BookCategoryModule,
-  BookVolumeModule,
-  BookKindModule,
-  BookPrizeModule,
-  BookSeriesModule,
-  BookStatsModule,
-  BookSEOModule,
-  BookEraModule,
-  BookGenreModule,
-  BookSummaryModule,
-  BookSearchModule,
-  BookTagsModule,
-  TagModule,
-]);
-
 @Module(
   {
     imports: [

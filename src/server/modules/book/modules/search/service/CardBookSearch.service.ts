@@ -55,9 +55,12 @@ export class CardBookSearchService {
 
     @Inject(forwardRef(() => BookReviewService))
     private readonly reviewsService: BookReviewService,
+
+    @Inject(forwardRef(() => BookReleaseService))
+    private readonly releaseService: BookReleaseService,
+
     private readonly categoryService: BookCategoryService,
     private readonly bookTagService: BookTagsService,
-    private readonly releaseService: BookReleaseService,
     private readonly prizeService: BookPrizeService,
     private readonly hierarchyService: BookHierarchySeriesService,
     private readonly genreService: BookGenreService,

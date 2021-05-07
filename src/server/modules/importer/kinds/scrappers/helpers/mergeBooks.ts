@@ -9,9 +9,6 @@ export function mergeBooks(books: CreateBookDto[]) {
 
   return mergeWithoutNulls(books, (key, a, b) => {
     switch (key) {
-      case 'authors':
-        return a?.length > b?.length ? a : b;
-
       case 'scrappersIds':
         return R.uniq([...(a || []), ...(b || [])]);
 

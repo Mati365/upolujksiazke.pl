@@ -2,12 +2,16 @@ import {Injectable} from '@nestjs/common';
 import {Connection, EntityManager} from 'typeorm';
 import * as R from 'ramda';
 
-import {BasicLimitPaginationOptions, groupRawMany, upsert} from '@server/common/helpers/db';
+import {safePluckIds} from '@shared/helpers/safePluckIds';
+import {paginatedAsyncIterator, PaginationForwardIteratorAttrs} from '@server/common/helpers/db/paginatedAsyncIterator';
+
+import {BasicLimitPaginationOptions, forwardTransaction, groupRawMany, upsert} from '@server/common/helpers/db';
 import {parameterize} from '@shared/helpers/parameterize';
 
 import {BookGroupedSelectAttrs} from '@server/modules/book/shared/types';
 import {BookCategoryEntity} from '../BookCategory.entity';
 import {CreateBookCategoryDto} from '../dto/CreateBookCategory.dto';
+import {EsBookCategoryIndex} from '../../search/indices/EsBookCategory.index';
 
 @Injectable()
 export class BookCategoryService {
@@ -17,7 +21,43 @@ export class BookCategoryService {
 
   constructor(
     private readonly connection: Connection,
+    private readonly categoryIndex: EsBookCategoryIndex,
   ) {}
+
+  /**
+   * Create query that iterates over all categories
+   *
+   * @param {Object} attrs
+   * @returns
+   * @memberof BookCategoryService
+   */
+  createIdsIteratedQuery(
+    {
+      pageLimit,
+      maxOffset = Infinity,
+      query = (
+        BookCategoryEntity.createQueryBuilder('c')
+      ),
+    }: PaginationForwardIteratorAttrs<BookCategoryEntity>,
+  ) {
+    return paginatedAsyncIterator(
+      {
+        maxOffset,
+        limit: pageLimit,
+        queryExecutor: async ({limit, offset}) => {
+          const result = await (
+            query
+              .select('c.id')
+              .offset(offset)
+              .limit(limit)
+              .getMany()
+          );
+
+          return R.pluck('id', result);
+        },
+      },
+    );
+  }
 
   /**
    * Returns N most popular categories
@@ -134,6 +174,29 @@ export class BookCategoryService {
   }
 
   /**
+   * Removes categories by ids
+   *
+   * @param {number[]} ids
+   * @param {EntityManager} [entityManager]
+   * @memberof BookCategoryService
+   */
+  async delete(ids: number[], entityManager?: EntityManager) {
+    if (!ids?.length)
+      return;
+
+    const {connection, categoryIndex} = this;
+    await forwardTransaction(
+      {
+        connection,
+        entityManager,
+      },
+      (transaction) => transaction.delete(BookCategoryEntity, ids),
+    );
+
+    await categoryIndex.deleteEntities(ids);
+  }
+
+  /**
    * Creates or updates books categories
    *
    * @param {CreateBookCategoryDto[]} dtos
@@ -145,7 +208,7 @@ export class BookCategoryService {
     if (!dtos?.length)
       return [];
 
-    const {connection} = this;
+    const {connection, categoryIndex} = this;
     const uniqueDtos = R.uniqBy(
       (dto) => parameterize(dto.name),
       R.unnest(dtos.filter(Boolean).map(
@@ -160,7 +223,7 @@ export class BookCategoryService {
       )),
     );
 
-    return upsert(
+    const result = await upsert(
       {
         entityManager,
         connection,
@@ -169,5 +232,10 @@ export class BookCategoryService {
         data: uniqueDtos,
       },
     );
+
+    if (result?.length)
+      await categoryIndex.reindexBulk(safePluckIds(result));
+
+    return result;
   }
 }

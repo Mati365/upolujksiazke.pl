@@ -1,5 +1,13 @@
+import {SelectQueryBuilder} from 'typeorm';
+
 import {asyncIteratorToObservable} from '../rx/asyncIteratorToObservable';
 import {BasicLimitPaginationOptions} from './pagination';
+
+export type PaginationForwardIteratorAttrs<T> = {
+  pageLimit: number,
+  maxOffset?: number,
+  query?: SelectQueryBuilder<T>,
+};
 
 type PaginatedAsyncIterator<T> = BasicLimitPaginationOptions & {
   increment?: boolean,

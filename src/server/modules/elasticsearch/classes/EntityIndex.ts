@@ -266,36 +266,45 @@ export abstract class EntityIndex<E extends {id: number}, I = E> implements OnMo
   @MeasureCallDuration('reindexAllEntities')
   async reindexAllEntities(): Promise<void> {
     const {es, indexName} = this;
-    const clonedIndex = await this.cloneAndCreateIndex(
-      `${indexName}_${getCurrentTimestampSuffix()}`,
-    );
+    const newIndexName = `${indexName}_${getCurrentTimestampSuffix()}`;
 
-    for await (const ids of this.findEntitiesIds())
-      await this.reindexBulk(ids, clonedIndex.indexName);
+    try {
+      const clonedIndex = await this.cloneAndCreateIndex(newIndexName);
 
-    // change alias
-    const {body: prevAlias} = await es.indices.getAlias(
-      {
-        name: indexName,
-      },
-      {
-        ignore: [404],
-      },
-    );
+      for await (const ids of this.findEntitiesIds())
+        await this.reindexBulk(ids, clonedIndex.indexName);
 
-    await es.indices.putAlias(
-      {
-        name: indexName,
-        index: clonedIndex.indexName,
-      },
-    );
+      // change alias
+      const {body: prevAlias} = await es.indices.getAlias(
+        {
+          name: indexName,
+        },
+        {
+          ignore: [404],
+        },
+      );
 
-    if (prevAlias.status !== 404) {
-      const prevIndexes = R.keys(prevAlias);
+      await es.indices.putAlias(
+        {
+          name: indexName,
+          index: clonedIndex.indexName,
+        },
+      );
 
+      if (prevAlias.status !== 404) {
+        const prevIndexes = R.keys(prevAlias);
+
+        await es.indices.delete(
+          {
+            index: prevIndexes,
+          },
+        );
+      }
+    } catch (e) {
       await es.indices.delete(
         {
-          index: prevIndexes,
+          index: newIndexName,
+          ignore_unavailable: true,
         },
       );
     }

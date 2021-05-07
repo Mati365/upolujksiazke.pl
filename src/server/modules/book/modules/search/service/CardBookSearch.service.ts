@@ -3,7 +3,7 @@ import {Inject, Injectable, forwardRef} from '@nestjs/common';
 import {Connection, EntityTarget, SelectQueryBuilder} from 'typeorm';
 
 import {objPropsToPromise, preserveOrderByIds} from '@shared/helpers';
-import {paginatedAsyncIterator} from '@server/common/helpers/db/paginatedAsyncIterator';
+import {paginatedAsyncIterator, PaginationForwardIteratorAttrs} from '@server/common/helpers/db/paginatedAsyncIterator';
 
 import {Awaited} from '@shared/types';
 import {BasicAPIPagination} from '@api/APIClient';
@@ -25,12 +25,6 @@ import {BookEraService} from '../../era/BookEra.service';
 import {BookSummaryService} from '../../summary/BookSummary.service';
 
 export type FullCardEntity = Awaited<ReturnType<CardBookSearchService['findFullCard']>>;
-
-type BookIdsIteratorAttrs = {
-  pageLimit: number,
-  maxOffset?: number,
-  query?: SelectQueryBuilder<BookEntity>,
-};
 
 @Injectable()
 export class CardBookSearchService {
@@ -59,7 +53,9 @@ export class CardBookSearchService {
     @Inject(forwardRef(() => BookReleaseService))
     private readonly releaseService: BookReleaseService,
 
+    @Inject(forwardRef(() => BookCategoryService))
     private readonly categoryService: BookCategoryService,
+
     private readonly bookTagService: BookTagsService,
     private readonly prizeService: BookPrizeService,
     private readonly hierarchyService: BookHierarchySeriesService,
@@ -107,7 +103,7 @@ export class CardBookSearchService {
    * @param {Object} attrs
    * @memberof CardBookSearchService
    */
-  createMostPopularIdsIteratedQuery(attrs: Omit<BookIdsIteratorAttrs, 'query'>) {
+  createMostPopularIdsIteratedQuery(attrs: Omit<PaginationForwardIteratorAttrs<BookEntity>, 'query'>) {
     return this.createIdsIteratedQuery(
       {
         ...attrs,
@@ -134,7 +130,7 @@ export class CardBookSearchService {
       query = (
         BookEntity.createQueryBuilder('b')
       ),
-    }: BookIdsIteratorAttrs,
+    }: PaginationForwardIteratorAttrs<BookEntity>,
   ) {
     return paginatedAsyncIterator(
       {

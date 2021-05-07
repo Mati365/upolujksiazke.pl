@@ -10,7 +10,10 @@ import {BookSeriesModule} from '../series/BookSeries.module';
 import {BookSummaryModule} from '../summary/BookSummary.module';
 import {BookTagsModule} from '../tags/BookTags.module';
 import {BookAuthorModule} from '../author/BookAuthor.module';
-import {EsBookIndex} from './indices/EsBook.index';
+import {
+  EsBookIndex,
+  EsBookCategoryIndex,
+} from './indices';
 
 import {
   CardBookSearchService,
@@ -34,12 +37,14 @@ import {
     ],
     providers: [
       EsBookIndex,
+      EsBookCategoryIndex,
       CardBookSearchService,
       EsCardBookSearchService,
       EsFuzzyBookSearchService,
     ],
     exports: [
       EsBookIndex,
+      EsBookCategoryIndex,
       CardBookSearchService,
       EsCardBookSearchService,
       EsFuzzyBookSearchService,

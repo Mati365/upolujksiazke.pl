@@ -19,4 +19,5 @@ export enum SortMode {
   ACCURACY = 1,
   POPULARITY = 2,
   ALPHABETIC = 3,
+  RECENTLY_ADDED = 4,
 }

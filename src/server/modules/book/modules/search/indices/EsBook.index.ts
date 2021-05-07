@@ -27,7 +27,7 @@ export type BookIndexEntity = Pick<
   BookEntity,
   'id'|'era'|'genre'|'tags'|'categories'|'prizes'|'authors'
   |'originalTitle'|'defaultTitle'|'lowestPrice' |'highestPrice'
-  |'allTypes'|'schoolBook'|'totalRatings'
+  |'allTypes'|'schoolBook'|'totalRatings'|'createdAt'
 /* eslint-enable @typescript-eslint/indent */
 > & {
   volumeName: string,
@@ -41,6 +41,7 @@ export class EsBookIndex extends EntityIndex<BookEntity, BookIndexEntity> {
 
   static readonly BOOK_INDEX_MAPPING: Record<keyof BookIndexEntity, any> = {
     id: {type: 'integer'},
+    createdAt: {type: 'date'},
     originalTitle: {type: 'text'},
     defaultTitle: {
       type: 'text',
@@ -93,10 +94,8 @@ export class EsBookIndex extends EntityIndex<BookEntity, BookIndexEntity> {
 
     @Inject(forwardRef(() => CardBookSearchService))
     private readonly bookSearchService: CardBookSearchService,
-
     @Inject(forwardRef(() => BookReleaseService))
     private readonly bookReleasesService: BookReleaseService,
-
     private readonly bookEraService: BookEraService,
     private readonly bookGenreService: BookGenreService,
     private readonly bookTagsService: BookTagsService,
@@ -176,7 +175,7 @@ export class EsBookIndex extends EntityIndex<BookEntity, BookIndexEntity> {
             select: [
               'id', 'originalTitle', 'defaultTitle',
               'lowestPrice', 'highestPrice', 'allTypes',
-              'totalRatings',
+              'totalRatings', 'createdAt',
             ],
             relations: [
               'schoolBook', 'volume',

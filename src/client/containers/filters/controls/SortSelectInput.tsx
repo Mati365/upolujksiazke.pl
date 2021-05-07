@@ -12,6 +12,7 @@ import {
 const DEFAULT_SORT_MODES = [
   SortMode.ACCURACY,
   SortMode.POPULARITY,
+  SortMode.RECENTLY_ADDED,
   SortMode.ALPHABETIC,
 ];
 

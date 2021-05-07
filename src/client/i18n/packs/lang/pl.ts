@@ -36,6 +36,7 @@ const PL_SORT_MODES_PACK: Record<SortMode, string> = {
   [SortMode.ACCURACY]: 'Trafność',
   [SortMode.ALPHABETIC]: 'Alfabetycznie',
   [SortMode.POPULARITY]: 'Popularność',
+  [SortMode.RECENTLY_ADDED]: 'Ostatnio dodane',
 };
 
 export const PL_LANG_PACK = {

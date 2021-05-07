@@ -21,7 +21,7 @@ set :app_env,   'NODE_ENV=production APP_ENV=production'
 set :log_level, :info
 set :format,    :airbrussh
 
-set :branch, 'main'
+set :branch, 'production'
 
 set :bundle_without, %w[development test].join(' ')
 set :bundle_roles, :all

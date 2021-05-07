@@ -258,6 +258,9 @@ export class EsCardBookSearchService {
    */
   private static createSortQuery(mode: SortMode): esb.Sort[] {
     switch (mode) {
+      case SortMode.RECENTLY_ADDED:
+        return [esb.sort('createdAt', 'desc')];
+
       case SortMode.POPULARITY:
         return [esb.sort('totalRatings', 'desc')];
 

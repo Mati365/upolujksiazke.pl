@@ -146,7 +146,7 @@ Remove book:
 app.select(ScrapperModule).get('BookService').delete([13])
 ```
 
-Reindex all record (after index structure change or something):
+Reindex all record of particular type (after index structure change or something):
 
 ```bash
 app.select(ScrapperModule).get('EsBookIndex').reindexAllEntities();
@@ -157,6 +157,9 @@ app.select(ScrapperModule).get('EsBookIndex').reindexAllEntities();
 Fetchers:
 
 ```bash
+# Reindex all records
+gulp entity:reindex:all
+
 # Fetches single review by id
 gulp scrapper:refresh:single --kind BOOK_REVIEW --remoteId 123 --website wykop.pl
 

@@ -1,6 +1,7 @@
 import {
   Entity, Column,
   BeforeInsert, BeforeUpdate,
+  Index,
 } from 'typeorm';
 
 import {parameterize} from '@shared/helpers/parameterize';
@@ -13,6 +14,7 @@ import {BookReleaseEntity} from '../release/BookRelease.entity';
     name: 'book_series',
   },
 )
+@Index(['hierarchic'])
 export class BookSeriesEntity extends DatedRecordEntity {
   @Column('citext')
   name: string;

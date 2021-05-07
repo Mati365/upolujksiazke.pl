@@ -2,7 +2,10 @@ import {Injectable} from '@nestjs/common';
 import {Connection, EntityManager} from 'typeorm';
 import * as R from 'ramda';
 
-import {upsert} from '@server/common/helpers/db';
+import {
+  forwardTransaction,
+  upsert,
+} from '@server/common/helpers/db';
 
 import {BookSeriesEntity} from '../BookSeries.entity';
 import {CreateBookSeriesDto} from '../dto/CreateBookSeries.dto';
@@ -15,14 +18,15 @@ export class BookSeriesService {
   ) {}
 
   /**
-   * Returns all series for specific book
+   * Create query to find series
    *
    * @param {number} bookId
+   * @param {boolean} [hierarchic]
    * @returns
    * @memberof BookSeriesService
    */
-  findBookSeries(bookId: number) {
-    return (
+  createBookSeriesQuery(bookId: number, hierarchic?: boolean) {
+    let qb = (
       BookSeriesEntity
         .createQueryBuilder('s')
         .innerJoin(
@@ -33,24 +37,42 @@ export class BookSeriesService {
           },
         )
         .select(['s.id', 's.name'])
-        .getMany()
     );
+
+    if (hierarchic)
+      qb = qb.andWhere('s.hierarchic = true');
+
+    return qb;
   }
 
   /**
-   * Removes series without any book
+   * Returns all series for specific book
+   *
+   * @param {number} bookId
+   * @param {boolean} [hierarchic]
+   * @returns
+   * @memberof BookSeriesService
+   */
+  findBookSeries(bookId: number, hierarchic?: boolean) {
+    return this.createBookSeriesQuery(bookId, hierarchic).getMany();
+  }
+
+  /**
+   * Delete series without books
    *
    * @param {number[]} ids
-   * @param {EntityManager} entityManager
+   * @param {number} [minBookCount=1]
+   * @param {EntityManager} [entityManager=this.entityManager]
    * @memberof BookSeriesService
    */
   async deleteOrphanedSeries(
     ids: number[],
+    minBookCount: number = 1,
     entityManager: EntityManager = this.entityManager,
   ) {
     await entityManager.query(
       /* sql */ `
-        select bs."id"
+        delete
         from book_series as "bs"
         where
           bs."id" = any(string_to_array($1, ',')::int[])
@@ -58,11 +80,39 @@ export class BookSeriesService {
             select count("bookId")
             from book_series_book_series as "bss"
             where bss."bookId" = bs."id"
-          ) = 0
+          ) <= $2
       `,
       [
         ids.join(','),
+        minBookCount,
       ],
+    );
+  }
+
+  /**
+   * Remove multiple series by ids
+   *
+   * @param {number[]} ids
+   * @param {EntityManager} [entityManager]
+   * @memberof BookSeriesService
+   */
+  async delete(ids: number[], entityManager?: EntityManager) {
+    const {connection} = this;
+
+    await forwardTransaction(
+      {
+        connection,
+        entityManager,
+      },
+      async (transaction) => {
+        await transaction.remove(
+          ids.map((id) => new BookSeriesEntity(
+            {
+              id,
+            },
+          )),
+        );
+      },
     );
   }
 

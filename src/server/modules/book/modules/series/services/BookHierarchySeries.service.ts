@@ -1,10 +1,11 @@
-import {Injectable, Logger} from '@nestjs/common';
+import {Inject, Injectable, Logger, forwardRef} from '@nestjs/common';
 import {EntityManager, IsNull, Not} from 'typeorm';
 import * as R from 'ramda';
 
 import {BookEntity} from '@server/modules/book/entity/Book.entity';
 import {BookVolumeEntity} from '../../volume/BookVolume.entity';
 import {EsFuzzyBookSearchService} from '../../search/service/EsFuzzyBookSearch.service';
+import {CardBookSearchService} from '../../search/service/CardBookSearch.service';
 import {CreateBookSeriesDto} from '../dto/CreateBookSeries.dto';
 import {BookSeriesService} from './BookSeries.service';
 
@@ -22,6 +23,9 @@ export class BookHierarchySeriesService {
     private readonly entityManager: EntityManager,
     private readonly bookSeriesService: BookSeriesService,
     private readonly esFuzzyBookSearchService: EsFuzzyBookSearchService,
+
+    @Inject(forwardRef(() => CardBookSearchService))
+    private readonly cardBookSearch: CardBookSearchService,
   ) {}
 
   /**
@@ -70,15 +74,26 @@ export class BookHierarchySeriesService {
    * Finds similar named books and creates series
    *
    * @param {number} bookId
+   * @param {boolean} [ignoreIfHasSeries]
+   * @returns
    * @memberof BookHierarchySeriesService
    */
-  async findAndCreateBookHierarchy(bookId: number) {
+  async findAndCreateBookHierarchy(bookId: number, ignoreIfHasSeries?: boolean) {
     const {
       logger,
       bookSeriesService,
       entityManager,
       esFuzzyBookSearchService,
     } = this;
+
+    // remove previous series
+    const book = await BookEntity.findOne(bookId, {select: ['hierarchicSeriesId']});
+    if (!R.isNil(book?.hierarchicSeriesId)) {
+      if (ignoreIfHasSeries)
+        return;
+
+      await bookSeriesService.deleteOrphanedSeries([book.hierarchicSeriesId], 2);
+    }
 
     const similarBooks = await esFuzzyBookSearchService.findSimilarAuthorSeriesBook(
       {
@@ -120,5 +135,25 @@ export class BookHierarchySeriesService {
         )
         .execute()
     );
+  }
+
+  /**
+   * Rewrites descriptions of all books
+   *
+   * @param {boolean} [ignoreIfHasSeries]
+   * @memberof BookHierarchySeriesService
+   */
+  async findSeriesForAllBooks(ignoreIfHasSeries?: boolean) {
+    const {cardBookSearch} = this;
+    const booksIterator = cardBookSearch.createIdsIteratedQuery(
+      {
+        pageLimit: 30,
+      },
+    );
+
+    for await (const [, ids] of booksIterator) {
+      for await (const id of ids)
+        await this.findAndCreateBookHierarchy(id, ignoreIfHasSeries);
+    }
   }
 }

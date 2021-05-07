@@ -4,13 +4,13 @@ import * as R from 'ramda';
 import {Optional} from '@shared/types';
 
 import {genTagLink} from '@client/routes/Links';
-import {paginatedAsyncIterator} from '@server/common/helpers/db';
 import {objPropsToPromise} from '@shared/helpers';
 
 import {TagEntity} from '@server/modules/tag/Tag.entity';
 import {BookService} from '@server/modules/book/services';
 import {BookTagsStatsService} from '../../stats/services';
 import {BookTagsService} from '../../tags/BookTags.service';
+import {CardBookSearchService} from '../../search/service';
 
 import {LinkHydrateAttrs, hydrateTextWithLinks} from '../helpers/hydrateTextWithLinks';
 import {BookEntity} from '../../../entity/Book.entity';
@@ -24,6 +24,7 @@ export class BookTagsTextHydratorService {
     @Inject(forwardRef(() => BookTagsStatsService))
     private readonly bookTagsStats: BookTagsStatsService,
     private readonly bookTags: BookTagsService,
+    private readonly cardBookSearch: CardBookSearchService,
 
     @Inject(forwardRef(() => BookService))
     private readonly bookService: BookService,
@@ -178,22 +179,14 @@ export class BookTagsTextHydratorService {
    * @memberof BookTagsTextHydratorService
    */
   async refreshAllBooksHydratedTags() {
-    const booksIterator = paginatedAsyncIterator(
+    const {cardBookSearch} = this;
+    const booksIterator = cardBookSearch.createIdsIteratedQuery(
       {
-        limit: 30,
-        queryExecutor: ({limit, offset}) => (
-          BookEntity
-            .createQueryBuilder('b')
-            .select('b.id')
-            .offset(offset)
-            .limit(limit)
-            .getMany()
-        ),
+        pageLimit: 30,
       },
     );
 
-    for await (const [, page] of booksIterator) {
-      await this.refreshBooksHydratedTags(R.pluck('id', page));
-    }
+    for await (const [, ids] of booksIterator)
+      await this.refreshBooksHydratedTags(ids);
   }
 }

@@ -265,13 +265,7 @@ export class EsFuzzyBookSearchService {
     const query = (
       esb
         .boolQuery()
-        .must([
-          esb.boolQuery().minimumShouldMatch(1).should([
-            esb.multiMatchQuery(['originalTitle', 'defaultTitle'], book.defaultTitle),
-            ...book.originalTitle
-              ? [esb.multiMatchQuery(['originalTitle', 'defaultTitle'], book.originalTitle)]
-              : [],
-          ]),
+        .filter(
           esb.nestedQuery().path('authors').query(
             esb
               .boolQuery()
@@ -279,6 +273,16 @@ export class EsFuzzyBookSearchService {
               .should(book.authors.map(
                 (author) => esb.termQuery('authors.id', author.id),
               )),
+          ),
+        )
+        .must([
+          esb.disMaxQuery().tieBreaker(0.7).queries(
+            [
+              esb.matchQuery('defaultTitle', book.defaultTitle),
+              book.originalTitle
+                ? esb.matchQuery('originalTitle', book.originalTitle)
+                : null,
+            ].filter(Boolean),
           ),
         ])
         .mustNot(
@@ -289,6 +293,7 @@ export class EsFuzzyBookSearchService {
     const results = await bookEsIndex.searchHits(
       esb
         .requestBodySearch()
+        .minScore(5)
         .query(query)
         .source(['id', ...source])
         .toJSON(),

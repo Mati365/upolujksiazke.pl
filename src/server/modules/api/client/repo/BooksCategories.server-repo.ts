@@ -19,11 +19,17 @@ export class BooksCategoriesServerRepo extends ServerAPIClientChild implements B
       }),
     },
   )
-  async findMostPopularCategories({limit}: MostPopularCategoriesFilters): Promise<BookCategoryRecord[]> {
+  async findMostPopularCategories(
+    {
+      limit,
+      root,
+    }: MostPopularCategoriesFilters,
+  ): Promise<BookCategoryRecord[]> {
     const {bookCategoryService} = this.services;
     const categories = await bookCategoryService.findMostPopularCategories(
       {
         limit,
+        root,
       },
     );
 

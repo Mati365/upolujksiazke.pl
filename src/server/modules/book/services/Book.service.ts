@@ -291,10 +291,11 @@ export class BookService {
       // get most popular release
       const primaryRelease = R.reduce(
         (acc, releaseDto) => (
-          !acc
-            || (acc.availability?.length || 0) < (releaseDto.availability?.length || 0)
-            || !acc.description
-            || !releaseDto.cover
+          releaseDto.cover?.file && (
+            !acc
+              || (acc.availability?.length || 0) < (releaseDto.availability?.length || 0)
+              || !acc.description
+          )
             ? releaseDto
             : acc
         ),
@@ -306,6 +307,7 @@ export class BookService {
         dto.primaryReleaseId
           ?? book.primaryReleaseId
           ?? (primaryRelease && findByProp('isbn')(primaryRelease.isbn)(upsertedReleases))
+          ?? upsertedReleases[0]
       );
 
       const description = (

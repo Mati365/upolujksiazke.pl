@@ -1,7 +1,8 @@
 import {EntityIndex} from '@server/modules/elasticsearch/classes/EntityIndex';
-import * as Index from '@server/modules/book/modules/search/indices';
+import {EsBookIndex} from '@server/modules/book/modules/search/indices/EsBook.index';
+import {EsBookCategoryIndex} from '@server/modules/book/modules/category/indices/EsBookCategory.index';
 
 export const ES_INDICES: {new(...args: any[]): EntityIndex<any, any>}[] = [
-  Index.EsBookIndex,
-  Index.EsBookCategoryIndex,
+  EsBookIndex,
+  EsBookCategoryIndex,
 ];

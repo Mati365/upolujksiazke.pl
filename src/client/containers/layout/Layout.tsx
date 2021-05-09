@@ -11,6 +11,7 @@ import {Header} from './Header';
 import {Footer} from './Footer';
 
 export type LayoutViewData = {
+  rootPopularCategories: BookCategoryRecord[],
   popularCategories: BookCategoryRecord[],
 };
 
@@ -18,6 +19,7 @@ export type LayoutProps = BasicWrapperProps & Partial<LayoutViewData>;
 
 export const Layout: AsyncPropsComponent<LayoutProps> = (
   {
+    rootPopularCategories,
     popularCategories,
     children,
     className,
@@ -25,12 +27,14 @@ export const Layout: AsyncPropsComponent<LayoutProps> = (
 ) => (
   <>
     <Header
-      promoItems={popularCategories?.map(
-        (category) => ({
-          name: category.name,
-          href: genCategoryLink(category),
-        }),
-      )}
+      promoItems={
+        rootPopularCategories?.map(
+          (category) => ({
+            name: category.name,
+            href: genCategoryLink(category),
+          }),
+        )
+      }
     />
 
     <main
@@ -50,6 +54,12 @@ Layout.displayName = 'Layout';
 
 Layout.getInitialProps = async ({api: {repo}}) => objPropsToPromise(
   {
+    rootPopularCategories: repo.booksCategories.findMostPopularCategories(
+      {
+        limit: 7,
+        root: true,
+      },
+    ),
     popularCategories: repo.booksCategories.findMostPopularCategories(
       {
         limit: 13,

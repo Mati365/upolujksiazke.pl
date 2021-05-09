@@ -22,6 +22,9 @@ export class BookCategoryEntity extends DatedRecordEntity {
   @Column('citext')
   name: string;
 
+  @Column('text', {array: true, nullable: true})
+  nameAliases: string[];
+
   @ManyToMany(() => BookEntity, (book) => book.categories)
   books: BookEntity[];
 
@@ -34,10 +37,10 @@ export class BookCategoryEntity extends DatedRecordEntity {
   @Column('boolean', {default: false, nullable: true})
   root: boolean;
 
-  @Column({nullable: true})
+  @Column('number', {nullable: true})
   parentCategoryId: number;
 
-  @ManyToOne(() => BookCategoryEntity, (category) => category.id)
+  @ManyToOne(() => BookCategoryEntity, (category) => category.id, {onDelete: 'SET NULL'})
   @JoinColumn({name: 'parentCategoryId'})
   parentCategory: BookCategoryEntity;
 

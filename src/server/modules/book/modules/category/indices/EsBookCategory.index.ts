@@ -1,5 +1,6 @@
 import {Inject, Injectable, forwardRef} from '@nestjs/common';
 import {ElasticsearchService} from '@nestjs/elasticsearch';
+import * as R from 'ramda';
 
 import {
   EntityIndex,
@@ -7,14 +8,15 @@ import {
   PredefinedProperties,
 } from '@server/modules/elasticsearch/classes/EntityIndex';
 
-import {BookCategoryEntity} from '../../category/BookCategory.entity';
-import {BookCategoryService} from '../../category/services/BookCategory.service';
+import {BookCategoryEntity} from '../BookCategory.entity';
+import {BookCategoryService} from '../services/BookCategory.service';
 
 export type BookCategoryIndexEntity = Pick<
 /* eslint-disable @typescript-eslint/indent */
   BookCategoryEntity,
-  'id'|'name'|'parameterizedName'
+  'id'|'name'|'nameAliases'|'parameterizedName'
   | 'createdAt'|'parentCategory'|'promotion'
+  | 'root'
 /* eslint-enable @typescript-eslint/indent */
 >;
 
@@ -27,6 +29,8 @@ export class EsBookCategoryIndex extends EntityIndex<BookCategoryEntity, BookCat
     createdAt: {type: 'date'},
     promotion: {type: 'integer'},
     parameterizedName: {type: 'keyword'},
+    root: {type: 'boolean'},
+    nameAliases: {type: 'text'},
     name: {
       type: 'text',
       fields: {
@@ -81,8 +85,9 @@ export class EsBookCategoryIndex extends EntityIndex<BookCategoryEntity, BookCat
       ids,
       {
         select: [
-          'id', 'name', 'createdAt',
+          'id', 'name', 'createdAt', 'root',
           'promotion', 'parameterizedName',
+          'nameAliases',
         ],
         relations: [
           'parentCategory',
@@ -108,24 +113,22 @@ export class EsBookCategoryIndex extends EntityIndex<BookCategoryEntity, BookCat
   /**
    * @inheritdoc
    */
-  protected mapRecord(
-    {
-      id,
-      createdAt,
-      name,
-      parameterizedName,
-      promotion,
-      parentCategory,
-    }: BookCategoryEntity,
-  ): EsMappedDoc<BookCategoryIndexEntity> {
+  protected mapRecord(item: BookCategoryEntity): EsMappedDoc<BookCategoryIndexEntity> {
     return {
-      _id: id,
-      id,
-      createdAt,
-      name,
-      parameterizedName,
-      promotion,
-      parentCategory,
+      _id: item.id,
+      ...R.pick(
+        [
+          'id',
+          'createdAt',
+          'root',
+          'name',
+          'parameterizedName',
+          'promotion',
+          'parentCategory',
+          'nameAliases',
+        ],
+        item,
+      ),
     };
   }
 }

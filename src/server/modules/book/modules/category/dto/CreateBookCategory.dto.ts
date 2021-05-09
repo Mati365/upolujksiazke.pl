@@ -33,6 +33,10 @@ export class CreateBookCategoryDto {
   @IsString()
   readonly name: string;
 
+  @IsOptional()
+  @IsString({each: true})
+  readonly nameAliases: string[];
+
   constructor(partial: Partial<CreateBookCategoryDto>) {
     Object.assign(this, partial);
   }

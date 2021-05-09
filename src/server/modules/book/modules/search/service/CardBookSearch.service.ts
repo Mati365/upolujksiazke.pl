@@ -142,6 +142,7 @@ export class CardBookSearchService {
               .select('b.id')
               .offset(offset)
               .limit(limit)
+              .orderBy('b.id')
               .getMany()
           );
 
@@ -195,6 +196,7 @@ export class CardBookSearchService {
     const popularCategories = await categoryService.findMostPopularCategories(
       {
         ids: categoriesIds,
+        root: false,
         offset,
         limit,
       },

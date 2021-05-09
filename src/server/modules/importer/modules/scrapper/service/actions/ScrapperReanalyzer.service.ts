@@ -54,6 +54,7 @@ export class ScrapperReanalyzerService {
         queryExecutor: ({limit, offset}) => ScrapperMetadataEntity.find(
           {
             relations: ['website'],
+            order: {id: 'DESC'},
             skip: offset,
             take: limit,
           },

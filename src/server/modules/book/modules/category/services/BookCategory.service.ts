@@ -11,7 +11,7 @@ import {parameterize} from '@shared/helpers/parameterize';
 import {BookGroupedSelectAttrs} from '@server/modules/book/shared/types';
 import {BookCategoryEntity} from '../BookCategory.entity';
 import {CreateBookCategoryDto} from '../dto/CreateBookCategory.dto';
-import {EsBookCategoryIndex} from '../../search/indices/EsBookCategory.index';
+import {EsBookCategoryIndex} from '../indices/EsBookCategory.index';
 
 @Injectable()
 export class BookCategoryService {
@@ -50,6 +50,7 @@ export class BookCategoryService {
               .select('c.id')
               .offset(offset)
               .limit(limit)
+              .orderBy('c.id', 'DESC')
               .getMany()
           );
 
@@ -71,8 +72,10 @@ export class BookCategoryService {
       limit,
       offset,
       ids,
+      root,
     }: BasicLimitPaginationOptions & {
       ids?: number[],
+      root?: boolean,
     },
   ) {
     if (ids && R.isEmpty(ids))
@@ -85,6 +88,9 @@ export class BookCategoryService {
         .andWhere('c.promotion is not null')
         .orderBy('c.promotion', 'DESC')
     );
+
+    if (!R.isNil(root))
+      qb = qb.andWhere('c.root = :root', {root});
 
     if (offset)
       qb = qb.offset(offset);

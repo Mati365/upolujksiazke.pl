@@ -5,6 +5,7 @@ import {BookCategoryRecord} from '../types/BookCategory.record';
 
 export type MostPopularCategoriesFilters = {
   limit: number,
+  root?: boolean,
 };
 
 export interface BooksCategoriesRepo extends APIRepo<BookCategoryRecord> {

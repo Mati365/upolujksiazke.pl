@@ -13,6 +13,11 @@ export class BookCategoryRankingService {
     private readonly entityManager: EntityManager,
   ) {}
 
+  async refreshCategoryRanking() {
+    await this.refreshNestedCategoriesRanking();
+    await this.refreshRootCategoriesRating();
+  }
+
   /**
    * Computes categories promotion values
    *
@@ -20,7 +25,7 @@ export class BookCategoryRankingService {
    *
    * @memberof BookCategoryRankingService
    */
-  async refreshCategoryRanking() {
+  private async refreshNestedCategoriesRanking() {
     const {bookStats, entityManager} = this;
 
     const totalBooks = await bookStats.getTotalBooks();
@@ -32,8 +37,9 @@ export class BookCategoryRankingService {
             .createQueryBuilder('bc')
             .select(['bc.id as "id"', 'count(bcc.bookId)::int as "totalBooks"'])
             .leftJoin('book_categories_book_category', 'bcc', 'bcc.bookCategoryId = bc.id')
-            .where('"promotionLock" = false')
+            .where('bc."promotionLock" = false and bc."root" = false')
             .groupBy('bc.id')
+            .orderBy('bc.id')
             .offset(offset)
             .limit(limit)
             .getRawMany()
@@ -70,5 +76,30 @@ export class BookCategoryRankingService {
         ],
       );
     }
+  }
+
+  /**
+   * Picks max count of books per nested category and set as promotion of root category
+   *
+   * @private
+   * @memberof BookCategoryRankingService
+   */
+  private async refreshRootCategoriesRating() {
+    const {entityManager} = this;
+
+    await entityManager.query(
+      /* sql */ `
+        update book_category
+        set promotion = subquery.promotion
+        from (
+          select
+            c.id,
+            (select max(bc.promotion) from book_category bc where bc."parentCategoryId" = c.id) as promotion
+          from public.book_category c
+          where c.root = true
+        ) as subquery
+        where book_category.id = subquery.id
+      `,
+    );
   }
 }

@@ -11,7 +11,7 @@ import {
   BOOK_SERIES_PATH,
   TAGS_PATH,
   TOP_BOOKS_PATH,
-  CategoryLink,
+  BookCategoryLink,
 } from '@client/routes/Links';
 
 import {BookCategoryRecord} from '@api/types';
@@ -94,12 +94,12 @@ export const Footer = ({popularCategories}: FooterProps) => {
             >
               {R.take(9, popularCategories || []).map(
                 (category) => (
-                  <CategoryLink
+                  <BookCategoryLink
                     key={category.id}
                     item={category}
                   >
                     {category.name}
-                  </CategoryLink>
+                  </BookCategoryLink>
                 ),
               )}
             </Grid>

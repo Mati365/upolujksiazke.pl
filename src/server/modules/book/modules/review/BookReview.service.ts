@@ -98,7 +98,7 @@ export class BookReviewService {
         .leftJoin('websiteLogo.attachment', 'websiteAttachment')
 
         .limit(limit)
-        .orderBy('review.createdAt', 'DESC')
+        .orderBy('review.publishDate', 'DESC')
         .getMany()
     );
   }

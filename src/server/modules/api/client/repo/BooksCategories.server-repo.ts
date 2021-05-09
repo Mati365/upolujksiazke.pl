@@ -1,7 +1,12 @@
 import {plainToClass} from 'class-transformer';
 
+import {ID} from '@shared/types';
 import {BookCategoryRecord} from '@api/types/BookCategory.record';
-import {BooksCategoriesRepo, MostPopularCategoriesFilters} from '@api/repo';
+import {
+  BooksCategoriesRepo,
+  CategoriesFindOneAttrs,
+  MostPopularCategoriesFilters,
+} from '@api/repo';
 
 import {BookCategorySerializer} from '../../serializers';
 import {ServerAPIClientChild} from '../ServerAPIClientChild';
@@ -11,6 +16,20 @@ import {
 } from '../../helpers';
 
 export class BooksCategoriesServerRepo extends ServerAPIClientChild implements BooksCategoriesRepo {
+  @MeasureCallDuration('findOneCategory')
+  @RedisMemoize(
+    {
+      keyFn: (id, attrs) => ({
+        key: `category-${id}-${JSON.stringify(attrs)}`,
+      }),
+    },
+  )
+  async findOne(id: ID, attrs?: CategoriesFindOneAttrs) {
+    const {bookCategoryService} = this.services;
+
+    return bookCategoryService.findOne(id, attrs);
+  }
+
   @MeasureCallDuration('findMostPopularCategories')
   @RedisMemoize(
     {

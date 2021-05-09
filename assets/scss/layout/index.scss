@@ -14,3 +14,12 @@
     flex-shrink: 0;
   }
 }
+
+.c-layout {
+  &-header-title {
+    width: 100%;
+    margin-top: .5rem;
+    margin-bottom: 2.5rem;
+    font-size: 1.3rem;
+  }
+}

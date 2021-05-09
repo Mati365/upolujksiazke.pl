@@ -5,8 +5,14 @@ import * as R from 'ramda';
 import {safePluckIds} from '@shared/helpers/safePluckIds';
 import {paginatedAsyncIterator, PaginationForwardIteratorAttrs} from '@server/common/helpers/db/paginatedAsyncIterator';
 
-import {BasicLimitPaginationOptions, forwardTransaction, groupRawMany, upsert} from '@server/common/helpers/db';
+import {ID} from '@shared/types';
+import {CategoriesFindOneAttrs} from '@api/repo';
+
 import {parameterize} from '@shared/helpers/parameterize';
+import {
+  BasicLimitPaginationOptions,
+  forwardTransaction, groupRawMany, upsert,
+} from '@server/common/helpers/db';
 
 import {BookGroupedSelectAttrs} from '@server/modules/book/shared/types';
 import {BookCategoryEntity} from '../BookCategory.entity';
@@ -23,6 +29,27 @@ export class BookCategoryService {
     private readonly connection: Connection,
     private readonly categoryIndex: EsBookCategoryIndex,
   ) {}
+
+  /**
+   * Finds one category entity
+   *
+   * @param {ID} id
+   * @param {CategoriesFindOneAttrs} [{root}={}]
+   * @returns
+   * @memberof BookCategoryService
+   */
+  findOne(id: ID, {root}: CategoriesFindOneAttrs = {}) {
+    return BookCategoryEntity.findOne(
+      id,
+      {
+        ...!R.isNil(root) && {
+          where: {
+            root,
+          },
+        },
+      },
+    );
+  }
 
   /**
    * Create query that iterates over all categories

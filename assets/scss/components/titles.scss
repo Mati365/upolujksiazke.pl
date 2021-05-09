@@ -13,4 +13,9 @@
     bottom: 0;
     background: color(primary-light);
   }
+
+  &.has-bottom-border {
+    padding-bottom: 1.15rem;
+    border-bottom: 1px solid color(section-header-border);
+  }
 }

@@ -1,4 +1,5 @@
 import React from 'react';
+import {Redirect} from 'react-router-dom';
 
 import {objPropsToPromise} from '@shared/helpers';
 import {deserializeUrlFilters} from '@client/containers/filters/hooks/useStoreFiltersInURL';
@@ -11,6 +12,8 @@ import {Breadcrumbs} from '@client/containers/Breadcrumbs';
 
 import {Container} from '@client/components/ui';
 import {BooksPaginationResultWithAggs} from '@api/repo';
+import {BookCategoryRecord} from '@api/types';
+
 import {
   Layout,
   LayoutHeaderTitle,
@@ -22,22 +25,30 @@ import {
   getDefaultBooksFilters,
 } from '@client/containers/kinds/book/filters/BooksFiltersContainer';
 
-import {BOOKS_PATH} from '../Links';
+import {
+  BOOKS_CATEGORY_PATH,
+  BOOKS_PATH,
+} from '../Links';
 
 type BooksRouteViewData = {
+  category: BookCategoryRecord,
   layoutData: LayoutViewData,
   initialBooks: BooksPaginationResultWithAggs,
   initialFilters: any,
 };
 
-export const BooksRoute: AsyncRoute<BooksRouteViewData> = (
+export const BooksCategoryRoute: AsyncRoute<BooksRouteViewData> = (
   {
     layoutData,
+    category,
     initialBooks,
     initialFilters,
   },
 ) => {
-  const t = useI18n('routes.books.all');
+  const t = useI18n('routes.books.category');
+
+  if (!category)
+    return <Redirect to={BOOKS_PATH} />;
 
   return (
     <Layout {...layoutData}>
@@ -52,7 +63,7 @@ export const BooksRoute: AsyncRoute<BooksRouteViewData> = (
         />
 
         <LayoutHeaderTitle>
-          {t('title')}
+          {t('title', [category.name])}
         </LayoutHeaderTitle>
 
         <BooksFiltersContainer
@@ -64,15 +75,16 @@ export const BooksRoute: AsyncRoute<BooksRouteViewData> = (
   );
 };
 
-BooksRoute.displayName = 'BooksRoute';
+BooksCategoryRoute.displayName = 'BooksCategoryRoute';
 
-BooksRoute.route = {
-  path: BOOKS_PATH,
+BooksCategoryRoute.route = {
+  path: BOOKS_CATEGORY_PATH,
 };
 
-BooksRoute.getInitialProps = async (attrs) => {
+BooksCategoryRoute.getInitialProps = async (attrs) => {
   const {
     api: {repo},
+    match: {params},
     search,
   } = attrs;
 
@@ -80,9 +92,16 @@ BooksRoute.getInitialProps = async (attrs) => {
   const {
     initialBooks,
     layoutData,
+    category,
   } = await objPropsToPromise(
     {
       layoutData: Layout.getInitialProps(attrs),
+      category: repo.booksCategories.findOne(
+        params.id,
+        {
+          root: true,
+        },
+      ),
       initialBooks: repo.books.findAggregatedBooks(
         {
           ...getDefaultBooksFilters(),
@@ -96,5 +115,6 @@ BooksRoute.getInitialProps = async (attrs) => {
     initialBooks,
     initialFilters,
     layoutData,
+    category,
   } as BooksRouteViewData;
 };

@@ -7,7 +7,7 @@ import {useI18n} from '@client/i18n';
 
 import {BookFullInfoRecord} from '@api/types';
 import {BooksAuthorsGroupedBooks} from '@api/repo';
-import {CategoryLink} from '@client/routes/Links';
+import {BookCategoryLink} from '@client/routes/Links';
 
 import {
   ExpandableDescriptionBox,
@@ -112,7 +112,7 @@ export const BookInfo = ({book, authorsBooks, children}: BookInfoProps) => {
             <LinksRow
               className='is-text-small'
               items={categories}
-              linkComponent={CategoryLink}
+              linkComponent={BookCategoryLink}
               linkProps={{
                 underline: true,
               }}

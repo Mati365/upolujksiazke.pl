@@ -8,6 +8,10 @@ export type MostPopularCategoriesFilters = {
   root?: boolean,
 };
 
-export interface BooksCategoriesRepo extends APIRepo<BookCategoryRecord> {
+export type CategoriesFindOneAttrs = {
+  root?: boolean,
+};
+
+export interface BooksCategoriesRepo extends APIRepo<BookCategoryRecord, {}, CategoriesFindOneAttrs> {
   findMostPopularCategories(filters: MostPopularCategoriesFilters): CanBePromise<BookCategoryRecord[]>;
 }

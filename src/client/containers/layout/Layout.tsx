@@ -2,7 +2,7 @@ import React from 'react';
 import c from 'classnames';
 
 import {objPropsToPromise} from '@shared/helpers';
-import {genCategoryLink} from '@client/routes/Links';
+import {genBookCategoryLink} from '@client/routes/Links';
 
 import {BasicWrapperProps} from '@client/components/ui';
 import {BookCategoryRecord} from '@api/types';
@@ -31,7 +31,7 @@ export const Layout: AsyncPropsComponent<LayoutProps> = (
         rootPopularCategories?.map(
           (category) => ({
             name: category.name,
-            href: genCategoryLink(category),
+            href: genBookCategoryLink(category),
           }),
         )
       }

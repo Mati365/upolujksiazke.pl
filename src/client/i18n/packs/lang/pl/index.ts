@@ -7,6 +7,9 @@ import {
   SortMode,
 } from '@shared/enums';
 
+import {PL_BOOKS_ROUTE_PACK} from './routes/books';
+import {PL_HOME_ROUTE_PACK} from './routes/home';
+
 const PL_BOOK_BINDING_PACK: Record<BookBindingKind, string> = {
   [BookBindingKind.HARDCOVER]: 'twarda okładka',
   [BookBindingKind.NOTEBOOK]: 'miękka okładka',
@@ -39,12 +42,13 @@ const PL_SORT_MODES_PACK: Record<SortMode, string> = {
   [SortMode.RECENTLY_ADDED]: 'Ostatnio dodane',
 };
 
+const ROUTES_PACK = {
+  books: PL_BOOKS_ROUTE_PACK,
+  home: PL_HOME_ROUTE_PACK,
+};
+
 export const PL_LANG_PACK = {
-  home: {
-    meta: {
-      title: 'Upoluj książkę - sprawdź recenzje, opinie i porównaj ceny książek w większości księgarni w Polsce',
-    },
-  },
+  routes: ROUTES_PACK,
   search: {
     placeholder: 'Wyszukaj książkę, autora lub ISBN i wciśnij enter...',
   },
@@ -148,8 +152,8 @@ export const PL_LANG_PACK = {
         placeholder: 'Szukaj książki...',
       },
       categories: {
-        single: 'Kategoria',
-        header: 'Kategorie',
+        single: 'Podkategoria',
+        header: 'Podkategorie',
         total: '%{} kategorii',
       },
       price: {

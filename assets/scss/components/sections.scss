@@ -20,15 +20,23 @@
 
     &.is-spaced {
       @for $i from 1 through 4 {
-        &-#{$i}:not(:last-child) {
+        &-#{$i} {
           margin: #{$i}rem 0;
+
+          &:last-child {
+            margin-bottom: 0;
+          }
         }
       }
 
       @include mobile {
         @for $i from 1 through 4 {
-          &-#{$i}:not(:last-child) {
+          &-#{$i} {
             margin: #{$i / 1.5}rem 0;
+
+            &:last-child {
+              margin-bottom: 0;
+            }
           }
         }
       }

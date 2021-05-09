@@ -60,15 +60,15 @@ export const AuthorLink = UndecoratedLink.create<Pick<BookAuthorRecord, 'paramet
   ({id, parameterizedName}) => `/autor/${parameterizedName},${id}`,
 );
 
-export const genCategoryLink = (
+export const genBookCategoryLink = (
   {
     id,
     parameterizedName,
   }: Pick<BookCategoryRecord, 'parameterizedName'|'id'>,
 ) => `/kategoria/${parameterizedName},${id}`;
 
-export const CATEGORY_PATH = '/kategoria/:slug,:id';
-export const CategoryLink = UndecoratedLink.create<Parameters<typeof genCategoryLink>[0]>(genCategoryLink);
+export const BOOKS_CATEGORY_PATH = '/kategoria/:slug,:id';
+export const BookCategoryLink = UndecoratedLink.create<Parameters<typeof genBookCategoryLink>[0]>(genBookCategoryLink);
 
 export const TAG_PATH = '/tag/:slug,:id';
 export const TAGS_PATH = '/tagi';

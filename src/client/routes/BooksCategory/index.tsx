@@ -69,6 +69,9 @@ export const BooksCategoryRoute: AsyncRoute<BooksRouteViewData> = (
         <BooksFiltersContainer
           initialBooks={initialBooks}
           initialFilters={initialFilters}
+          overrideFilters={{
+            parentCategoriesIds: [category.id],
+          }}
         />
       </Container>
     </Layout>
@@ -106,6 +109,7 @@ BooksCategoryRoute.getInitialProps = async (attrs) => {
         {
           ...getDefaultBooksFilters(),
           ...serializeAggsToSearchParams(initialFilters),
+          parentCategoriesIds: [params.id],
         },
       ),
     },

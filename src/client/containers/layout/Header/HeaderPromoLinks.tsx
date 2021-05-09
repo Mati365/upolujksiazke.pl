@@ -39,7 +39,10 @@ export const HeaderPromoLinks = ({items}: HeaderPromoLinksProps) => (
             borderBottomColor: PROMO_COLORS[index % PROMO_COLORS.length],
           }}
         >
-          <UndecoratedLink href={href}>
+          <UndecoratedLink
+            href={href}
+            activeClassName='is-active'
+          >
             {name}
           </UndecoratedLink>
         </li>

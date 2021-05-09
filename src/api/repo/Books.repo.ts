@@ -40,6 +40,7 @@ export type BooksFilters = BasicAPIPagination & {
   phrase?: string,
   types?: BookType[],
   schoolLevels?: BookSchoolLevel[],
+  parentCategoriesIds?: number[],
   categoriesIds?: number[],
   authorsIds?: number[],
   prizesIds?: number[],

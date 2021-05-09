@@ -2,7 +2,7 @@ import {forwardRef, Inject, Injectable} from '@nestjs/common';
 import {ElasticsearchService} from '@nestjs/elasticsearch';
 import * as R from 'ramda';
 
-import {objPropsToPromise} from '@shared/helpers';
+import {objPropsToPromise, pickIdName} from '@shared/helpers';
 import {createMapperListItemSelector} from '@server/modules/elasticsearch/helpers';
 
 import {ListItem} from '@shared/types';
@@ -33,6 +33,7 @@ export type BookIndexEntity = Pick<
   volumeName: string,
   isbns: string[],
   publishers: ListItem[],
+  primaryCategory: ListItem,
 };
 
 @Injectable()
@@ -56,9 +57,11 @@ export class EsBookIndex extends EntityIndex<BookEntity, BookIndexEntity> {
     totalRatings: {type: 'integer'},
     volumeName: {type: 'keyword'},
     isbns: {type: 'keyword'},
+    primaryCategory: PredefinedProperties.idNamePair,
     categories: PredefinedProperties.customIdNamePair(
       {
         promotion: {type: 'integer'},
+        parentCategoryId: {type: 'integer'},
       },
     ),
     publishers: PredefinedProperties.idNamePair,
@@ -178,7 +181,7 @@ export class EsBookIndex extends EntityIndex<BookEntity, BookIndexEntity> {
               'totalRatings', 'createdAt',
             ],
             relations: [
-              'schoolBook', 'volume',
+              'schoolBook', 'volume', 'primaryCategory',
             ],
           },
         ),
@@ -203,6 +206,7 @@ export class EsBookIndex extends EntityIndex<BookEntity, BookIndexEntity> {
             select: [
               ...createMapperListItemSelector('c'),
               'c.promotion as "promotion"',
+              'c.parentCategoryId as "parentCategoryId"',
             ],
           },
         ),
@@ -257,6 +261,7 @@ export class EsBookIndex extends EntityIndex<BookEntity, BookIndexEntity> {
     {
       volume,
       releases,
+      primaryCategory,
       ...entity
     }: BookEntity,
   ): EsMappedDoc<BookIndexEntity> {
@@ -265,6 +270,7 @@ export class EsBookIndex extends EntityIndex<BookEntity, BookIndexEntity> {
       volumeName: volume?.name,
       isbns: R.pluck('isbn', releases || []),
       publishers: R.pluck('publisher', releases || []),
+      primaryCategory: pickIdName(primaryCategory),
       ...entity,
     };
   }

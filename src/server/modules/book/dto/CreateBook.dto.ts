@@ -116,6 +116,10 @@ export class CreateBookDto {
   @Type(() => CreateBookAuthorDto)
   readonly authors: CreateBookAuthorDto[];
 
+  @IsOptional()
+  @IsNumber()
+  readonly primaryCategoryId: number;
+
   @IsArray()
   @ValidateNested()
   @Type(() => CreateBookCategoryDto)

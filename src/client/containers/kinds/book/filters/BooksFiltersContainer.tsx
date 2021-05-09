@@ -50,9 +50,16 @@ export function getDefaultBooksFilters() {
 type BooksFiltersContainerProps = {
   initialBooks: BooksPaginationResultWithAggs,
   initialFilters?: any,
+  overrideFilters?: any,
 };
 
-export const BooksFiltersContainer = ({initialBooks, initialFilters}: BooksFiltersContainerProps) => {
+export const BooksFiltersContainer = (
+  {
+    initialBooks,
+    initialFilters,
+    overrideFilters,
+  }: BooksFiltersContainerProps,
+) => {
   const {
     decodedInitialFilters,
     assignFiltersToURL,
@@ -87,7 +94,12 @@ export const BooksFiltersContainer = ({initialBooks, initialFilters}: BooksFilte
   const {emptyFilters, serializedValue} = useMemo(
     () => ({
       emptyFilters: R.isEmpty(pickNonPaginationFilters(l.value)),
-      serializedValue: serializeAggsToSearchParams(l.value),
+      serializedValue: serializeAggsToSearchParams(
+        {
+          ...l.value,
+          ...overrideFilters,
+        },
+      ),
     }),
     [l.value],
   );

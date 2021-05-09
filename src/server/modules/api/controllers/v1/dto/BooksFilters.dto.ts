@@ -32,6 +32,11 @@ export class BooksFiltersDto extends APIPaginationDto implements Required<BooksF
   @IsOptional()
   @TransformSeparatedArray()
   @IsNumber({}, {each: true})
+  readonly parentCategoriesIds: number[];
+
+  @IsOptional()
+  @TransformSeparatedArray()
+  @IsNumber({}, {each: true})
   readonly categoriesIds: number[];
 
   @IsOptional()

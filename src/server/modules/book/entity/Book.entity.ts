@@ -86,6 +86,13 @@ export class BookEntity extends DatedRecordEntity implements TrackScrappersList 
   )
   categories: BookCategoryEntity[];
 
+  @Column('number', {nullable: true})
+  primaryCategoryId: number;
+
+  @ManyToOne(() => BookCategoryEntity, (category) => category.id, {onDelete: 'SET NULL'})
+  @JoinColumn({name: 'primaryCategoryId'})
+  primaryCategory: BookCategoryEntity;
+
   @JoinTable()
   @ManyToMany(
     () => BookEraEntity,

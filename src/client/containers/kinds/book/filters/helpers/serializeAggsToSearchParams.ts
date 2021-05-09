@@ -14,6 +14,7 @@ export function serializeAggsToSearchParams(aggs: any): BooksFilters {
     offset: aggs.offset || 0,
     limit: aggs.limit || 30,
     phrase: aggs.phrase,
+    parentCategoriesIds: aggs.parentCategoriesIds,
     schoolLevels: safePluckObjIds(aggs.schoolLevels),
     types: safePluckObjIds(aggs.types),
     categoriesIds: safePluckObjIds(aggs.categories),

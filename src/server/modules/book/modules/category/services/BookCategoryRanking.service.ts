@@ -94,7 +94,7 @@ export class BookCategoryRankingService {
         from (
           select
             c.id,
-            (select max(bc.promotion) from book_category bc where bc."parentCategoryId" = c.id) as promotion
+            (select count(id) from book b where b."primaryCategoryId" = c.id) as promotion
           from public.book_category c
           where c.root = true
         ) as subquery

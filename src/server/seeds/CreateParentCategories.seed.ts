@@ -22,7 +22,7 @@ export default class CreateParentCategories implements Seeder {
         'teatr', 'awangarda', 'wiersz', 'wiersze', 'realistyczna', 'sentencje', 'myśli', 'eseistyka',
         'limeryki', 'estetyka', 'poeci', 'sztuka', 'film', 'teksty filozoficzne', 'ebooki', 'audiobooki',
         'marginistyczna', 'farsy', 'poezja zagraniczna', 'satyry i parodie', 'eseistyka', 'dokument zbeleteryzowany',
-        'zbeleteryzowany',
+        'zbeleteryzowany', 'literatura piękna',
       ],
       [
         'Biografie, wspomnienia',
@@ -51,7 +51,7 @@ export default class CreateParentCategories implements Seeder {
         'Reportaż, literatura faktu, prasa',
         'reportaż', 'fakty', 'dzienniki', 'czasopismo', 'felieton', 'eseje', 'wywiad',
         'czasopismo', 'prasa', 'publikacje', 'publicystyka', 'reportażowa',
-        'relacje podróżników',
+        'relacje podróżników', 'literatura faktu', 'popularna', 'fakty',
       ],
       [
         'Komiksy',
@@ -140,10 +140,6 @@ export default class CreateParentCategories implements Seeder {
         'język obcy', 'język niemiecki', 'język angielski', 'języki obce', 'rosyjski', 'niemiecki', 'angielski',
         'nauka języków', 'słownik', 'encyklopedie', 'słowniki', 'encyklopedia', 'leksykon', 'leksykony', 'obcojęzyczne',
         'językoznawstwo',
-      ],
-      [
-        'Literatura piękna, popularna i faktu',
-        'literatura faktu', 'popularna', 'literatura piękna',
       ],
       [
         'Książki o naukach przyrodniczych',

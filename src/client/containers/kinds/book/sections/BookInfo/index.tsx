@@ -5,9 +5,10 @@ import {formatBookTitle} from '@client/helpers/logic';
 import {useUA} from '@client/modules/ua';
 import {useI18n} from '@client/i18n';
 
+import {ListItem} from '@shared/types';
 import {BookFullInfoRecord} from '@api/types';
-import {BooksAuthorsGroupedBooks} from '@api/repo';
-import {BookCategoryLink} from '@client/routes/Links';
+import {BooksAuthorsGroupedBooks, BooksFiltersWithNames} from '@api/repo';
+import {BookCategoryLink, BooksLink} from '@client/routes/Links';
 
 import {
   ExpandableDescriptionBox,
@@ -39,6 +40,7 @@ export const BookInfo = ({book, authorsBooks, children}: BookInfoProps) => {
     taggedDescription, description,
     primaryRelease, categories,
     schoolBook, tags,
+    primaryCategory,
   } = book;
 
   const formattedTitle = formatBookTitle(
@@ -102,25 +104,47 @@ export const BookInfo = ({book, authorsBooks, children}: BookInfoProps) => {
 
         <BookProperties book={book} />
 
-        {categories.length > 0 && (
-          <BookHeaderAttribute
-            className='c-book-info-section__categories'
-            label={
-              `${t('shared.titles.categories')}:`
-            }
-          >
-            <LinksRow
-              className='is-text-small'
-              items={categories}
-              linkComponent={BookCategoryLink}
-              linkProps={{
-                underline: true,
-              }}
-              block={false}
-              separated
-            />
-          </BookHeaderAttribute>
-        )}
+        <div className='c-book-info-section__categories'>
+          {primaryCategory && (
+            <BookHeaderAttribute
+              label={
+                `${t('book.primary_category')}:`
+              }
+            >
+              <BookCategoryLink
+                className='is-primary-chevron-link is-text-small is-text-semibold'
+                item={primaryCategory}
+                withChevron
+              >
+                {primaryCategory.name}
+              </BookCategoryLink>
+            </BookHeaderAttribute>
+          )}
+
+          {categories.length > 0 && (
+            <BookHeaderAttribute
+              label={
+                `${t('shared.titles.subcategories')}:`
+              }
+            >
+              <LinksRow<BooksFiltersWithNames>
+                className='is-text-small'
+                items={categories}
+                linkComponent={BooksLink}
+                linkProps={
+                  (item) => ({
+                    withChevron: true,
+                    item: {
+                      categories: [item as ListItem],
+                    },
+                  })
+                }
+                block={false}
+                separated
+              />
+            </BookHeaderAttribute>
+          )}
+        </div>
 
         {ua.mobile && tags.length > 0 && (
           <BookTags tags={book.tags} />

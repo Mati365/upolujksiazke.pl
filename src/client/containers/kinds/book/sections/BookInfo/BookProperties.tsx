@@ -61,7 +61,8 @@ export const BookProperties = memo(({book}: BookPropertiesProps) => {
         value: publisher && (
           <PublisherLink
             item={publisher}
-            className='is-undecorated-link has-double-link-chevron'
+            className='is-undecorated-link'
+            withChevron
           >
             {publisher.name}
           </PublisherLink>

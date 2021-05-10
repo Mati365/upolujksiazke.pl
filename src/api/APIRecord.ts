@@ -4,7 +4,7 @@ export abstract class APIRecord {
 
 export abstract class APINamedRecord extends APIRecord {
   name: string;
-  parameterizedName: string;
+  parameterizedName?: string;
 }
 
 export class APIDatedRecord {

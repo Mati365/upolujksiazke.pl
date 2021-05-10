@@ -1,4 +1,4 @@
-import {isPromise} from '@shared/types';
+import {isPromise} from '@shared/guards/isPromise';
 import {shallowMemoizeOneCall} from '../memoizeOne';
 
 import {WrapMethod} from './WrapMethod';

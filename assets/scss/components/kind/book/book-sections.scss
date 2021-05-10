@@ -70,12 +70,21 @@
     }
 
     &__categories {
-      align-items: flex-start;
       margin-top: 2.2rem;
       margin-bottom: 0;
 
-      .c-book-info-section__header-attr-label {
+      &:empty {
+        display: none;
+      }
+
+      > .c-book-info-section__header-attr {
+        align-items: flex-start;
+        margin-bottom: .25rem;
         line-height: 20px;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
       }
     }
 

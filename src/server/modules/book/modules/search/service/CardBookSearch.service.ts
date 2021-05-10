@@ -333,6 +333,11 @@ export class CardBookSearchService {
           this
             .createCardsQuery(CardBookSearchService.BOOK_FULL_CARD_FIELDS)
             .leftJoinAndSelect('primaryRelease.publisher', 'publisher')
+            .leftJoinAndSelect(
+              'book.primaryCategory',
+              'primaryCategory',
+              'primaryCategory.id = book."primaryCategoryId"',
+            )
             .leftJoin('book.schoolBook', 'schoolBook')
             .where(
               {

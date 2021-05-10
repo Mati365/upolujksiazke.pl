@@ -37,6 +37,10 @@ export class BookFullInfoSerializer extends BookCardSerializer implements BookFu
   categories: BookCategorySerializer[];
 
   @Expose()
+  @Type(() => BookCategorySerializer)
+  primaryCategory: BookCategorySerializer;
+
+  @Expose()
   @Type(() => BookEraSerializer)
   era: BookEraSerializer[];
 

@@ -162,6 +162,7 @@ export const BooksFiltersContainer = (
             sidebar={(
               <BooksFiltersGroups
                 aggs={safeResult.aggs}
+                overrideFilters={overrideFilters}
                 l={l}
               />
             )}

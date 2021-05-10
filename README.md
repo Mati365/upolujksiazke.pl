@@ -124,7 +124,18 @@ https://coolors.co/2b2d42-8d99ae-edf2f4-ef233c-d90429
 ```bash
 cp .env.example .env # edit .env config
 yarn install
+
 yarn run migration:run
+yarn run seed:run
+gulp entity:reindex:all
+
+[yarn run console]:
+  await app.select(ScrapperModule).get('BookParentCategoryService').findAndAssignMissingParentCategories();
+  await app.select(ScrapperModule).get('BookCategoryRankingService').refreshCategoryRanking();
+  await app.select(ScrapperModule).get('BookStatsService').refreshAllBooksStats();
+  ... and reindex again
+[/console]
+
 yarn run develop
 gulp scrapper:refresh
 ```

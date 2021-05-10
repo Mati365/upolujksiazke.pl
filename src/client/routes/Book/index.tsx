@@ -2,7 +2,11 @@ import React from 'react';
 import {Redirect} from 'react-router';
 import * as R from 'ramda';
 
-import {objPropsToPromise} from '@shared/helpers';
+import {
+  capitalize,
+  objPropsToPromise,
+} from '@shared/helpers';
+
 import {
   formatBookTitle,
   formatBookVolume,
@@ -33,6 +37,7 @@ import {Layout, LayoutViewData} from '@client/containers/layout';
 import {
   BookLink,
   BooksLink,
+  BookCategoryLink,
   BOOK_PATH,
   HOME_PATH,
 } from '../Links';
@@ -58,7 +63,11 @@ export const BookRoute: AsyncRoute<BookRouteViewData> = (
   if (!book)
     return <Redirect to={HOME_PATH} />;
 
-  const {volume, defaultTitle, hierarchy} = book;
+  const {
+    volume, defaultTitle,
+    hierarchy, primaryCategory,
+  } = book;
+
   return (
     <Layout {...layoutData}>
       <Container className='c-book-route'>
@@ -70,6 +79,14 @@ export const BookRoute: AsyncRoute<BookRouteViewData> = (
                 <BooksLink>
                   {t('shared.breadcrumbs.books')}
                 </BooksLink>
+              ),
+            },
+            primaryCategory && {
+              id: 'category',
+              node: (
+                <BookCategoryLink item={primaryCategory}>
+                  {capitalize(primaryCategory.name)}
+                </BookCategoryLink>
               ),
             },
             ...(
@@ -105,7 +122,7 @@ export const BookRoute: AsyncRoute<BookRouteViewData> = (
                   },
                 ]
             ),
-          ]}
+          ].filter(Boolean)}
         />
 
         <BookInfo

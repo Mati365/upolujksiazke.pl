@@ -28,6 +28,7 @@ export type UndecoratedLinkProps<I = {}, P = {}> = P & {
   utm?: object,
   action?: string,
   spaMode?: boolean,
+  withChevron?: boolean,
   onClick?: React.MouseEventHandler,
 };
 
@@ -39,7 +40,7 @@ export function UndecoratedLink<I = {}, P = {}>(
     activeClassName, additionalClassName,
     searchParams, state, absolute, action,
     href, hash, utm, item, className, spaMode,
-    disabled, rel,
+    disabled, rel, withChevron,
     ...props
   }: UndecoratedLinkProps<I, P>,
 ) {
@@ -93,6 +94,7 @@ export function UndecoratedLink<I = {}, P = {}>(
       additionalClassName,
       active && activeClassName,
       disabled && 'is-disabled',
+      withChevron && 'has-double-link-chevron',
     );
 
     if (!spaMode && typeof to === 'string') {

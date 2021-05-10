@@ -14,9 +14,12 @@ export function pickNonPaginationFilters(obj: any) {
 }
 
 export function serializeUrlFilters(obj: any) {
+  if (!obj)
+    return null;
+
   const mapper = R.cond(
     [
-      [R.is(Array), (...args) => mapper(...args)],
+      [R.is(Array), R.map((...args) => mapper(...args))],
       [
         R.both(R.is(Object), R.has('id')),
         R.pick(['id', 'name']),
@@ -26,9 +29,7 @@ export function serializeUrlFilters(obj: any) {
     ],
   );
 
-  return encodeURLParams(
-    flattenObject(R.mapObjIndexed(mapper, obj)),
-  );
+  return flattenObject(R.mapObjIndexed(mapper, obj));
 }
 
 export function deserializeUrlFilters(search: string|object) {
@@ -71,16 +72,18 @@ export function useStoreFiltersInURL(
   );
 
   const assignFiltersToURL = (filters: any, reactRouterHistory: boolean = false) => {
-    const searchParams = serializeUrlFilters(filters);
+    const searchQuery = encodeURLParams(
+      serializeUrlFilters(filters),
+    );
 
     if (reactRouterHistory) {
       history.replace(
         {
-          search: searchParams,
+          search: searchQuery,
         },
       );
     } else
-      window.history.replaceState(null, null, `?${searchParams}`);
+      window.history.replaceState(null, null, `?${searchQuery}`);
   };
 
   return {

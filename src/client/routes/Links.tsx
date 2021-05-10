@@ -1,7 +1,9 @@
 import {buildURL} from '@shared/helpers';
+import {serializeUrlFilters} from '@client/containers/filters/hooks/useStoreFiltersInURL';
 
 import {UndecoratedLink} from '@client/components/ui/Link';
 import {BookSchoolLevel} from '@shared/enums';
+import {BooksFiltersWithNames} from '@api/repo';
 import {
   BookAuthorRecord,
   BookCardRecord,
@@ -16,12 +18,27 @@ export const HOME_PATH = '/';
 export const HomeLink = UndecoratedLink.create(HOME_PATH);
 
 export const BOOKS_PATH = '/ksiazki';
-export const BooksLink = UndecoratedLink.create(BOOKS_PATH);
+export const BooksLink = UndecoratedLink.create<BooksFiltersWithNames>(
+  (filters) => buildURL(
+    BOOKS_PATH,
+    serializeUrlFilters(filters),
+  ),
+);
 
 export const genBooksSearchLink = (searchParams: any) => buildURL(
   BOOKS_PATH,
-  searchParams,
+  serializeUrlFilters(searchParams),
 );
+
+export const genBookCategoryLink = (
+  {
+    id,
+    parameterizedName,
+  }: Pick<BookCategoryRecord, 'parameterizedName'|'id'>,
+) => `/kategoria/${parameterizedName},${id}`;
+
+export const BOOKS_CATEGORY_PATH = '/kategoria/:slug,:id';
+export const BookCategoryLink = UndecoratedLink.create<Parameters<typeof genBookCategoryLink>[0]>(genBookCategoryLink);
 
 export const BOOK_PATH = '/ksiazka/:slug,:id';
 export const BookLink = UndecoratedLink.create<Pick<BookCardRecord, 'parameterizedSlug'|'id'>>(
@@ -59,16 +76,6 @@ export const AuthorsLink = UndecoratedLink.create(AUTHORS_PATH);
 export const AuthorLink = UndecoratedLink.create<Pick<BookAuthorRecord, 'parameterizedName'|'id'>>(
   ({id, parameterizedName}) => `/autor/${parameterizedName},${id}`,
 );
-
-export const genBookCategoryLink = (
-  {
-    id,
-    parameterizedName,
-  }: Pick<BookCategoryRecord, 'parameterizedName'|'id'>,
-) => `/kategoria/${parameterizedName},${id}`;
-
-export const BOOKS_CATEGORY_PATH = '/kategoria/:slug,:id';
-export const BookCategoryLink = UndecoratedLink.create<Parameters<typeof genBookCategoryLink>[0]>(genBookCategoryLink);
 
 export const TAG_PATH = '/tag/:slug,:id';
 export const TAGS_PATH = '/tagi';

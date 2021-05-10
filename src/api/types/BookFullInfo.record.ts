@@ -18,6 +18,7 @@ export interface BookFullInfoRecord extends BookCardRecord {
   primaryRelease: BookFullInfoReleaseRecord;
   tags: TagRecord[];
   categories: BookCategoryRecord[];
+  primaryCategory: BookCategoryRecord;
   releases: BookFullInfoReleaseRecord[];
   prizes: BookPrizeRecord[];
   reviews: BookReviewRecord[];

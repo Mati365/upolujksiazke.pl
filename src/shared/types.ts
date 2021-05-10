@@ -12,6 +12,8 @@ export type CanBeArray<T> = T | T[];
 
 export type CanBePromise<T> = T | Promise<T>;
 
+export type CanBeFunction<T, A> = T | ((attrs: A) => T);
+
 export type CanBeVoidFunction<T> = T | (() => T);
 
 export type IdentifiedItem<I = ID, R = {}> = R & {
@@ -31,6 +33,10 @@ export type Awaited<T> = T extends PromiseLike<infer U> ? Awaited<U> : T;
 export type AwaitedObject<T> = {
   [key in keyof T]: Awaited<T[key]>
 };
+
+export type CreateObjArrayType<Type> = Partial<{
+  +readonly [Key in keyof Type]: Type[Key][];
+}>;
 
 export type ListItem = {
   id: number,
@@ -131,8 +137,4 @@ export class ImageResizeSize {
     public w: number | '',
     public h: number | '',
   ) {}
-}
-
-export function isPromise<T = any>(obj: any): obj is Promise<T> {
-  return !!obj && 'then' in obj;
 }

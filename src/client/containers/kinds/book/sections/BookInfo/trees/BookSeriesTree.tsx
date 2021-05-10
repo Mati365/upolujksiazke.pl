@@ -54,7 +54,8 @@ export const BookSeriesTree = (
           >
             <BookLink
               item={item}
-              className='is-undecorated-link has-hover-underline has-double-link-chevron'
+              className='is-undecorated-link has-hover-underline'
+              withChevron
             >
               {`${noVolumeNames ? `#${index + 1} ` : ''}${formatBookTitle(
                 {

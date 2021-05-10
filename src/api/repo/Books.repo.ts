@@ -1,4 +1,8 @@
-import {CanBePromise} from '@shared/types';
+import {
+  CreateObjArrayType,
+  CanBePromise,
+} from '@shared/types';
+
 import {CreateCountedAggType} from '@api/APIRecord';
 import {
   APIPaginationResult,
@@ -24,7 +28,7 @@ export type AuthorsBooksFilters = BasicAPIPagination & {
   authorsIds: number[],
 };
 
-export type BookCountedAggs = CreateCountedAggType<{
+export type BookAggsRecords = {
   categories: BookCategoryRecord,
   authors: BookAuthorRecord,
   types: BookType,
@@ -33,13 +37,24 @@ export type BookCountedAggs = CreateCountedAggType<{
   era: BookEraRecord,
   publishers: BookPublisherRecord,
   schoolLevels: BookSchoolLevel,
-}>;
+};
 
-export type BooksFilters = BasicAPIPagination & {
+export type BookCountedAggs = CreateCountedAggType<BookAggsRecords>;
+
+export type BooksNonNestedFilters = BasicAPIPagination & {
   sort?: SortMode,
   phrase?: string,
   types?: BookType[],
   schoolLevels?: BookSchoolLevel[],
+  lowestPrice?: number,
+  highestPrice?: number,
+};
+
+export type BooksFiltersWithNames = BooksNonNestedFilters & (
+  CreateObjArrayType<BookAggsRecords>
+);
+
+export type BooksFilters = BooksNonNestedFilters & {
   parentCategoriesIds?: number[],
   categoriesIds?: number[],
   authorsIds?: number[],
@@ -47,8 +62,6 @@ export type BooksFilters = BasicAPIPagination & {
   genresIds?: number[],
   erasIds?: number[],
   publishersIds?: number[],
-  lowestPrice?: number,
-  highestPrice?: number,
 };
 
 export type SingleAggBookFilters = {

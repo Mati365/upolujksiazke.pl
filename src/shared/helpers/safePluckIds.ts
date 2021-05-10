@@ -11,5 +11,8 @@ export function safePluckObjIds(obj: any) {
   if (!obj)
     return null;
 
-  return safePluckIds(R.values(obj).filter(Boolean));
+  if (!R.is(Array, obj))
+    obj = R.values(obj);
+
+  return safePluckIds(obj.filter(Boolean));
 }

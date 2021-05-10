@@ -54,9 +54,17 @@ export function flattenObject(
       if (joinArraySeparator)
         result[keyPrefix] = value.join(joinArraySeparator);
       else {
-        value.forEach((item: any, index: number) => {
-          result[prefixBuilderFn(keyPrefix, index)] = item;
-        });
+        Object.assign(
+          result,
+          flattenObject(
+            R.fromPairs(value.map((item: any, index: number) => [index, item])),
+            {
+              prefix: keyPrefix,
+              joinArraySeparator,
+              prefixBuilderFn,
+            },
+          ),
+        );
       }
     } else if (R.is(Object, value)) {
       Object.assign(

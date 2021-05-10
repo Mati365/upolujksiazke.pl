@@ -63,6 +63,7 @@ export const PL_LANG_PACK = {
       rating: 'Ocena',
       keywords: 'Słowa kluczowe',
       categories: 'Kategorie',
+      subcategories: 'Podkategorie',
       group_by: 'Grupuj wg.:',
       action: 'Akcja',
       more: 'Więcej',
@@ -146,6 +147,7 @@ export const PL_LANG_PACK = {
     volumes: 'Seria książek',
     releases: 'Wydania książki',
     about_school_book: 'O lekturze',
+    primary_category: 'Kategoria główna',
     filters: {
       phrase: {
         single: 'Fraza',

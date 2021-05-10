@@ -25,9 +25,10 @@ import {serializeAggsToSearchParams} from './helpers/serializeAggsToSearchParams
 
 type BooksFiltersGroupsProps = LinkProps<Partial<any>> & {
   aggs: BookCountedAggs,
+  overrideFilters?: any,
 };
 
-export const BooksFiltersGroups = ({aggs, l}: BooksFiltersGroupsProps) => {
+export const BooksFiltersGroups = ({aggs, l, overrideFilters}: BooksFiltersGroupsProps) => {
   const api = useAjaxAPIClient();
   const t = useI18n('book.filters');
   const {
@@ -78,7 +79,12 @@ export const BooksFiltersGroups = ({aggs, l}: BooksFiltersGroupsProps) => {
                           limit: expandBy,
                         },
                       },
-                      filters: serializeAggsToSearchParams(l.value),
+                      filters: serializeAggsToSearchParams(
+                        {
+                          ...l.value,
+                          ...overrideFilters,
+                        },
+                      ),
                     },
                   );
 

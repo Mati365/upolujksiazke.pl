@@ -1,8 +1,15 @@
 .c {
   &-container {
     margin: 0 auto;
-    width: $container-width;
     max-width: calc(100vw - 30px);
+
+    &.is-expandable {
+      min-width: $container-width;
+    }
+
+    &:not(.is-expandable) {
+      width: $container-width;
+    }
   }
 
   &-sections-list > .c-section:first-child {

@@ -47,7 +47,7 @@ export const Header = ({promoItems}: HeaderProps) => {
       </Container>
 
       {hasPromoBar && (
-        <Container>
+        <Container expandable>
           <HeaderPromoLinks items={promoItems} />
         </Container>
       )}

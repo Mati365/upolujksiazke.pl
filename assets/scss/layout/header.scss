@@ -1,16 +1,11 @@
 .c-header {
-  @include flex-list;
+  @include flex-list(flex, flex-start, column);
 
   position: relative;
   width: 100%;
   margin-bottom: 2.5rem;
-  border-bottom: 1px solid color(divider);
 
-  &.has-promo-bar {
-    margin-bottom: 4.5rem;
-  }
-
-  > .c-container {
+  > .c-container:first-of-type {
     padding: 20px;
   }
 
@@ -83,17 +78,13 @@
   }
 
   &__promo {
-    position: absolute;
     width: 100%;
-    top: 100%;
-    left: 0;
+    margin-top: 5px;
 
     &-link {
       padding: 8px 10px;
       border: 1px solid color(divider);
-      border-top-color: #fff;
-      border-bottom-left-radius: 5px;
-      border-bottom-right-radius: 5px;
+      border-radius: 5px;
       font-size: $text-small;
       font-weight: 500;
       border-bottom-width: 2px;
@@ -101,6 +92,10 @@
       > a.is-active {
         color: color(primary);
         font-weight: 600;
+      }
+
+      &.is-borderless {
+        border-color: transparent !important;
       }
     }
   }
@@ -110,7 +105,7 @@
   .c-header {
     margin-bottom: 2rem;
 
-    > .c-container {
+    > .c-container:first-of-type {
       padding: 15px 10px;
     }
 

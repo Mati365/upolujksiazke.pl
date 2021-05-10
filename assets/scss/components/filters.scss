@@ -60,6 +60,10 @@
           top: 300px;
         }
       }
+
+      &.is-loading .c-grid {
+        overflow: hidden;
+      }
     }
   }
 

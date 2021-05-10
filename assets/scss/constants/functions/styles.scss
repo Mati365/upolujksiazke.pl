@@ -12,10 +12,10 @@
   justify-content: center;
 }
 
-@mixin flex-list($display: flex, $align: center) {
+@mixin flex-list($display: flex, $align: center, $direction: row) {
   display: $display;
   align-items: $align;
-  flex-direction: row;
+  flex-direction: $direction;
 }
 
 @mixin clean-list {

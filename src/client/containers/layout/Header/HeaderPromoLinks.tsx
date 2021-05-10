@@ -1,5 +1,9 @@
 import React from 'react';
+import * as R from 'ramda';
+
+import {useI18n} from '@client/i18n';
 import {CleanList, UndecoratedLink} from '@client/components/ui';
+import {HomeLink} from '@client/routes/Links';
 
 /**
  * @see {@link https://coolors.co/264653-2a9d8f-e9c46a-f4a261-e76f51}
@@ -23,32 +27,47 @@ export type HeaderPromoLinksProps = {
   }[],
 };
 
-export const HeaderPromoLinks = ({items}: HeaderPromoLinksProps) => (
-  <CleanList
-    className='c-header__promo'
-    justify='center'
-    spaced={2}
-    inline
-  >
-    {items.map(
-      ({name, href}, index) => (
-        <li
-          key={name}
-          className='c-header__promo-link'
-          style={{
-            borderBottomColor: PROMO_COLORS[index % PROMO_COLORS.length],
-          }}
-        >
-          <UndecoratedLink
-            href={href}
-            activeClassName='is-active'
+export const HeaderPromoLinks = ({items}: HeaderPromoLinksProps) => {
+  const t = useI18n();
+  const [visible, rest] = R.splitAt(6, items);
+
+  return (
+    <CleanList
+      className='c-header__promo'
+      spaced={2}
+      inline
+    >
+      {visible.map(
+        ({name, href}, index) => (
+          <li
+            key={name}
+            className='c-header__promo-link'
+            style={{
+              borderBottomColor: PROMO_COLORS[index % PROMO_COLORS.length],
+            }}
           >
-            {name}
-          </UndecoratedLink>
+            <UndecoratedLink
+              href={href}
+              activeClassName='is-active'
+            >
+              {name}
+            </UndecoratedLink>
+          </li>
+        ),
+      )}
+      {!R.isEmpty(rest) && (
+        <li className='c-header__promo-link is-borderless'>
+          <HomeLink
+            className='is-primary-chevron-link is-text-semibold'
+            undecorated={false}
+            underline={false}
+          >
+            {`${t('shared.titles.more')} (${rest.length})`}
+          </HomeLink>
         </li>
-      ),
-    )}
-  </CleanList>
-);
+      )}
+    </CleanList>
+  );
+};
 
 HeaderPromoLinks.displayName = 'HeaderPromoLinks';

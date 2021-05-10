@@ -21,6 +21,8 @@ export type UndecoratedLinkProps<I = {}, P = {}> = P & {
   state?: object,
   absolute?: boolean,
   underline?: boolean,
+  hoverUnderline?: boolean,
+  undecorated?: boolean,
   disabled?: boolean,
   href?: string,
   hash?: string,
@@ -41,6 +43,8 @@ export function UndecoratedLink<I = {}, P = {}>(
     searchParams, state, absolute, action,
     href, hash, utm, item, className, spaMode,
     disabled, rel, withChevron,
+    hoverUnderline = true,
+    undecorated = true,
     ...props
   }: UndecoratedLinkProps<I, P>,
 ) {
@@ -84,14 +88,13 @@ export function UndecoratedLink<I = {}, P = {}>(
     };
   }
 
-  const generatedClassName = (
-    className ?? `is-undecorated-link ${underline ? 'is-text-underline' : 'has-hover-underline'}`
-  );
-
   const renderLink = (active: boolean) => {
     const mergedClassName = c(
-      generatedClassName,
+      className,
       additionalClassName,
+      undecorated && 'is-undecorated-link',
+      underline && 'is-text-underline',
+      hoverUnderline && 'has-hover-underline',
       active && activeClassName,
       disabled && 'is-disabled',
       withChevron && 'has-double-link-chevron',

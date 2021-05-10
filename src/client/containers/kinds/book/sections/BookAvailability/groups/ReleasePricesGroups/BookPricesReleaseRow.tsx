@@ -15,7 +15,7 @@ export const BookPricesReleaseRow = ({release}: BookPricesReleaseRowProps) => (
         <BookReleaseTypeBadge type={release.type} />
       </td>
 
-      <td className='c-book-prices__release-isbn has-double-link-chevron'>
+      <td className='c-book-prices__release-isbn'>
         {release.isbn}
       </td>
 

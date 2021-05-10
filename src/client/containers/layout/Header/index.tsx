@@ -28,6 +28,7 @@ export const Header = ({promoItems}: HeaderProps) => {
     >
       <Container className='c-flex-row'>
         <HomeLink
+          hoverUnderline={false}
           className={c(
             'c-header__brand',
             ua.mobile && 'mx-auto',
@@ -46,7 +47,9 @@ export const Header = ({promoItems}: HeaderProps) => {
       </Container>
 
       {hasPromoBar && (
-        <HeaderPromoLinks items={promoItems} />
+        <Container>
+          <HeaderPromoLinks items={promoItems} />
+        </Container>
       )}
     </header>
   );

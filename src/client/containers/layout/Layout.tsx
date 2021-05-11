@@ -52,9 +52,9 @@ export const Layout: AsyncPropsComponent<LayoutProps> = (
 
 Layout.displayName = 'Layout';
 
-Layout.getInitialProps = async ({api: {repo}}) => objPropsToPromise(
+Layout.getInitialProps = async ({api: {repo}, attrs: {withRootCategories = true} = {}}) => objPropsToPromise(
   {
-    rootPopularCategories: repo.booksCategories.findMostPopularCategories(
+    rootPopularCategories: withRootCategories && repo.booksCategories.findMostPopularCategories(
       {
         limit: 17,
         root: true,

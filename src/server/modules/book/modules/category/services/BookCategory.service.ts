@@ -22,7 +22,8 @@ import {EsBookCategoryIndex} from '../indices/EsBookCategory.index';
 @Injectable()
 export class BookCategoryService {
   public static readonly BOOK_CATEGORY_FIELDS = [
-    'c.id', 'c.name', 'c.parameterizedName', 'c.promotion',
+    'c.id', 'c.name', 'c.parameterizedName',
+    'c.promotion', 'c.icon',
   ];
 
   constructor(

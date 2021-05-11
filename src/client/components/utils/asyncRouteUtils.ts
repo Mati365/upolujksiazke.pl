@@ -16,6 +16,7 @@ export type AsyncRouteContext = {
   match: match<any>,
   search?: object,
   api: APIClient,
+  attrs?: any,
 };
 
 export type AsyncPropsComponent<Props = any, AsyncProps extends Partial<Props> = Partial<Props>> = {

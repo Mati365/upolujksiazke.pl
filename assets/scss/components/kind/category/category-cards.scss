@@ -1,0 +1,53 @@
+.c-category-card {
+  width: 100%;
+  padding: 20px 20px 10px 20px;
+  border: 1px solid color(divider);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 250ms ease-in-out;
+  transition-property: transform, background, color, filter;
+
+  &:hover {
+    box-shadow: 0px 0px 23px -2px rgb(221 61 37 / 50%);
+    transform: scale(1.04, 1.04);
+    background: color(primary);
+    color: #fff;
+
+    svg {
+      color: #fff;
+    }
+  }
+
+  &__title {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+  }
+
+  > a {
+    position: relative;
+    display: block;
+    height: 0;
+    padding-bottom: 100%;
+  }
+
+  &__content {
+    @include layer(absolute);
+  }
+
+  &__title {
+    margin: 0;
+    text-transform: capitalize;
+    font-size: $text-normal;
+    line-height: 1.5rem;
+  }
+
+  &__icon {
+    color: color(primary);
+
+    svg {
+      width: 40px;
+      height: 40px;
+    }
+  }
+}

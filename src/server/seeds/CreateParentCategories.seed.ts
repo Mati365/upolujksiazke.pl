@@ -11,12 +11,14 @@ export default class CreateParentCategories implements Seeder {
   public async run(factory: Factory, connection: Connection): Promise<any> {
     const names = [
       {
+        icon: 'QuestionMark',
         names: [
           'Inne',
           'pozostałe', 'niesklasyfikowane', 'b.d', 'niesklasyfikowane',
         ],
       },
       {
+        icon: 'Pen',
         names: [
           'Literatura, poeci, gatunki',
           'groteska', 'tragedia', 'epos', 'dramat', 'agoryzmy', 'satyra', 'fraszki', 'przysłowia',
@@ -29,6 +31,7 @@ export default class CreateParentCategories implements Seeder {
         ],
       },
       {
+        icon: 'Contact',
         names: [
           'Biografie, wspomnienia',
           'biografia', 'wspomnienia', 'autobiografia', 'biografie', 'biograficzna',
@@ -36,6 +39,7 @@ export default class CreateParentCategories implements Seeder {
         ],
       },
       {
+        icon: 'Rocket',
         names: [
           'Fantasy, science fiction, horror',
           'fantasy', 'science fiction', 'scifi', 'sci-fi', 'sci fi', 'horror', 'fantasy', 'sf',
@@ -45,6 +49,7 @@ export default class CreateParentCategories implements Seeder {
         ],
       },
       {
+        icon: 'Meteor',
         names: [
           'Kryminał, sensacja i thriller',
           'kryminał', 'sensacja', 'thriller', 'powieść kryminalna', 'akcja', 'więziennictwo',
@@ -52,6 +57,7 @@ export default class CreateParentCategories implements Seeder {
         ],
       },
       {
+        icon: 'Heart',
         names: [
           'Literatura obyczajowa, erotyczna',
           'erotyka', 'obyczajowa', 'sex', 'seks', 'romans', 'miłość',
@@ -60,6 +66,7 @@ export default class CreateParentCategories implements Seeder {
         ],
       },
       {
+        icon: 'News',
         names: [
           'Reportaż, literatura faktu, prasa',
           'reportaż', 'fakty', 'dzienniki', 'czasopismo', 'felieton', 'eseje', 'wywiad',
@@ -68,12 +75,14 @@ export default class CreateParentCategories implements Seeder {
         ],
       },
       {
+        icon: 'MessageAlt',
         names: [
           'Komiksy',
           'manga', 'komiks',
         ],
       },
       {
+        icon: 'BusSchool',
         names: [
           'Szkoła, dzieci',
           'podręcznik', 'szkoła', 'oświata', 'dla dzieci', 'bajki', 'bajka', 'baśnie',
@@ -86,6 +95,7 @@ export default class CreateParentCategories implements Seeder {
         ],
       },
       {
+        icon: 'Brain',
         names: [
           'Książki naukowe i popularnonaukowe',
           'nauka', 'biologia', 'popularnonaukowe', 'paranaukowe', 'paranormal', 'zmysły',
@@ -93,6 +103,7 @@ export default class CreateParentCategories implements Seeder {
         ],
       },
       {
+        icon: 'Laptop',
         names: [
           'Informatyka, Internet',
           'programowanie', 'komputer', 'internet', 'informatyka', 'komputery', 'systemy operacyjne',
@@ -101,6 +112,7 @@ export default class CreateParentCategories implements Seeder {
         ],
       },
       {
+        icon: 'History',
         names: [
           'Historia, archeologia, polityka',
           'historia', 'archeologia', 'książki historyczne', 'wojna światowa', 'legendy', 'mity',
@@ -114,6 +126,7 @@ export default class CreateParentCategories implements Seeder {
         ],
       },
       {
+        icon: 'Joystick',
         names: [
           'Hobby',
           'hobby', 'zainteresowania', 'broń', 'motoryzacja', 'samochody', 'malarze',
@@ -126,6 +139,7 @@ export default class CreateParentCategories implements Seeder {
         ],
       },
       {
+        icon: 'Graph',
         names: [
           'Finanse',
           'finanse', 'pieniądze', 'bank', 'bankowość', 'giełda', 'logistyka', 'zarządzanie', 'finanse publiczne',
@@ -136,6 +150,7 @@ export default class CreateParentCategories implements Seeder {
         ],
       },
       {
+        icon: 'Pray',
         names: [
           'Religioznawstwo, nauki teologiczne',
           'religia', 'teologia', 'bóg', 'wiara', 'wierzenia', 'bóstwa', 'kazania', 'papież',
@@ -145,6 +160,7 @@ export default class CreateParentCategories implements Seeder {
         ],
       },
       {
+        icon: 'Restaurant',
         names: [
           'Kuchnia, potrawy',
           'przepisy', 'odżywianie', 'jedzenie', 'potrawy', 'dieta', 'diety', 'pożywienie',
@@ -152,6 +168,7 @@ export default class CreateParentCategories implements Seeder {
         ],
       },
       {
+        icon: 'Football',
         names: [
           'Sport, forma fizyczna, zdrowie',
           'sport', 'trening', 'dieta', 'ćwiczenia', 'zdrowie', 'medycyna', 'ciąża', 'wychowywanie', 'rozwój',
@@ -160,12 +177,14 @@ export default class CreateParentCategories implements Seeder {
         ],
       },
       {
+        icon: 'MessageSquareCheck',
         names: [
           'Poradniki i albumy',
           'poradnik',
         ],
       },
       {
+        icon: 'World',
         names: [
           'Mapy, przewodniki, książki podróżnicze',
           'mapy', 'przewodnik', 'podróżnicze', 'geografia', 'geograficznych', 'góry',
@@ -174,6 +193,7 @@ export default class CreateParentCategories implements Seeder {
         ],
       },
       {
+        icon: 'Plane',
         names: [
           'Język',
           'język obcy', 'język niemiecki', 'język angielski', 'języki obce', 'rosyjski', 'niemiecki', 'angielski',
@@ -182,12 +202,14 @@ export default class CreateParentCategories implements Seeder {
         ],
       },
       {
+        icon: 'Plant',
         names: [
           'Książki o naukach przyrodniczych',
           'przyroda', 'przyrodnicze', 'natura', 'zwierzęta', 'rośliny', 'rolnictwo', 'rezerwaty',
         ],
       },
       {
+        icon: 'Vook',
         names: [
           'Nauki humanistyczne',
           'słownik', 'filozofia', 'humanistyka', 'kobieta', 'kulturoznawstwo',
@@ -195,6 +217,7 @@ export default class CreateParentCategories implements Seeder {
         ],
       },
       {
+        icon: 'Group',
         names: [
           'Nauki społeczne',
           'psychologia', 'socjologia', 'kulturoznawstwo', 'społecznych', 'badania społeczne', 'socjologiczne',
@@ -210,9 +233,10 @@ export default class CreateParentCategories implements Seeder {
         Entity: BookCategoryEntity,
         primaryKey: 'parameterizedName',
         data: names.map(
-          ({names: [name, ...nameAliases]}) => new BookCategoryEntity({
-            root: true,
+          ({icon, names: [name, ...nameAliases]}) => new BookCategoryEntity({
             parameterizedName: parameterize(name),
+            root: true,
+            icon,
             name,
             nameAliases,
           }),

@@ -229,6 +229,9 @@ export const PL_LANG_PACK = {
     read_more_at: 'Czytaj więcej na',
   },
   sections: {
+    root_categories: {
+      title: 'Kategorie książek',
+    },
     recent_books: {
       title: 'Ostatnio dodane książki',
     },

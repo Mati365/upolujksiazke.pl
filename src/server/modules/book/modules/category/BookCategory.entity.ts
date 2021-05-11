@@ -44,6 +44,9 @@ export class BookCategoryEntity extends DatedRecordEntity {
   @JoinColumn({name: 'parentCategoryId'})
   parentCategory: BookCategoryEntity;
 
+  @Column('text', {nullable: true})
+  icon: string;
+
   constructor(partial: Partial<BookCategoryEntity>) {
     super();
     Object.assign(this, partial);

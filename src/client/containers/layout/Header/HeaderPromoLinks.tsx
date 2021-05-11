@@ -34,7 +34,8 @@ export const HeaderPromoLinks = ({items}: HeaderPromoLinksProps) => {
   return (
     <CleanList
       className='c-header__promo'
-      spaced={2}
+      spaced={3}
+      separated
       inline
     >
       {visible.map(

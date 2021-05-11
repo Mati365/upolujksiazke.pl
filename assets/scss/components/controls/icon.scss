@@ -6,7 +6,8 @@
     width: 1em;
     height: 1em;
 
-    > path {
+    > path,
+    > circle {
       color: currentColor;
 
       &:not([fill='none']) {

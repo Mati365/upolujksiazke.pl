@@ -11,6 +11,7 @@ import {
 import {Container} from '@client/components/ui';
 import {Layout, LayoutViewData} from '@client/containers/layout';
 
+import {RootCategoriesSection} from '@client/containers/kinds/category';
 import {
   RecentBooksSection,
   CategoriesGroupsBooksSection,
@@ -27,7 +28,10 @@ type HomeRouteProps = {
 
 export const HomeRoute: AsyncRoute = (
   {
-    layoutData,
+    layoutData: {
+      rootPopularCategories,
+      ...layoutData
+    },
     recentBooks,
     popularCategoriesBooks,
   }: HomeRouteProps,
@@ -35,6 +39,7 @@ export const HomeRoute: AsyncRoute = (
   <Layout {...layoutData}>
     <LazyHydrate>
       <Container className='c-sections-list'>
+        <RootCategoriesSection items={rootPopularCategories} />
         <CategoriesGroupsBooksSection items={popularCategoriesBooks} />
         <RecentBooksSection items={recentBooks} />
       </Container>

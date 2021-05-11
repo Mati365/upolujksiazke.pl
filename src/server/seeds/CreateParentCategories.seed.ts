@@ -209,7 +209,7 @@ export default class CreateParentCategories implements Seeder {
         ],
       },
       {
-        icon: 'Vook',
+        icon: 'Book',
         names: [
           'Nauki humanistyczne',
           'słownik', 'filozofia', 'humanistyka', 'kobieta', 'kulturoznawstwo',

@@ -35,6 +35,7 @@ import NewsSVG from '@assets/icons/svg/news.svg';
 import PenSVG from '@assets/icons/svg/pen.svg';
 import PlaneSVG from '@assets/icons/svg/plane.svg';
 import PraySVG from '@assets/icons/svg/pray.svg';
+import PlantSVG from '@assets/icons/svg/plant.svg';
 import PurchaseSVG from '@assets/icons/svg/purchase.svg';
 import QuestionMarkSVG from '@assets/icons/svg/question-mark.svg';
 import QuoteEndSVG from '@assets/icons/svg/quote-end.svg';
@@ -107,6 +108,7 @@ export const MessageSquareCheckIcon = Icon.createFromSVG(MessageSquareCheckSVG);
 export const NewsIcon = Icon.createFromSVG(NewsSVG);
 export const PenIcon = Icon.createFromSVG(PenSVG);
 export const PlaneIcon = Icon.createFromSVG(PlaneSVG);
+export const PlantIcon = Icon.createFromSVG(PlantSVG);
 export const PrayIcon = Icon.createFromSVG(PraySVG);
 export const RestaurantIcon = Icon.createFromSVG(RestaurantSVG);
 export const RocketIcon = Icon.createFromSVG(RocketSVG);
@@ -167,6 +169,7 @@ export const ICON_BY_NAME = {
   Pen: PenIcon,
   Plane: PlaneIcon,
   Pray: PrayIcon,
+  Plant: PlantIcon,
   Restaurant: RestaurantIcon,
   Rocket: RocketIcon,
   World: WorldIcon,

@@ -56,7 +56,7 @@ Layout.getInitialProps = async ({api: {repo}, attrs: {withRootCategories = true}
   {
     rootPopularCategories: withRootCategories && repo.booksCategories.findMostPopularCategories(
       {
-        limit: 17,
+        limit: 23,
         root: true,
       },
     ),

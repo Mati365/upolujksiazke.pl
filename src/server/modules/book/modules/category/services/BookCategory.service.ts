@@ -23,7 +23,7 @@ import {EsBookCategoryIndex} from '../indices/EsBookCategory.index';
 export class BookCategoryService {
   public static readonly BOOK_CATEGORY_FIELDS = [
     'c.id', 'c.name', 'c.parameterizedName',
-    'c.promotion', 'c.icon',
+    'c.promotion', 'c.icon', 'c.root',
   ];
 
   constructor(
@@ -113,7 +113,7 @@ export class BookCategoryService {
       BookCategoryEntity
         .createQueryBuilder('c')
         .select(BookCategoryService.BOOK_CATEGORY_FIELDS)
-        .andWhere('c.promotion is not null')
+        .andWhere('c.promotion > 0')
         .orderBy('c.promotion', 'DESC')
     );
 
@@ -147,6 +147,7 @@ export class BookCategoryService {
         'c.name as "name"',
         'c.parameterizedName as "parameterizedName"',
         'c.promotion as "promotion"',
+        'c.root as "root"',
       ],
     }: BookGroupedSelectAttrs,
   ) {

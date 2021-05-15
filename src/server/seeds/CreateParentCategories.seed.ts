@@ -31,7 +31,7 @@ export default class CreateParentCategories implements Seeder {
         ],
       },
       {
-        icon: 'Contact',
+        icon: 'User',
         names: [
           'Biografie, wspomnienia',
           'biografia', 'wspomnienia', 'autobiografia', 'biografie', 'biograficzna',
@@ -184,7 +184,7 @@ export default class CreateParentCategories implements Seeder {
         ],
       },
       {
-        icon: 'World',
+        icon: 'Plane',
         names: [
           'Mapy, przewodniki, książki podróżnicze',
           'mapy', 'przewodnik', 'podróżnicze', 'geografia', 'geograficznych', 'góry',
@@ -193,7 +193,7 @@ export default class CreateParentCategories implements Seeder {
         ],
       },
       {
-        icon: 'Plane',
+        icon: 'UserVoice',
         names: [
           'Język',
           'język obcy', 'język niemiecki', 'język angielski', 'języki obce', 'rosyjski', 'niemiecki', 'angielski',
@@ -209,7 +209,7 @@ export default class CreateParentCategories implements Seeder {
         ],
       },
       {
-        icon: 'Book',
+        icon: 'Library',
         names: [
           'Nauki humanistyczne',
           'słownik', 'filozofia', 'humanistyka', 'kobieta', 'kulturoznawstwo',

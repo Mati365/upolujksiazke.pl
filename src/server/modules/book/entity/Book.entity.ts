@@ -29,6 +29,7 @@ import {SchoolBookEntity} from './SchoolBook.entity';
   },
 )
 @Index(['hierarchicSeries'])
+@Index(['primaryCategoryId'])
 export class BookEntity extends DatedRecordEntity implements TrackScrappersList {
   @Column('text', {unique: true, nullable: true})
   parameterizedSlug: string;

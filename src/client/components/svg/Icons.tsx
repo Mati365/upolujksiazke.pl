@@ -54,6 +54,9 @@ import TrendingUpSVG from '@assets/icons/svg/trending-up.svg';
 import TrophySVG from '@assets/icons/svg/trophy.svg';
 import WorldSVG from '@assets/icons/svg/world.svg';
 import HeartSVG from '@assets/icons/svg/heart.svg';
+import LibrarySVG from '@assets/icons/svg/library.svg';
+import UserSVG from '@assets/icons/svg/user.svg';
+import UserVoiceSVG from '@assets/icons/svg/user-voice.svg';
 import WebsiteLogoSVG from '@assets/icons/website-logo.svg';
 import {Icon} from '../ui/Icon';
 
@@ -81,6 +84,7 @@ export const TrendingUpIcon = Icon.createFromSVG(TrendingUpSVG);
 export const TrophyIcon = Icon.createFromSVG(TrophySVG);
 export const TimeIcon = Icon.createFromSVG(TimeSVG);
 export const BookReaderIcon = Icon.createFromSVG(BookReaderSVG);
+export const LibraryIcon = Icon.createFromSVG(LibrarySVG);
 export const StoreIcon = Icon.createFromSVG(StoreSVG);
 export const SpreadsheetIcon = Icon.createFromSVG(SpreadsheetSVG);
 export const QuestionMarkIcon = Icon.createFromSVG(QuestionMarkSVG);
@@ -114,6 +118,8 @@ export const RestaurantIcon = Icon.createFromSVG(RestaurantSVG);
 export const RocketIcon = Icon.createFromSVG(RocketSVG);
 export const WorldIcon = Icon.createFromSVG(WorldSVG);
 export const HeartIcon = Icon.createFromSVG(HeartSVG);
+export const UserIcon = Icon.createFromSVG(UserSVG);
+export const UserVoiceIcon = Icon.createFromSVG(UserVoiceSVG);
 
 export const ICON_BY_NAME = {
   WebsiteLogo: WebsiteLogoIcon,
@@ -173,4 +179,7 @@ export const ICON_BY_NAME = {
   Restaurant: RestaurantIcon,
   Rocket: RocketIcon,
   World: WorldIcon,
+  Library: LibraryIcon,
+  User: UserIcon,
+  UserVoice: UserVoiceIcon,
 };

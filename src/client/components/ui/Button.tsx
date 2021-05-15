@@ -2,7 +2,7 @@ import React from 'react';
 import c from 'classnames';
 import {BasicWrapperProps} from './Container';
 
-export type ButtonProps = BasicWrapperProps & {
+export type ButtonProps<T = {}> = T & BasicWrapperProps & {
   tag?: any,
   type?: string,
   size?: string,
@@ -14,7 +14,7 @@ export type ButtonProps = BasicWrapperProps & {
   onClick?: JSX.IntrinsicElements['button']['onClick'],
 };
 
-export const Button = (
+export function Button<T = {}>(
   {
     className,
     type,
@@ -25,22 +25,24 @@ export const Button = (
     htmlType = 'button',
     tag: Tag = 'button',
     ...props
-  }: ButtonProps,
-) => (
-  <Tag
-    // eslint-disable-next-line react/button-has-type
-    type={htmlType}
-    className={c(
-      'c-button',
-      type && `is-${type}`,
-      size && `is-${size}`,
-      outlined && 'is-outlined',
-      iconSuffix && 'has-icon-suffix',
-      expanded && 'is-expanded',
-      className,
-    )}
-    {...props}
-  />
-);
+  }: ButtonProps<T>,
+) {
+  return (
+    <Tag
+      // eslint-disable-next-line react/button-has-type
+      type={htmlType}
+      className={c(
+        'c-button',
+        type && `is-${type}`,
+        size && `is-${size}`,
+        outlined && 'is-outlined',
+        iconSuffix && 'has-icon-suffix',
+        expanded && 'is-expanded',
+        className,
+      )}
+      {...props}
+    />
+  );
+}
 
 Button.displayName = 'Button';

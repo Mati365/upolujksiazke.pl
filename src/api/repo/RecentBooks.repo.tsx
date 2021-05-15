@@ -9,6 +9,7 @@ export type BooksGroupsFilters = BasicAPIPagination & {
   categoriesIds?: number[],
   excludeBooksIds?: number[],
   itemsPerGroup?: number,
+  root?: boolean,
 };
 
 export interface RecentBooksRepo extends APIRepo<BookCardRecord> {

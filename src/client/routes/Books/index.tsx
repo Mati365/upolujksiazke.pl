@@ -76,7 +76,11 @@ BooksRoute.getInitialProps = async (attrs) => {
     search,
   } = attrs;
 
-  const initialFilters = deserializeUrlFilters(search);
+  const initialFilters = {
+    ...getDefaultBooksFilters(),
+    ...deserializeUrlFilters(search),
+  };
+
   const {
     initialBooks,
     layoutData,
@@ -84,10 +88,7 @@ BooksRoute.getInitialProps = async (attrs) => {
     {
       layoutData: Layout.getInitialProps(attrs),
       initialBooks: repo.books.findAggregatedBooks(
-        {
-          ...getDefaultBooksFilters(),
-          ...serializeAggsToSearchParams(initialFilters),
-        },
+        serializeAggsToSearchParams(initialFilters),
       ),
     },
   );

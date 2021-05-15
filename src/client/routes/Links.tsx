@@ -18,12 +18,12 @@ export const HOME_PATH = '/';
 export const HomeLink = UndecoratedLink.create(HOME_PATH);
 
 export const BOOKS_PATH = '/ksiazki';
-export const BooksLink = UndecoratedLink.create<BooksFiltersWithNames>(
-  (filters) => buildURL(
-    BOOKS_PATH,
-    serializeUrlFilters(filters),
-  ),
+export const genBooksLink = (filters: BooksFiltersWithNames) => buildURL(
+  BOOKS_PATH,
+  serializeUrlFilters(filters),
 );
+
+export const BooksLink = UndecoratedLink.create<BooksFiltersWithNames>(genBooksLink);
 
 export const genBooksSearchLink = (searchParams: any) => buildURL(
   BOOKS_PATH,
@@ -33,9 +33,24 @@ export const genBooksSearchLink = (searchParams: any) => buildURL(
 export const genBookCategoryLink = (
   {
     id,
+    name,
+    root,
     parameterizedName,
-  }: Pick<BookCategoryRecord, 'parameterizedName'|'id'>,
-) => `/kategoria/${parameterizedName},${id}`;
+  }: BookCategoryRecord,
+) => (
+  root === false
+    ? genBooksLink(
+      {
+        categories: [
+          {
+            id,
+            name,
+          },
+        ],
+      },
+    )
+    : `/kategoria/${parameterizedName},${id}`
+);
 
 export const BOOKS_CATEGORY_PATH = '/kategoria/:slug,:id';
 export const BookCategoryLink = UndecoratedLink.create<Parameters<typeof genBookCategoryLink>[0]>(genBookCategoryLink);

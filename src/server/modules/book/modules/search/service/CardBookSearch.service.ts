@@ -185,6 +185,7 @@ export class CardBookSearchService {
    */
   async findCategoriesPopularBooks(
     {
+      root,
       categoriesIds,
       excludeBooksIds = [],
       itemsPerGroup = 12,
@@ -196,7 +197,7 @@ export class CardBookSearchService {
     const popularCategories = await categoryService.findMostPopularCategories(
       {
         ids: categoriesIds,
-        root: false,
+        root,
         offset,
         limit,
       },
@@ -214,19 +215,35 @@ export class CardBookSearchService {
           .where(
             // eslint-disable-next-line @typescript-eslint/no-loop-func
             (qb) => {
-              let query = (
+              let query: SelectQueryBuilder<any> = (
                 qb
                   .createQueryBuilder()
-                  .select('bcc."bookId"')
-                  .from('book_categories_book_category', 'bcc')
-                  .where('bcc."bookCategoryId" = :categoryId and b."totalRatings" > 0')
-                  .innerJoin('book', 'b', 'b.id = bcc."bookId"')
+                  .select('b.id')
+              );
+
+              if (root) {
+                query = (
+                  query
+                    .from('book', 'b')
+                    .andWhere('b."primaryCategoryId" = :categoryId')
+                );
+              } else {
+                query = (
+                  query
+                    .from('book_categories_book_category', 'bcc')
+                    .where('bcc."bookCategoryId" = :categoryId and b."totalRatings" > 0')
+                    .innerJoin('book', 'b', 'b.id = bcc."bookId"')
+                );
+              }
+
+              query = (
+                query
                   .orderBy('b.totalRatings', 'DESC')
                   .limit(itemsPerGroup)
               );
 
               if (excludeBooksIds.length > 0)
-                query = query.andWhere('bcc."bookId" not in (:...excludeBooksIds)');
+                query = query.andWhere('b.id not in (:...excludeBooksIds)');
 
               return `book."id" IN (${query.getQuery()})`;
             },

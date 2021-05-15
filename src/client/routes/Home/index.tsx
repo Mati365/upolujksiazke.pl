@@ -67,6 +67,7 @@ HomeRoute.getInitialProps = (attrs) => {
         {
           itemsPerGroup: 14,
           limit: 6,
+          root: true,
         },
       ),
     },

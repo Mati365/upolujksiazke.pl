@@ -1,3 +1,8 @@
+import {ReactNode} from 'react';
+import {SortDirection} from './enums';
+
+export * from './enums';
+
 export type ValueOf<T> = T[keyof T];
 
 export type AnyCallback = (...args: any[]) => any;
@@ -43,6 +48,11 @@ export type ListItem = {
   name: string,
 };
 
+export type ReactListItem = {
+  id: number,
+  name: ReactNode,
+};
+
 export type CountedListItem = ListItem & {
   count?: number,
 };
@@ -82,48 +92,9 @@ export type PaginationResult<T> = {
   meta: PaginationMeta,
 };
 
-export enum SortDirection {
-  DESC = 'desc',
-  ASC = 'asc',
-  NORMAL = '',
-}
-
 export type SortKeys = {
   [key: string]: SortDirection,
 };
-
-export enum Currency {
-  DOLLAR = '$',
-  EURO = '€',
-  PLN = 'zł',
-}
-
-export enum Gender {
-  UNKNOWN = 1,
-  FEMALE = 2,
-  MALE = 3,
-}
-
-export type Person = {
-  name: string,
-  gender?: Gender,
-};
-
-export class Vec2 {
-  constructor(
-    public x: number,
-    public y: number,
-  ) {}
-}
-
-export class Rect {
-  constructor(
-    public x: number,
-    public y: number,
-    public w: number,
-    public h: number,
-  ) {}
-}
 
 export class Size {
   constructor(

@@ -14,10 +14,3 @@ export enum BookType {
   PAPER = 2,
   AUDIOBOOK = 3,
 }
-
-export enum SortMode {
-  ACCURACY = 1,
-  POPULARITY = 2,
-  ALPHABETIC = 3,
-  RECENTLY_ADDED = 4,
-}

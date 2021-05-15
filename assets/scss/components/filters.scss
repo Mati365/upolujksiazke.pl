@@ -158,16 +158,36 @@
   }
 }
 
-.c-empty-results {
-  @include flex-centered;
+.c {
+  &-empty-results {
+    @include flex-centered;
 
-  width: 100%;
-  margin: 5rem 0;
-  flex-direction: column;
-  opacity: .4;
+    width: 100%;
+    margin: 5rem 0;
+    flex-direction: column;
+    opacity: .4;
 
-  &__icon {
-    font-size: 2.5rem;
-    margin-bottom: $text-tiny;
+    &__icon {
+      font-size: 2.5rem;
+      margin-bottom: $text-tiny;
+    }
+  }
+
+  &-view-mode-switch {
+    button {
+      @include flex-centered;
+
+      &:not(.is-text-primary) {
+        opacity: .35;
+      }
+    }
+
+    &__grid {
+      font-size: 1.25rem;
+    }
+
+    &__list {
+      font-size: 1.55rem;
+    }
   }
 }

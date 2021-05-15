@@ -4,7 +4,7 @@
 
   gap: var(--gap);
 
-  &:not(.has-fixed-columns-count) {
+  &:not(.has-fixed-columns-count):not(.has-list-layout) {
     grid-template-columns: repeat(var(--columns), 1fr);
 
     @mixin clean-book-border {

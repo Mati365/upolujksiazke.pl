@@ -15,7 +15,7 @@ import {
 import {APIQuery} from '@client/modules/api/client/components';
 import {BookCardRecord} from '@api/types';
 import {BooksPaginationResultWithAggs} from '@api/repo';
-import {SortMode} from '@shared/enums';
+import {SortMode, ViewMode} from '@shared/enums';
 
 import {FiltersBadges} from '@client/containers/filters/FiltersBadges';
 import {ArrowsPagination} from '@client/containers/controls/pagination/ArrowsPagination';
@@ -25,6 +25,7 @@ import {
   FiltersPaginationToolbar,
   PageSizeSelectInput,
   SortSelectInput,
+  ViewModeSwitch,
 } from '@client/containers/filters';
 
 import {BooksGrid} from '../grids';
@@ -32,17 +33,12 @@ import {BooksFiltersGroups} from './BooksFiltersGroups';
 
 import {serializeAggsToSearchParams} from './helpers/serializeAggsToSearchParams';
 
-const PAGE_SIZES = [
-  30,
-  36,
-  42,
-  48,
-  54,
-];
+const PAGE_SIZES = [30, 36, 42, 48, 54];
 
 export function getDefaultBooksFilters() {
   return {
     offset: 0,
+    viewMode: ViewMode.GRID,
     sort: SortMode.POPULARITY,
     limit: PAGE_SIZES[0],
   };
@@ -148,6 +144,10 @@ export const BooksFiltersContainer = (
               </li>
 
               <li>
+                <ViewModeSwitch {...l.input('viewMode')} />
+              </li>
+
+              <li>
                 <ArrowsPagination
                   urlSearchParams={serializedValue}
                   totalItems={safeResult.meta.totalItems}
@@ -184,6 +184,9 @@ export const BooksFiltersContainer = (
                 ? <EmptyResults />
                 : (
                   <BooksGrid
+                    viewMode={
+                      +l.value.viewMode
+                    }
                     items={
                       safeResult.items as BookCardRecord[]
                     }

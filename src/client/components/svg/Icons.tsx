@@ -58,6 +58,8 @@ import LibrarySVG from '@assets/icons/svg/library.svg';
 import UserSVG from '@assets/icons/svg/user.svg';
 import UserVoiceSVG from '@assets/icons/svg/user-voice.svg';
 import MehSVG from '@assets/icons/svg/meh.svg';
+import ListSVG from '@assets/icons/svg/list-ul.svg';
+import GridSVG from '@assets/icons/svg/grid.svg';
 import WebsiteLogoSVG from '@assets/icons/website-logo.svg';
 import {Icon} from '../ui/Icon';
 
@@ -122,6 +124,8 @@ export const HeartIcon = Icon.createFromSVG(HeartSVG);
 export const UserIcon = Icon.createFromSVG(UserSVG);
 export const UserVoiceIcon = Icon.createFromSVG(UserVoiceSVG);
 export const MehIcon = Icon.createFromSVG(MehSVG);
+export const GridIcon = Icon.createFromSVG(GridSVG);
+export const ListIcon = Icon.createFromSVG(ListSVG);
 
 export const ICON_BY_NAME = {
   WebsiteLogo: WebsiteLogoIcon,
@@ -185,4 +189,6 @@ export const ICON_BY_NAME = {
   User: UserIcon,
   UserVoice: UserVoiceIcon,
   Meh: MehIcon,
+  List: ListIcon,
+  Grid: GridIcon,
 };

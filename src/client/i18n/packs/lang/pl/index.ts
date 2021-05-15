@@ -11,6 +11,7 @@ import {PL_HOME_ROUTE_PACK} from './routes/home';
 import {PL_BOOKS_ROUTE_PACK} from './routes/books';
 import {PL_AUTHORS_PACK} from './routes/authors';
 import {PL_AUTHOR_PACK} from './routes/author';
+import {PL_TOP_BOOKS_PACK} from './routes/topBooks';
 
 const PL_BOOK_BINDING_PACK: Record<BookBindingKind, string> = {
   [BookBindingKind.HARDCOVER]: 'twarda okładka',
@@ -49,6 +50,7 @@ const ROUTES_PACK = {
   books: PL_BOOKS_ROUTE_PACK,
   authors: PL_AUTHORS_PACK,
   author: PL_AUTHOR_PACK,
+  top_books: PL_TOP_BOOKS_PACK,
 };
 
 export const PL_LANG_PACK = {
@@ -134,6 +136,7 @@ export const PL_LANG_PACK = {
       home: 'Strona główna',
       books: 'Książki',
       authors: 'Autorzy',
+      top_books: 'TOP 100 książek',
     },
     filters: {
       header: 'Filtry',
@@ -253,7 +256,7 @@ export const PL_LANG_PACK = {
     authors: 'Autorzy',
     series: 'Serie',
     tags: 'Tagi',
-    top: 'TOP książki',
+    top: 'TOP 100',
   },
   about: {
     // eslint-disable-next-line max-len

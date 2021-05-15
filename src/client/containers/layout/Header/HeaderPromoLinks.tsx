@@ -1,7 +1,9 @@
 import React from 'react';
 import * as R from 'ramda';
 
+import {getIconComponentIfString} from '@client/components/svg';
 import {useI18n} from '@client/i18n';
+
 import {CleanList, UndecoratedLink} from '@client/components/ui';
 import {HomeLink} from '@client/routes/Links';
 
@@ -9,7 +11,6 @@ import {HomeLink} from '@client/routes/Links';
  * @see {@link https://coolors.co/264653-2a9d8f-e9c46a-f4a261-e76f51}
  */
 const PROMO_COLORS = [
-  '#d90429',
   '#264653',
   '#2a9d8f',
   '#e9c46a',
@@ -22,6 +23,7 @@ const PROMO_COLORS = [
 
 export type HeaderPromoLinksProps = {
   items: {
+    icon?: any,
     name: string,
     href: string,
   }[],
@@ -29,7 +31,7 @@ export type HeaderPromoLinksProps = {
 
 export const HeaderPromoLinks = ({items}: HeaderPromoLinksProps) => {
   const t = useI18n();
-  const [visible, rest] = R.splitAt(6, items);
+  const [visible, rest] = R.splitAt(5, items);
 
   return (
     <CleanList
@@ -39,27 +41,32 @@ export const HeaderPromoLinks = ({items}: HeaderPromoLinksProps) => {
       inline
     >
       {visible.map(
-        ({name, href}, index) => (
-          <li
-            key={name}
-            className='c-header__promo-link'
-            style={{
-              borderBottomColor: PROMO_COLORS[index % PROMO_COLORS.length],
-            }}
-          >
-            <UndecoratedLink
-              href={href}
-              activeClassName='is-active'
-            >
-              {name}
-            </UndecoratedLink>
-          </li>
-        ),
+        ({name, href, icon}, index) => {
+          const IconComponent = getIconComponentIfString(icon);
+
+          return (
+            <li key={name}>
+              <UndecoratedLink
+                href={href}
+                className='c-header__promo-link'
+                activeClassName='is-active'
+                style={{
+                  borderBottomColor: PROMO_COLORS[index % PROMO_COLORS.length],
+                }}
+              >
+                {IconComponent && (
+                  <IconComponent className='c-header__promo-link-icon' />
+                )}
+                {name}
+              </UndecoratedLink>
+            </li>
+          );
+        },
       )}
       {!R.isEmpty(rest) && (
-        <li className='c-header__promo-link is-borderless'>
+        <li>
           <HomeLink
-            className='is-primary-chevron-link is-text-semibold'
+            className='c-header__promo-link is-borderless is-primary-chevron-link is-text-semibold'
             undecorated={false}
             underline={false}
           >

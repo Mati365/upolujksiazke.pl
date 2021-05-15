@@ -30,6 +30,7 @@ export const Layout: AsyncPropsComponent<LayoutProps> = (
       promoItems={
         rootPopularCategories?.map(
           (category) => ({
+            icon: category.icon,
             name: category.name,
             href: genBookCategoryLink(category),
           }),

@@ -1,3 +1,5 @@
+import * as R from 'ramda';
+
 import AnchorSVG from '@assets/icons/svg/anchor.svg';
 import BasketSVG from '@assets/icons/svg/basket.svg';
 import BookOpenSVG from '@assets/icons/svg/book-open.svg';
@@ -62,6 +64,14 @@ import ListSVG from '@assets/icons/svg/list-ul.svg';
 import GridSVG from '@assets/icons/svg/grid.svg';
 import WebsiteLogoSVG from '@assets/icons/website-logo.svg';
 import {Icon} from '../ui/Icon';
+
+export function getIconComponentIfString(icon: any) {
+  if (R.is(String, icon))
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    return ICON_BY_NAME[icon];
+
+  return icon;
+}
 
 export const WebsiteLogoIcon = Icon.createFromSVG(WebsiteLogoSVG, '0 0 1049.965 1510.7');
 export const ChevronRightIcon = Icon.createFromSVG(ChevronRightSVG);

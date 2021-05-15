@@ -83,20 +83,30 @@
     flex-wrap: nowrap;
 
     &-link {
+      @include flex-list;
+
       padding: 8px 10px;
       border: 1px solid color(divider);
+      border-bottom-width: 2px;
       border-radius: 5px;
       font-size: $text-small;
       font-weight: 500;
-      border-bottom-width: 2px;
 
-      > a.is-active {
+      &.is-active {
         color: color(primary);
+        border-bottom-color: color(primary) !important;
         font-weight: 600;
       }
 
       &.is-borderless {
         border-color: transparent !important;
+      }
+
+      &-icon {
+        position: relative;
+        top: 1px;
+        margin-right: 7px;
+        opacity: .5;
       }
     }
   }

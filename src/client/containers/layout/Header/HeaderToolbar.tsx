@@ -3,9 +3,9 @@ import React from 'react';
 import {useI18n} from '@client/i18n';
 
 import {
+  genAuthorsLink,
   HOME_PATH,
   BOOKS_PATH,
-  AUTHORS_PATH,
   BOOK_SERIES_PATH,
   TAGS_PATH,
   TOP_BOOKS_PATH,
@@ -26,10 +26,10 @@ export const HeaderToolbar = () => {
   const links: [any, string, string][] = [
     [HomeIcon, HOME_PATH, null],
     [CategoryIcon, BOOKS_PATH, t('links.books')],
-    [GroupIcon, AUTHORS_PATH, t('links.authors')],
-    [BookIcon, BOOK_SERIES_PATH, t('links.series')],
-    [TagIcon, TAGS_PATH, t('links.tags')],
     [TrophyIcon, TOP_BOOKS_PATH, t('links.top')],
+    [BookIcon, BOOK_SERIES_PATH, t('links.series')],
+    [GroupIcon, genAuthorsLink(), t('links.authors')],
+    [TagIcon, TAGS_PATH, t('links.tags')],
   ];
 
   return (

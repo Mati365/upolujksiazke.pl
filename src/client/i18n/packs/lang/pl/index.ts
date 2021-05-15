@@ -7,8 +7,9 @@ import {
   SortMode,
 } from '@shared/enums';
 
-import {PL_BOOKS_ROUTE_PACK} from './routes/books';
 import {PL_HOME_ROUTE_PACK} from './routes/home';
+import {PL_BOOKS_ROUTE_PACK} from './routes/books';
+import {PL_AUTHORS_PACK} from './routes/authors';
 
 const PL_BOOK_BINDING_PACK: Record<BookBindingKind, string> = {
   [BookBindingKind.HARDCOVER]: 'twarda okładka',
@@ -43,8 +44,9 @@ const PL_SORT_MODES_PACK: Record<SortMode, string> = {
 };
 
 const ROUTES_PACK = {
-  books: PL_BOOKS_ROUTE_PACK,
   home: PL_HOME_ROUTE_PACK,
+  books: PL_BOOKS_ROUTE_PACK,
+  authors: PL_AUTHORS_PACK,
 };
 
 export const PL_LANG_PACK = {
@@ -128,6 +130,7 @@ export const PL_LANG_PACK = {
     breadcrumbs: {
       home: 'Strona główna',
       books: 'Książki',
+      authors: 'Autorzy',
     },
     filters: {
       header: 'Filtry',

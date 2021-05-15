@@ -12,6 +12,7 @@ export class AjaxAPIClient extends APIClient {
         booksCategories: null,
         recentBooks: null,
         tags: null,
+        authors: null,
       },
     );
 

@@ -1,0 +1,16 @@
+.c-authors-letters-section {
+  &__letters {
+    margin-bottom: 2rem;
+
+    > li.is-active {
+      color: color(primary);
+      font-weight: 700;
+    }
+  }
+
+  &__content {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: $text-tiny;
+  }
+}

@@ -39,7 +39,3 @@ AuthorRoute.displayName = 'AuthorRoute';
 AuthorRoute.route = {
   path: AUTHOR_PATH,
 };
-
-// BookRoute.getInitialProps = async ({api, match}) => ({
-//   book: await api.repo.books.findOne(match.params.id),
-// });

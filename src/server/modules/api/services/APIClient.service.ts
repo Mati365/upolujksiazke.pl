@@ -6,7 +6,8 @@ import {BookCategoryService} from '@server/modules/book/modules/category';
 import {TagService} from '@server/modules/tag/Tag.service';
 import {BookTagsStatsService} from '@server/modules/book/modules/stats/services/BookTagsStats.service';
 import {BookTagsService} from '@server/modules/book/modules/tags/BookTags.service';
-import {BookService} from '@server/modules/book';
+import {BookService} from '@server/modules/book/services/Book.service';
+import {BookAuthorService} from '@server/modules/book/modules/author/BookAuthor.service';
 
 import {
   CardBookSearchService,
@@ -19,6 +20,7 @@ export class APIClientService {
   public readonly client = new ServerAPIClient(this);
 
   constructor(
+    @Inject(CACHE_MANAGER) public readonly cacheManager: Cache,
     public readonly entityManager: EntityManager,
     public readonly bookService: BookService,
     public readonly bookCategoryService: BookCategoryService,
@@ -27,6 +29,6 @@ export class APIClientService {
     public readonly tagsService: TagService,
     public readonly bookTagsService: BookTagsService,
     public readonly bookTagsStatsService: BookTagsStatsService,
-    @Inject(CACHE_MANAGER) public readonly cacheManager: Cache,
+    public readonly bookAuthorService: BookAuthorService,
   ) {}
 }

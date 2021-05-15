@@ -9,7 +9,7 @@ export class BookSEOCron {
     private readonly tagsHydrator: BookTagsTextHydratorService,
   ) {}
 
-  @Cron(CronExpression.EVERY_DAY_AT_1PM)
+  @Cron(CronExpression.EVERY_DAY_AT_4AM)
   async refreshRanking() {
     await this.tagsHydrator.refreshAllBooksHydratedTags();
   }

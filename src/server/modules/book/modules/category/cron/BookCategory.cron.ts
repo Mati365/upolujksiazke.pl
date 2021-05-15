@@ -8,7 +8,7 @@ export class BookCategoryCron {
     private readonly categoryRanking: BookCategoryRankingService,
   ) {}
 
-  @Cron(CronExpression.EVERY_DAY_AT_4AM)
+  @Cron(CronExpression.EVERY_DAY_AT_3AM)
   async refreshRanking() {
     await this.categoryRanking.refreshCategoryRanking();
   }

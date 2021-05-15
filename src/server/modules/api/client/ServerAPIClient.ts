@@ -2,6 +2,7 @@ import {APIClient} from '@api/APIClient';
 import {
   BooksCategoriesServerRepo,
   BooksServerRepo,
+  BooksAuthorsServerRepo,
   RecentBooksServerRepo,
   TagsServerRepo,
 } from './repo';
@@ -17,6 +18,7 @@ export class ServerAPIClient extends APIClient {
         recentBooks: new RecentBooksServerRepo,
         books: new BooksServerRepo,
         booksCategories: new BooksCategoriesServerRepo,
+        authors: new BooksAuthorsServerRepo,
         tags: new TagsServerRepo,
       },
     );

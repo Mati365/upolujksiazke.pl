@@ -9,6 +9,7 @@ import {
   RecentBooksRepo,
   BooksRepo,
   BooksCategoriesRepo,
+  BookAuthorsRepo,
   TagsRepo,
 } from './repo';
 
@@ -48,6 +49,7 @@ export abstract class APIClient {
       books: BooksRepo,
       booksCategories: BooksCategoriesRepo,
       tags: TagsRepo,
+      authors: BookAuthorsRepo,
     },
   ) {
     R.forEachObjIndexed(

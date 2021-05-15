@@ -85,9 +85,12 @@ export const TOP_BOOKS_PATH = '/top-ksiazki';
 export const TopBooksLink = UndecoratedLink.create(TOP_BOOKS_PATH);
 
 export const AUTHOR_PATH = '/autor/:slug,:id';
-export const AUTHORS_PATH = '/autorzy';
+export const AUTHORS_PATH = '/autorzy/:letter?';
 
-export const AuthorsLink = UndecoratedLink.create(AUTHORS_PATH);
+export const AuthorsLink = UndecoratedLink.create<string>(
+  (letter: string) => `/autorzy${(letter ? `/${letter}` : '')}`,
+);
+
 export const AuthorLink = UndecoratedLink.create<Pick<BookAuthorRecord, 'parameterizedName'|'id'>>(
   ({id, parameterizedName}) => `/autor/${parameterizedName},${id}`,
 );

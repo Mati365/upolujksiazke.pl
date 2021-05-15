@@ -10,6 +10,7 @@ import {
 import {PL_HOME_ROUTE_PACK} from './routes/home';
 import {PL_BOOKS_ROUTE_PACK} from './routes/books';
 import {PL_AUTHORS_PACK} from './routes/authors';
+import {PL_AUTHOR_PACK} from './routes/author';
 
 const PL_BOOK_BINDING_PACK: Record<BookBindingKind, string> = {
   [BookBindingKind.HARDCOVER]: 'twarda okładka',
@@ -47,6 +48,7 @@ const ROUTES_PACK = {
   home: PL_HOME_ROUTE_PACK,
   books: PL_BOOKS_ROUTE_PACK,
   authors: PL_AUTHORS_PACK,
+  author: PL_AUTHOR_PACK,
 };
 
 export const PL_LANG_PACK = {
@@ -75,6 +77,7 @@ export const PL_LANG_PACK = {
       yes: 'Tak',
       no: 'Nie',
       click_to_choose: 'Kliknij by wybrać',
+      empty_results: 'Nic nie znaleziono!',
     },
     buttons: {
       more: 'pokaż więcej',

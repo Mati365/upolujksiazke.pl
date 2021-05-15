@@ -5,7 +5,6 @@
     display: grid;
     grid-template-columns: 220px 1fr;
     grid-gap: $gap;
-    min-height: calc(100vh - 350px);
 
     &__sidebar {
       height: 100%;
@@ -156,5 +155,19 @@
         }
       }
     }
+  }
+}
+
+.c-empty-results {
+  @include flex-centered;
+
+  width: 100%;
+  margin: 5rem 0;
+  flex-direction: column;
+  opacity: .4;
+
+  &__icon {
+    font-size: 2.5rem;
+    margin-bottom: $text-tiny;
   }
 }

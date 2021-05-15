@@ -20,6 +20,7 @@ import {SortMode} from '@shared/enums';
 import {FiltersBadges} from '@client/containers/filters/FiltersBadges';
 import {ArrowsPagination} from '@client/containers/controls/pagination/ArrowsPagination';
 import {
+  EmptyResults,
   FiltersContainer,
   FiltersPaginationToolbar,
   PageSizeSelectInput,
@@ -128,7 +129,9 @@ export const BooksFiltersContainer = (
     >
       {({result, loading}) => {
         const safeResult = result ?? initialBooks;
-        const toolbarRenderFn = () => (
+        const emptyItems = !loading && R.isEmpty(safeResult.items);
+
+        const toolbarRenderFn = (bottom: boolean) => (!emptyItems || bottom) && (
           <>
             <FiltersPaginationToolbar>
               <li>
@@ -176,15 +179,21 @@ export const BooksFiltersContainer = (
               translationsPath='book.filters'
             />
 
-            <BooksGrid
-              items={
-                safeResult.items as BookCardRecord[]
-              }
-              columns={{
-                xs: 2,
-                default: 6,
-              }}
-            />
+            {(
+              emptyItems
+                ? <EmptyResults />
+                : (
+                  <BooksGrid
+                    items={
+                      safeResult.items as BookCardRecord[]
+                    }
+                    columns={{
+                      xs: 2,
+                      default: 6,
+                    }}
+                  />
+                )
+            )}
           </FiltersContainer>
         );
       }}

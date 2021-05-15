@@ -45,4 +45,25 @@ export class BooksAuthorsServerRepo extends ServerAPIClientChild implements Book
 
     return bookAuthorService.findFilteredAuthors(filters);
   }
+
+  /**
+   * Single author fetch
+   *
+   * @param {number} id
+   * @returns
+   * @memberof BooksAuthorsServerRepo
+   */
+  @MeasureCallDuration('findAuthor')
+  @RedisMemoize(
+    {
+      keyFn: (id) => ({
+        key: `author-${id}`,
+      }),
+    },
+  )
+  findOne(id: number) {
+    const {bookAuthorService} = this.services;
+
+    return bookAuthorService.findOne(id);
+  }
 }

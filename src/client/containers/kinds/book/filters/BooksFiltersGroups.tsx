@@ -1,4 +1,5 @@
 import React from 'react';
+import * as R from 'ramda';
 
 import {mapCountedRecordsToCountedListItems} from '@api/helpers/mapCountedRecordsToCountedListItems';
 import {useI18n} from '@client/i18n';
@@ -28,7 +29,13 @@ type BooksFiltersGroupsProps = LinkProps<Partial<any>> & {
   overrideFilters?: any,
 };
 
-export const BooksFiltersGroups = ({aggs, l, overrideFilters}: BooksFiltersGroupsProps) => {
+export const BooksFiltersGroups = (
+  {
+    aggs,
+    l,
+    overrideFilters = {},
+  }: BooksFiltersGroupsProps,
+) => {
   const api = useAjaxAPIClient();
   const t = useI18n('book.filters');
   const {
@@ -43,7 +50,7 @@ export const BooksFiltersGroups = ({aggs, l, overrideFilters}: BooksFiltersGroup
   } = aggs;
 
   const renderBucketGroup = (name: string, agg: APICountedBucket<any>) => {
-    if (!agg)
+    if (!agg || !R.isNil(overrideFilters[name]))
       return null;
 
     const inputProps = l.input(name);
@@ -100,26 +107,30 @@ export const BooksFiltersGroups = ({aggs, l, overrideFilters}: BooksFiltersGroup
 
   return (
     <>
-      <FiltersPhraseSearchInput
-        placeholder={
-          t('phrase.placeholder')
-        }
-        {...l.input(
-          'phrase',
-          {
-            deleteFromParentIf: (inputValue) => !inputValue,
-          },
-        )}
-      />
+      {!overrideFilters.phrase && (
+        <FiltersPhraseSearchInput
+          placeholder={
+            t('phrase.placeholder')
+          }
+          {...l.input(
+            'phrase',
+            {
+              deleteFromParentIf: (inputValue) => !inputValue,
+            },
+          )}
+        />
+      )}
 
       {renderBucketGroup('categories', categories)}
       {renderBucketGroup('authors', authors)}
 
-      <FiltersGroup header={t('price.header')}>
-        <PriceRange {...l.input('price')} />
-      </FiltersGroup>
+      {!overrideFilters.price && (
+        <FiltersGroup header={t('price.header')}>
+          <PriceRange {...l.input('price')} />
+        </FiltersGroup>
+      )}
 
-      {types?.items.length > 0 && (
+      {!overrideFilters.types && types?.items.length > 0 && (
         <FiltersGroup
           header={t('types.header')}
           total={t('types.total', [types.total.bucket])}
@@ -141,7 +152,7 @@ export const BooksFiltersGroups = ({aggs, l, overrideFilters}: BooksFiltersGroup
 
       {renderBucketGroup('publishers', publishers)}
 
-      {schoolLevels?.items.length > 0 && (
+      {!overrideFilters.schoolLevels && schoolLevels?.items.length > 0 && (
         <FiltersGroup header={t('school_levels.header')}>
           <CountedCheckboxList
             {...l.input('schoolLevels')}

@@ -14,7 +14,7 @@ import {
   LayoutViewData,
 } from '@client/containers/layout';
 
-import {AUTHORS_PATH} from '../Links';
+import {AUTHORS_PATH, BooksLink} from '../Links';
 
 type AuthorsRouteData = {
   layoutData: LayoutViewData,
@@ -38,6 +38,14 @@ export const AuthorsRoute: AsyncRoute<AuthorsRouteData> = (
       <Container className='c-book-route'>
         <Breadcrumbs
           items={[
+            {
+              id: 'books',
+              node: (
+                <BooksLink>
+                  {t('shared.breadcrumbs.books')}
+                </BooksLink>
+              ),
+            },
             {
               id: 'authors',
               node: t('shared.breadcrumbs.authors'),

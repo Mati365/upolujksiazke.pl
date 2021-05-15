@@ -20,6 +20,17 @@ export class BookAuthorService {
   ) {}
 
   /**
+   * Find single book by id
+   *
+   * @param {number} id
+   * @returns
+   * @memberof BookAuthorService
+   */
+  findOne(id: number) {
+    return BookAuthorEntity.findOne(id);
+  }
+
+  /**
    * Find all first authors letters
    *
    * @returns

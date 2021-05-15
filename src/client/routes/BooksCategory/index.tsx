@@ -1,7 +1,7 @@
 import React from 'react';
 import {Redirect} from 'react-router-dom';
 
-import {objPropsToPromise} from '@shared/helpers';
+import {capitalize, objPropsToPromise} from '@shared/helpers';
 import {deserializeUrlFilters} from '@client/containers/filters/hooks/useStoreFiltersInURL';
 import {serializeAggsToSearchParams} from '@client/containers/kinds/book/filters/helpers/serializeAggsToSearchParams';
 
@@ -26,6 +26,7 @@ import {
 } from '@client/containers/kinds/book/filters/BooksFiltersContainer';
 
 import {
+  BooksLink,
   BOOKS_CATEGORY_PATH,
   BOOKS_PATH,
 } from '../Links';
@@ -57,7 +58,15 @@ export const BooksCategoryRoute: AsyncRoute<BooksRouteViewData> = (
           items={[
             {
               id: 'books',
-              node: t('shared.breadcrumbs.books'),
+              node: (
+                <BooksLink>
+                  {t('shared.breadcrumbs.books')}
+                </BooksLink>
+              ),
+            },
+            {
+              id: 'category',
+              node: capitalize(category.name),
             },
           ]}
         />

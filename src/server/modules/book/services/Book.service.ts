@@ -290,15 +290,20 @@ export class BookService {
 
       // get most popular release
       const primaryRelease = R.reduce(
-        (acc, releaseDto) => (
-          releaseDto.cover?.file && (
-            !acc
-              || (acc.availability?.length || 0) < (releaseDto.availability?.length || 0)
-              || !acc.description
-          )
-            ? releaseDto
-            : acc
-        ),
+        (acc, releaseDto) => {
+          const hasFile = releaseDto.cover?.file;
+          if (!acc || (!acc.cover?.file && hasFile))
+            return releaseDto;
+
+          return (
+            hasFile && (
+              (acc.availability?.length || 0) < (releaseDto.availability?.length || 0)
+                || !acc.description
+            )
+              ? releaseDto
+              : acc
+          );
+        },
         null as CreateBookReleaseDto,
         dto.releases,
       );

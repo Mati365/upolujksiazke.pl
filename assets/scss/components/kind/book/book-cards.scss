@@ -51,6 +51,7 @@
       @include flex-list;
 
       margin-top: .5rem;
+      margin-bottom: .25rem;
     }
 
     &__ratings {
@@ -103,6 +104,35 @@
         > ul {
           margin-left: 0;
         }
+      }
+    }
+  }
+
+  &-wide-card {
+    display: grid;
+    grid-template-columns: 130px 300px 1fr;
+    grid-gap: 32px;
+    border-bottom: 1px solid color(divider);
+
+    &__basic-info {
+      display: flex;
+      flex-direction: column;
+      max-height: 200px;
+    }
+
+    &__description {
+      font-size: .9rem;
+    }
+
+    .c-book-card {
+      &__title {
+        margin-bottom: .5rem;
+        overflow: visible;
+        font-size: $text-normal;
+      }
+
+      &__types {
+        margin-top: auto;
       }
     }
   }

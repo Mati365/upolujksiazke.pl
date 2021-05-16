@@ -4,6 +4,7 @@ import {BookCardReleaseRecord} from './BookCardRelease.record';
 import {SeriesBookRecord} from './SeriesBook.record';
 
 export interface BookCardRecord extends SeriesBookRecord {
+  description?: string;
   lowestPrice: number;
   highestPrice: number;
   authors: BookAuthorRecord[];

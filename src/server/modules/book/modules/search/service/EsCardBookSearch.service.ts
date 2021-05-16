@@ -58,11 +58,11 @@ export class EsCardBookSearchService {
   ) {}
 
   /**
-   * Advanced search
+   * Find book with filters
    *
-   * @async
    * @param {AggsBooksFilters} filters
-   * @returns {Promise<APIPaginationResultWithAggs<BookEntity, BookEntityAggs>>}
+   * @param {FindBooksAttrs} [attrs]
+   * @return {Promise<APIPaginationResultWithAggs<BookEntity, BookEntityAggs>>}
    * @memberof EsCardBookSearchService
    */
   async findFilteredBooks(filters: AggsBooksFilters): Promise<APIPaginationResultWithAggs<BookEntity, BookEntityAggs>> {
@@ -117,7 +117,14 @@ export class EsCardBookSearchService {
         this.fetchBooksAggsFromDB(result.aggs),
         filters.skipBooksLoading
           ? null
-          : cardBookSearch.findBooksByIds(result.ids),
+          : (
+            cardBookSearch.findBooksByIds(
+              result.ids,
+              {
+                withDescription: filters.selectDescription,
+              },
+            )
+          ),
       ],
     );
 

@@ -1,5 +1,4 @@
 import React from 'react';
-import c from 'classnames';
 import * as R from 'ramda';
 
 import {useI18n} from '@client/i18n';
@@ -19,15 +18,9 @@ import {BookCover} from './BookCover';
 
 export type BookCardProps = {
   item: BookCardRecord,
-  withDescription?: boolean,
 };
 
-export const BookCard = (
-  {
-    withDescription,
-    item,
-  }: BookCardProps,
-) => {
+export const BookCard = ({item}: BookCardProps) => {
   const t = useI18n();
   const {
     allTypes,
@@ -46,12 +39,7 @@ export const BookCard = (
   );
 
   return (
-    <article
-      className={c(
-        'c-book-card',
-        withDescription && 'has-description',
-      )}
-    >
+    <article className='c-book-card'>
       <BookLink item={item}>
         <BookCover
           className='c-book-card__cover is-hover-scale'

@@ -5,18 +5,18 @@ import {
 } from 'class-validator';
 
 import {APIPaginationDto} from '@server/modules/api/dto/APIPagination.dto';
-import {TransformSeparatedArray} from '@server/common/transformers/TransformSeparatedArray.transform';
-import {BooksFilters} from '@api/repo';
 import {
-  BookSchoolLevel, BookType,
-  SortMode, ViewMode,
-} from '@shared/enums';
+  TransformBoolean,
+  TransformSeparatedArray,
+} from '@server/common/transformers';
+
+import {BooksFilters} from '@api/repo';
+import {BookSchoolLevel, BookType, SortMode} from '@shared/enums';
 
 export class BooksFiltersDto extends APIPaginationDto implements Required<BooksFilters> {
   @IsOptional()
-  @Transform(({value}) => parseInt(value, 10))
-  @IsEnum(ViewMode)
-  viewMode: ViewMode;
+  @TransformBoolean()
+  readonly selectDescription: boolean;
 
   @IsOptional()
   @Transform(({value}) => parseInt(value, 10))

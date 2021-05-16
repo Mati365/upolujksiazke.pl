@@ -2,7 +2,7 @@ import {validateMinMaxRange} from '@client/helpers/logic';
 import {safePluckObjIds} from '@shared/helpers';
 
 import {BooksFilters} from '@api/repo';
-import {SortMode} from '@shared/enums';
+import {SortMode, ViewMode} from '@shared/enums';
 
 export function serializeAggsToSearchParams(aggs: any): BooksFilters {
   if (!aggs)
@@ -14,6 +14,7 @@ export function serializeAggsToSearchParams(aggs: any): BooksFilters {
     offset: aggs.offset || 0,
     limit: aggs.limit || 30,
     phrase: aggs.phrase,
+    selectDescription: +aggs.viewMode === ViewMode.LIST,
     parentCategoriesIds: aggs.parentCategoriesIds,
     schoolLevels: safePluckObjIds(aggs.schoolLevels),
     types: safePluckObjIds(aggs.types),

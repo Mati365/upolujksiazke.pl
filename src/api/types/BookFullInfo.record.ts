@@ -11,7 +11,6 @@ import {SeriesBookRecord} from './SeriesBook.record';
 import {SchoolBookRecord} from './SchoolBook.record';
 
 export interface BookFullInfoRecord extends BookCardRecord {
-  description: string;
   taggedDescription: string;
   originalPublishDate: string;
   schoolBook: SchoolBookRecord;

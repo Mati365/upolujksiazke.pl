@@ -5,11 +5,14 @@ import {ViewMode} from '@shared/enums';
 
 import {Grid, GridProps} from '@client/components/ui';
 import {BookCardRecord} from '@api/types';
-import {BookCard} from '../cards/BookCard';
+import {
+  BookCard,
+  WideBookCard,
+} from '../cards';
 
 export const GRID_VIEW_MODE_CARDS: Record<ViewMode, any> = {
   [ViewMode.GRID]: BookCard,
-  [ViewMode.LIST]: BookCard,
+  [ViewMode.LIST]: WideBookCard,
 };
 
 type BooksGridProps = GridProps & {

@@ -15,6 +15,14 @@ type ExpandableDescriptionBoxProps = Omit<DescriptionBoxProps, 'children'> & {
   maxCharactersCount: number,
   text: string,
   html?: boolean,
+  renderHiddenChunk?: boolean,
+  moreButtonRenderFn?(
+    attrs: {
+      expandTitle: string,
+      toggled: boolean,
+      setToggled: (value: boolean) => void,
+    },
+  ): void,
 };
 
 export const ExpandableDescriptionBox = (
@@ -22,6 +30,8 @@ export const ExpandableDescriptionBox = (
     maxCharactersCount,
     text,
     html,
+    moreButtonRenderFn,
+    renderHiddenChunk = true,
     ...props
   }: ExpandableDescriptionBoxProps,
 ) => {
@@ -100,36 +110,50 @@ export const ExpandableDescriptionBox = (
             <span>...</span>
           )}
 
-          <span
-            className={c(
-              !toggled && 'is-hidden',
-            )}
-            {...(
-              html
-                ? {
-                  dangerouslySetInnerHTML: {
-                    __html: chunks[1],
-                  },
-                  onClick: onClickHTML,
-                }
-                : {
-                  children: chunks[1],
-                }
-            )}
-          />
+          {(toggled || renderHiddenChunk) && (
+            <span
+              className={c(
+                !toggled && 'is-hidden',
+              )}
+              {...(
+                html
+                  ? {
+                    dangerouslySetInnerHTML: {
+                      __html: chunks[1],
+                    },
+                    onClick: onClickHTML,
+                  }
+                  : {
+                    children: chunks[1],
+                  }
+              )}
+            />
+          )}
 
           &nbsp;
 
-          <TextButton
-            role='button'
-            type='primary'
-            aria-label={expandTitle}
-            onClick={
-              () => setToggled(!toggled)
-            }
-          >
-            {expandTitle}
-          </TextButton>
+          {(
+            moreButtonRenderFn
+              ? moreButtonRenderFn(
+                {
+                  expandTitle,
+                  toggled,
+                  setToggled,
+                },
+              )
+              : (
+                <TextButton
+                  role='button'
+                  type='primary'
+                  aria-label={expandTitle}
+                  onClick={
+                    () => setToggled(!toggled)
+                  }
+                >
+                  {expandTitle}
+                </TextButton>
+              )
+          )}
         </>
       );
     }

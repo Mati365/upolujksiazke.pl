@@ -14,7 +14,6 @@ import {SeriesBookSerializer} from './SeriesBook.serializer';
 import {TagSerializer} from './Tag.serializer';
 
 export class BookFullInfoSerializer extends BookCardSerializer implements BookFullInfoRecord {
-  @Expose() description: string;
   @Expose() taggedDescription: string;
 
   @Expose()

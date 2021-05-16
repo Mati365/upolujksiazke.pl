@@ -9,6 +9,7 @@ import {SeriesBookSerializer} from './SeriesBook.serializer';
 import {safeParsePrice} from '../helpers';
 
 export class BookCardSerializer extends SeriesBookSerializer implements BookCardRecord {
+  @Expose() description: string;
   @Expose() allTypes: BookType[];
   @Expose() schoolBookId: number;
 

@@ -26,6 +26,10 @@ import {BookSummaryService} from '../../summary/BookSummary.service';
 
 export type FullCardEntity = Awaited<ReturnType<CardBookSearchService['findFullCard']>>;
 
+export type FindBooksAttrs = {
+  withDescription?: boolean,
+};
+
 @Injectable()
 export class CardBookSearchService {
   public static readonly BOOK_CARD_FIELDS = [
@@ -156,16 +160,22 @@ export class CardBookSearchService {
    * Find multiple cards, it is simple method
    *
    * @param {any[]} ids
+   * @param {FindBooksAttrs} attrs
    * @returns
    * @memberof CardBookSearchService
    */
-  async findBooksByIds(ids: any[]) {
+  async findBooksByIds(ids: any[], {withDescription}: FindBooksAttrs = {}) {
     return preserveOrderByIds(
       {
         ids,
         items: await (
           this
-            .createCardsQuery()
+            .createCardsQuery(
+              [
+                ...CardBookSearchService.BOOK_CARD_FIELDS,
+                withDescription && 'book.description',
+              ].filter(Boolean),
+            )
             .whereInIds(ids)
             .getMany()
         ),

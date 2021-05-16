@@ -14,7 +14,6 @@ import {
   BookSchoolLevel,
   BookType,
   SortMode,
-  ViewMode,
 } from '@shared/enums';
 
 import {
@@ -48,8 +47,8 @@ export type BookAggsRecords = {
 export type BookCountedAggs = CreateCountedAggType<BookAggsRecords>;
 
 export type BooksNonNestedFilters = BasicAPIPagination & {
+  selectDescription?: boolean,
   sort?: SortMode,
-  viewMode?: ViewMode
   phrase?: string,
   types?: BookType[],
   schoolLevels?: BookSchoolLevel[],

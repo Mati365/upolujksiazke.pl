@@ -23,16 +23,18 @@ import {
     column: {
       type: 'enum',
       enum: TrackerViewsMode,
-      name: 'type',
+      name: 'mode',
     },
   },
 )
 @Unique(
-  'views_aggs_unique_type_record',
-  ['type', 'recordId'],
+  'views_aggs_dated_type_unique_record',
+  ['type', 'recordId', 'date'],
 )
 @Index(['type', 'recordId'])
 export class ViewsAggEntity extends DatedRecordEntity {
+  mode: TrackerViewsMode;
+
   @Column(
     {
       type: 'date',

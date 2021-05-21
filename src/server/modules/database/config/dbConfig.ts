@@ -18,8 +18,8 @@ import {
 
 import {
   ViewsAggEntity,
-  DailyViewsEntity,
-  MonthlyViewsEntity,
+  DailyViewsAggEntity,
+  MonthlyViewsAggEntity,
 } from '../../tracker/entity';
 
 import {BookEntity, SchoolBookEntity} from '../../book/entity';
@@ -66,8 +66,8 @@ export const DB_ENTITIES = {
   ScrapperMetadataEntity,
   SpiderQueueEntity,
   ViewsAggEntity,
-  DailyViewsEntity,
-  MonthlyViewsEntity,
+  DailyViewsAggEntity,
+  MonthlyViewsAggEntity,
   TagEntity,
 };
 

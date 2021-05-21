@@ -17,6 +17,7 @@ export async function upsert<T, E extends T | T[], K extends keyof T>(
     conflictKeys,
     coalesce = true,
     doNothing,
+    updateStr,
     columns,
     skip = ['id', 'createdAt'] as K[],
   }: {
@@ -26,6 +27,7 @@ export async function upsert<T, E extends T | T[], K extends keyof T>(
     data: E,
     constraint?: string,
     conflictKeys?: string,
+    updateStr?: string,
     doNothing?: boolean,
     coalesce?: boolean,
     primaryKey?: CanBeArray<(string & keyof T) | `${string & keyof T}Id`>,
@@ -39,38 +41,39 @@ export async function upsert<T, E extends T | T[], K extends keyof T>(
       : getRepository(Entity)
   );
 
-  let updateStr: string = null;
-  if (doNothing)
-    conflictKeys ??= '';
-  else {
-    const metadata = (connection ?? entityManager.connection).getMetadata(Entity);
-    updateStr = !doNothing && (
-      metadata
-        .columns
-        .map(
-          ({databaseName: key}) => {
-            if (columns && !columns.includes(key as K))
-              return null;
+  if (!updateStr) {
+    if (doNothing)
+      conflictKeys ??= '';
+    else {
+      const metadata = (connection ?? entityManager.connection).getMetadata(Entity);
+      updateStr = !doNothing && (
+        metadata
+          .columns
+          .map(
+            ({databaseName: key}) => {
+              if (columns && !columns.includes(key as K))
+                return null;
 
-            if (skip.includes(key as K))
-              return null;
+              if (skip.includes(key as K))
+                return null;
 
-            let assignValue = `EXCLUDED."${key}"`;
-            if (coalesce)
-              assignValue = `COALESCE(${assignValue}, ${metadata.tableName}."${key}")`;
+              let assignValue = `EXCLUDED."${key}"`;
+              if (coalesce)
+                assignValue = `COALESCE(${assignValue}, ${metadata.tableName}."${key}")`;
 
-            return `"${key}" = ${assignValue}`;
-          },
-        )
-        .filter(Boolean)
-        .join(',')
-    );
+              return `"${key}" = ${assignValue}`;
+            },
+          )
+          .filter(Boolean)
+          .join(',')
+      );
 
-    conflictKeys ??= (
-      constraint
-        ? `on constraint ${constraint}`
-        : `(${safeArray(primaryKey).map((col) => `"${col}"`).join(',')})`
-    );
+      conflictKeys ??= (
+        constraint
+          ? `on constraint ${constraint}`
+          : `(${safeArray(primaryKey).map((col) => `"${col}"`).join(',')})`
+      );
+    }
   }
 
   const result = await (

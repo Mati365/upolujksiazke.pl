@@ -16,6 +16,12 @@ import {
   AttachmentEntity,
 } from '../../attachment/entity';
 
+import {
+  ViewsAggEntity,
+  DailyViewsEntity,
+  MonthlyViewsEntity,
+} from '../../tracker/entity';
+
 import {BookEntity, SchoolBookEntity} from '../../book/entity';
 import {BookAuthorEntity} from '../../book/modules/author/BookAuthor.entity';
 import {BookReviewEntity} from '../../book/modules/review/BookReview.entity';
@@ -59,6 +65,9 @@ export const DB_ENTITIES = {
   SchoolBookEntity,
   ScrapperMetadataEntity,
   SpiderQueueEntity,
+  ViewsAggEntity,
+  DailyViewsEntity,
+  MonthlyViewsEntity,
   TagEntity,
 };
 

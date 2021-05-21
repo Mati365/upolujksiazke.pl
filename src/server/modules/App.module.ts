@@ -23,6 +23,7 @@ import {RedisCacheModule} from './cache';
 import {APIModule} from './api';
 import {ElasticsearchConnectionModule} from './elasticsearch';
 import {FrontModule} from './front';
+import {TrackerModule} from './tracker';
 
 @Module(
   {
@@ -73,6 +74,7 @@ import {FrontModule} from './front';
           rootPath: `tmp/bookmeter-instance-${getClusterAppInstance()}`,
         },
       ),
+      TrackerModule,
       RemoteModule,
       ImporterModule,
     ],

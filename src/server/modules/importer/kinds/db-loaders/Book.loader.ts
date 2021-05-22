@@ -11,8 +11,7 @@ import {
 
 import {objPropsToPromise} from '@shared/helpers/async/mapObjValuesToPromise';
 import {parameterize} from '@shared/helpers/parameterize';
-import {pickLongestArrayItem, safeToString} from '@shared/helpers';
-import {trimBorderSpecialCharacters} from '@server/common/helpers/text/trimBorderSpecialCharacters';
+import {safeToString} from '@shared/helpers';
 
 import {EsFuzzyBookSearchService} from '@server/modules/book/modules/search/service';
 import {BookService} from '@server/modules/book/services/Book.service';
@@ -28,7 +27,6 @@ import {CreateBookPublisherDto} from '@server/modules/book/modules/publisher/dto
 import {CreateBookReleaseDto} from '@server/modules/book/modules/release/dto/CreateBookRelease.dto';
 import {CreateBookAvailabilityDto} from '@server/modules/book/modules/availability/dto/CreateBookAvailability.dto';
 import {CreateBookReviewDto} from '@server/modules/book/modules/review/dto/CreateBookReview.dto';
-import {CreateBookAuthorDto} from '@server/modules/book/modules/author/dto/CreateBookAuthor.dto';
 import {
   CreateBookVolumeDto,
   DEFAULT_BOOK_VOLUME_NAME,
@@ -260,23 +258,9 @@ export class BookDbLoaderService implements MetadataDbLoader {
 
     // check if releases are assigned to proper book
     // by grouping them by volumes
-    const allAuthors: CreateBookAuthorDto[] = [];
     let volumes: Record<string, CreateBookDto[]> = {};
-
     normalizedReleasesBooks.forEach(({book, volumesReleases}) => {
       volumesReleases.forEach(([{volume, series}, release]) => {
-        const volumeAuthors = (
-          book.authors?.length > 0
-            ? book.authors
-            : R.find(({authors}) => authors?.length > 0, books)?.authors
-        );
-
-        // do not lose reference! it is shared!
-        if (volumeAuthors.length > allAuthors.length) {
-          allAuthors.length = 0;
-          allAuthors.push(...volumeAuthors);
-        }
-
         // create new book
         const volumeBook = new CreateBookDto(
           {
@@ -290,7 +274,6 @@ export class BookDbLoaderService implements MetadataDbLoader {
                 },
               ),
             ],
-            authors: allAuthors,
             volume: new CreateBookVolumeDto(
               {
                 name: volume,
@@ -380,19 +363,6 @@ export class BookDbLoaderService implements MetadataDbLoader {
         return cachedBook;
     }
 
-    const authors = (
-      pickLongestArrayItem(R.pluck('authors', books))
-        ?.map(
-          (author) => new CreateBookAuthorDto(
-            {
-              ...author,
-              name: trimBorderSpecialCharacters(author.name),
-            },
-          ),
-        )
-        .filter(({name}) => name?.length > 0)
-    );
-
     const normalizedReleases = await this.normalizeReleases(allReleases);
     if (!normalizedReleases)
       return null;
@@ -405,7 +375,6 @@ export class BookDbLoaderService implements MetadataDbLoader {
           parameterizedSlug: cachedBook.parameterizedSlug,
         },
         releases: await this.fixSimilarNamedReleasesPublishers(normalizedReleases),
-        authors,
       },
     );
 

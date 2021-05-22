@@ -181,6 +181,7 @@ export const GLOBAL_CONFIG: Record<string, AppEnv> = {
         streszczenia: {
           id: 8,
           homepageURL: 'https://streszczenia.pl/',
+          withSubdomains: true,
         },
         hrosskar: {
           id: 9,

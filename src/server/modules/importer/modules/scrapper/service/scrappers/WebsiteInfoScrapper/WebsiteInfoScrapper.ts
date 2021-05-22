@@ -15,9 +15,8 @@ export class WebsiteInfoScrapper {
     public readonly info: CreateRemoteWebsiteDto,
   ) {}
 
-  get websiteURL() {
-    return this.info.url;
-  }
+  get withSubdomains() { return this.info.withSubdomains; }
+  get websiteURL() { return this.info.url; }
 
   /**
    * Fetches current website
@@ -37,11 +36,11 @@ export class WebsiteInfoScrapper {
    * Fetches website and creates dto
    *
    * @static
-   * @param {CreateRemoteWebsiteDto} dto
-   * @returns {CreateRemoteWebsiteDto}
+   * @param {CreateRemoteWebsiteDto} {url, logo, withSubdomains}
+   * @return {Promise<CreateRemoteWebsiteDto>}
    * @memberof WebsiteInfoScrapper
    */
-  static async fetchWebsiteDto({url, logo}: CreateRemoteWebsiteDto) {
+  static async fetchWebsiteDto({url, logo, withSubdomains}: CreateRemoteWebsiteDto): Promise<CreateRemoteWebsiteDto> {
     const {$} = await parseAsyncURL(url);
     let faviconUrl = logo?.originalUrl || $('[rel="shortcut icon"], [rel="icon"]').attr('href');
 
@@ -51,6 +50,7 @@ export class WebsiteInfoScrapper {
     return new CreateRemoteWebsiteDto(
       {
         url,
+        withSubdomains,
         title: $('title').text(),
         description: $('meta[name="description"]').attr('content'),
         logo: faviconUrl && new CreateImageAttachmentDto(

@@ -1,7 +1,8 @@
 import * as R from 'ramda';
 
-import {PartialRecord} from '@shared/types';
+import {extractHostname} from '@shared/helpers';
 
+import {PartialRecord} from '@shared/types';
 import {ScrapperMetadataKind} from '../../entity/ScrapperMetadata.entity';
 import {AsyncScrapper} from './AsyncScrapper';
 import {WebsiteInfoScrapper} from '../scrappers/WebsiteInfoScrapper';
@@ -79,6 +80,23 @@ implements ScrapperMatchable<string> {
     );
   }
 
+  /**
+   * Returns true if whole url matches scrapper
+   *
+   * @param {string} url
+   * @return {boolean}
+   * @memberof WebsiteScrappersGroup
+   */
+  isWebsiteURLMatching(url: string): boolean {
+    const {withSubdomains, websiteURL} = this;
+
+    return (
+      extractHostname(url, {dropSubdomain: withSubdomains})
+        === extractHostname(websiteURL, {dropSubdomain: withSubdomains})
+    );
+  }
+
+  get withSubdomains() { return this.websiteInfoScrapper.withSubdomains; }
   get websiteURL() { return this.websiteInfoScrapper.websiteURL; }
 
   /**
@@ -111,10 +129,7 @@ export class ScrapperGroupChild {
   }
 
   get websiteURL() { return this.group.websiteURL; }
-
   get matchers() { return this.group.matchers; }
-
   get scrappers() { return this.group.scrappers; }
-
   get parsers() { return this.group.parsers; }
 }

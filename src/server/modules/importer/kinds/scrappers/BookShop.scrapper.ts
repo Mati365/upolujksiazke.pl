@@ -10,6 +10,7 @@ import {SpiderQueueProxyScrapper} from './SpiderQueueProxy.scrapper';
 
 export type BookShopUrlsConfig = {
   id: number,
+  withSubdomains?: boolean,
   homepageURL?: string,
   searchURL?: string,
   apiURL?: string,
@@ -37,6 +38,7 @@ export abstract class BookShopScrappersGroup extends WebsiteScrappersGroup {
           new CreateRemoteWebsiteDto(
             {
               url: config.homepageURL,
+              withSubdomains: config.withSubdomains,
               logo: config.logoURL && new CreateImageAttachmentDto(
                 {
                   originalUrl: config.logoURL,

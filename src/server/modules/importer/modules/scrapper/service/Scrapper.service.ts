@@ -1,8 +1,8 @@
 import * as R from 'ramda';
-import {Injectable} from '@nestjs/common';
+import {Injectable, Logger} from '@nestjs/common';
+import chalk from 'chalk';
 
 import {SERVER_ENV} from '@server/constants/env';
-import {extractHostname} from '@shared/helpers';
 
 import {RemoteWebsiteEntity} from '@server/modules/remote/entity';
 import * as Groups from '@importer/sites';
@@ -14,6 +14,7 @@ const {parsers: PARSERS_ENV} = SERVER_ENV;
 
 @Injectable()
 export class ScrapperService {
+  private readonly logger = new Logger(ScrapperService.name);
   public readonly scrappersGroups: WebsiteScrappersGroup[] = null;
 
   constructor(
@@ -54,10 +55,8 @@ export class ScrapperService {
    * @memberof ScrapperService
    */
   getScrappersGroupByWebsiteURL(url: string): WebsiteScrappersGroup {
-    const hostname = extractHostname(url);
-
     return R.find(
-      (scrapper) => extractHostname(scrapper.websiteURL) === hostname,
+      (scrapper) => scrapper.isWebsiteURLMatching(url),
       this.scrappersGroups,
     );
   }
@@ -71,15 +70,27 @@ export class ScrapperService {
    */
   async findOrCreateWebsitesByUrls(urls: string[]): Promise<Record<string, RemoteWebsiteEntity>> {
     const entities = await this.websiteInfoService.findOrCreateWebsitesEntities(
-      R.map(
-        (url) => this.getScrappersGroupByWebsiteURL(url).websiteInfoScrapper,
-        R.uniq(urls),
-      ),
+      R
+        .map(
+          (url) => {
+            const scrapper = this.getScrappersGroupByWebsiteURL(url);
+            if (!scrapper) {
+              this.logger.warn(`Fixme: Scrapper for ${chalk.bold(url)} URL not found!`);
+              return null;
+            }
+
+            return scrapper.websiteInfoScrapper;
+          },
+          R.uniq(urls),
+        )
+        .filter(Boolean),
     );
 
     return urls.reduce(
       (acc, url) => {
-        acc[url] = entities.find((website) => url.startsWith(website.url));
+        acc[url] = entities.find(
+          (website) => this.getScrappersGroupByWebsiteURL(url).websiteURL === website.url,
+        );
         return acc;
       },
       {},

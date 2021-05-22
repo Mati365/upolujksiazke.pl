@@ -29,6 +29,15 @@ export class RemoteWebsiteEntity extends DatedRecordEntity {
   @Column('text', {nullable: true})
   hostname: string;
 
+  @Column(
+    'boolean',
+    {
+      nullable: true,
+      default: false,
+    },
+  )
+  withSubdomains: boolean;
+
   @ManyToMany(
     () => ImageAttachmentEntity,
     {

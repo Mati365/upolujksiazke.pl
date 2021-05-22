@@ -2,7 +2,8 @@ import {Type} from 'class-transformer';
 import {
   IsDefined, IsNotEmpty,
   IsOptional, IsNumber,
-  IsString, ValidateNested,
+  IsString, IsBoolean,
+  ValidateNested,
 } from 'class-validator';
 
 import {CreateImageAttachmentDto} from '@server/modules/attachment/dto';
@@ -17,6 +18,10 @@ export class CreateRemoteWebsiteDto extends CreateRemoteRecordDto {
   @IsNotEmpty()
   @IsString()
   readonly url: string;
+
+  @IsOptional()
+  @IsBoolean()
+  readonly withSubdomains: boolean;
 
   @IsString()
   @IsOptional()

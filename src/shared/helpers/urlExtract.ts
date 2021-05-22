@@ -1,6 +1,19 @@
 import * as R from 'ramda';
 
-export function extractHostname(url: string, allowWWW: boolean = true) {
+export function dropHostnameSubdomain(domain: string) {
+  return R.takeLast(2, domain.split('.')).join('.');
+}
+
+export function extractHostname(
+  url: string,
+  {
+    dropSubdomain = false,
+    allowWWW = true,
+  }: {
+    dropSubdomain?: boolean,
+    allowWWW?: boolean,
+  } = {},
+) {
   if (!url)
     return null;
 
@@ -10,6 +23,9 @@ export function extractHostname(url: string, allowWWW: boolean = true) {
   let {hostname} = new URL(url);
   if (!allowWWW && hostname && R.startsWith('www.', hostname))
     hostname = hostname.substr(4);
+
+  if (dropSubdomain)
+    hostname = dropHostnameSubdomain(hostname);
 
   return hostname;
 }

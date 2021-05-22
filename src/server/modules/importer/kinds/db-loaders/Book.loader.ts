@@ -9,6 +9,7 @@ import {
   Logger, forwardRef,
 } from '@nestjs/common';
 
+import {normalizeParsedYear} from '@server/common/helpers';
 import {objPropsToPromise} from '@shared/helpers/async/mapObjValuesToPromise';
 import {parameterize} from '@shared/helpers/parameterize';
 import {safeToString} from '@shared/helpers';
@@ -372,20 +373,22 @@ export class BookDbLoaderService implements MetadataDbLoader {
       return null;
 
     const mergedBooks = mergeBooks(books);
-    const dto = new CreateBookDto(
-      {
-        ...mergedBooks,
-        ...cachedBook && {
-          id: cachedBook.id,
-          parameterizedSlug: cachedBook.parameterizedSlug,
-        },
-        ...await objPropsToPromise(
-          {
-            releases: this.fixSimilarNamedReleasesPublishers(normalizedReleases),
-            authors: bookAuthorService.mergeAliasedDtos(mergedBooks.authors),
+    const dto = this.normalizeOriginalPublishYear(
+      new CreateBookDto(
+        {
+          ...mergedBooks,
+          ...cachedBook && {
+            id: cachedBook.id,
+            parameterizedSlug: cachedBook.parameterizedSlug,
           },
-        ),
-      },
+          ...await objPropsToPromise(
+            {
+              releases: this.fixSimilarNamedReleasesPublishers(normalizedReleases),
+              authors: bookAuthorService.mergeAliasedDtos(mergedBooks.authors),
+            },
+          ),
+        },
+      ),
     );
 
     const book = await bookService.upsert(dto);
@@ -395,6 +398,49 @@ export class BookDbLoaderService implements MetadataDbLoader {
     );
 
     return book;
+  }
+
+  /**
+   * Due to some editors errors validates original publish date
+   *
+   * @async
+   * @param {CreateBookDto} dto
+   * @returns {CreateBookDto}
+   */
+  private normalizeOriginalPublishYear(dto: CreateBookDto): CreateBookDto {
+    const firstReleaseDate = dto.releases.reduce(
+      (acc, release) => {
+        if (!release.publishDate)
+          return acc;
+
+        const parsedDate = +normalizeParsedYear(release.publishDate);
+        return (
+          acc
+            ? Math.min(parsedDate, acc)
+            : parsedDate
+        );
+      },
+      0,
+    );
+
+    if (!firstReleaseDate)
+      return dto;
+
+    return new CreateBookDto(
+      {
+        ...dto,
+        originalPublishYear: new Date(
+          Math
+            .min(
+              firstReleaseDate,
+              dto.originalPublishYear
+                ? +dto.originalPublishYear
+                : Infinity,
+            )
+            .toString(),
+        ).getFullYear(),
+      },
+    );
   }
 
   /**

@@ -17,7 +17,7 @@ export class BookFullInfoSerializer extends BookCardSerializer implements BookFu
   @Expose() taggedDescription: string;
 
   @Expose()
-  originalPublishDate: string;
+  originalPublishYear: number;
 
   @Expose()
   @Type(() => BookFullInfoReleaseSerializer)

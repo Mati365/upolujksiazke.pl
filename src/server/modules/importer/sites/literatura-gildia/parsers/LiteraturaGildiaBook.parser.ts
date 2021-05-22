@@ -2,6 +2,7 @@ import {
   normalizeISBN,
   normalizeURL,
   normalizeParsedText,
+  normalizeParsedYear,
 } from '@server/common/helpers';
 
 import {Language} from '@shared/enums/language';
@@ -66,7 +67,7 @@ export class LiteraturaGildiaBookParser
     return new CreateBookDto(
       {
         defaultTitle: release.title,
-        originalPublishDate: normalizeParsedText(text.match(/Rok wydania oryginału: ([\S]+)/)?.[1]),
+        originalPublishYear: normalizeParsedYear(text.match(/Rok wydania oryginału: ([\S]+)/)?.[1]),
         authors: [
           author,
         ],

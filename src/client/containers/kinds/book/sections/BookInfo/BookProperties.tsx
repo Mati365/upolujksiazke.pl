@@ -41,10 +41,6 @@ export const BookProperties = memo(({book}: BookPropertiesProps) => {
   );
 
   const publisher = firstRelease?.publisher || primaryRelease.publisher;
-  const publishDate = useMemo(
-    () => book.originalPublishDate || firstRelease?.publishDate,
-    [book],
-  );
 
   const t = useI18n('shared.book.props');
   const items = useMemo<IconPropertyInfo[]>(
@@ -81,7 +77,7 @@ export const BookProperties = memo(({book}: BookPropertiesProps) => {
       {
         name: t('original_publish_date'),
         icon: CalendarIcon,
-        value: publishDate && (new Date(publishDate).getFullYear() || publishDate),
+        value: book.originalPublishYear?.toString(),
         autoWidth: true,
       },
       {

@@ -4,6 +4,7 @@ import {extractTableRowsMap} from '@scrapper/helpers';
 import {
   normalizeISBN,
   normalizeParsedText,
+  normalizeParsedYear,
   normalizePrice,
 } from '@server/common/helpers';
 
@@ -98,7 +99,7 @@ export class MadBooksBookParser
     return new CreateBookDto(
       {
         defaultTitle: title,
-        originalPublishDate: basicProps['data premiery'],
+        originalPublishYear: normalizeParsedYear(basicProps['data premiery']),
         authors: (basicProps['autor'] || '').split(',').map((name) => (
           new CreateBookAuthorDto(
             {

@@ -54,7 +54,7 @@ export class CreateBookDto {
 
   @IsOptional()
   @IsString()
-  readonly originalPublishDate: string;
+  readonly originalPublishYear: number;
 
   @IsOptional()
   @IsArray()

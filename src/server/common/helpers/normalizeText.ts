@@ -43,3 +43,14 @@ export function normalizePrice(str: string) {
     currency: currency?.toLowerCase(),
   };
 }
+
+/**
+ * Extracts year from date
+ *
+ * @export
+ * @param {string} str
+ * @return {number}
+ */
+export function normalizeParsedYear(str: string): number {
+  return str && new Date(str.match(/\d{4}/)?.[0]).getFullYear();
+}

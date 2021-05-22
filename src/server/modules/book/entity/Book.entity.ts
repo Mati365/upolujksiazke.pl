@@ -64,8 +64,8 @@ export class BookEntity extends DatedRecordEntity implements TrackScrappersList 
   @Column('citext', {nullable: true})
   originalTitle: string;
 
-  @Column('text', {nullable: true})
-  originalPublishDate: string;
+  @Column('int', {nullable: true})
+  originalPublishYear: number;
 
   @Column('text', {nullable: true})
   description: string;
@@ -87,7 +87,7 @@ export class BookEntity extends DatedRecordEntity implements TrackScrappersList 
   )
   categories: BookCategoryEntity[];
 
-  @Column('number', {nullable: true})
+  @Column('int', {nullable: true})
   primaryCategoryId: number;
 
   @ManyToOne(() => BookCategoryEntity, (category) => category.id, {onDelete: 'SET NULL'})

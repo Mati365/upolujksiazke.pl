@@ -14,7 +14,7 @@ export class BookHierarchySeriesService {
   public static readonly HIERARCHY_BOOK_CARD_FIELDS = [
     'book.id', 'book.defaultTitle', 'book.parameterizedSlug',
     'book.totalRatings', 'book.avgRating',
-    'volume.id', 'volume.name',
+    'volume.id', 'volume.name', 'book.originalPublishYear',
   ];
 
   private readonly logger = new Logger(BookHierarchySeriesService.name);
@@ -48,7 +48,7 @@ export class BookHierarchySeriesService {
             hierarchicSeriesId: Not(IsNull()),
           },
         )
-        .orderBy('volume.name')
+        .orderBy('book."originalPublishYear"', 'ASC')
         .getRawMany()
     );
 

@@ -37,7 +37,7 @@ export class BookCategoryEntity extends DatedRecordEntity {
   @Column('boolean', {default: false, nullable: true})
   root: boolean;
 
-  @Column('number', {nullable: true})
+  @Column('int', {nullable: true})
   parentCategoryId: number;
 
   @ManyToOne(() => BookCategoryEntity, (category) => category.id, {onDelete: 'SET NULL'})

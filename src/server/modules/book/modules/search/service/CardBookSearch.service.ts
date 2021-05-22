@@ -43,7 +43,7 @@ export class CardBookSearchService {
 
   public static readonly BOOK_FULL_CARD_FIELDS = [
     ...CardBookSearchService.BOOK_CARD_FIELDS,
-    'book.originalPublishDate', 'book.taggedDescription', 'book.description',
+    'book.originalPublishYear', 'book.taggedDescription', 'book.description',
     'schoolBook.id', 'schoolBook.classLevel', 'schoolBook.obligatory',
     'primaryRelease',
   ];

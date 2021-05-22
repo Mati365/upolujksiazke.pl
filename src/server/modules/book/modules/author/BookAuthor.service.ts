@@ -1,5 +1,7 @@
 import {Injectable} from '@nestjs/common';
 import {Connection, EntityManager} from 'typeorm';
+import pMap from 'p-map';
+import esb from 'elastic-builder';
 import * as R from 'ramda';
 
 import {
@@ -8,18 +10,68 @@ import {
   groupRawMany,
   upsert,
   paginatedAsyncIterator,
+  forwardTransaction,
 } from '@server/common/helpers/db';
 
 import {BooksAuthorsFilters} from '@api/repo';
 import {BookGroupedSelectAttrs} from '../../shared/types';
 import {BookAuthorEntity} from './BookAuthor.entity';
 import {CreateBookAuthorDto} from './dto/CreateBookAuthor.dto';
+import {EsBookAuthorIndex} from './indices/EsBookAuthor.index';
+import {BookService} from '../../services/Book.service';
 
 @Injectable()
 export class BookAuthorService {
   constructor(
     private readonly connection: Connection,
+    private readonly authorIndex: EsBookAuthorIndex,
+    private readonly bookService: BookService,
   ) {}
+
+  /**
+   * Delete array of authors
+   *
+   * @param {number[]} ids
+   * @param {EntityManager} [entityManager]
+   * @memberof BookAuthorService
+   */
+  async delete(ids: number[], entityManager?: EntityManager) {
+    const {
+      connection,
+      bookService,
+      authorIndex,
+    } = this;
+
+    await forwardTransaction(
+      {
+        connection,
+        entityManager,
+      },
+      async (transaction) => {
+        const booksIds = R.pluck('bookId', await (
+          transaction
+            .createQueryBuilder()
+            .from('book_authors_book_author', 'b')
+            .select('b."bookId"')
+            .where('b."bookAuthorId" in (:...ids)', {ids})
+            .getRawMany()
+        ));
+
+        if (!R.isEmpty(booksIds))
+          await bookService.delete(booksIds, transaction);
+
+        await transaction.remove(
+          ids.map((id) => new BookAuthorEntity(
+            {
+              id,
+            },
+          )),
+        );
+      },
+    );
+
+    await authorIndex.deleteEntities(ids);
+  }
 
   /**
    * Create query that iterates over all authors
@@ -55,6 +107,55 @@ export class BookAuthorService {
         },
       },
     );
+  }
+
+  /**
+   * Return most similar authors by name
+   *
+   * @param {Object} attrs
+   * @returns {Promise<CreateBookAuthorDto>}
+   * @memberof BookAuthorService
+   */
+  async findSimilarAuthor(
+    {
+      name,
+      excludeIds,
+    }: {
+      name: string,
+      excludeIds?: number[],
+    },
+  ): Promise<CreateBookAuthorDto> {
+    const {authorIndex} = this;
+    let query = (
+      esb
+        .boolQuery()
+        .must(
+          esb
+            .multiMatchQuery(
+              ['name', 'nameAliases'],
+              name,
+            )
+            .operator('and'),
+        )
+    );
+
+    if (excludeIds) {
+      query = query.mustNot(
+        esb.idsQuery('values', excludeIds),
+      );
+    }
+
+    const hits = await authorIndex.searchHits(
+      esb
+        .requestBodySearch()
+        .source(['id', 'name', 'parameterizedName'])
+        .query(query),
+    );
+
+    if (R.isEmpty(hits))
+      return null;
+
+    return hits[0]._source;
   }
 
   /**
@@ -225,6 +326,30 @@ export class BookAuthorService {
         Entity: BookAuthorEntity,
         primaryKey: 'parameterizedName',
         data: dtos.map((dto) => new BookAuthorEntity(dto)),
+      },
+    );
+  }
+
+  /**
+   * Iterates over all dtos and try to merge aliases
+   *
+   * @param {CreateBookAuthorDto[]} dtos
+   * @memberof BookAuthorService
+   */
+  async mergeAliasedDtos(dtos: CreateBookAuthorDto[]) {
+    return pMap(
+      dtos,
+      async (dto) => {
+        const similarAuthor = await this.findSimilarAuthor(
+          {
+            name: dto.name,
+          },
+        );
+
+        return similarAuthor ?? dto;
+      },
+      {
+        concurrency: 2,
       },
     );
   }

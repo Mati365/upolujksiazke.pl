@@ -53,9 +53,10 @@ export class BookService {
     private readonly categoryService: BookCategoryService,
     @Inject(forwardRef(() => BookStatsService))
     private readonly statsService: BookStatsService,
+    @Inject(forwardRef(() => BookAuthorService))
+    private readonly authorService: BookAuthorService,
     private readonly connection: Connection,
     private readonly tagService: TagService,
-    private readonly authorService: BookAuthorService,
     private readonly volumeService: BookVolumeService,
     private readonly seriesService: BookSeriesService,
     private readonly prizeService: BookPrizeService,

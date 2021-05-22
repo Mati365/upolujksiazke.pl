@@ -22,6 +22,7 @@ import {
   {
     imports: [
       forwardRef(() => BookCategoryModule),
+      forwardRef(() => BookAuthorModule),
       BookTagsModule,
       BookReleaseModule,
       BookPrizeModule,
@@ -30,7 +31,6 @@ import {
       BookGenreModule,
       BookEraModule,
       BookSummaryModule,
-      BookAuthorModule,
     ],
     providers: [
       EsBookIndex,

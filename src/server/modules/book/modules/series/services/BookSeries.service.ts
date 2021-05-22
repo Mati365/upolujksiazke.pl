@@ -104,15 +104,13 @@ export class BookSeriesService {
         connection,
         entityManager,
       },
-      async (transaction) => {
-        await transaction.remove(
-          ids.map((id) => new BookSeriesEntity(
-            {
-              id,
-            },
-          )),
-        );
-      },
+      (transaction) => transaction.remove(
+        ids.map((id) => new BookSeriesEntity(
+          {
+            id,
+          },
+        )),
+      ),
     );
   }
 

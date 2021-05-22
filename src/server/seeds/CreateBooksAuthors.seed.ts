@@ -14,6 +14,10 @@ export default class CreateBooksAuthors implements Seeder {
         name: 'J.K. Rowling',
         nameAliases: [
           'Rowling Joanne K',
+          'J.K.Rowling',
+          'JK Rowling',
+          'Joanne Rowling',
+          'Rowling Joanne',
         ],
       },
     ];

@@ -13,6 +13,7 @@ import {objPropsToPromise} from '@shared/helpers/async/mapObjValuesToPromise';
 import {parameterize} from '@shared/helpers/parameterize';
 import {safeToString} from '@shared/helpers';
 
+import {BookAuthorService} from '@server/modules/book/modules/author/BookAuthor.service';
 import {EsFuzzyBookSearchService} from '@server/modules/book/modules/search/service';
 import {BookService} from '@server/modules/book/services/Book.service';
 import {BookPublisherService} from '@server/modules/book/modules/publisher/BookPublisher.service';
@@ -72,6 +73,8 @@ export class BookDbLoaderService implements MetadataDbLoader {
   constructor(
     @Inject(forwardRef(() => BookService))
     private readonly bookService: BookService,
+    @Inject(forwardRef(() => BookAuthorService))
+    private readonly bookAuthorService: BookAuthorService,
     @Inject(forwardRef(() => EsFuzzyBookSearchService))
     private readonly esFuzzyBookSearchService: EsFuzzyBookSearchService,
     private readonly scrapperMatcherService: ScrapperMatcherService,
@@ -346,8 +349,9 @@ export class BookDbLoaderService implements MetadataDbLoader {
     attrs: BookExtractorAttrs = {},
   ) {
     const {
-      esFuzzyBookSearchService,
       bookService,
+      bookAuthorService,
+      esFuzzyBookSearchService,
       eventEmitter,
     } = this;
 
@@ -367,14 +371,20 @@ export class BookDbLoaderService implements MetadataDbLoader {
     if (!normalizedReleases)
       return null;
 
+    const mergedBooks = mergeBooks(books);
     const dto = new CreateBookDto(
       {
-        ...mergeBooks(books),
+        ...mergedBooks,
         ...cachedBook && {
           id: cachedBook.id,
           parameterizedSlug: cachedBook.parameterizedSlug,
         },
-        releases: await this.fixSimilarNamedReleasesPublishers(normalizedReleases),
+        ...await objPropsToPromise(
+          {
+            releases: this.fixSimilarNamedReleasesPublishers(normalizedReleases),
+            authors: bookAuthorService.mergeAliasedDtos(mergedBooks.authors),
+          },
+        ),
       },
     );
 

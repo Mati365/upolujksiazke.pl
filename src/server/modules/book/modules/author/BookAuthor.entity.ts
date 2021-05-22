@@ -27,6 +27,9 @@ export class BookAuthorEntity extends DatedRecordEntity {
   @Column('citext')
   name: string;
 
+  @Column('text', {array: true, nullable: true})
+  nameAliases: string[];
+
   @Column('text', {nullable: true})
   description: string;
 

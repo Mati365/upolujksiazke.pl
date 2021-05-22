@@ -4,8 +4,10 @@ import * as R from 'ramda';
 
 import {
   PaginationResult,
+  PaginationForwardIteratorAttrs,
   groupRawMany,
   upsert,
+  paginatedAsyncIterator,
 } from '@server/common/helpers/db';
 
 import {BooksAuthorsFilters} from '@api/repo';
@@ -18,6 +20,42 @@ export class BookAuthorService {
   constructor(
     private readonly connection: Connection,
   ) {}
+
+  /**
+   * Create query that iterates over all authors
+   *
+   * @param {Object} attrs
+   * @returns
+   * @memberof BookAuthorService
+   */
+  createIdsIteratedQuery(
+    {
+      pageLimit,
+      maxOffset = Infinity,
+      query = (
+        BookAuthorEntity.createQueryBuilder('c')
+      ),
+    }: PaginationForwardIteratorAttrs<BookAuthorEntity>,
+  ) {
+    return paginatedAsyncIterator(
+      {
+        maxOffset,
+        limit: pageLimit,
+        queryExecutor: async ({limit, offset}) => {
+          const result = await (
+            query
+              .select('c.id')
+              .offset(offset)
+              .limit(limit)
+              .orderBy('c.id', 'DESC')
+              .getMany()
+          );
+
+          return R.pluck('id', result);
+        },
+      },
+    );
+  }
 
   /**
    * Find single book by id

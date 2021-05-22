@@ -18,6 +18,10 @@ export class CreateBookAuthorDto {
   readonly name: string;
 
   @IsOptional()
+  @IsString({each: true})
+  readonly nameAliases: string[];
+
+  @IsOptional()
   @IsString()
   readonly description: string;
 

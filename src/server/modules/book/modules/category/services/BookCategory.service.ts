@@ -1,6 +1,7 @@
 import {Injectable} from '@nestjs/common';
 import {Connection, EntityManager} from 'typeorm';
 import * as R from 'ramda';
+import esb from 'elastic-builder';
 
 import {safePluckIds} from '@shared/helpers/safePluckIds';
 import {paginatedAsyncIterator, PaginationForwardIteratorAttrs} from '@server/common/helpers/db/paginatedAsyncIterator';
@@ -30,6 +31,63 @@ export class BookCategoryService {
     private readonly connection: Connection,
     private readonly categoryIndex: EsBookCategoryIndex,
   ) {}
+
+  /**
+   * Return most similar category by name
+   *
+   * @param {Object} attrs
+   * @returns {Promise<CreateBookCategoryDto>}
+   * @memberof BookCategoryService
+   */
+  async findSimilarCategory(
+    {
+      name,
+      root,
+      excludeIds,
+    }: {
+      name: string,
+      root?: boolean,
+      excludeIds?: number[],
+    },
+  ): Promise<CreateBookCategoryDto> {
+    const {categoryIndex} = this;
+    let query = (
+      esb
+        .boolQuery()
+        .must(
+          esb
+            .multiMatchQuery(
+              ['name', 'nameAliases'],
+              name,
+            )
+            .fuzziness('auto'),
+        )
+    );
+
+    if (!R.isNil(root)) {
+      query = query.filter(
+        esb.termQuery('root', root),
+      );
+    }
+
+    if (excludeIds) {
+      query = query.mustNot(
+        esb.idsQuery('values', excludeIds),
+      );
+    }
+
+    const hits = await categoryIndex.searchHits(
+      esb
+        .requestBodySearch()
+        .source(['id', 'name', 'parameterizedName'])
+        .query(query),
+    );
+
+    if (R.isEmpty(hits))
+      return null;
+
+    return hits[0]._source;
+  }
 
   /**
    * Finds one category entity

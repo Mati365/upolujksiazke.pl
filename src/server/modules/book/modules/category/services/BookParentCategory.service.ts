@@ -1,83 +1,25 @@
 import {Injectable} from '@nestjs/common';
 import {Equal, Not} from 'typeorm';
-import esb from 'elastic-builder';
 import * as R from 'ramda';
 
 import {paginatedAsyncIterator} from '@server/common/helpers/db';
-
-import {EsBookCategoryIndex} from '../indices/EsBookCategory.index';
-import {CreateBookCategoryDto} from '../dto/CreateBookCategory.dto';
 import {BookCategoryEntity} from '../BookCategory.entity';
+import {BookCategoryService} from './BookCategory.service';
 
 @Injectable()
 export class BookParentCategoryService {
   constructor(
-    private readonly categoryIndex: EsBookCategoryIndex,
+    private readonly categoryService: BookCategoryService,
   ) {}
 
   /**
-   * Return most similar category name
-   *
-   * @param {Object} attrs
-   * @returns {Promise<CreateBookCategoryDto>}
-   * @memberof BookParentCategoryService
-   */
-  async findSimilarCategory(
-    {
-      name,
-      root,
-      excludeIds,
-    }: {
-      name: string,
-      root?: boolean,
-      excludeIds?: number[],
-    },
-  ): Promise<CreateBookCategoryDto> {
-    const {categoryIndex} = this;
-    let query = (
-      esb
-        .boolQuery()
-        .must(
-          esb
-            .multiMatchQuery(
-              ['name', 'nameAliases'],
-              name,
-            )
-            .fuzziness('auto'),
-        )
-    );
-
-    if (!R.isNil(root)) {
-      query = query.filter(
-        esb.termQuery('root', root),
-      );
-    }
-
-    if (excludeIds) {
-      query = query.mustNot(
-        esb.idsQuery('values', excludeIds),
-      );
-    }
-
-    const hits = await categoryIndex.searchHits(
-      esb
-        .requestBodySearch()
-        .source(['id', 'name', 'parameterizedName'])
-        .query(query),
-    );
-
-    if (R.isEmpty(hits))
-      return null;
-
-    return hits[0]._source;
-  }
-
-  /**
-   *
+   * Iterates over all categories and assigns to them
+   * root category id
    *
    * @memberof BookParentCategoryService
    */
   async findAndAssignMissingParentCategories() {
+    const {categoryService} = this;
     const categoriesIterator = paginatedAsyncIterator(
       {
         limit: 40,
@@ -98,7 +40,7 @@ export class BookParentCategoryService {
       },
     );
 
-    const otherCategory = await this.findSimilarCategory(
+    const otherCategory = await categoryService.findSimilarCategory(
       {
         root: true,
         name: 'b.d',
@@ -107,7 +49,7 @@ export class BookParentCategoryService {
 
     for await (const [, categories] of categoriesIterator) {
       for await (const category of categories) {
-        const matchedRootCategory = await this.findSimilarCategory(
+        const matchedRootCategory = await categoryService.findSimilarCategory(
           {
             root: true,
             name: category.name,

@@ -11,6 +11,7 @@ import {Header} from './Header';
 import {Footer} from './Footer';
 
 export type LayoutViewData = {
+  hidePromoItems?: boolean,
   rootPopularCategories: BookCategoryRecord[],
   popularCategories: BookCategoryRecord[],
 };
@@ -19,6 +20,7 @@ export type LayoutProps = BasicWrapperProps & Partial<LayoutViewData>;
 
 export const Layout: AsyncPropsComponent<LayoutProps> = (
   {
+    hidePromoItems,
     rootPopularCategories,
     popularCategories,
     children,
@@ -28,7 +30,7 @@ export const Layout: AsyncPropsComponent<LayoutProps> = (
   <>
     <Header
       promoItems={
-        rootPopularCategories?.map(
+        !hidePromoItems && rootPopularCategories?.map(
           (category) => ({
             icon: category.icon,
             name: category.name,

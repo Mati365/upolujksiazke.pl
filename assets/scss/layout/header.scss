@@ -3,7 +3,11 @@
 
   position: relative;
   width: 100%;
-  margin-bottom: 2.5rem;
+  margin-bottom: 1.2rem;
+
+  &.has-promo-bar {
+    margin-bottom: 2.5rem;
+  }
 
   > .c-container:first-of-type {
     padding: 20px;

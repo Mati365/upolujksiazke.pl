@@ -41,7 +41,10 @@ export const BooksRoute: AsyncRoute<BooksRouteViewData> = (
   const t = useI18n('routes.books.all');
 
   return (
-    <Layout {...layoutData}>
+    <Layout
+      {...layoutData}
+      hidePromoItems
+    >
       <Container className='c-book-route'>
         <Breadcrumbs
           items={[

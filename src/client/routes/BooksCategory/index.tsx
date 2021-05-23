@@ -54,7 +54,10 @@ export const BooksCategoryRoute: AsyncRoute<BooksRouteViewData> = (
     return <Redirect to={BOOKS_PATH} />;
 
   return (
-    <Layout {...layoutData}>
+    <Layout
+      {...layoutData}
+      hidePromoItems
+    >
       <Container className='c-book-route'>
         <Breadcrumbs
           items={[

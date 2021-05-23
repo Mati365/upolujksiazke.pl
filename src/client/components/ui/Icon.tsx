@@ -1,7 +1,7 @@
 import React, {ComponentType, CSSProperties} from 'react';
 import c from 'classnames';
 
-type IconProps = {
+export type IconProps = {
   style?: CSSProperties,
   className?: string,
   size?: string,

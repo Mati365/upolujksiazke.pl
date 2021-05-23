@@ -28,6 +28,7 @@ import {
   ViewModeSwitch,
 } from '@client/containers/filters';
 
+import {BooksBacklinks} from './BooksBacklinks';
 import {BooksGrid} from '../grids';
 import {BooksFiltersGroups} from './BooksFiltersGroups';
 
@@ -45,6 +46,7 @@ export function getDefaultBooksFilters() {
 }
 
 type BooksFiltersContainerProps = {
+  parentGroups?: ReactNode,
   initialBooks: BooksPaginationResultWithAggs,
   initialFilters?: any,
   overrideFilters?: any,
@@ -57,6 +59,9 @@ export const BooksFiltersContainer = (
     initialFilters,
     overrideFilters,
     contentHeader,
+    parentGroups = (
+      <BooksBacklinks />
+    ),
   }: BooksFiltersContainerProps,
 ) => {
   const {
@@ -165,6 +170,7 @@ export const BooksFiltersContainer = (
             contentHeader={contentHeader}
             loading={loading}
             className='c-books-filters-section'
+            sidebarToolbar={parentGroups}
             sidebar={(
               <BooksFiltersGroups
                 aggs={safeResult.aggs}

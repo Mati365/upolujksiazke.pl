@@ -121,8 +121,8 @@ export const BooksFiltersGroups = (
         />
       )}
 
-      {renderBucketGroup('categories', categories)}
       {renderBucketGroup('authors', authors)}
+      {renderBucketGroup('categories', categories)}
 
       {!overrideFilters.price && (
         <FiltersGroup header={t('price.header')}>

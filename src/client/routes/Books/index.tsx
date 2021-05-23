@@ -11,6 +11,7 @@ import {Breadcrumbs} from '@client/containers/Breadcrumbs';
 
 import {Container} from '@client/components/ui';
 import {BooksPaginationResultWithAggs} from '@api/repo';
+import {BooksBacklinks} from '@client/containers/kinds/book/filters/BooksBacklinks';
 import {
   Layout,
   LayoutHeaderTitle,
@@ -58,6 +59,12 @@ export const BooksRoute: AsyncRoute<BooksRouteViewData> = (
             <LayoutHeaderTitle margin='medium'>
               {t('title')}
             </LayoutHeaderTitle>
+          )}
+          parentGroups={(
+            <BooksBacklinks
+              categories={layoutData.rootPopularCategories}
+              showAllBooksLink
+            />
           )}
         />
       </Container>

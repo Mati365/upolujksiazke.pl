@@ -22,7 +22,7 @@ export const DefaultAsyncExpandableToolbar = (
     return null;
 
   return (
-    <Tag className='mt-3 c-flex-center'>
+    <Tag className='mt-2 c-flex-center'>
       <TextButton
         type='primary'
         className='is-text-tiny is-text-semibold'

@@ -23,6 +23,7 @@ export type AsyncChunkAttributes<T> = {
 };
 
 export type AsyncExpandableChunksProps<T> = CleanListProps & {
+  header?: ReactNode,
   firstChunk?: T[],
   resetKey?: any,
   totalItems: number,
@@ -39,6 +40,7 @@ export type AsyncExpandableChunksProps<T> = CleanListProps & {
 
 export function AsyncExpandableChunks<T extends {id: any}>(
   {
+    header,
     resetKey,
     firstChunk,
     totalItems,
@@ -91,6 +93,7 @@ export function AsyncExpandableChunks<T extends {id: any}>(
       inline={false}
       {...props}
     >
+      {header}
       {allChunks.map(
         (chunk, index) => {
           if (!chunk?.length)

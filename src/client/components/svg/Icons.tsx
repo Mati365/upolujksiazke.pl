@@ -1,3 +1,4 @@
+import React from 'react';
 import * as R from 'ramda';
 
 import AnchorSVG from '@assets/icons/svg/anchor.svg';
@@ -63,7 +64,7 @@ import MehSVG from '@assets/icons/svg/meh.svg';
 import ListSVG from '@assets/icons/svg/list-ul.svg';
 import GridSVG from '@assets/icons/svg/grid.svg';
 import WebsiteLogoSVG from '@assets/icons/website-logo.svg';
-import {Icon} from '../ui/Icon';
+import {Icon, IconProps} from '../ui/Icon';
 
 export function getIconComponentIfString(icon: any) {
   if (R.is(String, icon))
@@ -72,6 +73,16 @@ export function getIconComponentIfString(icon: any) {
 
   return icon;
 }
+
+export const DynamicIcon = ({icon, ...props}: {icon: string} & Omit<IconProps, 'svgComponent'>) => {
+  const IconComponent = getIconComponentIfString(icon);
+  if (!IconComponent)
+    return null;
+
+  return (
+    <IconComponent {...props} />
+  );
+};
 
 export const WebsiteLogoIcon = Icon.createFromSVG(WebsiteLogoSVG, '0 0 1049.965 1510.7');
 export const ChevronRightIcon = Icon.createFromSVG(ChevronRightSVG);

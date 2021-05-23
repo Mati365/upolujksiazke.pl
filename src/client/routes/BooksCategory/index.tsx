@@ -9,10 +9,12 @@ import {useI18n} from '@client/i18n';
 
 import {AsyncRoute} from '@client/components/utils/asyncRouteUtils';
 import {Breadcrumbs} from '@client/containers/Breadcrumbs';
+import {DynamicIcon} from '@client/components/svg';
 
 import {Container} from '@client/components/ui';
 import {BooksPaginationResultWithAggs} from '@api/repo';
 import {BookCategoryRecord} from '@api/types';
+import {BooksBacklinks} from '@client/containers/kinds/book/filters/BooksBacklinks';
 
 import {
   Layout,
@@ -79,8 +81,19 @@ export const BooksCategoryRoute: AsyncRoute<BooksRouteViewData> = (
           }}
           contentHeader={(
             <LayoutHeaderTitle margin='medium'>
+              <DynamicIcon
+                icon={category.icon}
+                className='mr-2'
+              />
               {t('title', [category.name])}
             </LayoutHeaderTitle>
+          )}
+          parentGroups={(
+            <BooksBacklinks
+              currentCategory={category}
+              categories={layoutData.rootPopularCategories}
+              showAllBooksLink
+            />
           )}
         />
       </Container>

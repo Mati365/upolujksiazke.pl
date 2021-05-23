@@ -34,8 +34,8 @@
     margin: 0;
     max-width: 100%;
     text-transform: capitalize;
-    font-size: .65rem;
-    line-height: 1rem;
+    font-size: $text-small;
+    line-height: $text-small-line-height;
   }
 
   &__content {

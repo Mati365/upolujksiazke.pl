@@ -1,7 +1,7 @@
 import React from 'react';
 import * as R from 'ramda';
 
-import {getIconComponentIfString} from '@client/components/svg';
+import {DynamicIcon} from '@client/components/svg';
 import {useI18n} from '@client/i18n';
 
 import {CleanList, UndecoratedLink} from '@client/components/ui';
@@ -41,27 +41,24 @@ export const HeaderPromoLinks = ({items}: HeaderPromoLinksProps) => {
       inline
     >
       {visible.map(
-        ({name, href, icon}, index) => {
-          const IconComponent = getIconComponentIfString(icon);
-
-          return (
-            <li key={name}>
-              <UndecoratedLink
-                href={href}
-                className='c-header__promo-link'
-                activeClassName='is-active'
-                style={{
-                  borderBottomColor: PROMO_COLORS[index % PROMO_COLORS.length],
-                }}
-              >
-                {IconComponent && (
-                  <IconComponent className='c-header__promo-link-icon' />
-                )}
-                {name}
-              </UndecoratedLink>
-            </li>
-          );
-        },
+        ({name, href, icon}, index) => (
+          <li key={name}>
+            <UndecoratedLink
+              href={href}
+              className='c-header__promo-link'
+              activeClassName='is-active'
+              style={{
+                borderBottomColor: PROMO_COLORS[index % PROMO_COLORS.length],
+              }}
+            >
+              <DynamicIcon
+                icon={icon}
+                className='c-header__promo-link-icon'
+              />
+              {name}
+            </UndecoratedLink>
+          </li>
+        ),
       )}
       {!R.isEmpty(rest) && (
         <li>

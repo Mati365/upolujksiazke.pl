@@ -9,6 +9,7 @@ type FiltersContainerProps = {
   children: ReactNode,
   sidebar: ReactNode,
   contentHeader?: ReactNode,
+  sidebarToolbar?: ReactNode,
   className?: string,
   loading?: boolean,
   toolbarRenderFn?(top: boolean): ReactNode,
@@ -34,6 +35,7 @@ export const FiltersContainer = (
     children,
     contentHeader,
     sidebar,
+    sidebarToolbar,
     className,
     loading,
     toolbarRenderFn,
@@ -60,6 +62,12 @@ export const FiltersContainer = (
       )}
     >
       <div className='c-filters-section__sidebar'>
+        {sidebarToolbar && (
+          <div className='c-filters-section__sidebar-toolbar'>
+            {sidebarToolbar}
+          </div>
+        )}
+
         <h4 className='c-filters-section__sidebar-header'>
           {t('header')}
 

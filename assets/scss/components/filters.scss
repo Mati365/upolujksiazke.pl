@@ -172,6 +172,14 @@
     &__chunk > li {
       line-height: 1rem;
       margin-bottom: 7px;
+
+      &.is-active {
+        padding: 5px;
+        background: color(primary);
+        color: #fff;
+        font-weight: 700;
+        font-size: $text-small;
+      }
     }
   }
 

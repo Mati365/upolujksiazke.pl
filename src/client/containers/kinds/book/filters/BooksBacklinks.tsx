@@ -64,7 +64,7 @@ export const BooksBacklinks = (
           }
           header={
             currentCategory && (
-              <li className='is-text-bold c-promo-tag-link'>
+              <li className='is-active'>
                 {renderBookCategory(currentCategory)}
               </li>
             )

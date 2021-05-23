@@ -33,13 +33,13 @@ import {ServerAPIClientChild} from '../ServerAPIClientChild';
 
 export class BooksServerRepo extends ServerAPIClientChild implements BooksRepo {
   static readonly DEFAULT_BOOK_AGGS_FILTERS: AggsBooksFilters['aggs'] = {
-    categories: {limit: 10},
+    categories: {limit: 5},
     authors: {limit: 5},
     publishers: {limit: 5},
-    schoolLevels: {limit: 10},
+    schoolLevels: {limit: 5},
+    prizes: {limit: 5},
     era: {},
     genre: {},
-    prizes: {},
     types: {},
   };
 

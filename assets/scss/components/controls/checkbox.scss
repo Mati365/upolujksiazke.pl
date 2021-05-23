@@ -1,5 +1,6 @@
 .c-checkbox {
   &-list {
+    &.is-last-spaced > li:last-child,
     > li:not(:last-child) {
       margin-bottom: 8px;
     }

@@ -95,7 +95,6 @@ export const BooksCategoryRoute: AsyncRoute<BooksRouteViewData> = (
             <BooksBacklinks
               currentCategory={category}
               categories={layoutData.rootPopularCategories}
-              showAllBooksLink
             />
           )}
         />

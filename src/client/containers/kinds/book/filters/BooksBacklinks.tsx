@@ -17,14 +17,12 @@ import {
 type BooksBacklinksProps = {
   currentCategory?: BookCategoryRecord,
   categories?: BookCategoryRecord[],
-  showAllBooksLink?: boolean,
 };
 
 export const BooksBacklinks = (
   {
     categories,
     currentCategory,
-    showAllBooksLink,
   }: BooksBacklinksProps,
 ) => {
   const t = useI18n();
@@ -48,13 +46,11 @@ export const BooksBacklinks = (
         </HomeLink>
       </BacklinkTitledGroup>
 
-      {showAllBooksLink && (
-        <BacklinkTitledGroup>
-          <BooksLink>
-            {t('links.books')}
-          </BooksLink>
-        </BacklinkTitledGroup>
-      )}
+      <BacklinkTitledGroup>
+        <BooksLink>
+          {t('links.books')}
+        </BooksLink>
+      </BacklinkTitledGroup>
 
       {categories && (
         <BacklinksList

@@ -64,10 +64,7 @@ export const BooksRoute: AsyncRoute<BooksRouteViewData> = (
             </LayoutHeaderTitle>
           )}
           parentGroups={(
-            <BooksBacklinks
-              categories={layoutData.rootPopularCategories}
-              showAllBooksLink
-            />
+            <BooksBacklinks categories={layoutData.rootPopularCategories} />
           )}
         />
       </Container>

@@ -35,7 +35,6 @@ export const CheckboxList = linkInputs<CheckboxesValuesMap>(
   <CleanList
     block
     inline={false}
-    spaced={2}
     className={c(
       'c-checkbox-list',
       className,

@@ -21,5 +21,9 @@
     margin-top: 0.25rem;
     margin-bottom: 2.5rem;
     font-size: 1.15rem;
+
+    &.has-medium-margin {
+      margin-bottom: 1.5rem;
+    }
   }
 }

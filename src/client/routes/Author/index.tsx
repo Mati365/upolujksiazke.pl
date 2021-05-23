@@ -81,16 +81,17 @@ export const AuthorRoute: AsyncRoute<AuthorRouteData> = (
           ]}
         />
 
-        <LayoutHeaderTitle>
-          {t('title', [author.name])}
-        </LayoutHeaderTitle>
-
         <BooksFiltersContainer
           initialBooks={initialBooks}
           initialFilters={initialFilters}
           overrideFilters={{
             authors: [author],
           }}
+          contentHeader={(
+            <LayoutHeaderTitle margin='medium'>
+              {t('title', [author.name])}
+            </LayoutHeaderTitle>
+          )}
         />
       </Container>
     </Layout>

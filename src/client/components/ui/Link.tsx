@@ -28,6 +28,7 @@ export type UndecoratedLinkProps<I = {}, P = {}> = P & {
   hash?: string,
   rel?: string,
   utm?: object,
+  title?: string,
   action?: string,
   spaMode?: boolean,
   withChevron?: boolean,

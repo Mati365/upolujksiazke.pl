@@ -71,16 +71,17 @@ export const BooksCategoryRoute: AsyncRoute<BooksRouteViewData> = (
           ]}
         />
 
-        <LayoutHeaderTitle>
-          {t('title', [category.name])}
-        </LayoutHeaderTitle>
-
         <BooksFiltersContainer
           initialBooks={initialBooks}
           initialFilters={initialFilters}
           overrideFilters={{
             parentCategoriesIds: [category.id],
           }}
+          contentHeader={(
+            <LayoutHeaderTitle margin='medium'>
+              {t('title', [category.name])}
+            </LayoutHeaderTitle>
+          )}
         />
       </Container>
     </Layout>

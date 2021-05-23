@@ -51,13 +51,14 @@ export const BooksRoute: AsyncRoute<BooksRouteViewData> = (
           ]}
         />
 
-        <LayoutHeaderTitle>
-          {t('title')}
-        </LayoutHeaderTitle>
-
         <BooksFiltersContainer
           initialBooks={initialBooks}
           initialFilters={initialFilters}
+          contentHeader={(
+            <LayoutHeaderTitle margin='medium'>
+              {t('title')}
+            </LayoutHeaderTitle>
+          )}
         />
       </Container>
     </Layout>

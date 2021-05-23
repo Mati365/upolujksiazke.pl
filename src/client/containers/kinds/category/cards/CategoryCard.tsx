@@ -21,7 +21,10 @@ export const CategoryCard = ({className, item}: CategoryCardProps) => {
         className,
       )}
     >
-      <BookCategoryLink item={item}>
+      <BookCategoryLink
+        item={item}
+        title={item.name}
+      >
         <div className='c-category-card__content'>
           {Icon && (
             <Icon className='c-category-card__icon' />

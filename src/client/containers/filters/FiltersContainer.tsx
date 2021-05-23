@@ -8,6 +8,7 @@ import {CleanList, TextButton} from '@client/components/ui';
 type FiltersContainerProps = {
   children: ReactNode,
   sidebar: ReactNode,
+  contentHeader?: ReactNode,
   className?: string,
   loading?: boolean,
   toolbarRenderFn?(top: boolean): ReactNode,
@@ -31,6 +32,7 @@ export const FiltersPaginationToolbar = ({children, className}: {children: React
 export const FiltersContainer = (
   {
     children,
+    contentHeader,
     sidebar,
     className,
     loading,
@@ -80,8 +82,8 @@ export const FiltersContainer = (
           loading && 'is-loading',
         )}
       >
+        {contentHeader}
         {renderToolbar(true)}
-
         <div className='c-filters-section__items'>
           {children}
         </div>

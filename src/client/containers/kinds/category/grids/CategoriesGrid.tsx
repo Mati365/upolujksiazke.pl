@@ -13,7 +13,7 @@ export const CategoriesGrid = memo<CategoriesGridProps>(
   ({items, className, ...props}) => (
     <Grid
       columns={{
-        default: 6,
+        default: 8,
         xs: 2,
       }}
       {...props}

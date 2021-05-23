@@ -1,4 +1,4 @@
-import React, {useMemo} from 'react';
+import React, {useMemo, ReactNode} from 'react';
 import * as R from 'ramda';
 
 import {
@@ -48,6 +48,7 @@ type BooksFiltersContainerProps = {
   initialBooks: BooksPaginationResultWithAggs,
   initialFilters?: any,
   overrideFilters?: any,
+  contentHeader?: ReactNode,
 };
 
 export const BooksFiltersContainer = (
@@ -55,6 +56,7 @@ export const BooksFiltersContainer = (
     initialBooks,
     initialFilters,
     overrideFilters,
+    contentHeader,
   }: BooksFiltersContainerProps,
 ) => {
   const {
@@ -127,7 +129,7 @@ export const BooksFiltersContainer = (
         const safeResult = result ?? initialBooks;
         const emptyItems = !loading && R.isEmpty(safeResult.items);
 
-        const toolbarRenderFn = (bottom: boolean) => (!emptyItems || bottom) && (
+        const toolbarRenderFn = (top: boolean) => (!emptyItems || top) && (
           <>
             <FiltersPaginationToolbar>
               <li>
@@ -160,6 +162,7 @@ export const BooksFiltersContainer = (
 
         return (
           <FiltersContainer
+            contentHeader={contentHeader}
             loading={loading}
             className='c-books-filters-section'
             sidebar={(

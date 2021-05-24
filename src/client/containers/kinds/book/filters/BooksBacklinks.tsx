@@ -15,12 +15,14 @@ import {
 } from '@client/routes/Links';
 
 type BooksBacklinksProps = {
+  withAllBooksLink?: boolean,
   currentCategory?: BookCategoryRecord,
   categories?: BookCategoryRecord[],
 };
 
 export const BooksBacklinks = (
   {
+    withAllBooksLink = true,
     categories,
     currentCategory,
   }: BooksBacklinksProps,
@@ -46,11 +48,13 @@ export const BooksBacklinks = (
         </HomeLink>
       </BacklinkTitledGroup>
 
-      <BacklinkTitledGroup>
-        <BooksLink>
-          {t('links.books')}
-        </BooksLink>
-      </BacklinkTitledGroup>
+      {withAllBooksLink && (
+        <BacklinkTitledGroup>
+          <BooksLink>
+            {t('links.books')}
+          </BooksLink>
+        </BacklinkTitledGroup>
+      )}
 
       {categories && (
         <BacklinksList

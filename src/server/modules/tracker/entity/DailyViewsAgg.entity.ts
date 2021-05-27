@@ -1,6 +1,6 @@
 import {ChildEntity} from 'typeorm';
 
-import {TrackerViewsMode} from '../constants/enums';
+import {TrackerViewsMode} from '@shared/enums';
 import {ViewsAggEntity} from './ViewsAgg.entity';
 
 @ChildEntity(TrackerViewsMode.DAY)

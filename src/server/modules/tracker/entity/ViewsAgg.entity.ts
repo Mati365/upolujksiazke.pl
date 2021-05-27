@@ -7,7 +7,7 @@ import {DatedRecordEntity} from '@server/modules/database/DatedRecord.entity';
 import {
   TrackerRecordType,
   TrackerViewsMode,
-} from '../constants/enums';
+} from '@shared/enums';
 
 /**
  * @export
@@ -28,10 +28,10 @@ import {
   },
 )
 @Unique(
-  'views_aggs_dated_type_unique_record',
-  ['type', 'recordId', 'date'],
+  'views_aggs_mode_type_unique_record',
+  ['mode', 'type', 'recordId', 'date'],
 )
-@Index(['type', 'recordId'])
+@Index(['mode', 'type', 'recordId'])
 export class ViewsAggEntity extends DatedRecordEntity {
   mode: TrackerViewsMode;
 

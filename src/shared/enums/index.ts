@@ -3,6 +3,7 @@ export * from './bookSummaries';
 export * from './imageVersion';
 export * from './language';
 export * from './school';
+export * from './tracker';
 
 export enum SortMode {
   ACCURACY = 1,

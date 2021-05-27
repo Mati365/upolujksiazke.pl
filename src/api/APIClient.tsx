@@ -11,6 +11,7 @@ import {
   BooksCategoriesRepo,
   BookAuthorsRepo,
   TagsRepo,
+  TrackerRepo,
 } from './repo';
 
 export type BasicAPIPagination = {
@@ -49,6 +50,7 @@ export abstract class APIClient {
       books: BooksRepo,
       booksCategories: BooksCategoriesRepo,
       tags: TagsRepo,
+      tracker: TrackerRepo,
       authors: BookAuthorsRepo,
     },
   ) {

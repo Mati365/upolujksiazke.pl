@@ -61,8 +61,8 @@ export class JwtAPIClient {
   constructor(config: APIConfig) {
     this._config = {
       ...config,
-      camelizeResponse: config.camelizeResponse ?? true,
-      decamelizeFormBody: config.decamelizeFormBody ?? true,
+      camelizeResponse: config.camelizeResponse ?? false,
+      decamelizeFormBody: config.decamelizeFormBody ?? false,
       tokenAccessor: config.tokenAccessor ?? new JwtTokenAccessor,
     };
   }

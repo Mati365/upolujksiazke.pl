@@ -3,3 +3,4 @@ export * from './Books.repo';
 export * from './BooksCategories.repo';
 export * from './BookAuthors.repo';
 export * from './Tags.repo';
+export * from './Tracker.repo';

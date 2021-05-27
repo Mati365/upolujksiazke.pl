@@ -14,6 +14,7 @@ export * from './BookGenre.record';
 export * from './BookPrize.record';
 export * from './BookSummaryHeader.record';
 export * from './Tag.record';
+export * from './Track.record';
 export * from './Website.record';
 export * from './ImageAttachment.record';
 export * from './CategoryBooksGroup.record';

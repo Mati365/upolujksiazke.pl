@@ -18,7 +18,7 @@ export class BooksAjaxRepo extends AjaxAPIClientChild implements BooksRepo {
    * @memberof BooksAjaxRepo
    */
   findAggregatedBooks(filters: AggsBooksFilters): CanBePromise<BooksPaginationResultWithAggs> {
-    return this.ajax.apiCall(
+    return this.ajax.get(
       {
         path: '/books',
         urlParams: filters,
@@ -40,8 +40,9 @@ export class BooksAjaxRepo extends AjaxAPIClientChild implements BooksRepo {
         pagination,
       },
       filters,
-    }: SingleAggBookFilters): CanBePromise<BooksPaginationResultWithAggs> {
-    return this.ajax.apiCall(
+    }: SingleAggBookFilters,
+  ): CanBePromise<BooksPaginationResultWithAggs> {
+    return this.ajax.get(
       {
         path: `/books/filters/aggs/${name}`,
         urlParams: {

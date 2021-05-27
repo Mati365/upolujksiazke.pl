@@ -76,7 +76,7 @@ export const APIQuery = <T extends unknown>(
             api,
           },
         )
-        : api.asyncCaller.apiCall(config)
+        : api.asyncCaller.get(config)
     ),
     ignoreFirstRenderFetch
       ? DEFAULT_NON_INITIAL_LOADING_EXECUTOR_CONFIG

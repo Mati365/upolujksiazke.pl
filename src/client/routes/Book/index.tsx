@@ -42,6 +42,8 @@ import {
   HOME_PATH,
 } from '../Links';
 
+import {useTrackBookRoute} from './hooks/useTrackBookRoute';
+
 type BookRouteViewData = {
   layoutData: LayoutViewData,
   book: BookFullInfoRecord,
@@ -59,6 +61,12 @@ export const BookRoute: AsyncRoute<BookRouteViewData> = (
 ) => {
   const t = useI18n();
   const ua = useUA();
+
+  useTrackBookRoute(
+    {
+      recordId: book?.id,
+    },
+  );
 
   if (!book)
     return <Redirect to={HOME_PATH} />;

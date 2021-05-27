@@ -1,4 +1,6 @@
 import {Global, Module} from '@nestjs/common';
+
+import {MonthlyStatsCron} from './cron/MonthlyStats.cron';
 import {TrackRecordViewsService} from './service/TrackRecordViews.service';
 
 @Global()
@@ -6,6 +8,7 @@ import {TrackRecordViewsService} from './service/TrackRecordViews.service';
   {
     providers: [
       TrackRecordViewsService,
+      MonthlyStatsCron,
     ],
     exports: [
       TrackRecordViewsService,

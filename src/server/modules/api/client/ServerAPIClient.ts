@@ -20,6 +20,7 @@ export class ServerAPIClient extends APIClient {
         booksCategories: new BooksCategoriesServerRepo,
         authors: new BooksAuthorsServerRepo,
         tags: new TagsServerRepo,
+        tracker: null,
       },
     );
   }

@@ -13,7 +13,7 @@ import {
 import {BooksFilters} from '@api/repo';
 import {BookSchoolLevel, BookType, SortMode} from '@shared/enums';
 
-export class BooksFiltersDto extends APIPaginationDto implements Required<BooksFilters> {
+export class BooksQueryFiltersDto extends APIPaginationDto implements Required<BooksFilters> {
   @IsOptional()
   @TransformBoolean()
   readonly selectDescription: boolean;

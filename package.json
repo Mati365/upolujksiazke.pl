@@ -121,6 +121,7 @@
     "classnames": "^2.2.6",
     "constate": "^3.1.0",
     "cookie-parser": "^1.4.5",
+    "date-fns": "^2.21.3",
     "dotenv": "^8.2.0",
     "easyimage": "^3.1.1",
     "elastic-builder": "^2.13.0",

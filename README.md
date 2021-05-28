@@ -49,8 +49,8 @@ OpenSource book reviews aggregator, something like Metacritic / Digg for books. 
 - [ ] Dynamic create e-leaflets from books grouped by shop
 - [ ] Add button on availability table with "add store link" and if user adds try to parse
 - [ ] Video reviews
-- [ ] Hierarchic comments (filmweb)
-- [ ] 
+- [ ] Hierarchic comments (filmweb, reddit)
+
 ## Resources
 
 Similar websites:

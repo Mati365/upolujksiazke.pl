@@ -56,31 +56,6 @@ export const AuthorRoute: AsyncRoute<AuthorRouteData> = (
   return (
     <Layout {...layoutData}>
       <Container className='c-book-route'>
-        <Breadcrumbs
-          items={[
-            {
-              id: 'books',
-              node: (
-                <BooksLink>
-                  {t('shared.breadcrumbs.books')}
-                </BooksLink>
-              ),
-            },
-            {
-              id: 'authors',
-              node: (
-                <AuthorsLink>
-                  {t('shared.breadcrumbs.authors')}
-                </AuthorsLink>
-              ),
-            },
-            {
-              id: 'author',
-              node: author.name,
-            },
-          ]}
-        />
-
         <BooksFiltersContainer
           initialBooks={initialBooks}
           initialFilters={initialFilters}
@@ -88,9 +63,36 @@ export const AuthorRoute: AsyncRoute<AuthorRouteData> = (
             authors: [author],
           }}
           contentHeader={(
-            <LayoutHeaderTitle margin='medium'>
-              {t('title', [author.name])}
-            </LayoutHeaderTitle>
+            <>
+              <Breadcrumbs
+                padding='medium'
+                items={[
+                  {
+                    id: 'books',
+                    node: (
+                      <BooksLink>
+                        {t('shared.breadcrumbs.books')}
+                      </BooksLink>
+                    ),
+                  },
+                  {
+                    id: 'authors',
+                    node: (
+                      <AuthorsLink>
+                        {t('shared.breadcrumbs.authors')}
+                      </AuthorsLink>
+                    ),
+                  },
+                  {
+                    id: 'author',
+                    node: author.name,
+                  },
+                ]}
+              />
+              <LayoutHeaderTitle margin='medium'>
+                {t('title', [author.name])}
+              </LayoutHeaderTitle>
+            </>
           )}
         />
       </Container>

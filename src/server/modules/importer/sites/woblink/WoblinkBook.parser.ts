@@ -1,3 +1,6 @@
+import * as R from 'ramda';
+import pMap from 'p-map';
+
 import {
   extractTableRowsMap,
   extractJsonLD,
@@ -17,6 +20,7 @@ import {CreateBookPublisherDto} from '@server/modules/book/modules/publisher/dto
 import {CreateImageAttachmentDto} from '@server/modules/attachment/dto';
 import {CreateBookAvailabilityDto} from '@server/modules/book/modules/availability/dto/CreateBookAvailability.dto';
 
+import {mergeBooks} from '@importer/kinds/scrappers/helpers';
 import {
   BookAvailabilityParser,
   LANGUAGE_TRANSLATION_MAPPINGS,
@@ -27,6 +31,9 @@ import {
 import {BookProtection, BookType} from '@server/modules/book/modules/release/BookRelease.entity';
 import {AsyncURLParseResult} from '@server/common/helpers/fetchAsyncHTML';
 import {WebsiteScrapperParser} from '../../modules/scrapper/service/shared';
+import {ScrapperMetadataKind} from '../../modules/scrapper/entity';
+
+import type {WoblinkBookMatcher} from './WoblinkBook.matcher';
 
 export class WoblinkBookParser
   extends WebsiteScrapperParser<CreateBookDto>
@@ -69,6 +76,44 @@ export class WoblinkBookParser
    */
   /* eslint-disable @typescript-eslint/dot-notation */
   async parse(bookPage: AsyncURLParseResult) {
+    const parsed = await this.parseType(bookPage);
+    if (!parsed)
+      return null;
+
+    const {book, otherTypesLinks} = parsed;
+    const matcher = <WoblinkBookMatcher> this.matchers[ScrapperMetadataKind.BOOK];
+    const otherFormatsBooks = await pMap(
+      otherTypesLinks,
+      async (link) => {
+        const result = await this.parseType(
+          await matcher.fetchPageByPath(link),
+        );
+
+        return result?.book;
+      },
+      {
+        concurrency: 2,
+      },
+    );
+
+    return mergeBooks(
+      [
+        book,
+        ...otherFormatsBooks.filter(Boolean),
+      ],
+    );
+  }
+  /* eslint-enable @typescript-eslint/dot-notation */
+
+  /* eslint-disable @typescript-eslint/dot-notation */
+  /**
+   * Parses and returns other formats links
+   *
+   * @private
+   * @param {AsyncURLParseResult} bookPage
+   * @memberof WoblinkBookParser
+   */
+  private async parseType(bookPage: AsyncURLParseResult) {
     if (!bookPage)
       return null;
 
@@ -127,7 +172,7 @@ export class WoblinkBookParser
       },
     );
 
-    return new CreateBookDto(
+    const book = new CreateBookDto(
       {
         defaultTitle: bookSchema['name'],
         releases: [release],
@@ -147,6 +192,16 @@ export class WoblinkBookParser
         ),
       },
     );
+
+    return {
+      book,
+      otherTypesLinks: R.uniq(
+        R.map(
+          (el) => $(el).attr('href'),
+          $('#woblink-items .woblink-redirect:not(.woblink-redirect__highlighted)').toArray(),
+        ),
+      ),
+    };
   }
   /* eslint-enable @typescript-eslint/dot-notation */
 

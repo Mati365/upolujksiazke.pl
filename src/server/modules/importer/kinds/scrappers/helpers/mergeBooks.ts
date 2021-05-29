@@ -12,6 +12,9 @@ export function mergeBooks(books: CreateBookDto[]) {
       case 'authors':
         return a?.length && a.length < b?.length ? a : b;
 
+      case 'releases':
+        return R.uniqBy(R.prop('isbn'), [...(a || []), ...(b || [])]);
+
       case 'scrappersIds':
         return R.uniq([...(a || []), ...(b || [])]);
 

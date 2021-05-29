@@ -3,6 +3,10 @@
   color: color(muted-text);
   font-size: $text-small;
 
+  &.has-medium-padding {
+    margin-bottom: 1rem;
+  }
+
   &__item {
     @include flex-centered;
     margin-bottom: .5rem;

@@ -15,11 +15,18 @@ type BreadcrumbInfo = {
 };
 
 type BreadcrumbsProps = {
+  padding?: string,
   className?: string,
   items?: BreadcrumbInfo[],
 };
 
-export const Breadcrumbs = ({items = [], className}: BreadcrumbsProps) => {
+export const Breadcrumbs = (
+  {
+    padding,
+    items = [],
+    className,
+  }: BreadcrumbsProps,
+) => {
   const mergedItems: BreadcrumbInfo[] = [
     {
       id: 'home',
@@ -36,6 +43,7 @@ export const Breadcrumbs = ({items = [], className}: BreadcrumbsProps) => {
     <CleanList
       className={c(
         'c-breadcrumbs',
+        padding && `has-${padding}-padding`,
         className,
       )}
       spaced={2}

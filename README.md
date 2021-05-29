@@ -6,6 +6,11 @@
 
 OpenSource book reviews aggregator, something like Metacritic / Digg for books. It allows to compare book price between different shops.
 
+## Screens
+
+![Filtered books](/doc/screens/filtered-books.png) <br />
+![Book](/doc/screens/book.png)
+
 ## Goals
 
 - [ ] wykop #książki as blog

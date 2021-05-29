@@ -46,22 +46,25 @@ export const BooksRoute: AsyncRoute<BooksRouteViewData> = (
       hidePromoItems
     >
       <Container className='c-book-route'>
-        <Breadcrumbs
-          items={[
-            {
-              id: 'books',
-              node: t('shared.breadcrumbs.books'),
-            },
-          ]}
-        />
-
         <BooksFiltersContainer
           initialBooks={initialBooks}
           initialFilters={initialFilters}
           contentHeader={(
-            <LayoutHeaderTitle margin='medium'>
-              {t('title')}
-            </LayoutHeaderTitle>
+            <>
+              <Breadcrumbs
+                padding='medium'
+                items={[
+                  {
+                    id: 'books',
+                    node: t('shared.breadcrumbs.books'),
+                  },
+                ]}
+              />
+
+              <LayoutHeaderTitle margin='medium'>
+                {t('title')}
+              </LayoutHeaderTitle>
+            </>
           )}
           parentGroups={(
             <BooksBacklinks

@@ -59,23 +59,6 @@ export const BooksCategoryRoute: AsyncRoute<BooksRouteViewData> = (
       hidePromoItems
     >
       <Container className='c-book-route'>
-        <Breadcrumbs
-          items={[
-            {
-              id: 'books',
-              node: (
-                <BooksLink>
-                  {t('shared.breadcrumbs.books')}
-                </BooksLink>
-              ),
-            },
-            {
-              id: 'category',
-              node: capitalize(category.name),
-            },
-          ]}
-        />
-
         <BooksFiltersContainer
           initialBooks={initialBooks}
           initialFilters={initialFilters}
@@ -83,13 +66,32 @@ export const BooksCategoryRoute: AsyncRoute<BooksRouteViewData> = (
             parentCategoriesIds: [category.id],
           }}
           contentHeader={(
-            <LayoutHeaderTitle margin='medium'>
-              <DynamicIcon
-                icon={category.icon}
-                className='mr-2'
+            <>
+              <Breadcrumbs
+                padding='medium'
+                items={[
+                  {
+                    id: 'books',
+                    node: (
+                      <BooksLink>
+                        {t('shared.breadcrumbs.books')}
+                      </BooksLink>
+                    ),
+                  },
+                  {
+                    id: 'category',
+                    node: capitalize(category.name),
+                  },
+                ]}
               />
-              {t('title', [category.name])}
-            </LayoutHeaderTitle>
+              <LayoutHeaderTitle margin='medium'>
+                <DynamicIcon
+                  icon={category.icon}
+                  className='mr-2'
+                />
+                {t('title', [category.name])}
+              </LayoutHeaderTitle>
+            </>
           )}
           parentGroups={(
             <BooksBacklinks

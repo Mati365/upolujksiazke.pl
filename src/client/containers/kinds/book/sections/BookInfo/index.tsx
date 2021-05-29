@@ -31,9 +31,17 @@ type BookInfoProps = {
   book: BookFullInfoRecord,
   authorsBooks?: BooksAuthorsGroupedBooks,
   children?: ReactNode,
+  toolbar?: ReactNode,
 };
 
-export const BookInfo = ({book, authorsBooks, children}: BookInfoProps) => {
+export const BookInfo = (
+  {
+    toolbar,
+    book,
+    authorsBooks,
+    children,
+  }: BookInfoProps,
+) => {
   const t = useI18n();
   const ua = useUA();
   const {
@@ -52,8 +60,8 @@ export const BookInfo = ({book, authorsBooks, children}: BookInfoProps) => {
 
   return (
     <Section
-      spaced={2}
       className='c-book-info-section'
+      spaced={0}
     >
       {ua.desktop && (
         <BookSidebar
@@ -63,6 +71,8 @@ export const BookInfo = ({book, authorsBooks, children}: BookInfoProps) => {
       )}
 
       <div className='c-book-info-section__info'>
+        {toolbar}
+
         <BookHeaderSection
           book={book}
           formattedTitle={formattedTitle}

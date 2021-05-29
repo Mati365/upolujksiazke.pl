@@ -60,6 +60,9 @@ export const BookGalleryThumbs = (
     );
   };
 
+  if (items.length === 1)
+    return null;
+
   return (
     <CleanList
       className='c-book-gallery__thumbs'

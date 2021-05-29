@@ -9,7 +9,6 @@ import {
   BOOKS_PATH,
   AUTHORS_PATH,
   BOOK_SERIES_PATH,
-  TAGS_PATH,
   TOP_BOOKS_PATH,
   BookCategoryLink,
 } from '@client/routes/Links';
@@ -42,7 +41,6 @@ export const Footer = ({popularCategories}: FooterProps) => {
     [BOOKS_PATH, t('links.books')],
     [AUTHORS_PATH, t('links.authors')],
     [BOOK_SERIES_PATH, t('links.series')],
-    [TAGS_PATH, t('links.tags')],
     [TOP_BOOKS_PATH, t('links.top')],
   ];
 

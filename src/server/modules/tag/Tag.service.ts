@@ -2,6 +2,8 @@ import * as R from 'ramda';
 import {Injectable} from '@nestjs/common';
 import {Connection, EntityManager} from 'typeorm';
 
+import {ID} from '@shared/types';
+
 import {upsert} from '@server/common/helpers/db';
 import {parameterize} from '@shared/helpers/parameterize';
 
@@ -17,6 +19,17 @@ export class TagService {
   constructor(
     private readonly connection: Connection,
   ) {}
+
+  /**
+   * Finds one tag
+   *
+   * @param {ID} id
+   * @return {Promise<TagEntity>}
+   * @memberof TagService
+   */
+  findOne(id: ID): Promise<TagEntity> {
+    return TagEntity.findOne(id);
+  }
 
   /**
    * Creates single tag

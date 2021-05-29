@@ -50,7 +50,6 @@ export class BookTagsTextHydratorService {
         linkGeneratorFn: (item) => ({
           href: genTagLink(item),
           class: 'c-promo-tag-link',
-          target: '_blank',
         }),
         ...attrs,
       },

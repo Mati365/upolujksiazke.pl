@@ -7,7 +7,6 @@ import {
   HOME_PATH,
   BOOKS_PATH,
   BOOK_SERIES_PATH,
-  TAGS_PATH,
   TOP_BOOKS_PATH,
 } from '@client/routes/Links';
 
@@ -16,7 +15,6 @@ import {
   HomeIcon,
   TrophyIcon,
   BookIcon,
-  TagIcon,
   GroupIcon,
   CategoryIcon,
 } from '@client/components/svg/Icons';
@@ -29,7 +27,6 @@ export const HeaderToolbar = () => {
     [TrophyIcon, TOP_BOOKS_PATH, t('links.top')],
     [BookIcon, BOOK_SERIES_PATH, t('links.series')],
     [GroupIcon, genAuthorsLink(), t('links.authors')],
-    [TagIcon, TAGS_PATH, t('links.tags')],
   ];
 
   return (

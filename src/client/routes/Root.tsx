@@ -20,6 +20,7 @@ import {BooksCategoryRoute} from './BooksCategory';
 import {AuthorRoute} from './Author';
 import {AuthorsRoute} from './Authors';
 import {TopBooksRoute} from './TopBooks';
+import {TagRoute} from './Tag';
 
 export const APP_ROUTES_LIST: AsyncRouterRouteInfo[] = [
   {
@@ -42,6 +43,9 @@ export const APP_ROUTES_LIST: AsyncRouterRouteInfo[] = [
   },
   {
     component: TopBooksRoute,
+  },
+  {
+    component: TagRoute,
   },
 ];
 

@@ -53,12 +53,32 @@ export const BooksCategoryRoute: AsyncRoute<BooksRouteViewData> = (
   if (!category)
     return <Redirect to={BOOKS_PATH} />;
 
+  const breadcrumbs = (
+    <Breadcrumbs
+      padding='medium'
+      items={[
+        {
+          id: 'books',
+          node: (
+            <BooksLink>
+              {t('shared.breadcrumbs.books')}
+            </BooksLink>
+          ),
+        },
+        {
+          id: 'category',
+          node: capitalize(category.name),
+        },
+      ]}
+    />
+  );
+
   return (
     <Layout
       {...layoutData}
       hidePromoItems
     >
-      <Container className='c-book-route'>
+      <Container className='c-book-category-route'>
         <BooksFiltersContainer
           initialBooks={initialBooks}
           initialFilters={initialFilters}
@@ -67,23 +87,7 @@ export const BooksCategoryRoute: AsyncRoute<BooksRouteViewData> = (
           }}
           contentHeader={(
             <>
-              <Breadcrumbs
-                padding='medium'
-                items={[
-                  {
-                    id: 'books',
-                    node: (
-                      <BooksLink>
-                        {t('shared.breadcrumbs.books')}
-                      </BooksLink>
-                    ),
-                  },
-                  {
-                    id: 'category',
-                    node: capitalize(category.name),
-                  },
-                ]}
-              />
+              {breadcrumbs}
               <LayoutHeaderTitle margin='medium'>
                 <DynamicIcon
                   icon={category.icon}
@@ -118,7 +122,11 @@ BooksCategoryRoute.getInitialProps = async (attrs) => {
     search,
   } = attrs;
 
-  const initialFilters = deserializeUrlFilters(search);
+  const initialFilters = {
+    ...deserializeUrlFilters(search),
+    ...getDefaultBooksFilters(),
+  };
+
   const {
     initialBooks,
     layoutData,
@@ -134,7 +142,6 @@ BooksCategoryRoute.getInitialProps = async (attrs) => {
       ),
       initialBooks: repo.books.findAggregatedBooks(
         {
-          ...getDefaultBooksFilters(),
           ...serializeAggsToSearchParams(initialFilters),
           parentCategoriesIds: [params.id],
         },

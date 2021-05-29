@@ -71,11 +71,7 @@ export const BookRoute: AsyncRoute<BookRouteViewData> = (
   if (!book)
     return <Redirect to={HOME_PATH} />;
 
-  const {
-    volume, defaultTitle,
-    hierarchy, primaryCategory,
-  } = book;
-
+  const {volume, hierarchy, primaryCategory} = book;
   return (
     <Layout {...layoutData}>
       <Container className='c-book-route'>
@@ -104,7 +100,7 @@ export const BookRoute: AsyncRoute<BookRouteViewData> = (
                     id: 'book',
                     node: (
                       <BookLink item={hierarchy[0]}>
-                        {defaultTitle}
+                        {hierarchy[0].defaultTitle}
                       </BookLink>
                     ),
                   },

@@ -148,7 +148,7 @@ export class EsCardBookSearchService {
    */
   private createNestedEsFiltersQuery(filters: AggsBooksFilters) {
     const {
-      authorsIds, categoriesIds, parentCategoriesIds,
+      tagsIds, authorsIds, categoriesIds, parentCategoriesIds,
       genresIds, prizesIds, publishersIds,
       erasIds, types, excludeIds, schoolLevels,
       lowestPrice, highestPrice, phrase,
@@ -166,11 +166,14 @@ export class EsCardBookSearchService {
     if (authorsIds || categoriesIds || genresIds
         || prizesIds || publishersIds || erasIds
         || excludeIds || types || parentCategoriesIds
-        || schoolLevels) {
+        || schoolLevels || tagsIds) {
       const createNestedIdQuery = (name: string, ids: number[], idField: string = 'id') => esb.nestedQuery(
         esb.termsQuery(`${name}.${idField}`, ids),
         name,
       );
+
+      if (tagsIds)
+        filtersNestedQueries.tags = createNestedIdQuery('tags', tagsIds);
 
       if (authorsIds)
         filtersNestedQueries.authors = createNestedIdQuery('authors', authorsIds);

@@ -1,23 +1,23 @@
 import React from 'react';
-import {Redirect} from 'react-router-dom';
+import {Redirect} from 'react-router';
 
-import {objPropsToPromise} from '@shared/helpers';
+import {capitalize, objPropsToPromise} from '@shared/helpers';
 import {serializeAggsToSearchParams} from '@client/containers/kinds/book/filters/helpers/serializeAggsToSearchParams';
 import {deserializeUrlFilters} from '@client/containers/filters/hooks/useStoreFiltersInURL';
 
 import {useI18n} from '@client/i18n';
-
-import {BookAuthorRecord} from '@api/types';
-import {
-  BooksFiltersWithNames,
-  BooksPaginationResultWithAggs,
-} from '@api/repo';
 
 import {
   BooksFiltersContainer,
   getDefaultBooksFilters,
 } from '@client/containers/kinds/book/filters/BooksFiltersContainer';
 
+import {
+  BooksFiltersWithNames,
+  BooksPaginationResultWithAggs,
+} from '@api/repo';
+
+import {TagRecord} from '@api/types';
 import {AsyncRoute} from '@client/components/utils/asyncRouteUtils';
 import {Breadcrumbs} from '@client/containers/Breadcrumbs';
 import {Container} from '@client/components/ui';
@@ -28,34 +28,34 @@ import {
 } from '@client/containers/layout';
 
 import {
-  AuthorsLink,
   BooksLink,
-  genAuthorsLink,
-  AUTHOR_PATH,
+  HOME_PATH,
+  TAG_PATH,
 } from '../Links';
 
-type AuthorRouteData = {
+type TagRouteData = {
   layoutData: LayoutViewData,
-  author: BookAuthorRecord,
+  tag: TagRecord,
   initialBooks: BooksPaginationResultWithAggs,
   initialFilters: any,
 };
 
-export const AuthorRoute: AsyncRoute<AuthorRouteData> = (
+export const TagRoute: AsyncRoute<TagRouteData> = (
   {
+    tag,
     layoutData,
-    author,
     initialBooks,
     initialFilters,
   },
 ) => {
-  const t = useI18n('routes.author');
-  if (!author)
-    return <Redirect to={genAuthorsLink()} />;
+  const t = useI18n('routes.tag');
 
+  if (!tag)
+    return <Redirect to={HOME_PATH} />;
+
+  const capitalizedName = capitalize(tag.name);
   const breadcrumbs = (
     <Breadcrumbs
-      padding='medium'
       items={[
         {
           id: 'books',
@@ -66,16 +66,8 @@ export const AuthorRoute: AsyncRoute<AuthorRouteData> = (
           ),
         },
         {
-          id: 'authors',
-          node: (
-            <AuthorsLink>
-              {t('shared.breadcrumbs.authors')}
-            </AuthorsLink>
-          ),
-        },
-        {
-          id: 'author',
-          node: author.name,
+          id: 'tag',
+          node: capitalizedName,
         },
       ]}
     />
@@ -83,18 +75,18 @@ export const AuthorRoute: AsyncRoute<AuthorRouteData> = (
 
   return (
     <Layout {...layoutData}>
-      <Container className='c-author-route'>
+      <Container className='c-tag-route'>
         <BooksFiltersContainer
           initialBooks={initialBooks}
           initialFilters={initialFilters}
           overrideFilters={{
-            authors: [author],
+            tagsIds: [tag.id],
           }}
           contentHeader={(
             <>
               {breadcrumbs}
               <LayoutHeaderTitle margin='medium'>
-                {t('title', [author.name])}
+                {t('books.title', [capitalizedName])}
               </LayoutHeaderTitle>
             </>
           )}
@@ -104,19 +96,18 @@ export const AuthorRoute: AsyncRoute<AuthorRouteData> = (
   );
 };
 
-AuthorRoute.displayName = 'AuthorRoute';
+TagRoute.displayName = 'TagRoute';
 
-AuthorRoute.route = {
-  path: AUTHOR_PATH,
+TagRoute.route = {
+  path: TAG_PATH,
+  exact: true,
 };
 
-AuthorRoute.getInitialProps = async (attrs) => {
+TagRoute.getInitialProps = async (attrs) => {
   const {
     search,
     api: {repo},
-    match: {
-      params: {id},
-    },
+    match: {params},
   } = attrs;
 
   const initialFilters: BooksFiltersWithNames = {
@@ -126,16 +117,16 @@ AuthorRoute.getInitialProps = async (attrs) => {
 
   const {
     layoutData,
-    author,
+    tag,
     initialBooks,
   } = await objPropsToPromise(
     {
       layoutData: Layout.getInitialProps(attrs),
-      author: repo.authors.findOne(id),
+      tag: repo.tags.findOne(params.id),
       initialBooks: repo.books.findAggregatedBooks(
         {
           ...serializeAggsToSearchParams(initialFilters),
-          authorsIds: [id],
+          tagsIds: [params.id],
         },
       ),
     },
@@ -143,8 +134,8 @@ AuthorRoute.getInitialProps = async (attrs) => {
 
   return {
     layoutData,
-    author,
+    tag,
     initialBooks,
     initialFilters,
-  } as AuthorRouteData;
+  } as TagRouteData;
 };

@@ -95,9 +95,7 @@ export const AuthorLink = UndecoratedLink.create<Pick<BookAuthorRecord, 'paramet
 );
 
 export const TAG_PATH = '/tag/:slug,:id';
-export const TAGS_PATH = '/tagi';
 
-export const TagsLink = UndecoratedLink.create(TAGS_PATH);
 export const genTagLink = (
   {
     id,

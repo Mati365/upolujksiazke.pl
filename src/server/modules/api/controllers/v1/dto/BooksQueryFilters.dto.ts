@@ -50,6 +50,11 @@ export class BooksQueryFiltersDto extends APIPaginationDto implements Required<B
   @IsOptional()
   @TransformSeparatedArray()
   @IsNumber({}, {each: true})
+  readonly tagsIds: number[];
+
+  @IsOptional()
+  @TransformSeparatedArray()
+  @IsNumber({}, {each: true})
   readonly authorsIds: number[];
 
   @IsOptional()

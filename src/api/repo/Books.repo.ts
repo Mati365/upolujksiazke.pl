@@ -68,6 +68,7 @@ export type BooksFilters = BooksNonNestedFilters & {
   genresIds?: number[],
   erasIds?: number[],
   publishersIds?: number[],
+  tagsIds?: number[],
 };
 
 export type SingleAggBookFilters = {

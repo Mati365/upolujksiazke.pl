@@ -35,7 +35,7 @@ export const AuthorsRoute: AsyncRoute<AuthorsRouteData> = (
 
   return (
     <Layout {...layoutData}>
-      <Container className='c-book-route'>
+      <Container className='c-authors-route'>
         <Breadcrumbs
           items={[
             {

@@ -12,6 +12,7 @@ import {PL_BOOKS_ROUTE_PACK} from './routes/books';
 import {PL_AUTHORS_PACK} from './routes/authors';
 import {PL_AUTHOR_PACK} from './routes/author';
 import {PL_TOP_BOOKS_PACK} from './routes/topBooks';
+import {PL_TAG_PACK} from './routes/tag';
 
 const PL_BOOK_BINDING_PACK: Record<BookBindingKind, string> = {
   [BookBindingKind.HARDCOVER]: 'twarda okładka',
@@ -51,6 +52,7 @@ const ROUTES_PACK = {
   authors: PL_AUTHORS_PACK,
   author: PL_AUTHOR_PACK,
   top_books: PL_TOP_BOOKS_PACK,
+  tag: PL_TAG_PACK,
 };
 
 export const PL_LANG_PACK = {

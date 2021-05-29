@@ -45,7 +45,7 @@ export const BooksRoute: AsyncRoute<BooksRouteViewData> = (
       {...layoutData}
       hidePromoItems
     >
-      <Container className='c-book-route'>
+      <Container className='c-books-route'>
         <BooksFiltersContainer
           initialBooks={initialBooks}
           initialFilters={initialFilters}

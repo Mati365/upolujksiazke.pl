@@ -131,7 +131,7 @@ export class WoblinkBookParser
       {
         defaultTitle: bookSchema['name'],
         releases: [release],
-        authors: $('#cart-data .author-single').toArray().map(
+        authors: $('#cart-data .author-single').eq(0).toArray().map(
           (item) => new CreateBookAuthorDto(
             {
               name: normalizeParsedText($(item).text()),

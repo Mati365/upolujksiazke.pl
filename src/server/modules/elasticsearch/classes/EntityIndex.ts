@@ -22,7 +22,7 @@ export const PredefinedProperties = Object.freeze(
       },
     },
 
-    customIdNamePair: (properties) => R.mergeDeepLeft(
+    customIdNamePair: (properties: any) => R.mergeDeepLeft(
       PredefinedProperties.idNamePair,
       {
         properties,

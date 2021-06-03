@@ -2,7 +2,11 @@ import {forwardRef, Inject, Injectable} from '@nestjs/common';
 import esb from 'elastic-builder';
 import * as R from 'ramda';
 
-import {objPropsToPromise} from '@shared/helpers';
+import {
+  objPropsToPromise,
+  extractPropIfPresent,
+} from '@shared/helpers';
+
 import {
   createNestedIdsAgg,
   wrapWithFilteredGlobalAgg,
@@ -365,15 +369,22 @@ export class EsCardBookSearchService {
     if (!aggs)
       return null;
 
-    const extractIdsAgg = (name: string, resolverClass: any) => fetchDbAggsRecords(
-      {
-        bucket: extractBucket(
+    const extractIdsAgg = (name: string, resolverClass: any) => {
+      const bucket = extractBucket(
+        extractPropIfPresent(
+          'inner',
           extractGlobalAgg(aggs[name], `${name}_ids`),
-          `${name}_ids`,
         ),
-        fetchFn: (ids) => resolverClass.findByIds(ids),
-      },
-    );
+        `${name}_ids`,
+      );
+
+      return fetchDbAggsRecords(
+        {
+          bucket,
+          fetchFn: (ids) => resolverClass.findByIds(ids),
+        },
+      );
+    };
 
     return objPropsToPromise(
       {

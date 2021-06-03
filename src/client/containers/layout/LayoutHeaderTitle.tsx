@@ -6,10 +6,12 @@ import {UnderlinedTitle} from '@client/components/ui';
 type LayoutHeaderTitleProps = {
   children: ReactNode,
   margin?: string,
+  toolbar?: ReactNode,
 };
 
 export const LayoutHeaderTitle = (
   {
+    toolbar,
     children,
     margin,
   }: LayoutHeaderTitleProps,
@@ -19,10 +21,18 @@ export const LayoutHeaderTitle = (
       'c-layout-header-title',
       margin && `has-${margin}-margin`,
     )}
-    tag='h1'
+    tag='div'
     withBottomBorder
   >
-    {children}
+    <h1>
+      {children}
+    </h1>
+
+    {toolbar && (
+      <span className='c-layout-header-title__toolbar'>
+        {toolbar}
+      </span>
+    )}
   </UnderlinedTitle>
 );
 

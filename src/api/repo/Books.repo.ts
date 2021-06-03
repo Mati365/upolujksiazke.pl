@@ -1,11 +1,11 @@
 import {
   CreateObjArrayType,
   CanBePromise,
+  PaginationMeta,
 } from '@shared/types';
 
-import {CreateCountedAggType} from '@api/APIRecord';
+import {APICountedBucket, CreateCountedAggType} from '@api/APIRecord';
 import {
-  APIPaginationResult,
   APIPaginationResultWithAggs,
   BasicAPIPagination,
 } from '@api/APIClient';
@@ -75,8 +75,14 @@ export type SingleAggBookFilters = {
   filters: BooksFilters,
   agg: {
     name: string,
+    phrase?: string,
     pagination: BasicAPIPagination,
   },
+};
+
+export type SingleAggFiltersResult = {
+  global: PaginationMeta,
+  agg: APICountedBucket<any>,
 };
 
 export type AggsBooksFilters = BooksFilters & {
@@ -84,6 +90,7 @@ export type AggsBooksFilters = BooksFilters & {
   aggs?: Record<keyof BookCountedAggs, {
     limit?: number,
     offset?: number,
+    phrase?: string,
   }>,
 };
 
@@ -97,7 +104,7 @@ export type BookFindOneAttrs = {
 };
 
 export interface BooksRepo extends APIRepo<BookFullInfoRecord, BooksFilters, BookFindOneAttrs> {
-  findBooksAggsItems?(attrs: SingleAggBookFilters): CanBePromise<APIPaginationResult<any>>;
+  findBooksAggsItems?(attrs: SingleAggBookFilters): CanBePromise<SingleAggFiltersResult>;
   findAggregatedBooks?(filters?: AggsBooksFilters): CanBePromise<BooksPaginationResultWithAggs>;
   findGroupedAuthorsBooks?(filters?: AuthorsBooksFilters): CanBePromise<BooksAuthorsGroupedBooks>;
   findRecentBooks?(filters?: BasicAPIPagination): CanBePromise<BookCardRecord[]>;

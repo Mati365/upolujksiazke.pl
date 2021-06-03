@@ -39,6 +39,17 @@ export const BooksRoute: AsyncRoute<BooksRouteViewData> = (
   },
 ) => {
   const t = useI18n('routes.books.all');
+  const breadcrumbs = (
+    <Breadcrumbs
+      padding='medium'
+      items={[
+        {
+          id: 'books',
+          node: t('shared.breadcrumbs.books'),
+        },
+      ]}
+    />
+  );
 
   return (
     <Layout
@@ -49,23 +60,19 @@ export const BooksRoute: AsyncRoute<BooksRouteViewData> = (
         <BooksFiltersContainer
           initialBooks={initialBooks}
           initialFilters={initialFilters}
-          contentHeader={(
-            <>
-              <Breadcrumbs
-                padding='medium'
-                items={[
-                  {
-                    id: 'books',
-                    node: t('shared.breadcrumbs.books'),
-                  },
-                ]}
-              />
-
-              <LayoutHeaderTitle margin='medium'>
-                {t('title')}
-              </LayoutHeaderTitle>
-            </>
-          )}
+          contentHeader={
+            ({searchInput}) => (
+              <>
+                {breadcrumbs}
+                <LayoutHeaderTitle
+                  margin='medium'
+                  toolbar={searchInput}
+                >
+                  {t('title')}
+                </LayoutHeaderTitle>
+              </>
+            )
+          }
           parentGroups={(
             <BooksBacklinks
               categories={layoutData.rootPopularCategories}

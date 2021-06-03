@@ -83,6 +83,10 @@ export const PL_LANG_PACK = {
       click_to_choose: 'Kliknij by wybrać',
       empty_results: 'Nic nie znaleziono!',
     },
+    placeholders: {
+      search: 'Szukaj...',
+      filter: 'Filtruj...',
+    },
     buttons: {
       more: 'pokaż więcej',
       less: 'pokaż mniej',

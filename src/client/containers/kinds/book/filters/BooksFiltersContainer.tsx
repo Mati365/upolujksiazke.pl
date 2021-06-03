@@ -1,6 +1,7 @@
 import React, {useMemo, ReactNode} from 'react';
 import * as R from 'ramda';
 
+import {useI18n} from '@client/i18n';
 import {
   useInputLink,
   usePrevious,
@@ -26,6 +27,7 @@ import {
   PageSizeSelectInput,
   SortSelectInput,
   ViewModeSwitch,
+  FiltersPhraseSearchInput,
 } from '@client/containers/filters';
 
 import {BooksBacklinks} from './BooksBacklinks';
@@ -50,7 +52,11 @@ type BooksFiltersContainerProps = {
   initialBooks: BooksPaginationResultWithAggs,
   initialFilters?: any,
   overrideFilters?: any,
-  contentHeader?: ReactNode,
+  contentHeader?(
+    attrs: {
+      searchInput: ReactNode,
+    },
+  ): ReactNode,
 };
 
 export const BooksFiltersContainer = (
@@ -64,6 +70,7 @@ export const BooksFiltersContainer = (
     ),
   }: BooksFiltersContainerProps,
 ) => {
+  const t = useI18n();
   const {
     decodedInitialFilters,
     assignFiltersToURL,
@@ -113,6 +120,20 @@ export const BooksFiltersContainer = (
       assignFiltersToURL(l.value);
     },
     [l.value],
+  );
+
+  const searchInput = (
+    <FiltersPhraseSearchInput
+      placeholder={
+        t('book.filters.phrase.placeholder')
+      }
+      {...l.input(
+        'phrase',
+        {
+          deleteFromParentIf: (inputValue) => !inputValue,
+        },
+      )}
+    />
   );
 
   return (
@@ -167,7 +188,13 @@ export const BooksFiltersContainer = (
 
         return (
           <FiltersContainer
-            contentHeader={contentHeader}
+            contentHeader={
+              contentHeader?.(
+                {
+                  searchInput,
+                },
+              )
+            }
             loading={loading}
             className='c-books-filters-section'
             sidebarToolbar={parentGroups}

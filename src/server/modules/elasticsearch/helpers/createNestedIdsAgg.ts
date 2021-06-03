@@ -13,6 +13,7 @@ export function createNestedPaginatedAgg(
     nestedDocName,
     field,
     withRootDocs,
+    phrase,
     limit,
     offset,
   }: {
@@ -20,6 +21,7 @@ export function createNestedPaginatedAgg(
     nestedDocName: string,
     field: string,
     withRootDocs?: boolean,
+    phrase?: string,
     limit?: number,
     offset?: number,
   },
@@ -41,17 +43,29 @@ export function createNestedPaginatedAgg(
   } else if (limit)
     termsAgg = termsAgg.size(limit);
 
-  return (
-    esb
-      .nestedAggregation(aggName, nestedDocName)
-      .aggs([
-        ...withRootDocs
-          ? [esb.reverseNestedAggregation('parent_docs')]
-          : [],
-        esb.cardinalityAggregation('bucket_size', fieldPath),
-        termsAgg,
-      ])
-  );
+  // it is a bit sucky
+  // try to find a way to fuzzy filter
+  const idsAggsList = [
+    ...withRootDocs
+      ? [esb.reverseNestedAggregation('parent_docs')]
+      : [],
+    esb.cardinalityAggregation('bucket_size', fieldPath),
+    termsAgg,
+  ];
+
+  const agg: esb.Aggregation = esb.nestedAggregation(aggName, nestedDocName);
+  if (phrase) {
+    return agg.agg(
+      esb
+        .filterAggregation(
+          'inner',
+          esb.prefixQuery(`${nestedDocName}.name.autocomplete`, phrase),
+        )
+        .aggs(idsAggsList),
+    );
+  }
+
+  return agg.aggs(idsAggsList);
 }
 
 /**

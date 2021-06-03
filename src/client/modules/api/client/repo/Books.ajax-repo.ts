@@ -5,6 +5,7 @@ import {
   BooksRepo,
   AggsBooksFilters,
   SingleAggBookFilters,
+  SingleAggFiltersResult,
 } from '@api/repo';
 
 import {AjaxAPIClientChild} from '../AjaxAPIClientChild';
@@ -30,22 +31,24 @@ export class BooksAjaxRepo extends AjaxAPIClientChild implements BooksRepo {
    * Find single filters aggregation items list
    *
    * @param {SingleAggBookFilters} attrs
-   * @returns {CanBePromise<BooksPaginationResultWithAggs>}
+   * @returns {CanBePromise<SingleAggFiltersResult>}
    * @memberof BooksAjaxRepo
    */
   findBooksAggsItems(
     {
       agg: {
         name,
+        phrase,
         pagination,
       },
       filters,
     }: SingleAggBookFilters,
-  ): CanBePromise<BooksPaginationResultWithAggs> {
+  ): CanBePromise<SingleAggFiltersResult> {
     return this.ajax.get(
       {
         path: `/books/filters/aggs/${name}`,
         urlParams: {
+          aggPhrase: phrase,
           ...filters,
           ...pagination,
         },

@@ -9,7 +9,7 @@ import {
   AsyncExpandableChunksProps,
 } from '../AsyncExpandableChunks';
 
-type CheckboxExpandableListProps<T extends ListItem> = Omit<AsyncExpandableChunksProps<T>, 'renderChunkFn'> & {
+export type CheckboxExpandableListProps<T extends ListItem> = Omit<AsyncExpandableChunksProps<T>, 'renderChunkFn'> & {
   checkboxListProps?(attrs: AsyncChunkAttributes<T>): Partial<CheckboxListProps<T>>,
   listComponent?: any,
 };

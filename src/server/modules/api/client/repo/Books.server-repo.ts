@@ -5,6 +5,7 @@ import {plainToClass} from 'class-transformer';
 import {ID} from '@shared/types';
 import {objPropsToPromise} from '@shared/helpers';
 import {BasicAPIPagination} from '@api/APIClient';
+import {APICountedBucket} from '@api/APIRecord';
 import {
   AggsBooksFilters,
   AuthorsBooksFilters,
@@ -126,13 +127,17 @@ export class BooksServerRepo extends ServerAPIClientChild implements BooksRepo {
         limit: 0,
         skipBooksLoading: true,
         aggs: {
-          [agg.name]: agg.pagination,
+          [agg.name]: {
+            ...agg.pagination,
+            phrase: agg.phrase,
+          },
         } as AggsBooksFilters['aggs'],
       },
     );
 
-    let items: any[] = aggs?.[agg.name]?.items;
+    const currentAgg: APICountedBucket<any> = aggs?.[agg.name];
     const serializer = BooksServerRepo.BOOK_AGGS_SERIALIZERS[agg.name];
+    let items: any[] = currentAgg?.items || [];
 
     if (serializer) {
       items = items.map(
@@ -150,8 +155,11 @@ export class BooksServerRepo extends ServerAPIClientChild implements BooksRepo {
     }
 
     return {
-      items,
-      meta,
+      global: meta,
+      agg: {
+        ...currentAgg,
+        items,
+      },
     };
   }
 

@@ -85,18 +85,23 @@ export const BooksCategoryRoute: AsyncRoute<BooksRouteViewData> = (
           overrideFilters={{
             parentCategoriesIds: [category.id],
           }}
-          contentHeader={(
-            <>
-              {breadcrumbs}
-              <LayoutHeaderTitle margin='medium'>
-                <DynamicIcon
-                  icon={category.icon}
-                  className='mr-2'
-                />
-                {t('title', [category.name])}
-              </LayoutHeaderTitle>
-            </>
-          )}
+          contentHeader={
+            ({searchInput}) => (
+              <>
+                {breadcrumbs}
+                <LayoutHeaderTitle
+                  margin='medium'
+                  toolbar={searchInput}
+                >
+                  <DynamicIcon
+                    icon={category.icon}
+                    className='mr-2'
+                  />
+                  {t('title', [category.name])}
+                </LayoutHeaderTitle>
+              </>
+            )
+          }
           parentGroups={(
             <BooksBacklinks
               currentCategory={category}

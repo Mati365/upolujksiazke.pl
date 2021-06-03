@@ -13,6 +13,7 @@ import {CachedRender} from '@client/components/functional';
 
 import {
   CheckboxExpandableList,
+  CheckboxExpandableListProps,
   PriceRange,
 } from '@client/components/ui/controls';
 
@@ -49,11 +50,47 @@ export const BooksFiltersGroups = (
     schoolLevels,
   } = aggs;
 
-  const renderBucketGroup = (name: string, agg: APICountedBucket<any>) => {
+  const renderBucketGroup = (
+    name: string,
+    agg: APICountedBucket<any>,
+    showSearch: boolean = true,
+  ) => {
     if (!agg || !R.isNil(overrideFilters[name]))
       return null;
 
     const inputProps = l.input(name);
+    const onRequestChunk: CheckboxExpandableListProps<any>['onRequestChunk'] = async (
+      {
+        totalLoaded,
+        expandBy,
+        filters: groupFilters,
+      },
+    ) => {
+      const result = await api.repo.books.findBooksAggsItems(
+        {
+          agg: {
+            name,
+            phrase: groupFilters?.phrase,
+            pagination: {
+              offset: totalLoaded,
+              limit: expandBy,
+            },
+          },
+          filters: serializeAggsToSearchParams(
+            {
+              ...l.value,
+              ...overrideFilters,
+            },
+          ),
+        },
+      );
+
+      return {
+        items: mapCountedRecordsToCountedListItems(result?.agg?.items),
+        total: result?.agg?.total.bucket,
+      };
+    };
+
     return (
       <CachedRender cacheKey={agg}>
         {() => (
@@ -75,29 +112,24 @@ export const BooksFiltersGroups = (
               checkboxListProps={
                 () => inputProps
               }
-              onRequestChunk={
-                async ({totalLoaded, expandBy}) => {
-                  const result = await api.repo.books.findBooksAggsItems(
-                    {
-                      agg: {
-                        name,
-                        pagination: {
-                          offset: totalLoaded,
-                          limit: expandBy,
-                        },
-                      },
-                      filters: serializeAggsToSearchParams(
+              {...showSearch && {
+                renderHeaderFn: ({filtersLink}) => (
+                  <li className='mb-3'>
+                    <FiltersPhraseSearchInput
+                      placeholder={
+                        t('shared.placeholders.filter')
+                      }
+                      {...filtersLink.input(
+                        'phrase',
                         {
-                          ...l.value,
-                          ...overrideFilters,
+                          deleteFromParentIf: (inputValue) => !inputValue,
                         },
-                      ),
-                    },
-                  );
-
-                  return mapCountedRecordsToCountedListItems(result?.items);
-                }
-              }
+                      )}
+                    />
+                  </li>
+                ),
+              }}
+              onRequestChunk={onRequestChunk}
             />
           </FiltersGroup>
         )}
@@ -107,20 +139,6 @@ export const BooksFiltersGroups = (
 
   return (
     <>
-      {!overrideFilters.phrase && (
-        <FiltersPhraseSearchInput
-          placeholder={
-            t('phrase.placeholder')
-          }
-          {...l.input(
-            'phrase',
-            {
-              deleteFromParentIf: (inputValue) => !inputValue,
-            },
-          )}
-        />
-      )}
-
       {renderBucketGroup('authors', authors)}
       {renderBucketGroup('categories', categories)}
 
@@ -169,8 +187,8 @@ export const BooksFiltersGroups = (
         </FiltersGroup>
       )}
 
-      {renderBucketGroup('era', era)}
-      {renderBucketGroup('genre', genre)}
+      {renderBucketGroup('era', era, false)}
+      {renderBucketGroup('genre', genre, false)}
       {renderBucketGroup('prizes', prizes)}
     </>
   );

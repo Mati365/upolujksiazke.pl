@@ -40,6 +40,15 @@ export type BookIndexEntity = Pick<
 export class EsBookIndex extends EntityIndex<BookEntity, BookIndexEntity> {
   static readonly INDEX_NAME = 'books';
 
+  static readonly BOOK_INDEX_NESTED_AUTOCOMPLETE = {
+    fields: {
+      autocomplete: {
+        type: 'keyword',
+        normalizer: 'lowercase_normalizer',
+      },
+    },
+  };
+
   static readonly BOOK_INDEX_MAPPING: Record<keyof BookIndexEntity, any> = {
     id: {type: 'integer'},
     createdAt: {type: 'date'},
@@ -58,13 +67,23 @@ export class EsBookIndex extends EntityIndex<BookEntity, BookIndexEntity> {
     volumeName: {type: 'keyword'},
     isbns: {type: 'keyword'},
     primaryCategory: PredefinedProperties.idNamePair,
+    prizes: PredefinedProperties.customIdNamePair(
+      {
+        name: EsBookIndex.BOOK_INDEX_NESTED_AUTOCOMPLETE,
+      },
+    ),
+    publishers: PredefinedProperties.customIdNamePair(
+      {
+        name: EsBookIndex.BOOK_INDEX_NESTED_AUTOCOMPLETE,
+      },
+    ),
     categories: PredefinedProperties.customIdNamePair(
       {
+        name: EsBookIndex.BOOK_INDEX_NESTED_AUTOCOMPLETE,
         promotion: {type: 'integer'},
         parentCategoryId: {type: 'integer'},
       },
     ),
-    publishers: PredefinedProperties.idNamePair,
     authors: {
       type: 'nested',
       properties: {
@@ -72,16 +91,13 @@ export class EsBookIndex extends EntityIndex<BookEntity, BookIndexEntity> {
         parameterizedName: {type: 'keyword'},
         name: {
           type: 'keyword',
-          fields: {
-            autocomplete: {type: 'search_as_you_type'},
-          },
+          ...EsBookIndex.BOOK_INDEX_NESTED_AUTOCOMPLETE,
         },
       },
     },
     tags: PredefinedProperties.idNamePair,
     era: PredefinedProperties.idNamePair,
     genre: PredefinedProperties.idNamePair,
-    prizes: PredefinedProperties.idNamePair,
     schoolBook: {
       type: 'nested',
       properties: {
@@ -143,6 +159,15 @@ export class EsBookIndex extends EntityIndex<BookEntity, BookIndexEntity> {
         body: {
           settings: {
             'index.number_of_replicas': 0,
+            analysis: {
+              normalizer: {
+                lowercase_normalizer: {
+                  type: 'custom',
+                  char_filter: [],
+                  filter: ['lowercase', 'asciifolding'],
+                },
+              },
+            },
           },
           mappings: {
             dynamic: false,

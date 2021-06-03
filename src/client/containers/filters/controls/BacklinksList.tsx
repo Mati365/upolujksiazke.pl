@@ -3,11 +3,11 @@ import * as R from 'ramda';
 
 import {
   AsyncExpandableChunks,
-  AsyncExpandableChunksProps,
   CleanList,
 } from '@client/components/ui';
 
-type BacklinksListProps<T> = Pick<AsyncExpandableChunksProps<T>, 'header'> & {
+type BacklinksListProps<T> = {
+  header?: ReactNode,
   links: T[],
   renderLinkFn(link: T): ReactNode,
 };

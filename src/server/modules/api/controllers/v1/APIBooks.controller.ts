@@ -3,7 +3,10 @@ import {Response} from 'express';
 
 import {Accepts} from '@server/common/decorators/Accepts.decorator';
 import {APIClientService} from '../../services/APIClient.service';
-import {BooksQueryFiltersDto} from './dto/BooksQueryFilters.dto';
+import {
+  BooksQueryFiltersDto,
+  BooksAggQueryFiltersDto,
+} from './dto';
 
 @Controller('books')
 export class APIBooksController {
@@ -48,7 +51,7 @@ export class APIBooksController {
   async filterAggs(
     @Res() res: Response,
     @Param('name') name: string,
-    @Query() {limit, offset, ...filters}: BooksQueryFiltersDto,
+    @Query() {limit, offset, aggPhrase, ...filters}: BooksAggQueryFiltersDto,
   ) {
     const {client: {repo}} = this.apiClientService;
     const result = await repo.books.findBooksAggsItems(
@@ -56,6 +59,7 @@ export class APIBooksController {
         filters,
         agg: {
           name,
+          phrase: aggPhrase,
           pagination: {
             limit,
             offset,

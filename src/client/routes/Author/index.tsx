@@ -90,14 +90,19 @@ export const AuthorRoute: AsyncRoute<AuthorRouteData> = (
           overrideFilters={{
             authors: [author],
           }}
-          contentHeader={(
-            <>
-              {breadcrumbs}
-              <LayoutHeaderTitle margin='medium'>
-                {t('title', [author.name])}
-              </LayoutHeaderTitle>
-            </>
-          )}
+          contentHeader={
+            ({searchInput}) => (
+              <>
+                {breadcrumbs}
+                <LayoutHeaderTitle
+                  margin='medium'
+                  toolbar={searchInput}
+                >
+                  {t('title', [author.name])}
+                </LayoutHeaderTitle>
+              </>
+            )
+          }
         />
       </Container>
     </Layout>

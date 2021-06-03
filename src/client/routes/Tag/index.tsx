@@ -82,14 +82,19 @@ export const TagRoute: AsyncRoute<TagRouteData> = (
           overrideFilters={{
             tagsIds: [tag.id],
           }}
-          contentHeader={(
-            <>
-              {breadcrumbs}
-              <LayoutHeaderTitle margin='medium'>
-                {t('books.title', [capitalizedName])}
-              </LayoutHeaderTitle>
-            </>
-          )}
+          contentHeader={
+            ({searchInput}) => (
+              <>
+                {breadcrumbs}
+                <LayoutHeaderTitle
+                  margin='medium'
+                  toolbar={searchInput}
+                >
+                  {t('books.title', [capitalizedName])}
+                </LayoutHeaderTitle>
+              </>
+            )
+          }
         />
       </Container>
     </Layout>

@@ -65,7 +65,7 @@ export class TrackRecordViewsService {
    * Get summary views count between dates
    *
    * @param {Object} attrs
-   * @returns {number} views count
+   * @returns {Promise<number>} views count
    * @memberof TrackRecordViewsService
    */
   async getSummaryPeriodViewsCount(
@@ -80,7 +80,7 @@ export class TrackRecordViewsService {
       duration: Required<Duration>,
       recordId: number,
     },
-  ) {
+  ): Promise<number> {
     const result = await (
       DailyViewsAggEntity
         .createQueryBuilder()
@@ -129,6 +129,7 @@ export class TrackRecordViewsService {
         .values(
           new ViewsAggEntity(
             {
+              date: duration.begin,
               count,
               type,
               recordId,

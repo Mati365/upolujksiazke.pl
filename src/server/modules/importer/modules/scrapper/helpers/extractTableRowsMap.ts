@@ -1,7 +1,7 @@
 import * as R from 'ramda';
 import {normalizeParsedText} from '@server/common/helpers/normalizeText';
 
-export function extractTableRowsMap($: cheerio.Root, selector: string|cheerio.Element[]) {
+export function extractTableRowsMap($: cheerio.Root, selector: string | cheerio.Element[]) {
   const rows = (
     $(selector)
       .toArray()

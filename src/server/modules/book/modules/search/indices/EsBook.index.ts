@@ -25,9 +25,9 @@ import {BookReleaseService} from '../../release/BookRelease.service';
 export type BookIndexEntity = Pick<
 /* eslint-disable @typescript-eslint/indent */
   BookEntity,
-  'id'|'era'|'genre'|'tags'|'categories'|'prizes'|'authors'
-  |'originalTitle'|'defaultTitle'|'lowestPrice' |'highestPrice'
-  |'allTypes'|'schoolBook'|'totalRatings'|'createdAt'
+  'id' | 'era' | 'genre' | 'tags' | 'categories' | 'prizes' | 'authors'
+  | 'originalTitle' | 'defaultTitle' | 'lowestPrice' | 'highestPrice'
+  | 'allTypes' | 'schoolBook' | 'totalRatings' | 'createdAt'
 /* eslint-enable @typescript-eslint/indent */
 > & {
   volumeName: string,

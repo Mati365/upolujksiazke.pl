@@ -59,7 +59,7 @@ type TabsProps = {
     attrs: {
       items: IconListItem[],
       activeTab: ListItem,
-      setActiveTab(item: ListItem|ID): void,
+      setActiveTab(item: ListItem | ID): void,
     },
   ): ReactNode,
 };

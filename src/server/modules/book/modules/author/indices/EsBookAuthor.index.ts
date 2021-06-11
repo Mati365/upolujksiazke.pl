@@ -13,7 +13,7 @@ import {BookAuthorService} from '../BookAuthor.service';
 export type BookAuthorIndexEntity = Pick<
 /* eslint-disable @typescript-eslint/indent */
   BookAuthorEntity,
-  'id'|'name'|'nameAliases'|'parameterizedName'| 'createdAt'
+  'id' | 'name' | 'nameAliases' | 'parameterizedName' | 'createdAt'
 /* eslint-enable @typescript-eslint/indent */
 >;
 

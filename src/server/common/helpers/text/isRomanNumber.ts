@@ -25,7 +25,7 @@ export function isRomanNumber(str: string) {
  * @export
  * @param {string} str
  */
-export function parseIfRomanNumber(str: string): string|number {
+export function parseIfRomanNumber(str: string): string | number {
   if (!isRomanNumber(str))
     return str;
 

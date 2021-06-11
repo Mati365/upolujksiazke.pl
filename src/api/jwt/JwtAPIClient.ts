@@ -31,11 +31,11 @@ export type APIConfig = {
 };
 
 export type APICallConfig = {
-  method?: 'POST'|'GET'|'PATCH'|'PUT'|'DELETE',
+  method?: 'POST' | 'GET' | 'PATCH' | 'PUT' | 'DELETE',
   headers?: object,
   path?: string,
   urlParams?: object,
-  body?: JSON|object|BodyInit,
+  body?: JSON | object | BodyInit,
 };
 
 export class APIError extends Error {

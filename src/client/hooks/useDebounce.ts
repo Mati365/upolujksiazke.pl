@@ -7,7 +7,7 @@ import {
 } from '@shared/helpers/debounce';
 
 export const useDebounce = (
-  config: DebounceConfig&{disabled?: boolean},
+  config: DebounceConfig & {disabled?: boolean},
   fn: DebounceCallback,
 ): (...args: any[]) => Promise<any> => {
   const callbackRef = useRef<DebounceCallback>();

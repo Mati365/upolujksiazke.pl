@@ -1,6 +1,6 @@
 import * as R from 'ramda';
 
-export function getNextObjKey(prevKey: string|number, obj: any) {
+export function getNextObjKey(prevKey: string | number, obj: any) {
   let nextKey = false;
 
   if (R.is(Number, prevKey))

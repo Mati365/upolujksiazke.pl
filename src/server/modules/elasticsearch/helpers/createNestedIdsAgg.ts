@@ -79,7 +79,7 @@ export function createNestedPaginatedAgg(
  */
 export function createNestedIdsAgg(
   name: string,
-  attrs: Omit<Parameters<typeof createNestedPaginatedAgg>[0], 'aggName'|'nestedDocName'|'field'> = {},
+  attrs: Omit<Parameters<typeof createNestedPaginatedAgg>[0], 'aggName' | 'nestedDocName' | 'field'> = {},
 ) {
   return createNestedPaginatedAgg(
     {

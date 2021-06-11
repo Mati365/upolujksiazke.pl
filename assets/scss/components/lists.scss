@@ -59,7 +59,7 @@
           }
 
           &.is-separated > li:not(:last-child):not(.has-no-separator)::after {
-            right: -#{$spacing / 2}px;
+            right: -#{math.div($spacing, 2)}px;
           }
         }
 

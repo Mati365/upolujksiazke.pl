@@ -2,7 +2,7 @@ import React, {ReactNode} from 'react';
 import c from 'classnames';
 
 type PictureProps = JSX.IntrinsicElements['picture'] & Pick<
-JSX.IntrinsicElements['img'], 'alt'|'src'|'title'|'loading'
+JSX.IntrinsicElements['img'], 'alt' | 'src' | 'title' | 'loading'
 > & {
   layer?: ReactNode,
 };

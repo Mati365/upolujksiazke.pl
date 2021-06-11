@@ -1,9 +1,9 @@
-import {ListItem} from '@shared/types';
+import {CanBeArray, ListItem} from '@shared/types';
 
 export function pickIdName<T extends Partial<ListItem>>(item: T): ListItem;
 export function pickIdName<T extends Partial<ListItem>>(item: T[]): ListItem[];
 
-export function pickIdName<T extends Partial<ListItem>>(item: T|T[]): ListItem|ListItem[] {
+export function pickIdName<T extends Partial<ListItem>>(item: CanBeArray<T>): CanBeArray<ListItem> {
   if (!item)
     return null;
 

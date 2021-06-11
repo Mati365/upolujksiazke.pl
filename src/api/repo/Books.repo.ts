@@ -6,6 +6,7 @@ import {
 
 import {APICountedBucket, CreateCountedAggType} from '@api/APIRecord';
 import {
+  APIPaginationResult,
   APIPaginationResultWithAggs,
   BasicAPIPagination,
 } from '@api/APIClient';
@@ -93,6 +94,8 @@ export type AggsBooksFilters = BooksFilters & {
     phrase?: string,
   }>,
 };
+
+export type BooksPaginationResult = APIPaginationResult<BookCardRecord>;
 
 export type BooksPaginationResultWithAggs = APIPaginationResultWithAggs<BookCardRecord, BookCountedAggs>;
 

@@ -28,7 +28,7 @@ export function formatBookTitle(
     },
   }: {
     t: LangTranslateFn,
-    book: Pick<BookCardRecord, 'defaultTitle'|'volume'>,
+    book: Pick<BookCardRecord, 'defaultTitle' | 'volume'>,
     volumeFirst?: boolean,
     withDefaultVolumeName?: boolean,
   },

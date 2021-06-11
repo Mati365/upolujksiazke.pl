@@ -294,7 +294,7 @@ export class BookDbLoaderService implements MetadataDbLoader {
     // please check for example "Uczta dla wron: Sieć spisków"
     // its move edition has the same ISBN as book edition
     // try to assign isbn to largest volume
-    const isbnsQueues: Record<string, {volume: string|number, queue: CreateBookDto[]}> = {};
+    const isbnsQueues: Record<string, {volume: string | number, queue: CreateBookDto[]}> = {};
     const reversedVolumes = R.reverse(R.sortBy(R.identity, R.keys(volumes).map((n) => +n)));
 
     volumes = reversedVolumes.reduce(

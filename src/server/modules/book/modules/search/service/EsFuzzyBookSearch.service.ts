@@ -215,7 +215,7 @@ export class EsFuzzyBookSearchService {
    * @returns
    * @memberof BookService
    */
-  findAlreadyCachedReviewBook({book, bookId, releaseId}: Pick<CreateBookReviewDto, 'book'|'bookId'|'releaseId'>) {
+  findAlreadyCachedReviewBook({book, bookId, releaseId}: Pick<CreateBookReviewDto, 'book' | 'bookId' | 'releaseId'>) {
     return this.findAlreadyCachedSimilarToBooks(
       [
         new CreateBookDto(

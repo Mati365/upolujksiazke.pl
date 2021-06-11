@@ -13,7 +13,7 @@ type BookCoverGalleryProps = {
   primaryAlt?: string,
   className?: string,
   tag?: any,
-  layout?: 'grid'|'absolute',
+  layout?: 'grid' | 'absolute',
 };
 
 export const BookCoverGallery = (

@@ -36,7 +36,7 @@ import {BookEraEntity} from '../../era/BookEra.entity';
 import {BookPrizeEntity} from '../../prize/BookPrize.entity';
 import {EsBookIndex} from '../indices/EsBook.index';
 
-export type BookEntityAggs = Pick<BookCountedAggs, 'types'|'schoolLevels'> & CreateCountedAggType<{
+export type BookEntityAggs = Pick<BookCountedAggs, 'types' | 'schoolLevels'> & CreateCountedAggType<{
   categories: BookCategoryEntity,
   authors: BookAuthorEntity,
   prizes: BookPrizeEntity,

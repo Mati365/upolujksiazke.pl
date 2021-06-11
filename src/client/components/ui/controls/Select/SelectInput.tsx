@@ -16,14 +16,14 @@ import {DownArrowIcon} from '@client/components/svg';
 import {SelectOptions} from './SelectOptions';
 import {Input, InputProps} from '../Input';
 
-export type SelectInputProps = LinkProps<ListItem|ID> & {
+export type SelectInputProps = LinkProps<ListItem | ID> & {
   returnOnlyId?: boolean,
   className?: string,
   items?: ListItem[],
   inputProps?: InputProps,
 };
 
-export const SelectInput = linkInputs<ListItem|ID>(
+export const SelectInput = linkInputs<ListItem | ID>(
   {
     initialData: null,
   },

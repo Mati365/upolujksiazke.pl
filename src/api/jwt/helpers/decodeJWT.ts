@@ -1,4 +1,5 @@
 import * as R from 'ramda';
+import {CanBeArray} from '@shared/types';
 
 export type JWTToken = {
   header: object,
@@ -16,7 +17,7 @@ export const decodeBase64 = (str: string): string => (
  *
  * @param {String} str
  */
-export const parseBase64 = (str: string): object|object[] => R.compose(
+export const parseBase64 = (str: string): CanBeArray<object> => R.compose(
   JSON.parse,
   decodeURIComponent,
   (_str: string) => _str.replace(/(.)/g, (m, p) => {

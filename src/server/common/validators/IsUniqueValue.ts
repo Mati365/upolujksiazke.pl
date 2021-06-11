@@ -16,7 +16,7 @@ export class IsUniqueValueConstraint {
     private entityManager: EntityManager,
   ) {}
 
-  async validate(value: number|string, args: ValidationArguments) {
+  async validate(value: number | string, args: ValidationArguments) {
     const [repository, column, queryBuilderMapper] = args.constraints;
     const record = await (() => {
       let queryBuilder = this

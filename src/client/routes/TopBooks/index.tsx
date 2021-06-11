@@ -12,6 +12,8 @@ import {
   LayoutViewData,
 } from '@client/containers/layout';
 
+import {BooksPaginationResultWithAggs} from '@api/repo';
+import {TopBooksListContainer} from './TopBooksListContainer';
 import {
   BooksLink,
   TOP_BOOKS_PATH,
@@ -19,11 +21,13 @@ import {
 
 type TopBooksRouteRouteData = {
   layoutData: LayoutViewData,
+  initialBooks: BooksPaginationResultWithAggs,
 };
 
 export const TopBooksRoute: AsyncRoute<TopBooksRouteRouteData> = (
   {
     layoutData,
+    initialBooks,
   },
 ) => {
   const t = useI18n('routes.top_books');
@@ -51,6 +55,8 @@ export const TopBooksRoute: AsyncRoute<TopBooksRouteRouteData> = (
         <LayoutHeaderTitle>
           {t('title')}
         </LayoutHeaderTitle>
+
+        <TopBooksListContainer initialBooks={initialBooks} />
       </Container>
     </Layout>
   );
@@ -64,15 +70,19 @@ TopBooksRoute.route = {
 };
 
 TopBooksRoute.getInitialProps = async (attrs) => {
+  const {api: {repo}} = attrs;
   const {
+    initialBooks,
     layoutData,
   } = await objPropsToPromise(
     {
       layoutData: Layout.getInitialProps(attrs),
+      initialBooks: repo.books.findAggregatedBooks(),
     },
   );
 
   return {
+    initialBooks,
     layoutData,
   } as TopBooksRouteRouteData;
 };

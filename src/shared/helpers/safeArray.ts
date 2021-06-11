@@ -1,6 +1,6 @@
 import * as R from 'ramda';
 
-export function safeArray<T>(val: T|T[]): T[] {
+export function safeArray<T>(val: T | T[]): T[] {
   if (R.isNil(val))
     return [];
 

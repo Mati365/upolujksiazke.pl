@@ -8,7 +8,7 @@ import {EsBookIndex} from '../../search/indices/EsBook.index';
 import {CardBookSearchService} from '../../search/service/CardBookSearch.service';
 import {BookEntity} from '../../../entity/Book.entity';
 
-type BookStats = Pick<BookEntity, 'avgRating'|'totalRatings'|'lowestPrice'|'highestPrice'|'allTypes'>;
+type BookStats = Pick<BookEntity, 'avgRating' | 'totalRatings' | 'lowestPrice' | 'highestPrice' | 'allTypes'>;
 
 @Injectable()
 export class BookStatsService {

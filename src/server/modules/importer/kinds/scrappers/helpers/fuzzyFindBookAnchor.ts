@@ -36,8 +36,8 @@ export function orderAuthorField(author: string) {
  * @returns
  */
 export function getNormalizedBooksSimilarity(
-  a: Pick<NormalizedBookTitleInfo, 'title'|'volume'>,
-  b: Pick<NormalizedBookTitleInfo, 'title'|'volume'>,
+  a: Pick<NormalizedBookTitleInfo, 'title' | 'volume'>,
+  b: Pick<NormalizedBookTitleInfo, 'title' | 'volume'>,
 ) {
   let similarity = (
     stringSimilarity.compareTwoStrings(a.title || '', b.title || '')

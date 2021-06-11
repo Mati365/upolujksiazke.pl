@@ -14,8 +14,8 @@ import {BookCategoryService} from '../services/BookCategory.service';
 export type BookCategoryIndexEntity = Pick<
 /* eslint-disable @typescript-eslint/indent */
   BookCategoryEntity,
-  'id'|'name'|'nameAliases'|'parameterizedName'
-  | 'createdAt'|'parentCategory'|'promotion'
+  'id' | 'name' | 'nameAliases' | 'parameterizedName'
+  | 'createdAt' | 'parentCategory' | 'promotion'
   | 'root'
 /* eslint-enable @typescript-eslint/indent */
 >;

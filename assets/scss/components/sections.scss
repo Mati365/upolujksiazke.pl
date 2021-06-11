@@ -32,7 +32,7 @@
       @include mobile {
         @for $i from 1 through 4 {
           &-#{$i} {
-            margin: #{$i / 1.5}rem 0;
+            margin: #{math.div($i, 1.5)}rem 0;
 
             &:last-child {
               margin-bottom: 0;

@@ -40,7 +40,7 @@ export type AsyncExpandableChunksProps<T> = CleanListProps & {
       totalLoaded: number,
       expandBy: number,
     },
-  ): CanBePromise<T[]|{total: number, items: T[]}>,
+  ): CanBePromise<T[] | {total: number, items: T[]}>,
 
   renderHeaderFn?(
     attrs: {

@@ -1,4 +1,4 @@
-export type ListenersChain<T = Function> = [string[]|string, T][];
+export type ListenersChain<T = Function> = [string[] | string, T][];
 
 /**
  * @see

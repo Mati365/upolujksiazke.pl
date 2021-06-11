@@ -92,7 +92,7 @@ export abstract class EntityIndex<E extends {id: number}, I = E> implements OnMo
    * @returns
    * @memberof EntityIndex
    */
-  async getByID(id: string|number) {
+  async getByID(id: string | number) {
     const {es, indexName} = this;
     const response = await es.get(
       {

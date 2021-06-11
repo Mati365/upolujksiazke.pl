@@ -1,10 +1,10 @@
-import {InterceptMethod} from '@shared/helpers/decorators/InterceptMethod';
 import {Logger} from '@nestjs/common';
 import chalk from 'chalk';
+import {InterceptMethod} from '@shared/helpers/decorators/InterceptMethod';
 
 const measureLogger = new Logger('MeasureCallDuration');
 
-export function MeasureCallDuration(name?: string|((...args: any) => string)) {
+export function MeasureCallDuration(name?: string | ((...args: any) => string)) {
   return InterceptMethod((...args: any[]) => {
     const t = Date.now();
 

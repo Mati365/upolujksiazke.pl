@@ -16,6 +16,7 @@ import {
 } from '@server/modules/book/modules/search/service';
 
 import {ServerAPIClient} from '../client/ServerAPIClient';
+
 @Injectable()
 export class APIClientService {
   public readonly client = new ServerAPIClient(this);

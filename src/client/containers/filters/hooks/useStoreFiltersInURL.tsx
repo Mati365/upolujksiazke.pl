@@ -35,7 +35,7 @@ export function serializeUrlFilters(obj: any) {
   return flattenObject(R.mapObjIndexed(mapper, obj));
 }
 
-export function deserializeUrlFilters(search: string|object) {
+export function deserializeUrlFilters(search: string | object) {
   if (!search)
     return null;
 

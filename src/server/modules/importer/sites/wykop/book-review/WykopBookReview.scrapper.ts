@@ -217,7 +217,7 @@ export class WykopBookReviewScrapper extends AsyncScrapper<BookReviewScrapperInf
    * @returns {Promise<BookReviewProcessResult>}
    * @memberof WykopScrapper
    */
-  protected async processPage(pagination: number|string): Promise<BookReviewProcessResult> {
+  protected async processPage(pagination: number | string): Promise<BookReviewProcessResult> {
     const {logger, api} = this;
     const page = +pagination || 1;
     let result: WykopAPIResponse & {ignore?: boolean} = null;

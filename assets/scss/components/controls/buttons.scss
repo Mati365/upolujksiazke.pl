@@ -132,7 +132,7 @@
       }
 
       &.is-outlined {
-        padding-right: calc(#{$suffix-width / 2} + var(--btn-x-padding) + 2px);
+        padding-right: calc(#{math.div($suffix-width, 2)} + var(--btn-x-padding) + 2px);
 
         > .c-icon:last-of-type {
           background: initial;

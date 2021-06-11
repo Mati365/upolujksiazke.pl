@@ -14,7 +14,7 @@ export const ATTACHMENTS_OPTIONS = 'ATTACHMENTS_OPTIONS';
 
 export type AttachmentServiceOptions = {
   dest: string,
-  fileNameGenerator?(extension: string|false): string,
+  fileNameGenerator?(extension: string | false): string,
 };
 
 @Injectable()

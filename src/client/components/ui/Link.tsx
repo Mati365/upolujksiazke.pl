@@ -63,7 +63,7 @@ export function UndecoratedLink<I = {}, P = {}>(
   if (utm) {
     searchParams = searchParams || {};
     R.forEachObjIndexed(
-      (value: string|number, key: string) => {
+      (value: string | number, key: string) => {
         searchParams[`utm_${key}`] = value;
       },
       utm,

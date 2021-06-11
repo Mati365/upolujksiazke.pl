@@ -13,7 +13,7 @@ type PromiseFn = (...args: any[]) => CanBePromise<any>;
 
 export type PromiseState<T> = {
   result?: T,
-  errors?: boolean|any[],
+  errors?: boolean | any[],
   success?: boolean,
   loading?: boolean,
 };

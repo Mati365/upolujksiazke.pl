@@ -92,7 +92,7 @@ export abstract class WebsiteScrapperMatcher<
    * @returns
    * @memberof WebsiteScrapperMatcher
    */
-  async fetchPageBySearch(queryParams: object|string) {
+  async fetchPageBySearch(queryParams: object | string) {
     const {
       config: {
         searchURL,

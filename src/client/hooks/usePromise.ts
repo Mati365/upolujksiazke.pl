@@ -23,7 +23,7 @@ export type PromiseHookReturnType<T> = PromiseState<T> & {
     fn: (current: T) => {
       // promise is discarded
       reloadContent: true,
-      promise?: Promise<T|any>,
+      promise?: Promise<T | any>,
       optimistic: T,
     } | ({
       reloadContent?: boolean,

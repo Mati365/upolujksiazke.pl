@@ -10,7 +10,12 @@ export function calcPaginationMetaFromFilters(filters: PaginationMeta) {
     };
   }
 
-  const {totalItems, limit, offset} = filters;
+  const {
+    totalItems,
+    limit,
+    offset = 0,
+  } = filters;
+
   return {
     totalPages: Math.ceil(totalItems / limit),
     page: Math.ceil(offset / limit),

@@ -7,7 +7,7 @@ import {CleanList, TextButton} from '@client/components/ui';
 
 type FiltersContainerProps = {
   children: ReactNode,
-  sidebar: ReactNode,
+  sidebar?: ReactNode,
   contentHeader?: ReactNode,
   sidebarToolbar?: ReactNode,
   className?: string,
@@ -58,31 +58,34 @@ export const FiltersContainer = (
     <section
       className={c(
         'c-filters-section',
+        !sidebar && 'has-no-sidebar',
         className,
       )}
     >
-      <div className='c-filters-section__sidebar'>
-        {sidebarToolbar && (
-          <div className='c-filters-section__sidebar-toolbar'>
-            {sidebarToolbar}
-          </div>
-        )}
-
-        <h4 className='c-filters-section__sidebar-header'>
-          {t('header')}
-
-          {onClearFilters && (
-            <TextButton
-              className='is-text-tiny is-text-muted'
-              onClick={onClearFilters}
-            >
-              {t('clear')}
-            </TextButton>
+      {sidebar && (
+        <div className='c-filters-section__sidebar'>
+          {sidebarToolbar && (
+            <div className='c-filters-section__sidebar-toolbar'>
+              {sidebarToolbar}
+            </div>
           )}
-        </h4>
 
-        {sidebar}
-      </div>
+          <h4 className='c-filters-section__sidebar-header'>
+            {t('header')}
+
+            {onClearFilters && (
+              <TextButton
+                className='is-text-tiny is-text-muted'
+                onClick={onClearFilters}
+              >
+                {t('clear')}
+              </TextButton>
+            )}
+          </h4>
+
+          {sidebar}
+        </div>
+      )}
 
       <div
         className={c(

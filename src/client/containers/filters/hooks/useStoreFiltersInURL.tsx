@@ -56,9 +56,9 @@ export function deserializeUrlFilters(search: string | object) {
 
 export function useStoreFiltersInURL(
   {
-    initialFilters,
+    decodedFilters,
   }: {
-    initialFilters?: any,
+    decodedFilters?: any,
   } = {},
 ) {
   const history = useHistory();
@@ -66,10 +66,13 @@ export function useStoreFiltersInURL(
 
   const decodedInitialFilters = useMemo(
     () => {
-      if (initialFilters)
-        return initialFilters;
+      if (decodedFilters)
+        return decodedFilters;
 
-      return deserializeUrlFilters(location.search);
+      return {
+        ...decodedFilters,
+        ...deserializeUrlFilters(location.search),
+      };
     },
     [],
   );

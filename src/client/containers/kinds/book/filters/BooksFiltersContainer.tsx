@@ -48,9 +48,10 @@ export function getDefaultBooksFilters() {
 }
 
 type BooksFiltersContainerProps = {
+  hideSidebar?: boolean,
   parentGroups?: ReactNode,
-  initialBooks: BooksPaginationResultWithAggs,
   initialFilters?: any,
+  initialBooks: BooksPaginationResultWithAggs,
   overrideFilters?: any,
   contentHeader?(
     attrs: {
@@ -61,6 +62,7 @@ type BooksFiltersContainerProps = {
 
 export const BooksFiltersContainer = (
   {
+    hideSidebar,
     initialBooks,
     initialFilters,
     overrideFilters,
@@ -74,16 +76,12 @@ export const BooksFiltersContainer = (
   const {
     decodedInitialFilters,
     assignFiltersToURL,
-  } = useStoreFiltersInURL(
-    {
-      initialFilters,
-    },
-  );
+  } = useStoreFiltersInURL();
 
   const l = useInputLink<any>(
     {
       initialData: () => ({
-        ...getDefaultBooksFilters(),
+        ...initialFilters,
         ...decodedInitialFilters,
       }),
       effectFn(prevValue, value) {
@@ -198,13 +196,15 @@ export const BooksFiltersContainer = (
             loading={loading}
             className='c-books-filters-section'
             sidebarToolbar={parentGroups}
-            sidebar={(
-              <BooksFiltersGroups
-                aggs={safeResult.aggs}
-                overrideFilters={overrideFilters}
-                l={l}
-              />
-            )}
+            sidebar={
+              !hideSidebar && (
+                <BooksFiltersGroups
+                  aggs={safeResult.aggs}
+                  overrideFilters={overrideFilters}
+                  l={l}
+                />
+              )
+            }
             toolbarRenderFn={toolbarRenderFn}
             {...!emptyFilters && {
               onClearFilters: () => l.setValue({}),

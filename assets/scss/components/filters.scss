@@ -6,6 +6,10 @@
     grid-template-columns: 220px 1fr;
     grid-gap: $gap;
 
+    &.has-no-sidebar {
+      grid-template-columns: 1fr;
+    }
+
     &__sidebar {
       height: 100%;
       padding-right: $gap;

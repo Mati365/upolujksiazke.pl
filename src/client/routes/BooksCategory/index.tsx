@@ -128,8 +128,8 @@ BooksCategoryRoute.getInitialProps = async (attrs) => {
   } = attrs;
 
   const initialFilters = {
-    ...deserializeUrlFilters(search),
     ...getDefaultBooksFilters(),
+    ...deserializeUrlFilters(search),
   };
 
   const {

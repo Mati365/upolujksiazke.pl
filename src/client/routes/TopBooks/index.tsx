@@ -1,5 +1,6 @@
 import React from 'react';
 import * as R from 'ramda';
+import {Helmet} from 'react-helmet';
 
 import {objPropsToPromise} from '@shared/helpers';
 import {deserializeUrlFilters} from '@client/containers/filters/hooks/useStoreFiltersInURL';
@@ -69,6 +70,12 @@ export const TopBooksRoute: AsyncRoute<TopBooksRouteRouteData> = (
 
   return (
     <Layout {...layoutData}>
+      <Helmet>
+        <title>
+          {t('title')}
+        </title>
+      </Helmet>
+
       <Container className='c-top-books-route'>
         <BooksFiltersContainer
           hideSidebar

@@ -1,5 +1,6 @@
 import React from 'react';
 import {Redirect} from 'react-router';
+import {Helmet} from 'react-helmet';
 import * as R from 'ramda';
 
 import {
@@ -128,6 +129,17 @@ export const BookRoute: AsyncRoute<BookRouteViewData> = (
             ),
           ].filter(Boolean)}
         />
+
+        <Helmet>
+          <title>
+            {formatBookTitle(
+              {
+                t,
+                book,
+              },
+            )}
+          </title>
+        </Helmet>
 
         <BookInfo
           book={book}

@@ -1,6 +1,7 @@
 import pug from 'pug';
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
+import {Helmet} from 'react-helmet';
 import {StaticRouterContext} from 'react-router';
 import {Response, Request} from 'express';
 import {Controller, Get, Res, Req} from '@nestjs/common';
@@ -97,6 +98,7 @@ export class FrontController {
       />,
     );
 
+    const helmet = Helmet.renderStatic();
     if (context.url) {
       res.redirect(301, context.url);
       return;
@@ -107,6 +109,11 @@ export class FrontController {
         {
           lang: i18n.lang,
           viewData: JSON.stringify(viewData),
+          meta: `
+            ${helmet.title.toString()}
+            ${helmet.meta.toString()}
+            ${helmet.link.toString()}
+          `,
           files,
           html,
         },

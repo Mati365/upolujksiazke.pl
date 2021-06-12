@@ -1,4 +1,5 @@
 import React from 'react';
+import {Helmet} from 'react-helmet';
 
 import {objPropsToPromise} from '@shared/helpers';
 import {deserializeUrlFilters} from '@client/containers/filters/hooks/useStoreFiltersInURL';
@@ -56,6 +57,12 @@ export const BooksRoute: AsyncRoute<BooksRouteViewData> = (
       {...layoutData}
       hidePromoItems
     >
+      <Helmet>
+        <title>
+          {t('title')}
+        </title>
+      </Helmet>
+
       <Container className='c-books-route'>
         <BooksFiltersContainer
           initialBooks={initialBooks}

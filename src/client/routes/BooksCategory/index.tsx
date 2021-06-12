@@ -1,5 +1,6 @@
 import React from 'react';
 import {Redirect} from 'react-router-dom';
+import {Helmet} from 'react-helmet';
 
 import {capitalize, objPropsToPromise} from '@shared/helpers';
 import {deserializeUrlFilters} from '@client/containers/filters/hooks/useStoreFiltersInURL';
@@ -78,6 +79,12 @@ export const BooksCategoryRoute: AsyncRoute<BooksRouteViewData> = (
       {...layoutData}
       hidePromoItems
     >
+      <Helmet>
+        <title>
+          {t('title', [category.name])}
+        </title>
+      </Helmet>
+
       <Container className='c-book-category-route'>
         <BooksFiltersContainer
           initialBooks={initialBooks}

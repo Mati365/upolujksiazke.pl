@@ -1,4 +1,5 @@
 import React from 'react';
+import {Helmet} from 'react-helmet';
 
 import {objPropsToPromise} from '@shared/helpers';
 import {useI18n} from '@client/i18n';
@@ -52,6 +53,12 @@ export const AuthorsRoute: AsyncRoute<AuthorsRouteData> = (
             },
           ]}
         />
+
+        <Helmet>
+          <title>
+            {t('title', [letter.current])}
+          </title>
+        </Helmet>
 
         <LayoutHeaderTitle>
           {t('title', [letter.current])}

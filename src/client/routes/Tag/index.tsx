@@ -1,5 +1,6 @@
 import React from 'react';
 import {Redirect} from 'react-router';
+import {Helmet} from 'react-helmet';
 
 import {capitalize, objPropsToPromise} from '@shared/helpers';
 import {serializeAggsToSearchParams} from '@client/containers/kinds/book/filters/helpers/serializeAggsToSearchParams';
@@ -76,6 +77,12 @@ export const TagRoute: AsyncRoute<TagRouteData> = (
   return (
     <Layout {...layoutData}>
       <Container className='c-tag-route'>
+        <Helmet>
+          <title>
+            {t('books.title', [capitalizedName])}
+          </title>
+        </Helmet>
+
         <BooksFiltersContainer
           initialBooks={initialBooks}
           initialFilters={initialFilters}

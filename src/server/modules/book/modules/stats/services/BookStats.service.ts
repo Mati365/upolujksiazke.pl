@@ -10,7 +10,12 @@ import {EsBookIndex} from '../../search/indices/EsBook.index';
 import {CardBookSearchService} from '../../search/service/CardBookSearch.service';
 import {BookEntity} from '../../../entity/Book.entity';
 
-type BookStats = Pick<BookEntity, 'avgRating' | 'totalRatings' | 'lowestPrice' | 'highestPrice' | 'allTypes'>;
+type BookStats = Pick<
+/* eslint-disable @typescript-eslint/indent */
+  BookEntity,
+  'avgRating' | 'totalRatings' | 'lowestPrice' | 'highestPrice' | 'allTypes' | 'totalTextReviews'
+/* eslint-enable @typescript-eslint/indent */
+>;
 
 @Injectable()
 export class BookStatsService {
@@ -90,16 +95,17 @@ export class BookStatsService {
               max("price")::float as "highestPrice",
               sum("avgRating" * coalesce("totalRatings", 0))::float as "sumRatings",
               sum(CASE WHEN "avgRating" IS NULL THEN 0 ELSE "totalRatings" END)::int as "totalRatings"
-            from public.book_availability ba
+            from book_availability ba
             left join releases r on r."id" = ba."releaseId"
             where r."bookId" = $1
           ),
           reviews as (
             select
-              sum("rating")::float as "sumRatings",
-              count(CASE WHEN "rating" IS NULL THEN 0 ELSE 1 END)::int as "totalRatings"
-            from public.book_review br
-            where br."bookId" = $1 and br."includeInStats" = true
+              sum(case when br."description" is not null then 1 else 0 end) as "totalTextReviews",
+              sum(case when br."includeInStats" = true then "rating" else 0 end)::float as "sumRatings",
+              count(case when "rating" is null and br."includeInStats" = true then 0 else 1 end)::int as "totalRatings"
+            from book_review br
+            where br."bookId" = $1
           ),
           primary_category as (
             select bc."parentCategoryId" as "id"
@@ -118,6 +124,7 @@ export class BookStatsService {
             / nullif(a."totalRatings" + r."totalRatings", 0) as "avgRating",
           (coalesce(a."totalRatings", 0) + coalesce(r."totalRatings", 0)) as "totalRatings",
           rt."items" as "allTypes",
+          r."totalTextReviews",
           (select "id" from primary_category) as "primaryCategoryId"
         from availability a
         cross join reviews r

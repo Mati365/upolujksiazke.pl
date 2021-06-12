@@ -202,6 +202,9 @@ export class BookEntity extends DatedRecordEntity implements TrackScrappersList 
   @Column('integer', {nullable: true})
   totalRatings: number;
 
+  @Column('integer', {nullable: true})
+  totalTextReviews: number;
+
   @Column(
     'decimal',
     {

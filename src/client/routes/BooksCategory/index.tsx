@@ -1,6 +1,5 @@
 import React from 'react';
 import {Redirect} from 'react-router-dom';
-import {Helmet} from 'react-helmet';
 
 import {capitalize, objPropsToPromise} from '@shared/helpers';
 import {deserializeUrlFilters} from '@client/containers/filters/hooks/useStoreFiltersInURL';
@@ -10,7 +9,7 @@ import {useI18n} from '@client/i18n';
 
 import {AsyncRoute} from '@client/components/utils/asyncRouteUtils';
 import {Breadcrumbs} from '@client/containers/Breadcrumbs';
-import {DynamicIcon} from '@client/components/svg';
+import {DynamicIcon, ICON_EMOJI_MAPPINGS} from '@client/components/svg';
 
 import {Container} from '@client/components/ui';
 import {BooksPaginationResultWithAggs} from '@api/repo';
@@ -21,6 +20,7 @@ import {
   Layout,
   LayoutHeaderTitle,
   LayoutViewData,
+  SEOMeta,
 } from '@client/containers/layout';
 
 import {
@@ -74,17 +74,25 @@ export const BooksCategoryRoute: AsyncRoute<BooksRouteViewData> = (
     />
   );
 
+  const seoMeta = {
+    title: t(
+      'seo.title',
+      {
+        emoji: ICON_EMOJI_MAPPINGS[category.icon] || '',
+        name: category.name,
+      },
+    ).trim(),
+
+    description: t('seo.description'),
+    cover: initialBooks[0]?.primaryRelease.cover.preview?.file,
+  };
+
   return (
     <Layout
       {...layoutData}
       hidePromoItems
     >
-      <Helmet>
-        <title>
-          {t('title', [category.name])}
-        </title>
-      </Helmet>
-
+      <SEOMeta meta={seoMeta} />
       <Container className='c-book-category-route'>
         <BooksFiltersContainer
           initialBooks={initialBooks}

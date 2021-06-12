@@ -25,6 +25,7 @@ import {
   Layout,
   LayoutHeaderTitle,
   LayoutViewData,
+  SEOMeta,
 } from '@client/containers/layout';
 
 import {
@@ -83,6 +84,14 @@ export const AuthorRoute: AsyncRoute<AuthorRouteData> = (
 
   return (
     <Layout {...layoutData}>
+      <SEOMeta
+        meta={{
+          title: t('seo.title', [author.name]),
+          description: t('seo.description', [author.name]),
+          cover: initialBooks.items[0]?.primaryRelease.cover.preview?.file,
+        }}
+      />
+
       <Container className='c-author-route'>
         <BooksFiltersContainer
           initialBooks={initialBooks}

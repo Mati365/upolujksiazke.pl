@@ -1,6 +1,5 @@
 import React from 'react';
 import * as R from 'ramda';
-import {Helmet} from 'react-helmet';
 
 import {objPropsToPromise} from '@shared/helpers';
 import {deserializeUrlFilters} from '@client/containers/filters/hooks/useStoreFiltersInURL';
@@ -12,6 +11,7 @@ import {
 
 import {useI18n} from '@client/i18n';
 
+import {TrophyIcon} from '@client/components/svg';
 import {AsyncRoute} from '@client/components/utils/asyncRouteUtils';
 import {Breadcrumbs} from '@client/containers/Breadcrumbs';
 import {Container} from '@client/components/ui';
@@ -20,6 +20,7 @@ import {
   Layout,
   LayoutHeaderTitle,
   LayoutViewData,
+  SEOMeta,
 } from '@client/containers/layout';
 
 import {BooksPaginationResultWithAggs} from '@api/repo';
@@ -70,11 +71,13 @@ export const TopBooksRoute: AsyncRoute<TopBooksRouteRouteData> = (
 
   return (
     <Layout {...layoutData}>
-      <Helmet>
-        <title>
-          {t('title')}
-        </title>
-      </Helmet>
+      <SEOMeta
+        meta={{
+          title: t('seo.title'),
+          description: t('seo.description'),
+          cover: initialBooks[0]?.primaryRelease.cover.preview?.file,
+        }}
+      />
 
       <Container className='c-top-books-route'>
         <BooksFiltersContainer
@@ -94,6 +97,7 @@ export const TopBooksRoute: AsyncRoute<TopBooksRouteRouteData> = (
                   margin='medium'
                   toolbar={searchInput}
                 >
+                  <TrophyIcon className='mr-2' />
                   {t('title')}
                 </LayoutHeaderTitle>
               </>

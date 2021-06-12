@@ -1,5 +1,4 @@
 import React from 'react';
-import {Helmet} from 'react-helmet';
 
 import {objPropsToPromise} from '@shared/helpers';
 import {useI18n} from '@client/i18n';
@@ -13,6 +12,7 @@ import {
   Layout,
   LayoutHeaderTitle,
   LayoutViewData,
+  SEOMeta,
 } from '@client/containers/layout';
 
 import {AUTHORS_PATH, BooksLink} from '../Links';
@@ -33,9 +33,17 @@ export const AuthorsRoute: AsyncRoute<AuthorsRouteData> = (
   },
 ) => {
   const t = useI18n('routes.authors');
+  const decodedLetter = decodeURIComponent(letter.current);
 
   return (
     <Layout {...layoutData}>
+      <SEOMeta
+        meta={{
+          title: t('seo.title', [decodedLetter]),
+          description: t('seo.description', [decodedLetter]),
+        }}
+      />
+
       <Container className='c-authors-route'>
         <Breadcrumbs
           items={[
@@ -53,12 +61,6 @@ export const AuthorsRoute: AsyncRoute<AuthorsRouteData> = (
             },
           ]}
         />
-
-        <Helmet>
-          <title>
-            {t('title', [letter.current])}
-          </title>
-        </Helmet>
 
         <LayoutHeaderTitle>
           {t('title', [letter.current])}

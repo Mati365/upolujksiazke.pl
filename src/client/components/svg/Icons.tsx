@@ -63,6 +63,7 @@ import UserVoiceSVG from '@assets/icons/svg/user-voice.svg';
 import MehSVG from '@assets/icons/svg/meh.svg';
 import ListSVG from '@assets/icons/svg/list-ul.svg';
 import GridSVG from '@assets/icons/svg/grid.svg';
+import MagicSVG from '@assets/icons/svg/magic.svg';
 import WebsiteLogoSVG from '@assets/icons/website-logo.svg';
 import {Icon, IconProps} from '../ui/Icon';
 
@@ -147,6 +148,7 @@ export const UserVoiceIcon = Icon.createFromSVG(UserVoiceSVG);
 export const MehIcon = Icon.createFromSVG(MehSVG);
 export const GridIcon = Icon.createFromSVG(GridSVG);
 export const ListIcon = Icon.createFromSVG(ListSVG);
+export const MagicIcon = Icon.createFromSVG(MagicSVG);
 
 export const ICON_BY_NAME = {
   WebsiteLogo: WebsiteLogoIcon,
@@ -212,4 +214,56 @@ export const ICON_BY_NAME = {
   Meh: MehIcon,
   List: ListIcon,
   Grid: GridIcon,
+  Magic: MagicIcon,
+};
+
+export const ICON_EMOJI_MAPPINGS = {
+  Headphone: '🎧',
+  Devices: '🖥️',
+  Book: '📖',
+  Basket: '🧺',
+  Home: '🏠',
+  Purchase: '🛒',
+  BookOpen: '📖',
+  Calendar: '📅',
+  Comment: '💬',
+  Globe: '🌍',
+  Lock: '🔒',
+  Buildings: '🏘️',
+  Shop: '🛍️',
+  TrendingDown: '📉',
+  TrendingUp: '📈',
+  Trophy: '🏆',
+  Time: '⌛',
+  BookReader: '📱',
+  Store: '🛍️',
+  QuestionMark: '❓',
+  Anchor: '⚓',
+  Tag: '🏷️',
+  Times: '❌',
+  Search: '🔎',
+  Brain: '🧠',
+  BusSchool: '🏫',
+  Contact: '📇',
+  Graph: '📊',
+  Football: '⚽',
+  Meteor: '💥',
+  Heart: '💖',
+  History: '📜',
+  Joystick: '🎮',
+  Laptop: '💻',
+  MessageAlt: '💬',
+  News: '📰',
+  Pen: '✒️',
+  Plane: '✈️',
+  Pray: '🙏🏻',
+  Plant: '🪴',
+  Restaurant: '🍜',
+  Rocket: '🚀',
+  World: '🌍',
+  Library: '📚',
+  User: '👥',
+  UserVoice: '🎤',
+  Meh: '😐',
+  Magic: '🪄',
 };

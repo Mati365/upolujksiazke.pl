@@ -13,6 +13,7 @@ import {PL_AUTHORS_PACK} from './routes/authors';
 import {PL_AUTHOR_PACK} from './routes/author';
 import {PL_TOP_BOOKS_PACK} from './routes/topBooks';
 import {PL_TAG_PACK} from './routes/tag';
+import {PL_BOOK_ROUTE_PACK} from './routes/book';
 
 const PL_BOOK_BINDING_PACK: Record<BookBindingKind, string> = {
   [BookBindingKind.HARDCOVER]: 'twarda okładka',
@@ -50,6 +51,7 @@ const PL_SORT_MODES_PACK: Record<SortMode, string> = {
 const ROUTES_PACK = {
   home: PL_HOME_ROUTE_PACK,
   books: PL_BOOKS_ROUTE_PACK,
+  book: PL_BOOK_ROUTE_PACK,
   authors: PL_AUTHORS_PACK,
   author: PL_AUTHOR_PACK,
   top_books: PL_TOP_BOOKS_PACK,
@@ -62,6 +64,20 @@ export const PL_LANG_PACK = {
     placeholder: 'Wyszukaj książkę, autora lub ISBN i wciśnij enter...',
   },
   shared: {
+    months: [
+      'Styczeń',
+      'Luty',
+      'Marzec',
+      'Kwiecień',
+      'Maj',
+      'Czerwiec',
+      'Lipiec',
+      'Sierpień',
+      'Wrzesień',
+      'Październik',
+      'Listopad',
+      'Grudzień',
+    ],
     fetch_state: {
       loading: 'Wczytywanie...',
       errors: 'Błąd :(',

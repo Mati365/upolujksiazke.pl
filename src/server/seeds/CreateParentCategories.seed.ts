@@ -39,7 +39,7 @@ export default class CreateParentCategories implements Seeder {
         ],
       },
       {
-        icon: 'Rocket',
+        icon: 'Magic',
         names: [
           'Fantasy, science fiction, horror',
           'fantasy', 'science fiction', 'scifi', 'sci-fi', 'sci fi', 'horror', 'fantasy', 'sf',

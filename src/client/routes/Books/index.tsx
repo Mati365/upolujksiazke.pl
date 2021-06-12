@@ -1,5 +1,4 @@
 import React from 'react';
-import {Helmet} from 'react-helmet';
 
 import {objPropsToPromise} from '@shared/helpers';
 import {deserializeUrlFilters} from '@client/containers/filters/hooks/useStoreFiltersInURL';
@@ -17,6 +16,7 @@ import {
   Layout,
   LayoutHeaderTitle,
   LayoutViewData,
+  SEOMeta,
 } from '@client/containers/layout';
 
 import {
@@ -57,11 +57,13 @@ export const BooksRoute: AsyncRoute<BooksRouteViewData> = (
       {...layoutData}
       hidePromoItems
     >
-      <Helmet>
-        <title>
-          {t('title')}
-        </title>
-      </Helmet>
+      <SEOMeta
+        meta={{
+          title: t('seo.title'),
+          description: t('seo.description'),
+          cover: initialBooks[0]?.primaryRelease.cover.preview?.file,
+        }}
+      />
 
       <Container className='c-books-route'>
         <BooksFiltersContainer

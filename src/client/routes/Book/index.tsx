@@ -1,7 +1,8 @@
 import React from 'react';
 import {Redirect} from 'react-router';
-import {Helmet} from 'react-helmet';
 import * as R from 'ramda';
+
+import {ICON_EMOJI_MAPPINGS} from '@client/components/svg';
 
 import {
   capitalize,
@@ -33,7 +34,7 @@ import {
 } from '@client/containers/kinds/book';
 
 import {Container} from '@client/components/ui';
-import {Layout, LayoutViewData} from '@client/containers/layout';
+import {Layout, LayoutViewData, SEOMeta} from '@client/containers/layout';
 
 import {
   BookLink,
@@ -60,7 +61,7 @@ export const BookRoute: AsyncRoute<BookRouteViewData> = (
     popularCategoriesBooks,
   },
 ) => {
-  const t = useI18n();
+  const t = useI18n('routes.book');
   const ua = useUA();
 
   useTrackBookRoute(
@@ -73,8 +74,35 @@ export const BookRoute: AsyncRoute<BookRouteViewData> = (
     return <Redirect to={HOME_PATH} />;
 
   const {volume, hierarchy, primaryCategory} = book;
+  const authorsSeoString = R.pluck('name', book.authors).join(', ');
+  const seoMeta = {
+    title: t(
+      'seo.title',
+      {
+        emoji: ICON_EMOJI_MAPPINGS[primaryCategory.icon] || '',
+        authors: authorsSeoString,
+        title: formatBookTitle(
+          {
+            t,
+            book,
+          },
+        ),
+      },
+    ).trim(),
+
+    description: t(
+      'seo.description',
+      {
+        authors: authorsSeoString,
+      },
+    ),
+
+    cover: book.primaryRelease.cover.preview?.file,
+  };
+
   return (
     <Layout {...layoutData}>
+      <SEOMeta meta={seoMeta} />
       <Container className='c-book-route'>
         <Breadcrumbs
           items={[
@@ -129,17 +157,6 @@ export const BookRoute: AsyncRoute<BookRouteViewData> = (
             ),
           ].filter(Boolean)}
         />
-
-        <Helmet>
-          <title>
-            {formatBookTitle(
-              {
-                t,
-                book,
-              },
-            )}
-          </title>
-        </Helmet>
 
         <BookInfo
           book={book}

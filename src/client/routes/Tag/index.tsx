@@ -1,6 +1,5 @@
 import React from 'react';
 import {Redirect} from 'react-router';
-import {Helmet} from 'react-helmet';
 
 import {capitalize, objPropsToPromise} from '@shared/helpers';
 import {serializeAggsToSearchParams} from '@client/containers/kinds/book/filters/helpers/serializeAggsToSearchParams';
@@ -26,6 +25,7 @@ import {
   Layout,
   LayoutHeaderTitle,
   LayoutViewData,
+  SEOMeta,
 } from '@client/containers/layout';
 
 import {
@@ -76,13 +76,15 @@ export const TagRoute: AsyncRoute<TagRouteData> = (
 
   return (
     <Layout {...layoutData}>
-      <Container className='c-tag-route'>
-        <Helmet>
-          <title>
-            {t('books.title', [capitalizedName])}
-          </title>
-        </Helmet>
+      <SEOMeta
+        meta={{
+          title: t('seo.title', [tag.name]),
+          description: t('seo.description', [tag.name]),
+          cover: initialBooks[0]?.primaryRelease.cover.preview?.file,
+        }}
+      />
 
+      <Container className='c-tag-route'>
         <BooksFiltersContainer
           initialBooks={initialBooks}
           initialFilters={initialFilters}

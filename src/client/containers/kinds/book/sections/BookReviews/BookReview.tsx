@@ -40,6 +40,7 @@ export const BookReview = ({review}: BookReviewProps) => {
           src={(
             reviewer.avatar?.smallThumb?.file || avatarPlaceholderUrl
           )}
+          alt='Avatar'
         />
 
         <CleanList

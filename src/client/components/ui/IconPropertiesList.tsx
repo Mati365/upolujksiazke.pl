@@ -42,9 +42,9 @@ export const IconPropertiesList = ({items, className}: IconPropertiesListProps) 
                 autoWidth && 'has-auto-width',
               )}
             >
-              <h4 className='c-icon-props-list__title'>
+              <span className='c-icon-props-list__title'>
                 {name}
-              </h4>
+              </span>
 
               <Icon className='c-icon-props-list__icon' />
 

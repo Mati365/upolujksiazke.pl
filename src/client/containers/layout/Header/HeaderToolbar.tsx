@@ -44,6 +44,7 @@ export const HeaderToolbar = () => {
           >
             <UndecoratedLink
               href={url}
+              title={title}
               activeClassName='is-active'
             >
               <Icon className='c-header__link-icon' />

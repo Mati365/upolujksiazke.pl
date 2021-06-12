@@ -9,7 +9,11 @@ export const Favicon = ({className, ...props}: JSX.IntrinsicElements['img']) => 
       className,
     )}
   >
-    <img {...props} />
+    <img
+      {...props}
+      width={14}
+      height={14}
+    />
   </span>
 );
 

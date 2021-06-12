@@ -5,6 +5,7 @@ import {BasicWrapperProps} from '@client/components/ui';
 
 type SectionProps = BasicWrapperProps & {
   title?: ReactNode,
+  titleSuffix?: ReactNode,
   spaced?: number,
   bordered?: boolean,
   subsection?: boolean,
@@ -16,6 +17,7 @@ type SectionProps = BasicWrapperProps & {
 export const Section = (
   {
     title,
+    titleSuffix,
     spaced = 4,
     bordered = true,
     noContentSpacing = true,
@@ -43,6 +45,11 @@ export const Section = (
         )}
       >
         {title}
+        {titleSuffix && (
+          <span className='c-section__header-suffix'>
+            {titleSuffix}
+          </span>
+        )}
         <span className='c-section__header-underline' />
       </h2>
     )}

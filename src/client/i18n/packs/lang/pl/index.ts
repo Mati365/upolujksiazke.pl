@@ -259,6 +259,7 @@ export const PL_LANG_PACK = {
     },
     reviews: {
       title: 'Recenzje książki',
+      total: '%{} recenzji',
     },
     summaries: {
       title: 'Streszczenia książki',

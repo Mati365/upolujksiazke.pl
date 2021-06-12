@@ -7,6 +7,7 @@ export interface BookCardRecord extends SeriesBookRecord {
   description?: string;
   lowestPrice: number;
   highestPrice: number;
+  totalTextReviews: number;
   authors: BookAuthorRecord[];
   primaryRelease: BookCardReleaseRecord,
   allTypes: BookType[];

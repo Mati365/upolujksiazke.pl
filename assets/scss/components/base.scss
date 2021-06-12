@@ -4,6 +4,10 @@
     flex-direction: row;
     align-items: center;
     justify-content: flex-start;
+
+    &.is-inline {
+      display: inline-flex;
+    }
   }
 
   &-flex-center {

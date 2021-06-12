@@ -97,7 +97,7 @@ export class BookReviewService {
         .leftJoin('website.logo', 'websiteLogo', `websiteLogo.version = '${ImageVersion.SMALL_THUMB}'`)
         .leftJoin('websiteLogo.attachment', 'websiteAttachment')
 
-        .limit(limit)
+        .take(limit)
         .orderBy('review.publishDate', 'DESC')
         .getMany()
     );

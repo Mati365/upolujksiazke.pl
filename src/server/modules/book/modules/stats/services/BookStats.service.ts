@@ -62,7 +62,7 @@ export class BookStatsService {
       },
     );
 
-    let score = totalViews * 8 + stats.totalRatings;
+    let score = totalViews * 8 + stats.totalTextReviews * 4 + stats.totalRatings / 400;
     if (stats.avgRating < 7)
       score *= 0.75;
 

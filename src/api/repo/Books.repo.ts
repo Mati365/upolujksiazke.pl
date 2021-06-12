@@ -6,6 +6,7 @@ import {
 
 import {APICountedBucket, CreateCountedAggType} from '@api/APIRecord';
 import {
+  APIPaginationFilters,
   APIPaginationResult,
   APIPaginationResultWithAggs,
   BasicAPIPagination,
@@ -109,6 +110,7 @@ export type BookFindOneAttrs = {
 export interface BooksRepo extends APIRepo<BookFullInfoRecord, BooksFilters, BookFindOneAttrs> {
   findBooksAggsItems?(attrs: SingleAggBookFilters): CanBePromise<SingleAggFiltersResult>;
   findAggregatedBooks?(filters?: AggsBooksFilters): CanBePromise<BooksPaginationResultWithAggs>;
+  findTopRankingBooks?(filters?: APIPaginationFilters): CanBePromise<BooksPaginationResult>;
   findGroupedAuthorsBooks?(filters?: AuthorsBooksFilters): CanBePromise<BooksAuthorsGroupedBooks>;
   findRecentBooks?(filters?: BasicAPIPagination): CanBePromise<BookCardRecord[]>;
 }

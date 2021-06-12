@@ -282,6 +282,9 @@ export class EsCardBookSearchService {
       case SortMode.POPULARITY:
         return [esb.sort('totalRatings', 'desc')];
 
+      case SortMode.RANKING:
+        return [esb.sort('rankingScore', 'desc')];
+
       case SortMode.ALPHABETIC:
         return [esb.sort('defaultTitle.raw', 'asc')];
 

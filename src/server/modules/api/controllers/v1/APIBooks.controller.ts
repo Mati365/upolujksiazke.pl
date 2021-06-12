@@ -5,6 +5,7 @@ import {Accepts} from '@server/common/decorators/Accepts.decorator';
 import {APIClientService} from '../../services/APIClient.service';
 import {
   BooksQueryFiltersDto,
+  BooksRankingQueryFiltersDto,
   BooksAggQueryFiltersDto,
 } from './dto';
 
@@ -13,6 +14,21 @@ export class APIBooksController {
   constructor(
     private readonly apiClientService: APIClientService,
   ) {}
+
+  /* eslint-disable @typescript-eslint/indent */
+  @Accepts('application/json')
+  @Get('/top-ranking')
+  async topRankingBooks(
+    @Res() res: Response,
+    @Query() filters: BooksRankingQueryFiltersDto,
+  ) {
+    const {client: {repo}} = this.apiClientService;
+
+    res.json(
+      await repo.books.findTopRankingBooks(filters),
+    );
+  }
+  /* eslint-enable @typescript-eslint/indent */
 
   /* eslint-disable @typescript-eslint/indent */
   /**
@@ -25,7 +41,7 @@ export class APIBooksController {
    */
   @Accepts('application/json')
   @Get()
-  async aggs(
+  async filterBooks(
     @Res() res: Response,
     @Query() filters: BooksQueryFiltersDto,
   ) {

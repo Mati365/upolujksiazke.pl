@@ -1,10 +1,7 @@
 import {Transform} from 'class-transformer';
-import {
-  IsEnum, IsNumber,
-  IsOptional, IsString,
-} from 'class-validator';
+import {IsEnum, IsNumber, IsOptional} from 'class-validator';
 
-import {APIPaginationDto} from '@server/modules/api/dto/APIPagination.dto';
+import {APIBasicPaginationFilters} from '@server/modules/api/dto';
 import {
   TransformBoolean,
   TransformSeparatedArray,
@@ -13,7 +10,7 @@ import {
 import {BooksFilters} from '@api/repo';
 import {BookSchoolLevel, BookType, SortMode} from '@shared/enums';
 
-export class BooksQueryFiltersDto extends APIPaginationDto implements Required<BooksFilters> {
+export class BooksQueryFiltersDto extends APIBasicPaginationFilters implements Required<BooksFilters> {
   @IsOptional()
   @TransformBoolean()
   readonly selectDescription: boolean;
@@ -22,10 +19,6 @@ export class BooksQueryFiltersDto extends APIPaginationDto implements Required<B
   @Transform(({value}) => parseInt(value, 10))
   @IsEnum(BookSchoolLevel)
   readonly sort: SortMode;
-
-  @IsOptional()
-  @IsString()
-  readonly phrase: string;
 
   @IsOptional()
   @TransformSeparatedArray()

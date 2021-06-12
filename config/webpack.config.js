@@ -213,6 +213,9 @@ module.exports = [
         ...mode !== 'production'
           ? [new NodemonPlugin(
             {
+              ignore: [
+                path.resolve('./node_modules'),
+              ],
               watch: [
                 path.resolve('./src'),
                 path.resolve('./assets'),

@@ -1,5 +1,6 @@
 import {Module, forwardRef} from '@nestjs/common';
 
+import {TrackerModule} from '@server/modules/tracker';
 import {BookSearchModule} from '../search';
 import {
   BookStatsService,
@@ -9,6 +10,7 @@ import {
 @Module(
   {
     imports: [
+      TrackerModule,
       forwardRef(() => BookSearchModule),
     ],
     providers: [

@@ -1,8 +1,9 @@
 import React from 'react';
+import * as R from 'ramda';
 
 import {objPropsToPromise} from '@shared/helpers';
 import {deserializeUrlFilters} from '@client/containers/filters/hooks/useStoreFiltersInURL';
-import {serializeAggsToSearchParams} from '@client/containers/kinds/book/filters/helpers/serializeAggsToSearchParams';
+import {serializeFiltersToSearchParams} from '@api/helpers';
 import {
   BooksFiltersContainer,
   getDefaultBooksFilters,
@@ -25,6 +26,13 @@ import {
   BooksLink,
   TOP_BOOKS_PATH,
 } from '../Links';
+
+function serializeTopBooksFilters(filters: any) {
+  return {
+    ...serializeFiltersToSearchParams(filters),
+    selectDescription: true,
+  };
+}
 
 type TopBooksRouteRouteData = {
   layoutData: LayoutViewData,
@@ -64,6 +72,11 @@ export const TopBooksRoute: AsyncRoute<TopBooksRouteRouteData> = (
       <Container className='c-top-books-route'>
         <BooksFiltersContainer
           hideSidebar
+          hideSort
+          filtersSerializeFn={serializeTopBooksFilters}
+          promiseFn={
+            ({api, filters}) => api.repo.books.findTopRankingBooks(filters)
+          }
           initialBooks={initialBooks}
           initialFilters={initialFilters}
           contentHeader={
@@ -99,9 +112,9 @@ TopBooksRoute.getInitialProps = async (attrs) => {
   } = attrs;
 
   const initialFilters = {
-    ...getDefaultBooksFilters(),
-    ...deserializeUrlFilters(search),
     viewMode: ViewMode.LIST,
+    ...R.omit(['sort', 'viewMode'], getDefaultBooksFilters()),
+    ...deserializeUrlFilters(search),
   };
 
   const {
@@ -110,8 +123,8 @@ TopBooksRoute.getInitialProps = async (attrs) => {
   } = await objPropsToPromise(
     {
       layoutData: Layout.getInitialProps(attrs),
-      initialBooks: repo.books.findAggregatedBooks(
-        serializeAggsToSearchParams(initialFilters),
+      initialBooks: repo.books.findTopRankingBooks(
+        serializeTopBooksFilters(initialFilters),
       ),
     },
   );

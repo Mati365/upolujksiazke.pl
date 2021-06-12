@@ -2,9 +2,9 @@ import * as R from 'ramda';
 
 import {plainToClass} from 'class-transformer';
 
-import {ID} from '@shared/types';
+import {ID, SortMode} from '@shared/types';
 import {objPropsToPromise} from '@shared/helpers';
-import {BasicAPIPagination} from '@api/APIClient';
+import {APIPaginationFilters, BasicAPIPagination} from '@api/APIClient';
 import {APICountedBucket} from '@api/APIRecord';
 import {
   AggsBooksFilters,
@@ -12,6 +12,7 @@ import {
   BookFindOneAttrs,
   BooksAuthorsGroupedBooks,
   BooksFilters,
+  BooksPaginationResult,
   BooksRepo,
   SingleAggBookFilters,
 } from '@api/repo';
@@ -54,6 +55,23 @@ export class BooksServerRepo extends ServerAPIClientChild implements BooksRepo {
     schoolLevels: null,
     types: null,
   };
+
+  /**
+   * Find books for top 100 books page
+   *
+   * @param {APIPaginationFilters} filters
+   * @return {CanBePromise<BooksPaginationResult>}
+   * @memberof BooksServerRepo
+   */
+  @MeasureCallDuration('findTopRankingBooks')
+  async findTopRankingBooks(filters: APIPaginationFilters): Promise<BooksPaginationResult> {
+    return this.findAggregatedBooks(
+      {
+        ...filters,
+        sort: SortMode.RANKING,
+      },
+    );
+  }
 
   /**
    * Returns all books for specified authos

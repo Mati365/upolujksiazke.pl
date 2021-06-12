@@ -10,6 +10,7 @@ export enum SortMode {
   POPULARITY = 2,
   ALPHABETIC = 3,
   RECENTLY_ADDED = 4,
+  RANKING = 5,
 }
 
 export enum SortDirection {

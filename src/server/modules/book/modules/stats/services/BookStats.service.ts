@@ -4,6 +4,8 @@ import pMap from 'p-map';
 
 import {removeNullValues} from '@shared/helpers';
 
+import {TrackerRecordType, TrackerViewsMode} from '@shared/enums';
+import {TrackRecordViewsService} from '@server/modules/tracker/service/TrackRecordViews.service';
 import {EsBookIndex} from '../../search/indices/EsBook.index';
 import {CardBookSearchService} from '../../search/service/CardBookSearch.service';
 import {BookEntity} from '../../../entity/Book.entity';
@@ -14,6 +16,7 @@ type BookStats = Pick<BookEntity, 'avgRating' | 'totalRatings' | 'lowestPrice' |
 export class BookStatsService {
   constructor(
     private readonly entityManager: EntityManager,
+    private readonly trackViewsService: TrackRecordViewsService,
 
     @Inject(forwardRef(() => CardBookSearchService))
     private readonly bookSearchService: CardBookSearchService,
@@ -33,6 +36,32 @@ export class BookStatsService {
    */
   getTotalBooks() {
     return BookEntity.count();
+  }
+
+  /**
+   * Computes score for book and returns value
+   *
+   * @param {number} id
+   * @param {BookStats} stats
+   * @memberof BookStatsService
+   * @returns {Promise<number>}
+   */
+  async calcBookRankingScore(id: number, stats: BookStats): Promise<number> {
+    const {trackViewsService} = this;
+    const totalViews = await trackViewsService.getSummaryPeriodViewsCount(
+      {
+        duration: TrackRecordViewsService.getCurrentMonthDuration(),
+        mode: TrackerViewsMode.DAY,
+        type: TrackerRecordType.BOOK,
+        recordId: id,
+      },
+    );
+
+    let score = totalViews * 8 + stats.totalRatings;
+    if (stats.avgRating < 7)
+      score *= 0.75;
+
+    return Math.ceil(score);
   }
 
   /**
@@ -99,7 +128,10 @@ export class BookStatsService {
 
     await BookEntity.update(
       id,
-      removeNullValues(stats),
+      {
+        rankingScore: await this.calcBookRankingScore(id, stats),
+        ...removeNullValues(stats),
+      },
     );
 
     if (reindex)

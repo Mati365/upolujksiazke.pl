@@ -22,13 +22,13 @@ export type BasicAPIPagination = {
 
 export type APIPaginationFilters<F = {}> = BasicAPIPagination & F & {
   phrase?: string,
-  sort?: SortKeys,
+  sortColumns?: SortKeys,
 };
 
 export type APIPaginationResult<T> = PaginationResult<T>;
 
 export type APIPaginationResultWithAggs<T, A> = APIPaginationResult<T> & {
-  aggs: A,
+  aggs?: A,
 };
 
 export abstract class APIClientChild<T extends APIClient = APIClient> {

@@ -1,16 +1,34 @@
 import {CanBePromise} from '@shared/types';
 
+import {APIPaginationFilters} from '@api/APIClient';
 import {
   BooksPaginationResultWithAggs,
   BooksRepo,
   AggsBooksFilters,
   SingleAggBookFilters,
   SingleAggFiltersResult,
+  BooksPaginationResult,
 } from '@api/repo';
 
 import {AjaxAPIClientChild} from '../AjaxAPIClientChild';
 
 export class BooksAjaxRepo extends AjaxAPIClientChild implements BooksRepo {
+  /**
+   * Find top ranking page books listing
+   *
+   * @param {APIPaginationFilters} [filters]
+   * @return {Promise<BooksPaginationResult>}
+   * @memberof BooksAjaxRepo
+   */
+  findTopRankingBooks(filters?: APIPaginationFilters): Promise<BooksPaginationResult> {
+    return this.ajax.get(
+      {
+        path: '/books/top-ranking',
+        urlParams: filters,
+      },
+    );
+  }
+
   /**
    * Find all books by filters
    *

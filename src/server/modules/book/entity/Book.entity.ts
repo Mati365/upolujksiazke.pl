@@ -196,6 +196,9 @@ export class BookEntity extends DatedRecordEntity implements TrackScrappersList 
   @Column('float', {nullable: true})
   avgRating: number;
 
+  @Column('bigint', {nullable: true})
+  rankingScore: number;
+
   @Column('integer', {nullable: true})
   totalRatings: number;
 

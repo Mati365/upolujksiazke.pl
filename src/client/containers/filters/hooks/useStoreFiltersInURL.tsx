@@ -9,6 +9,19 @@ import {
   unflattenObject,
 } from '@shared/helpers';
 
+export function deserializePaginationFilters(obj: any) {
+  const toInt = (n: string) => Number.parseInt(n, 10);
+
+  return R.evolve(
+    {
+      limit: toInt,
+      offset: toInt,
+      viewMode: toInt,
+    },
+    obj,
+  );
+}
+
 export function pickNonPaginationFilters(obj: any) {
   return R.omit(
     ['offset', 'limit', 'sort', 'viewMode'],
@@ -50,7 +63,7 @@ export function deserializeUrlFilters(search: string | object) {
   return (
     R.isEmpty(params)
       ? null
-      : params
+      : deserializePaginationFilters(params)
   );
 }
 

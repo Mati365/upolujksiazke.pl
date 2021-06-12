@@ -55,6 +55,7 @@ OpenSource book reviews aggregator, something like Metacritic / Digg for books. 
 - [ ] Add button on availability table with "add store link" and if user adds try to parse
 - [ ] Video reviews
 - [ ] Hierarchic comments (filmweb, reddit)
+- [ ] Popular phrases aggregator
 
 ## Resources
 

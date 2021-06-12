@@ -27,7 +27,7 @@ export type BookIndexEntity = Pick<
   BookEntity,
   'id' | 'era' | 'genre' | 'tags' | 'categories' | 'prizes' | 'authors'
   | 'originalTitle' | 'defaultTitle' | 'lowestPrice' | 'highestPrice'
-  | 'allTypes' | 'schoolBook' | 'totalRatings' | 'createdAt'
+  | 'allTypes' | 'schoolBook' | 'totalRatings' | 'rankingScore' | 'createdAt'
 /* eslint-enable @typescript-eslint/indent */
 > & {
   volumeName: string,
@@ -63,6 +63,7 @@ export class EsBookIndex extends EntityIndex<BookEntity, BookIndexEntity> {
     allTypes: {type: 'keyword'},
     lowestPrice: {type: 'float'},
     highestPrice: {type: 'float'},
+    rankingScore: {type: 'integer'},
     totalRatings: {type: 'integer'},
     volumeName: {type: 'keyword'},
     isbns: {type: 'keyword'},
@@ -204,7 +205,7 @@ export class EsBookIndex extends EntityIndex<BookEntity, BookIndexEntity> {
             select: [
               'id', 'originalTitle', 'defaultTitle',
               'lowestPrice', 'highestPrice', 'allTypes',
-              'totalRatings', 'createdAt',
+              'totalRatings', 'createdAt', 'rankingScore',
             ],
             relations: [
               'schoolBook', 'volume', 'primaryCategory',

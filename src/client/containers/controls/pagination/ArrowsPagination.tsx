@@ -36,13 +36,12 @@ export const ArrowsPagination = linkInputs<BasicLimitPaginationOptions>(
     const location = useLocation();
     const t = useI18n('shared');
 
-    const {page, totalPages} = calcPaginationMetaFromFilters(
-      {
-        ...value,
-        totalItems,
-      },
-    );
+    const valueWithTotal = {
+      ...value,
+      totalItems,
+    };
 
+    const {page, totalPages} = calcPaginationMetaFromFilters(valueWithTotal);
     const [firstPage, lastPage] = [!page, page + 1 >= totalPages];
     const setOffset = (offset: number, resetScroll: boolean = true) => {
       l.setValue(
@@ -68,9 +67,9 @@ export const ArrowsPagination = linkInputs<BasicLimitPaginationOptions>(
       lastOffset,
     ] = [
       0,
-      calcPageOffset(value, page - 1),
-      calcPageOffset(value, page + 1),
-      (totalPages - 1) * value.limit,
+      calcPageOffset(valueWithTotal, page - 1),
+      calcPageOffset(valueWithTotal, page + 1),
+      (totalPages - 1) * valueWithTotal.limit,
     ];
 
     return (
@@ -118,7 +117,10 @@ export const ArrowsPagination = linkInputs<BasicLimitPaginationOptions>(
           <Input
             value={page + 1}
             onChange={
-              (e) => setOffset(calcPageOffset(value, +pickEventValue(e)) - 1, false)
+              (e) => setOffset(
+                calcPageOffset(valueWithTotal, +pickEventValue(e)) - 1,
+                false,
+              )
             }
           />
           <span className='c-arrows-paginate__of'>

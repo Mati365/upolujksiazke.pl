@@ -13,21 +13,20 @@ import {
   useStoreFiltersInURL,
 } from '@client/containers/filters/hooks/useStoreFiltersInURL';
 
+import {AjaxAPIClient} from '@client/modules/api/client/AjaxAPIClient';
 import {APIQuery} from '@client/modules/api/client/components';
 import {BookCardRecord} from '@api/types';
 import {BooksPaginationResultWithAggs} from '@api/repo';
 import {SortMode, ViewMode} from '@shared/enums';
 
+import {CanBePromise} from '@shared/types';
 import {FiltersBadges} from '@client/containers/filters/FiltersBadges';
-import {ArrowsPagination} from '@client/containers/controls/pagination/ArrowsPagination';
 import {
   EmptyResults,
   FiltersContainer,
-  FiltersPaginationToolbar,
-  PageSizeSelectInput,
-  SortSelectInput,
-  ViewModeSwitch,
   FiltersPhraseSearchInput,
+  DEFAULT_PAGE_SIZES,
+  FiltersToolbar,
 } from '@client/containers/filters';
 
 import {BooksBacklinks} from './BooksBacklinks';
@@ -36,23 +35,30 @@ import {BooksFiltersGroups} from './BooksFiltersGroups';
 
 import {serializeAggsToSearchParams} from './helpers/serializeAggsToSearchParams';
 
-const PAGE_SIZES = [30, 36, 42, 48, 54];
-
 export function getDefaultBooksFilters() {
   return {
     offset: 0,
     viewMode: ViewMode.GRID,
     sort: SortMode.POPULARITY,
-    limit: PAGE_SIZES[0],
+    limit: DEFAULT_PAGE_SIZES[0],
   };
 }
 
 type BooksFiltersContainerProps = {
+  promiseFn?(
+    attrs: {
+      api: AjaxAPIClient,
+      filters: any,
+    }
+  ): CanBePromise<BooksPaginationResultWithAggs>,
+
+  hideSort?: boolean,
   hideSidebar?: boolean,
   parentGroups?: ReactNode,
   initialFilters?: any,
   initialBooks: BooksPaginationResultWithAggs,
   overrideFilters?: any,
+  filtersSerializeFn?(filters: any): any,
   contentHeader?(
     attrs: {
       searchInput: ReactNode,
@@ -62,22 +68,22 @@ type BooksFiltersContainerProps = {
 
 export const BooksFiltersContainer = (
   {
+    promiseFn,
+    hideSort,
     hideSidebar,
     initialBooks,
     initialFilters,
     overrideFilters,
     contentHeader,
+    filtersSerializeFn = serializeAggsToSearchParams,
     parentGroups = (
       <BooksBacklinks />
     ),
   }: BooksFiltersContainerProps,
 ) => {
-  const t = useI18n();
-  const {
-    decodedInitialFilters,
-    assignFiltersToURL,
-  } = useStoreFiltersInURL();
+  const {decodedInitialFilters, assignFiltersToURL} = useStoreFiltersInURL();
 
+  const t = useI18n();
   const l = useInputLink<any>(
     {
       initialData: () => ({
@@ -85,10 +91,16 @@ export const BooksFiltersContainer = (
         ...decodedInitialFilters,
       }),
       effectFn(prevValue, value) {
-        if (R.isEmpty(value))
-          return getDefaultBooksFilters();
+        if (R.isEmpty(value)) {
+          return {
+            ...initialFilters,
+            offset: 0,
+            limit: prevValue.limit,
+          };
+        }
 
-        if (prevValue?.offset !== value?.offset)
+        if (prevValue?.offset !== value?.offset
+            || prevValue?.viewMode !== value?.viewMode)
           return value;
 
         return {
@@ -103,7 +115,7 @@ export const BooksFiltersContainer = (
   const {emptyFilters, serializedValue} = useMemo(
     () => ({
       emptyFilters: R.isEmpty(pickNonPaginationFilters(l.value)),
-      serializedValue: serializeAggsToSearchParams(
+      serializedValue: filtersSerializeFn(
         {
           ...l.value,
           ...overrideFilters,
@@ -145,7 +157,16 @@ export const BooksFiltersContainer = (
       loadingComponent={null}
       promiseKey={serializedValue}
       promiseFn={
-        ({api}) => api.repo.books.findAggregatedBooks(serializedValue)
+        ({api}) => (
+          promiseFn
+            ? promiseFn(
+              {
+                api,
+                filters: serializedValue,
+              },
+            )
+            : api.repo.books.findAggregatedBooks(serializedValue)
+        )
       }
       ignoreFirstRenderFetch
     >
@@ -154,34 +175,12 @@ export const BooksFiltersContainer = (
         const emptyItems = !loading && R.isEmpty(safeResult.items);
 
         const toolbarRenderFn = (top: boolean) => (!emptyItems || top) && (
-          <>
-            <FiltersPaginationToolbar>
-              <li>
-                <SortSelectInput {...l.input('sort')} />
-              </li>
-            </FiltersPaginationToolbar>
-
-            <FiltersPaginationToolbar className='ml-auto'>
-              <li>
-                <PageSizeSelectInput
-                  {...l.input('limit')}
-                  sizes={PAGE_SIZES}
-                />
-              </li>
-
-              <li>
-                <ViewModeSwitch {...l.input('viewMode')} />
-              </li>
-
-              <li>
-                <ArrowsPagination
-                  urlSearchParams={serializedValue}
-                  totalItems={safeResult.meta.totalItems}
-                  {...l.input()}
-                />
-              </li>
-            </FiltersPaginationToolbar>
-          </>
+          <FiltersToolbar
+            l={l}
+            hideSort={hideSort}
+            urlSearchParams={serializedValue}
+            totalItems={safeResult.meta.totalItems}
+          />
         );
 
         return (
@@ -197,7 +196,7 @@ export const BooksFiltersContainer = (
             className='c-books-filters-section'
             sidebarToolbar={parentGroups}
             sidebar={
-              !hideSidebar && (
+              !hideSidebar && safeResult.aggs && (
                 <BooksFiltersGroups
                   aggs={safeResult.aggs}
                   overrideFilters={overrideFilters}

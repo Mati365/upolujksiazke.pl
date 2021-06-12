@@ -31,6 +31,13 @@ export class TrackRecordViewsService {
     [TrackerViewsMode.MONTH]: MonthlyViewsAggEntity,
   };
 
+  static getCurrentMonthDuration(): Required<Duration> {
+    return {
+      begin: startOfMonth(new Date),
+      end: endOfMonth(new Date),
+    };
+  }
+
   /**
    * Creates or increments views aggregator record
    *
@@ -147,11 +154,7 @@ export class TrackRecordViewsService {
    * @memberof TrackRecordViewsService
    */
   async refreshCurrentMonthStats() {
-    const duration = {
-      begin: startOfMonth(new Date),
-      end: endOfMonth(new Date),
-    };
-
+    const duration = TrackRecordViewsService.getCurrentMonthDuration();
     const recordsIdsIterator = paginatedAsyncIterator(
       {
         limit: 60,

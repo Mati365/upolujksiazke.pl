@@ -30,9 +30,9 @@ export const CategoryCard = ({className, item}: CategoryCardProps) => {
             <Icon className='c-category-card__icon' />
           )}
 
-          <h3 className='c-category-card__title'>
+          <span className='c-category-card__title'>
             {item.name}
-          </h3>
+          </span>
         </div>
       </BookCategoryLink>
     </article>

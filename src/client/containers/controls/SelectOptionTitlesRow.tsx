@@ -34,6 +34,8 @@ export const SelectOptionTitlesRow = memo(linkInputs<ID>(
             className={c(
               +value === +item.id && 'is-text-primary',
             )}
+            title={item.title}
+            aria-label={item.title}
             type='button'
             onClick={
               () => l.setValue(item.id)

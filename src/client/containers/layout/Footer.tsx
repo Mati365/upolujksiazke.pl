@@ -55,7 +55,7 @@ export const Footer = ({popularCategories}: FooterProps) => {
           gap={10}
         >
           <div className='c-footer__column'>
-            <UnderlinedTitle tag='h3'>
+            <UnderlinedTitle tag='h2'>
               {t('footer.shortcuts')}
             </UnderlinedTitle>
 

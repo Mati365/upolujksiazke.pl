@@ -20,9 +20,9 @@ export const BookPricesReleaseRow = ({release}: BookPricesReleaseRowProps) => (
       </td>
 
       <td className='has-ellipsis'>
-        <h3 className='c-book-prices__release-title'>
+        <span className='c-book-prices__release-title'>
           {release.title}
-        </h3>
+        </span>
       </td>
     </tr>
 

@@ -56,9 +56,9 @@ export const BookCard = ({item}: BookCardProps) => {
 
       <div className='c-book-card__info'>
         <BookLink item={item}>
-          <h3 className='c-book-card__title is-text-semibold is-text-small has-double-link-chevron'>
+          <span className='c-book-card__title is-text-semibold is-text-small has-double-link-chevron'>
             {formattedTitle}
-          </h3>
+          </span>
         </BookLink>
 
         <LinksRow

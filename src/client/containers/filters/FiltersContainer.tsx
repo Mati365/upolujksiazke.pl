@@ -70,7 +70,7 @@ export const FiltersContainer = (
             </div>
           )}
 
-          <h4 className='c-filters-section__sidebar-header'>
+          <h2 className='c-filters-section__sidebar-header'>
             {t('header')}
 
             {onClearFilters && (
@@ -81,7 +81,7 @@ export const FiltersContainer = (
                 {t('clear')}
               </TextButton>
             )}
-          </h4>
+          </h2>
 
           {sidebar}
         </div>

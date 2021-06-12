@@ -5,6 +5,7 @@ import {
   BookSchoolLevel,
   BookType,
   SortMode,
+  ViewMode,
 } from '@shared/enums';
 
 import {PL_HOME_ROUTE_PACK} from './routes/home';
@@ -48,6 +49,11 @@ const PL_SORT_MODES_PACK: Record<SortMode, string> = {
   [SortMode.RECENTLY_ADDED]: 'Ostatnio dodane',
 };
 
+const PL_VIEW_MODES: Record<ViewMode, string> = {
+  [ViewMode.LIST]: 'Widok listy',
+  [ViewMode.GRID]: 'Widok tabeli',
+};
+
 const ROUTES_PACK = {
   home: PL_HOME_ROUTE_PACK,
   books: PL_BOOKS_ROUTE_PACK,
@@ -82,6 +88,7 @@ export const PL_LANG_PACK = {
       loading: 'Wczytywanie...',
       errors: 'Błąd :(',
     },
+    view_modes: PL_VIEW_MODES,
     titles: {
       of: 'z',
       no_data: 'Brak danych',

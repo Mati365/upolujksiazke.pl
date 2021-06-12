@@ -22,7 +22,7 @@ import {
 export const HeaderToolbar = () => {
   const t = useI18n();
   const links: [any, string, string][] = [
-    [HomeIcon, HOME_PATH, null],
+    [HomeIcon, HOME_PATH, t('links.home')],
     [CategoryIcon, BOOKS_PATH, t('links.books')],
     [TrophyIcon, TOP_BOOKS_PATH, t('links.top')],
     [BookIcon, BOOK_SERIES_PATH, t('links.series')],

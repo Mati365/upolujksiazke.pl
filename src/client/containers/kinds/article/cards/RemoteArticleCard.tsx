@@ -71,9 +71,9 @@ export const RemoteArticleCard = (
           target='_blank'
           className='c-article-card__anchor is-undecorated-link'
         >
-          <h3 className='c-article-card__header has-double-link-chevron'>
+          <span className='c-article-card__header has-double-link-chevron'>
             {title}
-          </h3>
+          </span>
 
           {(children || description) && (
             <div className='c-article-card__description'>

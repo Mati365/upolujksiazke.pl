@@ -48,9 +48,9 @@ export const WideBookCard = ({item}: WideBookCardProps) => {
 
       <div className='c-book-wide-card__basic-info'>
         <BookLink item={item}>
-          <h3 className='c-book-card__title is-text-semibold is-text-small has-double-link-chevron'>
+          <span className='c-book-card__title is-text-semibold is-text-small has-double-link-chevron'>
             {formattedTitle}
-          </h3>
+          </span>
         </BookLink>
 
         <RatingsRow

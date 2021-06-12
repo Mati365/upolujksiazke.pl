@@ -51,6 +51,7 @@ export type ListItem = {
 export type ReactListItem = {
   id: number,
   name: ReactNode,
+  title?: string,
 };
 
 export type CountedListItem = ListItem & {

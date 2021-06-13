@@ -6,6 +6,7 @@ import {useI18n} from '@client/i18n';
 import {AsyncRoute} from '@client/components/utils/asyncRouteUtils';
 import {
   BookCardRecord,
+  BookReviewRecord,
   CategoryBooksGroup,
 } from '@api/types';
 
@@ -19,12 +20,14 @@ import {
 } from '@client/containers/kinds/book';
 
 import {LazyHydrate} from '@client/components/ui/LazyHydrate';
+import {RecentlyCommendedBooks} from '@client/containers/kinds/review/sections';
 import {HOME_PATH} from '../Links';
 
 type HomeRouteProps = {
   layoutData: LayoutViewData,
   recentBooks: BookCardRecord[],
   popularCategoriesBooks: CategoryBooksGroup[],
+  recentCommentedBooks: BookReviewRecord[],
 };
 
 export const HomeRoute: AsyncRoute = (
@@ -35,6 +38,7 @@ export const HomeRoute: AsyncRoute = (
     },
     recentBooks,
     popularCategoriesBooks,
+    recentCommentedBooks,
   }: HomeRouteProps,
 ) => {
   const t = useI18n('routes.home');
@@ -42,13 +46,15 @@ export const HomeRoute: AsyncRoute = (
   return (
     <Layout {...layoutData}>
       <SEOMeta meta={t('seo') as any} />
-      <LazyHydrate>
-        <Container className='c-sections-list'>
-          <RootCategoriesSection items={rootPopularCategories} />
+      <Container className='c-sections-list'>
+        <RootCategoriesSection items={rootPopularCategories} />
+        <RecentlyCommendedBooks items={recentCommentedBooks} />
+
+        <LazyHydrate>
           <CategoriesGroupsBooksSection items={popularCategoriesBooks} />
           <RecentBooksSection items={recentBooks} />
-        </Container>
-      </LazyHydrate>
+        </LazyHydrate>
+      </Container>
     </Layout>
   );
 };
@@ -72,8 +78,13 @@ HomeRoute.getInitialProps = (attrs) => {
       popularCategoriesBooks: repo.recentBooks.findCategoriesPopularBooks(
         {
           itemsPerGroup: 14,
-          limit: 6,
+          limit: 4,
           root: true,
+        },
+      ),
+      recentCommentedBooks: repo.booksReviews.findRecentCommentedBooks(
+        {
+          limit: 4,
         },
       ),
     },

@@ -20,7 +20,7 @@ import {
   CategoryBooksGroup,
 } from '@api/types';
 
-import {BookLatestReviewsSection} from '@client/containers/kinds/review/BookLatestReviews';
+import {BookLatestReviewsSection} from '@client/containers/kinds/review/sections/BookLatestReviews';
 import {
   BookAvailabilitySection,
   BookInfo,

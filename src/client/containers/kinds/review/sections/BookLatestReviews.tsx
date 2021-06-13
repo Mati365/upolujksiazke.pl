@@ -6,7 +6,7 @@ import {Button, Section, SectionProps} from '@client/components/ui';
 import {CommentIcon} from '@client/components/svg';
 import {BookFullInfoRecord} from '@api/types';
 import {BookAllReviewsLink} from '@client/routes/Links';
-import {BookReviewsList} from './BookReviewsList';
+import {BookReviewsList} from '../list/BookReviewsList';
 
 type BookLatestReviewsSectionProps = SectionProps & {
   book: BookFullInfoRecord,

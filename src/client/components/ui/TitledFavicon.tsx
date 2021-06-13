@@ -11,6 +11,7 @@ type TitledFaviconProps = JSX.IntrinsicElements['span'] & {
   tag?: any,
   href?: string,
   rel?: string,
+  target?: string,
 };
 
 export const TitledFavicon = (

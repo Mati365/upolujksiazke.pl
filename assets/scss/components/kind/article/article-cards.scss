@@ -41,9 +41,11 @@
   &__header {
     @include text-ellipsis;
 
+    display: block;
     margin-top: .35rem;
     margin-bottom: 1rem;
     font-size: $text-normal;
+    font-weight: 600;
     line-height: 1.3rem;
 
     &:last-child {

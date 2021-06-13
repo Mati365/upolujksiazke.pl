@@ -11,7 +11,7 @@ import {useI18n} from '@client/i18n';
 
 import {AsyncRoute} from '@client/components/utils/asyncRouteUtils';
 import {BookFullInfoRecord} from '@api/types';
-import {BookPaginatedReviews} from '@client/containers/kinds/review/BookPaginatedReviews';
+import {BookPaginatedReviews} from '@client/containers/kinds/review/sections/BookPaginatedReviews';
 
 import {Container} from '@client/components/ui';
 import {BookSecondarySidebarContainer} from '@client/containers/kinds/book';

@@ -28,3 +28,20 @@
     }
   }
 }
+
+.c-book-reviews.is-grid {
+  @include except-mobile {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+
+    > li {
+      margin-bottom: 0;
+
+      &:nth-last-child(2),
+      &:last-child {
+        border-bottom: 0;
+      }
+    }
+  }
+}

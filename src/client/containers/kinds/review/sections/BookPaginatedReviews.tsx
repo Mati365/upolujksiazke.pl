@@ -20,7 +20,7 @@ import {
   BookReviewsPaginationResult,
 } from '@api/repo/BookReviews.repo';
 
-import {BookReviewsList} from '../BookLatestReviews/BookReviewsList';
+import {BookReviewsList} from '../list/BookReviewsList';
 
 type BookPaginatedReviewsProps = SectionProps & {
   totalReviews: number,

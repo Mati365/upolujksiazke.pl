@@ -11,7 +11,7 @@ import {
 import {DescriptionBox, DescriptionBoxProps} from './DescriptionBox';
 import {TextButton} from './TextButton';
 
-type ExpandableDescriptionBoxProps = Omit<DescriptionBoxProps, 'children'> & {
+export type ExpandableDescriptionBoxProps = Omit<DescriptionBoxProps, 'children'> & {
   maxCharactersCount: number,
   text: string,
   html?: boolean,

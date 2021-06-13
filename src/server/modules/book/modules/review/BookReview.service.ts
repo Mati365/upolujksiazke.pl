@@ -1,19 +1,22 @@
 import {Inject, Injectable, forwardRef} from '@nestjs/common';
-import {Connection, EntityManager, IsNull, Not} from 'typeorm';
+import {Connection, EntityManager, IsNull, Not, SelectQueryBuilder} from 'typeorm';
 import pMap from 'p-map';
 import * as R from 'ramda';
 
+import {uniqFlatHashByProp} from '@shared/helpers';
 import {
   forwardTransaction,
   upsert,
   UpsertResourceAttrs,
 } from '@server/common/helpers/db';
 
+import {RecentCommentedBooksFilters} from '@api/repo';
 import {ImageVersion} from '@shared/enums';
 import {CreateBookReviewDto} from './dto/CreateBookReview.dto';
 import {BookReviewEntity} from './BookReview.entity';
 import {BookReviewerService} from '../reviewer/BookReviewer.service';
 import {BookStatsService} from '../stats/services/BookStats.service';
+import {CardBookSearchService} from '../search/service/CardBookSearch.service';
 
 export type UpdateBookReviewAttrs = UpsertResourceAttrs & {
   reindexBook?: boolean,
@@ -35,7 +38,36 @@ export class BookReviewService {
     @Inject(forwardRef(() => BookStatsService))
     private readonly bookStatsService: BookStatsService,
     private readonly bookReviewerService: BookReviewerService,
+    private readonly cardBookSearchService: CardBookSearchService,
   ) {}
+
+  /**
+   * Create basic query
+   *
+   * @param {string[]} [select=BookReviewService.REVIEW_CARD_FIELDS]
+   * @return {SelectQueryBuilder<BookReviewEntity>}
+   * @memberof BookReviewService
+   */
+  createCardsQuery(select: string[] = BookReviewService.REVIEW_CARD_FIELDS): SelectQueryBuilder<BookReviewEntity> {
+    return (
+      BookReviewEntity
+        .createQueryBuilder('review')
+        .select(select)
+        .leftJoin('review.reviewer', 'reviewer')
+        .leftJoin('reviewer.avatar', 'avatar', `avatar.version = '${ImageVersion.SMALL_THUMB}'`)
+        .leftJoin('avatar.attachment', 'attachment')
+
+        .innerJoin('review.website', 'website')
+        .leftJoin('website.logo', 'websiteLogo', `websiteLogo.version = '${ImageVersion.SMALL_THUMB}'`)
+        .leftJoin('websiteLogo.attachment', 'websiteAttachment')
+
+        .where(
+          {
+            description: Not(IsNull()),
+          },
+        )
+    );
+  }
 
   /**
    * Remove multiple book reviews
@@ -76,6 +108,40 @@ export class BookReviewService {
   }
 
   /**
+   * Find nth book reviews including books
+   *
+   * @param {RecentCommentedBooksFilters} {limit}
+   * @return {Promise<BookReviewEntity[]>}
+   * @memberof BookReviewService
+   */
+  async findRecentBooksComments({limit}: RecentCommentedBooksFilters): Promise<BookReviewEntity[]> {
+    const {cardBookSearchService} = this;
+    const reviews = await (
+      this
+        .createCardsQuery()
+        .orderBy('review.publishDate', 'DESC')
+        .take(limit)
+        .getMany()
+    );
+
+    const books = uniqFlatHashByProp(
+      'id',
+      await cardBookSearchService.findBooksByIds(
+        R.pluck('bookId', reviews),
+      ),
+    );
+
+    return reviews.map(
+      (item) => new BookReviewEntity(
+        {
+          ...item,
+          book: books[item.bookId],
+        },
+      ),
+    );
+  }
+
+  /**
    * Fetches N comments for book
    *
    * @param {Object} attrs
@@ -94,30 +160,16 @@ export class BookReviewService {
       limit?: number,
     },
   ) {
-    const query = (
-      BookReviewEntity
-        .createQueryBuilder('review')
-        .select(BookReviewService.REVIEW_CARD_FIELDS)
-        .where(
-          {
-            description: Not(IsNull()),
-            ...!R.isNil(bookId) && {
-              bookId,
-            },
-          },
-        )
-        .leftJoin('review.reviewer', 'reviewer')
-        .leftJoin('reviewer.avatar', 'avatar', `avatar.version = '${ImageVersion.SMALL_THUMB}'`)
-        .leftJoin('avatar.attachment', 'attachment')
-
-        .innerJoin('review.website', 'website')
-        .leftJoin('website.logo', 'websiteLogo', `websiteLogo.version = '${ImageVersion.SMALL_THUMB}'`)
-        .leftJoin('websiteLogo.attachment', 'websiteAttachment')
-
+    let query = (
+      this
+        .createCardsQuery()
         .skip(offset)
         .take(limit)
         .orderBy('review.publishDate', 'DESC')
     );
+
+    if (!R.isNil(bookId))
+      query = query.andWhere('review."bookId" = :bookId', {bookId});
 
     const [items, totalItems] = (
       pagination

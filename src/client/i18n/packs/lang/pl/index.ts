@@ -277,6 +277,9 @@ export const PL_LANG_PACK = {
     recent_books: {
       title: 'Ostatnio dodane książki',
     },
+    recently_commented_books: {
+      title: 'Ostatnio skomentowane',
+    },
   },
   footer: {
     shortcuts: 'Na skróty',

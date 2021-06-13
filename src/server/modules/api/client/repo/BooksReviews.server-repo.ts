@@ -1,6 +1,12 @@
 import {plainToClass} from 'class-transformer';
 
-import {BookReviewsFilters, BookReviewsRepo} from '@api/repo';
+import {BookReviewRecord} from '@api/types';
+import {
+  BookReviewsFilters,
+  BookReviewsRepo,
+  RecentCommentedBooksFilters,
+} from '@api/repo';
+
 import {BookReviewSerializer} from '../../serializers';
 import {ServerAPIClientChild} from '../ServerAPIClientChild';
 import {
@@ -65,6 +71,35 @@ export class BooksReviewsServerRepo extends ServerAPIClientChild implements Book
     return plainToClass(
       BookReviewSerializer,
       await bookReviewService.findOne(id),
+      {
+        excludeExtraneousValues: true,
+      },
+    );
+  }
+
+  /**
+   * Find comments and assigned books
+   *
+   * @param {RecentCommentedBooksFilters} attrs
+   * @return {Promise<BookReviewRecord[]>}
+   * @memberof BooksReviewsServerRepo
+   */
+  @MeasureCallDuration('findRecentCommentedBooks')
+  @RedisMemoize(
+    {
+      keyFn: (attrs) => ({
+        key: `review-${JSON.stringify(attrs)}`,
+        expire: 100,
+      }),
+    },
+  )
+  async findRecentCommentedBooks(filters: RecentCommentedBooksFilters): Promise<BookReviewRecord[]> {
+    const {bookReviewService} = this.services;
+    const result = await bookReviewService.findRecentBooksComments(filters);
+
+    return plainToClass(
+      BookReviewSerializer,
+      result,
       {
         excludeExtraneousValues: true,
       },

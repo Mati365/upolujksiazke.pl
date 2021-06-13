@@ -135,6 +135,8 @@ export const RemoteArticleCard = (
             bold={false}
             src={website.logo?.smallThumb?.file}
             title={website.hostname}
+            target='_blank'
+            rel='noopener noreferrer'
           />
         </div>
       </div>

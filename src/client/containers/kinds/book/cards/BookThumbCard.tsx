@@ -13,10 +13,12 @@ export type BookThumbCardProps = {
   item: BookCardRecord,
   titled?: boolean,
   rated?: boolean,
+  className?: string,
 };
 
 export const BookThumbCard = (
   {
+    className,
     item,
     titled = true,
     rated = true,
@@ -34,6 +36,7 @@ export const BookThumbCard = (
     <article
       className={c(
         'c-book-thumb-card',
+        className,
       )}
     >
       <BookLink item={item}>

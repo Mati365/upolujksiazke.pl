@@ -59,6 +59,7 @@ export class BookTagsTextHydratorService {
       return null;
 
     return {
+      nonHTMLText: hydration.nonHTMLText,
       text: hydration.text,
       tags: (hydration.tags || []).map(
         ({name, id}) => new TagEntity(
@@ -127,6 +128,7 @@ export class BookTagsTextHydratorService {
       id: number,
       description: string,
       taggedDescription: string,
+      nonHTMLDescription: string,
       newTags: TagEntity[],
     }> = {};
 
@@ -145,6 +147,7 @@ export class BookTagsTextHydratorService {
           id: book.id,
           description,
           taggedDescription: hydration.text,
+          nonHTMLDescription: hydration.nonHTMLText,
           newTags: (hydration.tags || []).filter(({id}) => !cachedTags || !cachedTags.includes(id)),
         };
       }
@@ -153,13 +156,16 @@ export class BookTagsTextHydratorService {
     await Promise.all(
       [
         bookService.shallowUpdate(
-          R.values(updatedBooks).map(({description, taggedDescription, id}) => new BookEntity(
-            {
-              id,
-              description,
-              taggedDescription,
-            },
-          )),
+          R
+            .values(updatedBooks)
+            .map(({description, taggedDescription, nonHTMLDescription, id}) => new BookEntity(
+              {
+                id,
+                description,
+                taggedDescription,
+                nonHTMLDescription,
+              },
+            )),
         ),
 
         bookTags.appendTagsForBooks(

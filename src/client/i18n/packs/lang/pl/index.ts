@@ -166,7 +166,7 @@ export const PL_LANG_PACK = {
       home: 'Strona główna',
       books: 'Książki',
       authors: 'Autorzy',
-      top_books: 'TOP 100 książek',
+      top_books: 'Ranking książek',
     },
     filters: {
       header: 'Filtry',
@@ -287,7 +287,7 @@ export const PL_LANG_PACK = {
     authors: 'Autorzy',
     series: 'Serie',
     tags: 'Tagi',
-    top: 'TOP 100',
+    top: 'TOP książki',
   },
   about: {
     // eslint-disable-next-line max-len

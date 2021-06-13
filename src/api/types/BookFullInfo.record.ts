@@ -12,6 +12,7 @@ import {SchoolBookRecord} from './SchoolBook.record';
 
 export interface BookFullInfoRecord extends BookCardRecord {
   taggedDescription: string;
+  nonHTMLDescription: string;
   originalPublishYear: number;
   schoolBook: SchoolBookRecord;
   primaryRelease: BookFullInfoReleaseRecord;

@@ -7,6 +7,7 @@ import {ICON_EMOJI_MAPPINGS} from '@client/components/svg';
 import {
   capitalize,
   objPropsToPromise,
+  truncateText,
 } from '@shared/helpers';
 
 import {
@@ -90,11 +91,10 @@ export const BookRoute: AsyncRoute<BookRouteViewData> = (
       },
     ).trim(),
 
-    description: t(
-      'seo.description',
-      {
-        authors: authorsSeoString,
-      },
+    description: (
+      book.nonHTMLDescription
+        ? truncateText(140, book.nonHTMLDescription)
+        : t('routes.home.seo.description')
     ),
 
     cover: book.primaryRelease.cover.preview?.file,

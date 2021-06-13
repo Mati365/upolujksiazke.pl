@@ -57,7 +57,7 @@ export class BooksServerRepo extends ServerAPIClientChild implements BooksRepo {
   };
 
   /**
-   * Find books for top 100 books page
+   * Find books for top books page
    *
    * @param {APIPaginationFilters} filters
    * @return {CanBePromise<BooksPaginationResult>}

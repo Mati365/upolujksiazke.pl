@@ -15,6 +15,7 @@ import {TagSerializer} from './Tag.serializer';
 
 export class BookFullInfoSerializer extends BookCardSerializer implements BookFullInfoRecord {
   @Expose() taggedDescription: string;
+  @Expose() nonHTMLDescription: string;
 
   @Expose()
   originalPublishYear: number;

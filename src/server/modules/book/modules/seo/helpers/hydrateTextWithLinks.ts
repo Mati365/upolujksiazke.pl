@@ -22,6 +22,7 @@ export type LinkHydrateAttrs<T = any> = {
 };
 
 export type LinkHydrateOutput<T> = {
+  nonHTMLText: string,
   text: string,
   tags: LinkHydrateAttrs<T>['tags'],
 };
@@ -120,6 +121,7 @@ export function hydrateTextWithLinks<T>(
   if (!tags.length || !text) {
     return {
       text,
+      nonHTMLText: null,
       tags: [],
     };
   }
@@ -129,14 +131,13 @@ export function hydrateTextWithLinks<T>(
     (a, b) => b.name.length - a.name.length,
   );
 
-  const similarWords = pickTextSimilarKeywords(
-    tags,
-    getHTMLInnerText(text),
-  );
+  const nonHTMLText = getHTMLInnerText(text);
+  const similarWords = pickTextSimilarKeywords(tags, nonHTMLText);
 
   if (R.isEmpty(similarWords)) {
     return {
       text,
+      nonHTMLText,
       tags: [],
     };
   }
@@ -257,6 +258,7 @@ export function hydrateTextWithLinks<T>(
   flushWordAcc(text.length);
 
   return {
+    nonHTMLText,
     text: output,
     tags: R.unnest(R.map(R.pluck('item'), R.values(similarWords))),
   };

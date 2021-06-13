@@ -68,10 +68,13 @@ export class BookEntity extends DatedRecordEntity implements TrackScrappersList 
   originalPublishYear: number;
 
   @Column('text', {nullable: true})
-  description: string;
+  nonHTMLDescription: string; // only text, without html tags
 
   @Column('text', {nullable: true})
-  taggedDescription: string;
+  description: string; // with html tags but without tags links
+
+  @Column('text', {nullable: true})
+  taggedDescription: string; // html + tags links
 
   @JoinTable()
   @ManyToMany(() => BookAuthorEntity, (author) => author.books)

@@ -46,3 +46,4 @@ export * from './safePluckIds';
 export * from './flattenObject';
 export * from './preserveOrderByIds';
 export * from './extractPropIfPresent';
+export * from './truncateText';

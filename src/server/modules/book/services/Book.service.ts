@@ -327,6 +327,8 @@ export class BookService {
 
       // insert seo tags
       let taggedDescription: string = null;
+      let nonHTMLDescription: string = null;
+
       if (!R.isNil(description)) {
         const result = await seoTagsService.hydrateTextWithPopularTags(
           {
@@ -336,6 +338,7 @@ export class BookService {
 
         if (result) {
           taggedDescription = result.text;
+          nonHTMLDescription = result.nonHTMLText;
 
           if (result.tags?.length) {
             tags = R.uniqBy(
@@ -363,8 +366,9 @@ export class BookService {
             scrappersIds: dto.scrappersIds,
           },
           ...!R.isNil(taggedDescription) && {
-            description,
+            nonHTMLDescription,
             taggedDescription,
+            description,
           },
           ...!R.isNil(primaryRelease) && {
             primaryReleaseId,

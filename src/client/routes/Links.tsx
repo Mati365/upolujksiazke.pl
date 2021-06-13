@@ -17,6 +17,9 @@ import {
 export const HOME_PATH = '/';
 export const HomeLink = UndecoratedLink.create(HOME_PATH);
 
+export const NEWS_PATH = '/aktualnosci';
+export const NewsLink = UndecoratedLink.create(NEWS_PATH);
+
 export const BOOKS_PATH = '/ksiazki';
 export const genBooksLink = (filters: BooksFiltersWithNames) => buildURL(
   BOOKS_PATH,

@@ -22,10 +22,14 @@ import {AuthorRoute} from './Author';
 import {AuthorsRoute} from './Authors';
 import {TopBooksRoute} from './TopBooks';
 import {TagRoute} from './Tag';
+import {NewsRoute} from './News';
 
 export const APP_ROUTES_LIST: AsyncRouterRouteInfo[] = [
   {
     component: HomeRoute,
+  },
+  {
+    component: NewsRoute,
   },
   {
     component: BookAllReviewsRoute,

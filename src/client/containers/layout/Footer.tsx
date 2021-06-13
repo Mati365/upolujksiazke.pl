@@ -10,6 +10,7 @@ import {
   AUTHORS_PATH,
   BOOK_SERIES_PATH,
   TOP_BOOKS_PATH,
+  NEWS_PATH,
   BookCategoryLink,
 } from '@client/routes/Links';
 
@@ -42,6 +43,7 @@ export const Footer = ({popularCategories}: FooterProps) => {
     [AUTHORS_PATH, t('links.authors')],
     [BOOK_SERIES_PATH, t('links.series')],
     [TOP_BOOKS_PATH, t('links.top')],
+    [NEWS_PATH, t('links.news')],
   ];
 
   return (
@@ -55,7 +57,7 @@ export const Footer = ({popularCategories}: FooterProps) => {
           gap={10}
         >
           <div className='c-footer__column'>
-            <UnderlinedTitle tag='h2'>
+            <UnderlinedTitle tag='h3'>
               {t('footer.shortcuts')}
             </UnderlinedTitle>
 

@@ -8,6 +8,7 @@ import {
   BOOKS_PATH,
   BOOK_SERIES_PATH,
   TOP_BOOKS_PATH,
+  NEWS_PATH,
 } from '@client/routes/Links';
 
 import {CleanList, UndecoratedLink} from '@client/components/ui';
@@ -17,12 +18,14 @@ import {
   BookIcon,
   GroupIcon,
   CategoryIcon,
+  NewsIcon,
 } from '@client/components/svg/Icons';
 
 export const HeaderToolbar = () => {
   const t = useI18n();
-  const links: [any, string, string][] = [
-    [HomeIcon, HOME_PATH, t('links.home')],
+  const links: [any, string, string, boolean?][] = [
+    [HomeIcon, HOME_PATH, t('links.home'), true],
+    [NewsIcon, NEWS_PATH, t('links.news')],
     [CategoryIcon, BOOKS_PATH, t('links.books')],
     [TrophyIcon, TOP_BOOKS_PATH, t('links.top')],
     [BookIcon, BOOK_SERIES_PATH, t('links.series')],
@@ -37,7 +40,7 @@ export const HeaderToolbar = () => {
       separated
     >
       {links.map(
-        ([Icon, url, title]) => (
+        ([Icon, url, title, onlyIcon]) => (
           <li
             key={title}
             className='c-header__link'
@@ -48,7 +51,7 @@ export const HeaderToolbar = () => {
               activeClassName='is-active'
             >
               <Icon className='c-header__link-icon' />
-              {title && (
+              {!onlyIcon && title && (
                 <span className='c-header__link-text'>
                   {title}
                 </span>

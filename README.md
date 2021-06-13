@@ -56,6 +56,7 @@ OpenSource book reviews aggregator, something like Metacritic / Digg for books. 
 - [ ] Video reviews
 - [ ] Hierarchic comments (filmweb, reddit)
 - [ ] Popular phrases aggregator
+- [ ] Pin favourite blog from news using heart icon (allow users to comment posts)
 
 ## Resources
 

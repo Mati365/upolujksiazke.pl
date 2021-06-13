@@ -75,9 +75,13 @@ export const BookAllReviewsRoute: AsyncRoute<BookAllReviewsRouteViewData> = (
           ]}
         />
 
-        <BookSecondarySidebarContainer book={book}>
+        <BookSecondarySidebarContainer
+          book={book}
+          title={
+            t('title', [book.defaultTitle])
+          }
+        >
           <BookPaginatedReviews
-            spaced={0}
             totalReviews={book.totalTextReviews}
             initialReviews={initialReviews}
             initialFilters={initialFilters}

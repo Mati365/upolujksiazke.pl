@@ -7,6 +7,7 @@ export const PL_BOOK_ROUTE_PACK = {
   },
 
   reviews: {
+    title: '%{} - recenzje',
     seo: {
       ...PL_SHARED_SEO_META,
       title: '💬 Opinie o książce %{title} - %{authors} | Porównaj ceny książek, oceny i recenzje  - upolujksiazke.pl',

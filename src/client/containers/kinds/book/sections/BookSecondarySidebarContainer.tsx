@@ -6,12 +6,14 @@ import {BookHeaderSection} from './BookInfo/BookHeaderSection';
 
 type BookSecondarySidebarContainerProps = {
   children?: ReactNode,
+  title: string,
   book: BookFullInfoRecord,
 };
 
 export const BookSecondarySidebarContainer = (
   {
     book,
+    title,
     children,
   }: BookSecondarySidebarContainerProps,
 ) => (
@@ -25,7 +27,7 @@ export const BookSecondarySidebarContainer = (
     <div className='c-book-secondary-container__content'>
       <BookHeaderSection
         book={book}
-        formattedTitle={book.defaultTitle}
+        formattedTitle={title}
       />
       {children}
     </div>

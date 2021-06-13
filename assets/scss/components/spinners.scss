@@ -31,5 +31,7 @@
   &-loading-layer {
     @include flex-centered;
     @include layer(absolute);
+
+    background: rgba(255, 255, 255, .65);
   }
 }

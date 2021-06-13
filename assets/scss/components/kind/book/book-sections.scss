@@ -359,4 +359,15 @@
       }
     }
   }
+
+  &-book-secondary-container {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 30px;
+
+    &__content {
+      padding-left: 30px;
+      border-left: 1px solid color(divider);
+    }
+  }
 }

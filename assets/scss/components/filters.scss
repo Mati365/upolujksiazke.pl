@@ -61,13 +61,9 @@
     &__content {
       position: relative;
 
-      .c-loading-layer {
-        background: rgba(255, 255, 255, .65);
-
-        &__content {
-          position: absolute;
-          top: 300px;
-        }
+      .c-loading-layer__content {
+        position: absolute;
+        top: 300px;
       }
 
       &.is-loading .c-grid {

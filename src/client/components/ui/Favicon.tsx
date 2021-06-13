@@ -11,6 +11,7 @@ export const Favicon = ({className, ...props}: JSX.IntrinsicElements['img']) => 
   >
     <img
       {...props}
+      width={14}
       height={14}
     />
   </span>

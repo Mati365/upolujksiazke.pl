@@ -2,6 +2,7 @@ import {APIClient} from '@api/APIClient';
 import {APIConfig, JwtAPIClient} from '@api/jwt';
 import {
   BooksAjaxRepo,
+  BooksReviewsAjaxRepo,
   TrackerAjaxRepo,
 } from './repo';
 
@@ -12,6 +13,7 @@ export class AjaxAPIClient extends APIClient {
     super(
       {
         books: new BooksAjaxRepo,
+        booksReviews: new BooksReviewsAjaxRepo,
         tracker: new TrackerAjaxRepo,
         booksCategories: null,
         recentBooks: null,

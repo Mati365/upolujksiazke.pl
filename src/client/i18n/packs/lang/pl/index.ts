@@ -112,8 +112,8 @@ export const PL_LANG_PACK = {
       filter: 'Filtruj...',
     },
     buttons: {
-      more: 'pokaż więcej',
-      less: 'pokaż mniej',
+      more: 'Pokaż więcej',
+      less: 'Pokaż mniej',
       show_spoiler: 'Pokaż spoiler',
     },
     book: {
@@ -167,6 +167,7 @@ export const PL_LANG_PACK = {
       books: 'Książki',
       authors: 'Autorzy',
       top_books: 'Ranking książek',
+      reviews: 'Recenzje',
     },
     filters: {
       header: 'Filtry',
@@ -260,6 +261,7 @@ export const PL_LANG_PACK = {
     reviews: {
       title: 'Recenzje książki',
       total: '%{} recenzji',
+      show_more_reviews: 'Pokaż więcej recenzji (%{})',
     },
     summaries: {
       title: 'Streszczenia książki',

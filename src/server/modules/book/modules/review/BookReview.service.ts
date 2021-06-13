@@ -65,6 +65,17 @@ export class BookReviewService {
   }
 
   /**
+   * Find single review by id
+   *
+   * @param {number} id
+   * @returns
+   * @memberof BookReviewService
+   */
+  findOne(id: number) {
+    return BookReviewEntity.findOne(id);
+  }
+
+  /**
    * Fetches N comments for book
    *
    * @param {Object} attrs
@@ -73,20 +84,26 @@ export class BookReviewService {
   async findBookReviews(
     {
       bookId,
-      limit,
+      pagination = true,
+      offset = 0,
+      limit = 15,
     }: {
-      bookId: number,
-      limit: number,
+      bookId?: number,
+      offset?: number,
+      pagination?: boolean,
+      limit?: number,
     },
   ) {
-    return (
+    const query = (
       BookReviewEntity
         .createQueryBuilder('review')
         .select(BookReviewService.REVIEW_CARD_FIELDS)
         .where(
           {
             description: Not(IsNull()),
-            bookId,
+            ...!R.isNil(bookId) && {
+              bookId,
+            },
           },
         )
         .leftJoin('review.reviewer', 'reviewer')
@@ -97,10 +114,25 @@ export class BookReviewService {
         .leftJoin('website.logo', 'websiteLogo', `websiteLogo.version = '${ImageVersion.SMALL_THUMB}'`)
         .leftJoin('websiteLogo.attachment', 'websiteAttachment')
 
+        .skip(offset)
         .take(limit)
         .orderBy('review.publishDate', 'DESC')
-        .getMany()
     );
+
+    const [items, totalItems] = (
+      pagination
+        ? await query.getManyAndCount()
+        : [await query.getMany(), null]
+    );
+
+    return {
+      items,
+      meta: {
+        limit,
+        offset,
+        totalItems,
+      },
+    };
   }
 
   /**

@@ -10,6 +10,7 @@ import {
   BooksRepo,
   BooksCategoriesRepo,
   BookAuthorsRepo,
+  BookReviewsRepo,
   TagsRepo,
   TrackerRepo,
 } from './repo';
@@ -49,6 +50,7 @@ export abstract class APIClient {
       recentBooks: RecentBooksRepo,
       books: BooksRepo,
       booksCategories: BooksCategoriesRepo,
+      booksReviews: BookReviewsRepo,
       tags: TagsRepo,
       tracker: TrackerRepo,
       authors: BookAuthorsRepo,

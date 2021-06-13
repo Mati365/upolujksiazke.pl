@@ -4,29 +4,23 @@ import * as R from 'ramda';
 
 import {ICON_EMOJI_MAPPINGS} from '@client/components/svg';
 
+import {formatBookTitle} from '@client/helpers/logic';
 import {
-  capitalize,
   objPropsToPromise,
   truncateText,
 } from '@shared/helpers';
-
-import {
-  formatBookTitle,
-  formatBookVolume,
-} from '@client/helpers/logic';
 
 import {useUA} from '@client/modules/ua';
 import {useI18n} from '@client/i18n';
 
 import {AsyncRoute} from '@client/components/utils/asyncRouteUtils';
-import {Breadcrumbs} from '@client/containers/Breadcrumbs';
 import {BooksAuthorsGroupedBooks} from '@api/repo';
 import {
   BookFullInfoRecord,
   CategoryBooksGroup,
 } from '@api/types';
 
-import {BookReviewsSection} from '@client/containers/kinds/book/sections/BookReviews';
+import {BookLatestReviewsSection} from '@client/containers/kinds/review/BookLatestReviews';
 import {
   BookAvailabilitySection,
   BookInfo,
@@ -36,11 +30,8 @@ import {
 
 import {Container} from '@client/components/ui';
 import {Layout, LayoutViewData, SEOMeta} from '@client/containers/layout';
-
+import {BookBreadcrumbs} from './parts';
 import {
-  BookLink,
-  BooksLink,
-  BookCategoryLink,
   BOOK_PATH,
   HOME_PATH,
 } from '../Links';
@@ -74,13 +65,12 @@ export const BookRoute: AsyncRoute<BookRouteViewData> = (
   if (!book)
     return <Redirect to={HOME_PATH} />;
 
-  const {volume, hierarchy, primaryCategory} = book;
   const authorsSeoString = R.pluck('name', book.authors).join(', ');
   const seoMeta = {
     title: t(
       'seo.title',
       {
-        emoji: ICON_EMOJI_MAPPINGS[primaryCategory.icon] || '',
+        emoji: ICON_EMOJI_MAPPINGS[book.primaryCategory.icon] || '',
         authors: authorsSeoString,
         title: formatBookTitle(
           {
@@ -104,59 +94,7 @@ export const BookRoute: AsyncRoute<BookRouteViewData> = (
     <Layout {...layoutData}>
       <SEOMeta meta={seoMeta} />
       <Container className='c-book-route'>
-        <Breadcrumbs
-          items={[
-            {
-              id: 'books',
-              node: (
-                <BooksLink>
-                  {t('shared.breadcrumbs.books')}
-                </BooksLink>
-              ),
-            },
-            primaryCategory && {
-              id: 'category',
-              node: (
-                <BookCategoryLink item={primaryCategory}>
-                  {capitalize(primaryCategory.name)}
-                </BookCategoryLink>
-              ),
-            },
-            ...(
-              volume?.name !== '1' && hierarchy?.length
-                ? [
-                  {
-                    id: 'book',
-                    node: (
-                      <BookLink item={hierarchy[0]}>
-                        {hierarchy[0].defaultTitle}
-                      </BookLink>
-                    ),
-                  },
-                  {
-                    id: 'volume',
-                    node: formatBookVolume(
-                      {
-                        t,
-                        volume,
-                      },
-                    ),
-                  },
-                ]
-                : [
-                  {
-                    id: 'book',
-                    node: formatBookTitle(
-                      {
-                        t,
-                        book,
-                      },
-                    ),
-                  },
-                ]
-            ),
-          ].filter(Boolean)}
-        />
+        <BookBreadcrumbs book={book} />
 
         <BookInfo
           book={book}
@@ -166,7 +104,7 @@ export const BookRoute: AsyncRoute<BookRouteViewData> = (
             book={book}
             shrink={ua.mobile}
           />
-          <BookReviewsSection book={book} />
+          <BookLatestReviewsSection book={book} />
           <BookSummariesSection book={book} />
         </BookInfo>
 
@@ -182,6 +120,7 @@ BookRoute.displayName = 'BookRoute';
 
 BookRoute.route = {
   path: BOOK_PATH,
+  exact: true,
 };
 
 /**

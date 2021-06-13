@@ -8,7 +8,7 @@ import {
   HomeIcon,
 } from '@client/components/svg/Icons';
 
-type BreadcrumbInfo = {
+export type BreadcrumbInfo = {
   id: string,
   node: ReactNode,
   title?: string,

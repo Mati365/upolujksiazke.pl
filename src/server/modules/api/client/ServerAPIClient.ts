@@ -3,6 +3,7 @@ import {
   BooksCategoriesServerRepo,
   BooksServerRepo,
   BooksAuthorsServerRepo,
+  BooksReviewsServerRepo,
   RecentBooksServerRepo,
   TagsServerRepo,
 } from './repo';
@@ -18,6 +19,7 @@ export class ServerAPIClient extends APIClient {
         recentBooks: new RecentBooksServerRepo,
         books: new BooksServerRepo,
         booksCategories: new BooksCategoriesServerRepo,
+        booksReviews: new BooksReviewsServerRepo,
         authors: new BooksAuthorsServerRepo,
         tags: new TagsServerRepo,
         tracker: null,

@@ -395,11 +395,16 @@ export class CardBookSearchService {
         ),
         reviews: (
           reviewsCount > 0
-            ? reviewsService.findBookReviews(
-              {
-                bookId: id,
-                limit: reviewsCount,
-              },
+            ? (
+              reviewsService
+                .findBookReviews(
+                  {
+                    pagination: false,
+                    bookId: id,
+                    limit: reviewsCount,
+                  },
+                )
+                .then(R.prop('items'))
             )
             : null
         ),

@@ -60,6 +60,11 @@ export const BookLink = UndecoratedLink.create<Pick<BookCardRecord, 'parameteriz
   ({id, parameterizedSlug}) => `/ksiazka/${parameterizedSlug},${id}`,
 );
 
+export const BOOK_ALL_REVIEWS_PATH = `${BOOK_PATH}/recenzje`;
+export const BookAllReviewsLink = UndecoratedLink.create<Pick<BookCardRecord, 'parameterizedSlug' | 'id'>>(
+  ({id, parameterizedSlug}) => `/ksiazka/${parameterizedSlug},${id}/recenzje`,
+);
+
 export const PUBLISHER_PATH = '/wydawca/:slug,:id';
 export const PublisherLink = UndecoratedLink.create<Pick<BookPublisherRecord, 'parameterizedName' | 'id'>>(
   ({id, parameterizedName}) => `/wydawca/${parameterizedName},${id}`,
@@ -67,7 +72,7 @@ export const PublisherLink = UndecoratedLink.create<Pick<BookPublisherRecord, 'p
 
 export const BOOK_ERA_PATH = '/epoka/:slug,:id';
 export const BookEraLink = UndecoratedLink.create<Pick<BookEraRecord, 'parameterizedName' | 'id'>>(
-  ({id, parameterizedName}) => `/wydawca/${parameterizedName},${id}`,
+  ({id, parameterizedName}) => `/epoka/${parameterizedName},${id}`,
 );
 
 export const BOOK_GENRE_PATH = '/gatunek/:slug,:id';

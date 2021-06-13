@@ -1,4 +1,5 @@
 import React from 'react';
+import c from 'classnames';
 
 import {useI18n} from '@client/i18n';
 
@@ -14,17 +15,27 @@ import {
   BookReleasesList,
 } from '../trees';
 
-type BookSidebarProps = {
+export type BookSidebarProps = {
   book: BookFullInfoRecord,
   formattedTitle: string,
+  className?: string,
 };
 
-export const BookSidebar = ({book, formattedTitle}: BookSidebarProps) => {
+export const BookSidebar = (
+  {
+    book,
+    formattedTitle,
+    className,
+  }: BookSidebarProps,
+) => {
   const t = useI18n();
 
   return (
     <CleanList
-      className='c-book-info-section__sidebar'
+      className={c(
+        'c-book-info-section__sidebar',
+        className,
+      )}
       inline={false}
       block
     >

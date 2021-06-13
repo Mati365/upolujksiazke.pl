@@ -8,6 +8,7 @@ import {BookTagsStatsService} from '@server/modules/book/modules/stats/services/
 import {BookTagsService} from '@server/modules/book/modules/tags/BookTags.service';
 import {BookService} from '@server/modules/book/services/Book.service';
 import {BookAuthorService} from '@server/modules/book/modules/author/BookAuthor.service';
+import {BookReviewService} from '@server/modules/book/modules/review/BookReview.service';
 import {TrackRecordViewsService} from '@server/modules/tracker/service/TrackRecordViews.service';
 
 import {
@@ -32,6 +33,7 @@ export class APIClientService {
     public readonly bookTagsService: BookTagsService,
     public readonly bookTagsStatsService: BookTagsStatsService,
     public readonly bookAuthorService: BookAuthorService,
+    public readonly bookReviewService: BookReviewService,
     public readonly trackerService: TrackRecordViewsService,
   ) {}
 }

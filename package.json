@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node ./dist/server.js",
     "test": "jest --c config/jest.config.ts",
-    "develop": "rm -rf ./dist && APP_ENV=development NODE_ENV=development node_modules/.bin/webpack --config=config/webpack.config.js",
+    "develop": "rm -rf ./dist && TSC_WATCHFILE=UseFsEventsWithFallbackDynamicPolling APP_ENV=development NODE_ENV=development node_modules/.bin/webpack --config=config/webpack.config.js",
     "backup:sync": "./scripts/sync-backup.sh",
     "build:production": "rm -rf ./dist && APP_ENV=production NODE_ENV=production node_modules/.bin/webpack --mode=production --config=config/webpack.config.js",
     "migration:revert": "node_modules/.bin/ts-node --project tsconfig.json -r tsconfig-paths/register ./node_modules/.bin/typeorm migration:revert --config src/server/ormconfig.js",

@@ -1,3 +1,10 @@
+export function getDefaultPaginationFilters(limit: number = 15) {
+  return {
+    offset: 0,
+    limit,
+  };
+}
+
 export function serializeFiltersToSearchParams(params: any) {
   if (!params)
     return null;

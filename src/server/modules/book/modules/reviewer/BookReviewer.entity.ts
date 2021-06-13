@@ -28,7 +28,7 @@ export class BookReviewerEntity extends RemoteRecordFields {
       default: Gender.UNKNOWN,
     },
   )
-  gender?: Gender;
+  gender: Gender;
 
   @OneToMany(() => BookReviewEntity, (entity) => entity.reviewer)
   reviews: BookReviewEntity[];

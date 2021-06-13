@@ -2,6 +2,7 @@ import {Module, forwardRef} from '@nestjs/common';
 
 import {APIModule} from '../../API.module';
 import {APIBooksController} from './APIBooks.controller';
+import {APIBooksReviewsController} from './APIBooksReviews.controller';
 import {APITrackerController} from './APITracker.controller';
 
 @Module(
@@ -12,6 +13,7 @@ import {APITrackerController} from './APITracker.controller';
     controllers: [
       APIBooksController,
       APITrackerController,
+      APIBooksReviewsController,
     ],
   },
 )

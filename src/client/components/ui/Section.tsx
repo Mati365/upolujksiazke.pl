@@ -3,7 +3,7 @@ import c from 'classnames';
 
 import {BasicWrapperProps} from '@client/components/ui';
 
-type SectionProps = BasicWrapperProps & {
+export type SectionProps = BasicWrapperProps & {
   title?: ReactNode,
   titleSuffix?: ReactNode,
   spaced?: number,

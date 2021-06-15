@@ -1,19 +1,22 @@
 import {forwardRef, Inject, Injectable} from '@nestjs/common';
 import {EntityManager} from 'typeorm';
 import pMap from 'p-map';
+import * as R from 'ramda';
 
-import {removeNullValues} from '@shared/helpers';
+import {objPropsToPromise, removeNullValues} from '@shared/helpers';
 
 import {TrackerRecordType, TrackerViewsMode} from '@shared/enums';
 import {TrackRecordViewsService} from '@server/modules/tracker/service/TrackRecordViews.service';
 import {EsBookIndex} from '../../search/indices/EsBook.index';
 import {CardBookSearchService} from '../../search/service/CardBookSearch.service';
 import {BookEntity} from '../../../entity/Book.entity';
+import {BookParentCategoryService} from '../../category/services/BookParentCategory.service';
 
 type BookStats = Pick<
 /* eslint-disable @typescript-eslint/indent */
   BookEntity,
-  'avgRating' | 'totalRatings' | 'lowestPrice' | 'highestPrice' | 'allTypes' | 'totalTextReviews'
+  'avgRating' | 'totalRatings' | 'lowestPrice' | 'highestPrice'
+  | 'allTypes' | 'totalTextReviews' | 'primaryCategoryId'
 /* eslint-enable @typescript-eslint/indent */
 >;
 
@@ -22,6 +25,7 @@ export class BookStatsService {
   constructor(
     private readonly entityManager: EntityManager,
     private readonly trackViewsService: TrackRecordViewsService,
+    private readonly bookParentCategoryService: BookParentCategoryService,
 
     @Inject(forwardRef(() => CardBookSearchService))
     private readonly bookSearchService: CardBookSearchService,
@@ -77,7 +81,12 @@ export class BookStatsService {
    * @memberof BookStatsService
    */
   async refreshBookStats(id: number, reindex: boolean = true) {
-    const {entityManager, bookEsIndex} = this;
+    const {
+      entityManager,
+      bookEsIndex,
+      bookParentCategoryService,
+    } = this;
+
     const [stats]: [BookStats] = await entityManager.query(
       /* sql */ `
         with
@@ -112,7 +121,7 @@ export class BookStatsService {
             from book_category bc
             inner join book_categories_book_category bcbc on bcbc."bookCategoryId" = bc."id"
             inner join book b on b.id = bcbc."bookId"
-            where bcbc."bookId" = $1 and b."primaryCategoryId" is null
+            where bcbc."bookId" = $1
             group by bc."parentCategoryId"
             order by count(bc."parentCategoryId") desc
             limit 1
@@ -133,11 +142,22 @@ export class BookStatsService {
       [id],
     );
 
+    const {rankingScore, primaryCategoryId} = await objPropsToPromise(
+      {
+        rankingScore: this.calcBookRankingScore(id, stats),
+        primaryCategoryId: (
+          stats.primaryCategoryId
+            ?? bookParentCategoryService.findDefaultParentCategory().then(R.prop('id'))
+        ),
+      },
+    );
+
     await BookEntity.update(
       id,
       {
-        rankingScore: await this.calcBookRankingScore(id, stats),
         ...removeNullValues(stats),
+        rankingScore,
+        primaryCategoryId,
       },
     );
 

@@ -5,12 +5,28 @@ import * as R from 'ramda';
 import {paginatedAsyncIterator} from '@server/common/helpers/db';
 import {BookCategoryEntity} from '../BookCategory.entity';
 import {BookCategoryService} from './BookCategory.service';
+import {CreateBookCategoryDto} from '../dto/CreateBookCategory.dto';
 
 @Injectable()
 export class BookParentCategoryService {
   constructor(
     private readonly categoryService: BookCategoryService,
   ) {}
+
+  /**
+   * Finds category that is assigned to products without category
+   *
+   * @return {Promise<CreateBookCategoryDto>}
+   * @memberof BookParentCategoryService
+   */
+  async findDefaultParentCategory(): Promise<CreateBookCategoryDto> {
+    return this.categoryService.findSimilarCategory(
+      {
+        root: true,
+        name: 'b.d',
+      },
+    );
+  }
 
   /**
    * Iterates over all categories and assigns to them
@@ -40,12 +56,7 @@ export class BookParentCategoryService {
       },
     );
 
-    const otherCategory = await categoryService.findSimilarCategory(
-      {
-        root: true,
-        name: 'b.d',
-      },
-    );
+    const otherCategory = await this.findDefaultParentCategory();
 
     for await (const [, categories] of categoriesIterator) {
       for await (const category of categories) {

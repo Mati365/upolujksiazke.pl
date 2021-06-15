@@ -30,7 +30,7 @@
 }
 
 .c-book-reviews.is-grid {
-  .c-book-review__user-rating {
+  .c-book-review__user-nick {
     @include text-ellipsis;
 
     max-width: 130px;

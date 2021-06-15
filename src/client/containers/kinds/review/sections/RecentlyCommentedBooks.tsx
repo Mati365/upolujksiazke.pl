@@ -32,6 +32,7 @@ export const RecentlyCommendedBooks = (
         itemPropsFn={
           (review) => ({
             showBookCard: true,
+            totalRatingStars: 6,
             moreButtonRenderFn: ({expandTitle}) => (
               <BookLink
                 className='c-promo-tag-link is-text-semibold ml-2'

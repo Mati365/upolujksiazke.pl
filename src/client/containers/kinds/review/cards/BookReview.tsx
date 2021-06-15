@@ -24,6 +24,8 @@ export type BookReviewProps = {
   review: BookReviewRecord,
   showBookCard?: boolean,
   moreButtonRenderFn?: ExpandableDescriptionBoxProps['moreButtonRenderFn'],
+  totalRatingStars?: number,
+  maxCharacterCount?: number,
 };
 
 export const BookReview = (
@@ -31,6 +33,8 @@ export const BookReview = (
     review,
     showBookCard,
     moreButtonRenderFn,
+    totalRatingStars = 10,
+    maxCharacterCount = 500,
   }: BookReviewProps,
 ) => {
   const t = useI18n();
@@ -103,7 +107,7 @@ export const BookReview = (
               <RatingsRow
                 className='ml-2'
                 value={rating / 10}
-                totalStars={10}
+                totalStars={totalRatingStars}
                 textOnly={ua.mobile}
                 showTextValue
               />
@@ -113,7 +117,7 @@ export const BookReview = (
 
         <ExpandableDescriptionBox
           className='c-book-review__text c-layer-box'
-          maxCharactersCount={500}
+          maxCharactersCount={maxCharacterCount}
           padding='small'
           quote={!!website}
           text={description}

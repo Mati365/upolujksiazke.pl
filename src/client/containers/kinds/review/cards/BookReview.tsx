@@ -90,8 +90,10 @@ export const BookReview = (
                 }
             )}
           >
-            <li className='c-book-review__user-nick is-text-bold'>
-              {reviewer.name}
+            <li>
+              <span className='c-book-review__user-nick is-text-bold'>
+                {reviewer.name}
+              </span>
             </li>
 
             {publishDate && (

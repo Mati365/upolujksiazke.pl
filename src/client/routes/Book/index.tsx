@@ -70,7 +70,7 @@ export const BookRoute: AsyncRoute<BookRouteViewData> = (
     title: t(
       'seo.title',
       {
-        emoji: ICON_EMOJI_MAPPINGS[book.primaryCategory.icon] || '',
+        emoji: ICON_EMOJI_MAPPINGS[book.primaryCategory?.icon] || '',
         authors: authorsSeoString,
         title: formatBookTitle(
           {

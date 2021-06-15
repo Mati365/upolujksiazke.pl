@@ -34,6 +34,8 @@
     &-inherit { color: inherit; }
     &-muted   { color: color(muted-text); }
     &-primary { color: color(primary); }
+
+    &-no-wrap { white-space: nowrap; }
   }
 
   &-cursor {

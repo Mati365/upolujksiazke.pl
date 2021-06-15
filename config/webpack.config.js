@@ -1,8 +1,10 @@
 const path = require('path');
+const zlib = require('zlib');
 const nodeExternals = require('webpack-node-externals');
 const {WebpackManifestPlugin} = require('webpack-manifest-plugin');
 const webpack = require('webpack');
 const NodemonPlugin = require('nodemon-webpack-plugin');
+const CompressionPlugin = require('compression-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
@@ -125,8 +127,10 @@ const createConfig = ({
       ...plugins(
         {
           mode,
+          devMode,
         },
-      ),
+      ).filter(Boolean),
+
       ...(
         !devMode
           ? [
@@ -169,7 +173,7 @@ module.exports = [
         client: resolveSource('client/client.tsx'),
       },
       distPath: 'public/[name]-[contenthash].js',
-      plugins: () => [
+      plugins: ({devMode}) => [
         new webpack.EnvironmentPlugin(
           [
             'NODE_ENV',
@@ -185,6 +189,21 @@ module.exports = [
           {
             filename: 'public/[name]-[contenthash].css',
             chunkFilename: '[id].css',
+          },
+        ),
+        !devMode && new CompressionPlugin(
+          {
+            filename: '[path][base].br',
+            algorithm: 'brotliCompress',
+            test: /\.(js|css|html|svg)$/,
+            compressionOptions: {
+              params: {
+                [zlib.constants.BROTLI_PARAM_QUALITY]: 11,
+              },
+            },
+            threshold: 10240,
+            minRatio: 0.8,
+            deleteOriginalAssets: false,
           },
         ),
       ],

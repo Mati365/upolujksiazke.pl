@@ -71,6 +71,10 @@
       padding-left: 20px;
       font-weight: 300;
 
+      &:first-child {
+        margin-top: 0;
+      }
+
       & ~ br {
         display: none;
       }

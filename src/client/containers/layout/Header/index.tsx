@@ -28,11 +28,8 @@ export const Header = ({promoItems}: HeaderProps) => {
     >
       <Container className='c-flex-row'>
         <HomeLink
+          className='c-header__brand'
           hoverUnderline={false}
-          className={c(
-            'c-header__brand',
-            ua.mobile && 'mx-auto',
-          )}
         >
           <WebsiteLogoIcon />
           <span className='c-header__brand-title'>

@@ -45,8 +45,8 @@ export const Header = ({promoItems}: HeaderProps) => {
 
         {!ua.mobile && (
           <>
-            <HeaderToolbar />
             <HeaderSearch />
+            <HeaderToolbar />
           </>
         )}
       </Container>

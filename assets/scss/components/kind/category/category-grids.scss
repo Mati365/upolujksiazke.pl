@@ -1,0 +1,5 @@
+.c-categories-grid {
+  @include except-mobile {
+    gap: 25px;
+  }
+}

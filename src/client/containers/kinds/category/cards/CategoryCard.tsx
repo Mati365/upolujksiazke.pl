@@ -6,7 +6,7 @@ import {ICON_BY_NAME} from '@client/components/svg';
 import {BookCategoryRecord} from '@api/types';
 import {BookCategoryLink} from '@client/routes/Links';
 
-type CategoryCardProps = {
+export type CategoryCardProps = {
   className?: string,
   item: BookCategoryRecord,
 };

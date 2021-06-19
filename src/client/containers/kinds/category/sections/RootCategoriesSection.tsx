@@ -15,6 +15,7 @@ export const RootCategoriesSection = ({items}: RecentBooksSectionProps) => {
 
   return (
     <Section
+      headerSpace='medium'
       title={
         t('sections.root_categories.title')
       }

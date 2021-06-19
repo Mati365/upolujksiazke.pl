@@ -135,7 +135,6 @@ export const BookReview = (
           padding='small'
           quote={!!website}
           text={description}
-          justify={false}
           moreButtonRenderFn={moreButtonRenderFn}
           html
         />

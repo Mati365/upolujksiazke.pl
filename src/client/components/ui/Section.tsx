@@ -12,6 +12,7 @@ export type SectionProps = BasicWrapperProps & {
   noContentSpacing?: boolean,
   contentClassName?: string,
   headerClassName?: string,
+  headerSpace?: string,
 };
 
 export const Section = (
@@ -21,6 +22,7 @@ export const Section = (
     spaced = 4,
     bordered = true,
     noContentSpacing = true,
+    headerSpace,
     className,
     subsection,
     contentClassName,
@@ -41,6 +43,7 @@ export const Section = (
       <h2
         className={c(
           'c-section__header',
+          headerSpace && `has-${headerSpace}-space`,
           headerClassName,
         )}
       >

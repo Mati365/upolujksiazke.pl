@@ -10,6 +10,7 @@ export * from './Link';
 export * from './DescriptionBox';
 export * from './ExpandableDescriptionBox';
 export * from './ExpandableTitledContainer';
+export * from './ExpandableFooterContainer';
 export * from './Divider';
 export * from './IconPropertiesList';
 export * from './Badge';

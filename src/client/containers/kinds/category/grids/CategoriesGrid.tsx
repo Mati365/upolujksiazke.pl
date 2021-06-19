@@ -1,9 +1,15 @@
 import React, {memo} from 'react';
 import c from 'classnames';
+import * as R from 'ramda';
 
 import {useUA} from '@client/modules/ua';
 
-import {Grid, GridProps} from '@client/components/ui';
+import {
+  ExpandableFooterContainer,
+  Grid,
+  GridProps,
+} from '@client/components/ui';
+
 import {BookCategoryRecord} from '@api/types';
 import {
   CategoryCard,
@@ -23,6 +29,15 @@ export const CategoriesGrid = memo<CategoriesGridProps>(
         : CategoryCard
     );
 
+    const renderContent = (limit: number) => R.take(limit, items).map(
+      (book) => (
+        <CardComponent
+          key={book.id}
+          item={book}
+        />
+      ),
+    );
+
     return (
       <Grid
         columns={{
@@ -35,13 +50,14 @@ export const CategoriesGrid = memo<CategoriesGridProps>(
           className,
         )}
       >
-        {items.map(
-          (book) => (
-            <CardComponent
-              key={book.id}
-              item={book}
-            />
-          ),
+        {(
+          ua.mobile
+            ? (
+              <ExpandableFooterContainer>
+                {(toggled) => renderContent(toggled ? Infinity : 5)}
+              </ExpandableFooterContainer>
+            )
+            : renderContent(Infinity)
         )}
       </Grid>
     );

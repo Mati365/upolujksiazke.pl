@@ -35,18 +35,26 @@
 
     &__toolbar {
       @include flex-list(flex, flex-start);
+
+      --spacing: 20px;
+
       width: 100%;
+      margin: var(--spacing) 0;
 
       &:empty {
         display: none;
       }
 
       &.is-top {
-        margin-bottom: 20px;
+        margin-top: 0;
       }
 
       &.is-bottom {
-        margin-top: 20px;
+        margin-bottom: 0;
+      }
+
+      @include mobile {
+        --spacing: 35px;
       }
     }
 

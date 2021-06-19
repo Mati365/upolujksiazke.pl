@@ -2,6 +2,7 @@ import React, {useMemo, ReactNode} from 'react';
 import * as R from 'ramda';
 
 import {useI18n} from '@client/i18n';
+import {useUA} from '@client/modules/ua';
 import {
   useInputLink,
   usePrevious,
@@ -84,6 +85,7 @@ export const BooksFiltersContainer = (
   const {decodedInitialFilters, assignFiltersToURL} = useStoreFiltersInURL();
 
   const t = useI18n();
+  const ua = useUA();
   const l = useInputLink<any>(
     {
       initialData: () => ({
@@ -132,7 +134,7 @@ export const BooksFiltersContainer = (
     [l.value],
   );
 
-  const searchInput = (
+  const searchInput = !ua.mobile && (
     <FiltersPhraseSearchInput
       placeholder={
         t('book.filters.phrase.placeholder')

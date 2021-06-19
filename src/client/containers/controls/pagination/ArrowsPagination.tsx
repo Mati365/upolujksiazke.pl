@@ -11,6 +11,7 @@ import {
 } from '@api/helpers';
 
 import {useI18n} from '@client/i18n/hooks/useI18n';
+import {useUA} from '@client/modules/ua';
 
 import {BasicLimitPaginationOptions} from '@shared/types';
 import {CleanList, UndecoratedLink} from '@client/components/ui';
@@ -34,6 +35,7 @@ export const ArrowsPagination = linkInputs<BasicLimitPaginationOptions>(
 )(
   ({l, value, totalItems, urlSearchParams}: ArrowsPaginationProps) => {
     const location = useLocation();
+    const ua = useUA();
     const t = useI18n('shared');
 
     const valueWithTotal = {
@@ -75,7 +77,11 @@ export const ArrowsPagination = linkInputs<BasicLimitPaginationOptions>(
     return (
       <CleanList
         className='c-arrows-paginate'
-        spaced={2}
+        spaced={(
+          ua.mobile
+            ? 3
+            : 2
+        )}
         inline
       >
         <li>

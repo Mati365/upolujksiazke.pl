@@ -22,4 +22,11 @@
     position: relative;
     top: 2px;
   }
+
+  @include mobile {
+    &__absolute-btn,
+    &__relative-btn {
+      font-size: 1.5rem;
+    }
+  }
 }

@@ -1,4 +1,7 @@
 import React from 'react';
+
+import {useUA} from '@client/modules/ua';
+
 import {LinkInputAttachParams} from '@client/hooks/useInputLink';
 import {FiltersPaginationToolbar} from './FiltersContainer';
 import {ArrowsPagination} from '../controls/pagination/ArrowsPagination';
@@ -26,37 +29,51 @@ export const FiltersToolbar = (
     totalItems,
     pageSizes = DEFAULT_PAGE_SIZES,
   }: FiltersToolbarProps,
-) => (
-  <>
-    {!hideSort && (
-      <FiltersPaginationToolbar>
+) => {
+  const ua = useUA();
+
+  return (
+    <>
+      {!hideSort && (
+        <FiltersPaginationToolbar>
+          <li>
+            <SortSelectInput {...l.input('sort')} />
+          </li>
+        </FiltersPaginationToolbar>
+      )}
+
+      <FiltersPaginationToolbar
+        className={(
+          ua.mobile
+            ? 'mx-auto'
+            : 'ml-auto'
+        )}
+      >
+        {!ua.mobile && (
+          <>
+            <li>
+              <PageSizeSelectInput
+                {...l.input('limit')}
+                sizes={pageSizes}
+              />
+            </li>
+
+            <li>
+              <ViewModeSwitch {...l.input('viewMode')} />
+            </li>
+          </>
+        )}
+
         <li>
-          <SortSelectInput {...l.input('sort')} />
+          <ArrowsPagination
+            urlSearchParams={urlSearchParams}
+            totalItems={totalItems}
+            {...l.input()}
+          />
         </li>
       </FiltersPaginationToolbar>
-    )}
-
-    <FiltersPaginationToolbar className='ml-auto'>
-      <li>
-        <PageSizeSelectInput
-          {...l.input('limit')}
-          sizes={pageSizes}
-        />
-      </li>
-
-      <li>
-        <ViewModeSwitch {...l.input('viewMode')} />
-      </li>
-
-      <li>
-        <ArrowsPagination
-          urlSearchParams={urlSearchParams}
-          totalItems={totalItems}
-          {...l.input()}
-        />
-      </li>
-    </FiltersPaginationToolbar>
-  </>
-);
+    </>
+  );
+};
 
 FiltersToolbar.displayName = 'FiltersToolbar';

@@ -17,6 +17,7 @@ type FiltersToolbarProps = {
   l: LinkInputAttachParams<any>,
   totalItems: number,
   hideSort?: boolean,
+  hidePagination?: boolean,
   pageSizes?: number[],
   urlSearchParams?: any,
 };
@@ -25,12 +26,15 @@ export const FiltersToolbar = (
   {
     l,
     hideSort,
+    hidePagination,
     urlSearchParams,
     totalItems,
     pageSizes = DEFAULT_PAGE_SIZES,
   }: FiltersToolbarProps,
 ) => {
   const ua = useUA();
+  if (hideSort && hidePagination && ua.mobile)
+    return null;
 
   return (
     <>
@@ -64,13 +68,15 @@ export const FiltersToolbar = (
           </>
         )}
 
-        <li>
-          <ArrowsPagination
-            urlSearchParams={urlSearchParams}
-            totalItems={totalItems}
-            {...l.input()}
-          />
-        </li>
+        {!hidePagination && (
+          <li>
+            <ArrowsPagination
+              urlSearchParams={urlSearchParams}
+              totalItems={totalItems}
+              {...l.input()}
+            />
+          </li>
+        )}
       </FiltersPaginationToolbar>
     </>
   );

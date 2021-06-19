@@ -2,6 +2,8 @@ import React, {ReactNode} from 'react';
 import c from 'classnames';
 
 import {useI18n} from '@client/i18n';
+import {useUA} from '@client/modules/ua';
+
 import {QueryLoadingSpinner} from '@client/containers/parts/DefaultLoaders';
 import {CleanList, TextButton} from '@client/components/ui';
 
@@ -43,6 +45,9 @@ export const FiltersContainer = (
   }: FiltersContainerProps,
 ) => {
   const t = useI18n('shared.filters');
+  const ua = useUA();
+
+  const noSidebar = ua.mobile || !sidebar;
   const renderToolbar = (top: boolean) => toolbarRenderFn && (
     <div
       className={c(
@@ -58,11 +63,11 @@ export const FiltersContainer = (
     <section
       className={c(
         'c-filters-section',
-        !sidebar && 'has-no-sidebar',
+        noSidebar && 'has-no-sidebar',
         className,
       )}
     >
-      {sidebar && (
+      {!noSidebar && (
         <div className='c-filters-section__sidebar'>
           {sidebarToolbar && (
             <div className='c-filters-section__sidebar-toolbar'>

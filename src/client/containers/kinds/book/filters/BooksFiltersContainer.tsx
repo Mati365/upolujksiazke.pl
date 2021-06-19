@@ -179,7 +179,12 @@ export const BooksFiltersContainer = (
         const toolbarRenderFn = (top: boolean) => (!emptyItems || top) && (
           <FiltersToolbar
             l={l}
-            hideSort={hideSort}
+            hideSort={
+              (!top && ua.mobile) || hideSort
+            }
+            hidePagination={
+              top && ua.mobile
+            }
             urlSearchParams={serializedValue}
             totalItems={safeResult.meta.totalItems}
           />
@@ -221,14 +226,16 @@ export const BooksFiltersContainer = (
                 ? <EmptyResults />
                 : (
                   <BooksGrid
-                    viewMode={
-                      +l.value.viewMode
-                    }
+                    viewMode={(
+                      ua.mobile
+                        ? ViewMode.LIST
+                        : +l.value.viewMode
+                    )}
                     items={
                       safeResult.items as BookCardRecord[]
                     }
                     columns={{
-                      xs: 2,
+                      xs: 1,
                       default: 6,
                     }}
                   />

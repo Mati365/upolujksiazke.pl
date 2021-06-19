@@ -79,6 +79,10 @@
     }
 
     @include mobile {
+      &__title {
+        -webkit-line-clamp: initial;
+      }
+
       &__ratings {
         font-size: 0.9rem;
         flex-wrap: wrap;

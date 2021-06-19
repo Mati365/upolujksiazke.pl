@@ -19,6 +19,7 @@ import {
 } from '@client/components/ui';
 
 import {BookThumbCard} from '../../book/cards/BookThumbCard';
+import {WideBookCard} from '../../book/cards/WideBookCard';
 
 export type BookReviewProps = {
   review: BookReviewRecord,
@@ -58,10 +59,21 @@ export const BookReview = (
       )}
     >
       {bookCardVisible && (
-        <BookThumbCard
-          item={book}
-          className='c-book-review__book'
-        />
+        ua.mobile
+          ? (
+            <WideBookCard
+              item={book}
+              className='c-book-review__book'
+              withDescription={false}
+              totalRatingStars={7}
+            />
+          )
+          : (
+            <BookThumbCard
+              item={book}
+              className='c-book-review__book'
+            />
+          )
       )}
 
       <div className='c-book-review__content'>

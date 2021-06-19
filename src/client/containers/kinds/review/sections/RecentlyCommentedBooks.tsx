@@ -38,7 +38,6 @@ export const RecentlyCommendedBooks = (
                 className='c-promo-tag-link is-text-semibold is-text-no-wrap ml-2'
                 undecorated={false}
                 item={review.book}
-                hash={`review-${review.id}`}
                 withChevron
               >
                 {expandTitle}

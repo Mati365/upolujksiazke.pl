@@ -1,8 +1,9 @@
 import React, {memo} from 'react';
 import c from 'classnames';
 
-import {ViewMode} from '@shared/enums';
+import {useUA} from '@client/modules/ua';
 
+import {ViewMode} from '@shared/enums';
 import {Grid, GridProps} from '@client/components/ui';
 import {BookCardRecord} from '@api/types';
 import {
@@ -29,7 +30,12 @@ export const BooksGrid = memo<BooksGridProps>(
       ...props
     },
   ) => {
-    const CardComponent = GRID_VIEW_MODE_CARDS[viewMode ?? ViewMode.GRID];
+    const ua = useUA();
+    const CardComponent = (
+      ua.mobile
+        ? WideBookCard
+        : GRID_VIEW_MODE_CARDS[viewMode ?? ViewMode.GRID]
+    );
 
     return (
       <Grid
@@ -45,6 +51,10 @@ export const BooksGrid = memo<BooksGridProps>(
             <CardComponent
               key={book.id}
               item={book}
+              {...ua.mobile && {
+                withDescription: false,
+                totalRatingStars: 6,
+              }}
             />
           ),
         )}

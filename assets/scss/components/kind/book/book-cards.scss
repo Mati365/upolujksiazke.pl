@@ -92,27 +92,22 @@
         display: none;
       }
     }
-
-    @include small-mobile {
-      &__price,
-      &__types {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-
-        > span,
-        > ul {
-          margin-left: 0;
-        }
-      }
-    }
   }
 
   &-wide-card {
     display: grid;
-    grid-template-columns: 130px 300px 1fr;
-    grid-gap: 32px;
+    gap: 32px;
+    grid-template-columns: 130px 1fr;
     border-bottom: 1px solid color(divider);
+
+    &.has-description {
+      grid-template-columns: 130px 300px 1fr;
+    }
+
+    @include mobile {
+      grid-template-columns: 100px 1fr;
+      gap: 25px;
+    }
 
     &__basic-info {
       display: flex;
@@ -213,67 +208,5 @@
   .c-book-ribbons {
     transform: scale(.75);
     transform-origin: right;
-  }
-}
-
-.c-book-review {
-  &.has-book-card {
-    display: grid;
-    grid-template-columns: 110px 1fr;
-    gap: 30px;
-  }
-
-  &:not(:last-child) {
-    border-bottom: 1px solid color(divider);
-    padding-bottom: 1.35rem;
-    margin-bottom: 1.35rem;
-  }
-
-  &__user {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-
-    &-avatar {
-      display: flex;
-      margin-right: 10px;
-
-      > img {
-        display: inline-block;
-        width: 1.5rem;
-        height: 1.5rem;
-        border-radius: 100%;
-      }
-    }
-  }
-
-  &__toolbar,
-  &__footer {
-    font-size: $text-small;
-  }
-
-  &__toolbar {
-    @include flex-list;
-
-    margin-bottom: 1rem;
-  }
-
-  &__text {
-    font-size: .9rem;
-  }
-
-  &__footer {
-    margin-top: .85rem;
-    justify-content: flex-end;
-  }
-
-  @include mobile {
-    &__user-rating {
-      align-self: flex-start;
-
-      .c-ratings-row__text-value {
-        font-size: $text-normal;
-      }
-    }
   }
 }

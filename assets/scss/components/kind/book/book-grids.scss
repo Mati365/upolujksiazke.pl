@@ -19,10 +19,10 @@
     }
 
     @include mobile {
-      --columns: 2;
-      --gap: 15px;
+      --columns: 1;
+      --gap: 20px;
 
-      > .c-book-card:nth-last-child(-n+2) {
+      > .c-book-card:last-child {
         @include clean-book-border;
       }
     }

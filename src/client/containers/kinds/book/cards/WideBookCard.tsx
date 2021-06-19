@@ -1,4 +1,5 @@
 import React from 'react';
+import c from 'classnames';
 import * as R from 'ramda';
 
 import {useI18n} from '@client/i18n';
@@ -16,9 +17,20 @@ import {BookPriceRow} from './BookCard/BookPriceRow';
 import {BookCover} from './BookCard/BookCover';
 import {BookCardProps} from './BookCard';
 
-type WideBookCardProps = BookCardProps;
+type WideBookCardProps = BookCardProps & {
+  className?: string,
+  withDescription?: boolean,
+  totalRatingStars?: number,
+};
 
-export const WideBookCard = ({item}: WideBookCardProps) => {
+export const WideBookCard = (
+  {
+    totalRatingStars = 10,
+    withDescription = true,
+    item,
+    className,
+  }: WideBookCardProps,
+) => {
   const t = useI18n();
   const {
     allTypes,
@@ -37,7 +49,13 @@ export const WideBookCard = ({item}: WideBookCardProps) => {
   );
 
   return (
-    <article className='c-book-card c-book-wide-card'>
+    <article
+      className={c(
+        'c-book-card c-book-wide-card',
+        withDescription && 'has-description',
+        className,
+      )}
+    >
       <BookLink item={item}>
         <BookCover
           className='c-book-wide-card__cover'
@@ -58,7 +76,7 @@ export const WideBookCard = ({item}: WideBookCardProps) => {
           value={avgRating / 10}
           totalRatings={totalRatings}
           truncateRatingsCount={Infinity}
-          totalStars={10}
+          totalStars={totalRatingStars}
         />
 
         <LinksRow
@@ -79,29 +97,31 @@ export const WideBookCard = ({item}: WideBookCardProps) => {
         />
       </div>
 
-      <ExpandableDescriptionBox
-        html
-        className='c-book-wide-card__description'
-        maxCharactersCount={600}
-        text={(
-          item.description
-            || t('book.no_description')
-        )}
-        mobileSmaller={false}
-        renderHiddenChunk={false}
-        moreButtonRenderFn={
-          ({expandTitle}) => (
-            <BookLink
-              className='c-promo-tag-link'
-              undecorated={false}
-              item={item}
-              withChevron
-            >
-              {expandTitle}
-            </BookLink>
-          )
-        }
-      />
+      {withDescription && (
+        <ExpandableDescriptionBox
+          html
+          className='c-book-wide-card__description'
+          maxCharactersCount={600}
+          text={(
+            item.description
+              || t('book.no_description')
+          )}
+          mobileSmaller={false}
+          renderHiddenChunk={false}
+          moreButtonRenderFn={
+            ({expandTitle}) => (
+              <BookLink
+                className='c-promo-tag-link'
+                undecorated={false}
+                item={item}
+                withChevron
+              >
+                {expandTitle}
+              </BookLink>
+            )
+          }
+        />
+      )}
     </article>
   );
 };

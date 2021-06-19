@@ -134,6 +134,9 @@ export const PL_LANG_PACK = {
       classLevel: PL_BOOK_SCHOOL_LEVEL_PACK,
       protection: PL_BOOK_PROTECTION_PACK,
       binding: PL_BOOK_BINDING_PACK,
+      review: {
+        about_book: 'Opinia o książce %{}',
+      },
       props: {
         total_pages: 'Strony',
         type: 'Rodzaj',

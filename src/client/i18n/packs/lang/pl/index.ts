@@ -301,6 +301,13 @@ export const PL_LANG_PACK = {
     tags: 'Tagi',
     top: 'TOP książki',
   },
+  bottom_menu: {
+    home: 'Start',
+    news: 'Newsy',
+    top: 'TOP',
+    books: 'Książki',
+    search: 'Szukaj',
+  },
   about: {
     // eslint-disable-next-line max-len
     description: `${SHARED_ENV.website.name} to darmowa porównywarka cen książek, e-booków i audiobooków. Znajdziesz na niej również dopasowane do książek streszczenia i opinie.`,

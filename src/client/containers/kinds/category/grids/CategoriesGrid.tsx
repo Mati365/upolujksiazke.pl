@@ -54,7 +54,7 @@ export const CategoriesGrid = memo<CategoriesGridProps>(
           ua.mobile
             ? (
               <ExpandableFooterContainer>
-                {(toggled) => renderContent(toggled ? Infinity : 5)}
+                {(toggled) => renderContent(toggled ? Infinity : 7)}
               </ExpandableFooterContainer>
             )
             : renderContent(Infinity)

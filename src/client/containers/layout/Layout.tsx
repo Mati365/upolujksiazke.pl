@@ -3,12 +3,14 @@ import c from 'classnames';
 
 import {objPropsToPromise} from '@shared/helpers';
 import {genBookCategoryLink} from '@client/routes/Links';
+import {useUA} from '@client/modules/ua';
 
 import {BasicWrapperProps} from '@client/components/ui';
 import {BookCategoryRecord} from '@api/types';
 import {AsyncPropsComponent} from '@client/components/utils/asyncRouteUtils';
 import {Header} from './Header';
 import {Footer} from './Footer';
+import {BottomMenu} from './BottomMenu';
 
 export type LayoutViewData = {
   hidePromoItems?: boolean,
@@ -26,32 +28,43 @@ export const Layout: AsyncPropsComponent<LayoutProps> = (
     children,
     className,
   },
-) => (
-  <>
-    <Header
-      promoItems={
-        !hidePromoItems && rootPopularCategories?.map(
-          (category) => ({
-            icon: category.icon,
-            name: category.name,
-            href: genBookCategoryLink(category),
-          }),
-        )
-      }
-    />
+) => {
+  const ua = useUA();
 
-    <main
-      className={c(
-        'c-layout',
-        className,
+  return (
+    <>
+      {!ua.mobile && (
+        <Header
+          promoItems={
+            !hidePromoItems && rootPopularCategories?.map(
+              (category) => ({
+                icon: category.icon,
+                name: category.name,
+                href: genBookCategoryLink(category),
+              }),
+            )
+          }
+        />
       )}
-    >
-      {children}
-    </main>
 
-    <Footer popularCategories={popularCategories} />
-  </>
-);
+      <main
+        className={c(
+          'c-layout',
+          ua.mobile && 'has-top-space',
+          className,
+        )}
+      >
+        {children}
+
+        {ua.mobile && (
+          <BottomMenu />
+        )}
+      </main>
+
+      <Footer popularCategories={popularCategories} />
+    </>
+  );
+};
 
 Layout.displayName = 'Layout';
 

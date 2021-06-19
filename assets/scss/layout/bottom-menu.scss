@@ -1,0 +1,46 @@
+.c-bottom-menu {
+  $self: &;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  position: fixed;
+  width: 100%;
+  height: $mobile-bottom-menu-height;
+  left: 0;
+  bottom: 0;
+  z-index: 5;
+  background: #fff;
+  box-shadow: rgb(0, 0, 0, 0.28) 0px 0px 4px 0px;
+
+  &__item {
+    @include flex-centered;
+
+    position: relative;
+    flex: 1 1 0px;
+    flex-direction: column;
+
+    &.is-active {
+      color: color(primary);
+
+      &::after {
+        content: '';
+        position: absolute;
+        width: 100%;
+        left: 0;
+        bottom: 0;
+        border-top: 3px solid color(primary);
+      }
+    }
+
+    &-icon svg {
+      width: auto;
+      height: 24px;
+    }
+
+    &-title {
+      margin-top: 2px;
+      font-size: .7rem;
+    }
+  }
+}

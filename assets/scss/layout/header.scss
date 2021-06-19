@@ -114,3 +114,30 @@
     }
   }
 }
+
+@include mobile {
+  .c-header {
+    margin-bottom: .85rem;
+    border-bottom: 1px solid color(gray-2);
+
+    > .c-container:first-of-type {
+      padding: 15px;
+    }
+
+    &__brand {
+      svg {
+        width: 22px;
+        height: 22px;
+      }
+
+      &-title {
+        font-size: 1.1rem;
+      }
+    }
+
+    &__search {
+      width: 100%;
+      margin: 0 0 15px;
+    }
+  }
+}

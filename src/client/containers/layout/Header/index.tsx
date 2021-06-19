@@ -2,6 +2,7 @@ import React from 'react';
 import c from 'classnames';
 
 import {ENV} from '@client/constants/env';
+import {useUA} from '@client/modules/ua';
 
 import {HomeLink} from '@client/routes/Links';
 import {Container} from '@client/components/ui';
@@ -15,6 +16,7 @@ export type HeaderProps = {
 };
 
 export const Header = ({promoItems}: HeaderProps) => {
+  const ua = useUA();
   const hasPromoBar = promoItems?.length > 0;
 
   return (
@@ -24,7 +26,13 @@ export const Header = ({promoItems}: HeaderProps) => {
         hasPromoBar && 'has-promo-bar',
       )}
     >
-      <Container className='c-flex-row'>
+      <Container
+        className={(
+          ua.mobile
+            ? 'c-flex-column'
+            : 'c-flex-row'
+        )}
+      >
         <HomeLink
           className='c-header__brand'
           hoverUnderline={false}
@@ -35,9 +43,19 @@ export const Header = ({promoItems}: HeaderProps) => {
           </span>
         </HomeLink>
 
-        <HeaderSearch />
-        <HeaderToolbar />
+        {!ua.mobile && (
+          <>
+            <HeaderToolbar />
+            <HeaderSearch />
+          </>
+        )}
       </Container>
+
+      {ua.mobile && (
+        <Container>
+          <HeaderSearch />
+        </Container>
+      )}
 
       {hasPromoBar && (
         <Container expandable>

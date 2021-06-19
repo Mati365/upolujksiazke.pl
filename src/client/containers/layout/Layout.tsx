@@ -33,19 +33,17 @@ export const Layout: AsyncPropsComponent<LayoutProps> = (
 
   return (
     <>
-      {!ua.mobile && (
-        <Header
-          promoItems={
-            !hidePromoItems && rootPopularCategories?.map(
-              (category) => ({
-                icon: category.icon,
-                name: category.name,
-                href: genBookCategoryLink(category),
-              }),
-            )
-          }
-        />
-      )}
+      <Header
+        promoItems={
+          !ua.mobile && !hidePromoItems && rootPopularCategories?.map(
+            (category) => ({
+              icon: category.icon,
+              name: category.name,
+              href: genBookCategoryLink(category),
+            }),
+          )
+        }
+      />
 
       <main
         className={c(

@@ -56,6 +56,8 @@ OpenSource book reviews aggregator, something like Metacritic / Digg for books. 
 - [ ] Hierarchic comments (filmweb, reddit)
 - [ ] Popular phrases aggregator
 - [ ] Pin favourite blog from news using heart icon (allow users to comment posts)
+- [ ] Users might create own book regals
+- [ ] tinder but for books(I'm hard, my father is..)
 
 ## Resources
 

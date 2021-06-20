@@ -45,6 +45,10 @@ export const Layout: AsyncPropsComponent<LayoutProps> = (
         }
       />
 
+      {ua.mobile && (
+        <BottomMenu popularCategories={rootPopularCategories} />
+      )}
+
       <main
         className={c(
           'c-layout',
@@ -53,10 +57,6 @@ export const Layout: AsyncPropsComponent<LayoutProps> = (
         )}
       >
         {children}
-
-        {ua.mobile && (
-          <BottomMenu />
-        )}
       </main>
 
       <Footer popularCategories={popularCategories} />
@@ -66,9 +66,9 @@ export const Layout: AsyncPropsComponent<LayoutProps> = (
 
 Layout.displayName = 'Layout';
 
-Layout.getInitialProps = async ({api: {repo}, attrs: {withRootCategories = true} = {}}) => objPropsToPromise(
+Layout.getInitialProps = async ({api: {repo}}) => objPropsToPromise(
   {
-    rootPopularCategories: withRootCategories && repo.booksCategories.findMostPopularCategories(
+    rootPopularCategories: repo.booksCategories.findMostPopularCategories(
       {
         limit: 23,
         root: true,

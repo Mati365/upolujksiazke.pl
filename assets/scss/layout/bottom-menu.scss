@@ -1,17 +1,32 @@
 .c-bottom-menu {
   $self: &;
 
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
   position: fixed;
   width: 100%;
-  height: $mobile-bottom-menu-height;
   left: 0;
   bottom: 0;
-  z-index: 5;
   background: #fff;
-  box-shadow: rgb(0, 0, 0, 0.28) 0px 0px 4px 0px;
+  transition: height 150ms ease-in-out;
+  height: $mobile-bottom-menu-height;
+  z-index: 5;
+
+  &.is-active {
+    height: 100%;
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    height: $mobile-bottom-menu-height;
+    box-shadow: rgb(0, 0, 0, 0.28) 0px 0px 4px 0px;
+  }
+
+  &__content {
+    max-height: calc(100% - #{$mobile-bottom-menu-height});
+    padding: 15px 20px;
+    overflow-y: auto;
+  }
 
   &__item {
     @include flex-centered;

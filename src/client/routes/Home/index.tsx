@@ -32,10 +32,7 @@ type HomeRouteProps = {
 
 export const HomeRoute: AsyncRoute = (
   {
-    layoutData: {
-      rootPopularCategories,
-      ...layoutData
-    },
+    layoutData,
     recentBooks,
     popularCategoriesBooks,
     recentCommentedBooks,
@@ -44,10 +41,13 @@ export const HomeRoute: AsyncRoute = (
   const t = useI18n('routes.home');
 
   return (
-    <Layout {...layoutData}>
+    <Layout
+      {...layoutData}
+      hidePromoItems
+    >
       <SEOMeta meta={t('seo') as any} />
       <Container className='c-sections-list'>
-        <RootCategoriesSection items={rootPopularCategories} />
+        <RootCategoriesSection items={layoutData.rootPopularCategories} />
         <RecentlyCommendedBooks items={recentCommentedBooks} />
 
         <LazyHydrate>

@@ -11,6 +11,11 @@ small {
   @extend .is-text-tiny;
 }
 
+input, button {
+  appearance: none;
+  -webkit-appearance: none;
+}
+
 a.is-disabled {
   opacity: .35;
   pointer-events: none;

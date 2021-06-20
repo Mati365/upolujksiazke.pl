@@ -18,10 +18,18 @@ import {
 
 type CategoriesGridProps = GridProps & {
   items: BookCategoryRecord[],
+  allowExpand?: boolean,
 };
 
 export const CategoriesGrid = memo<CategoriesGridProps>(
-  ({items, className, ...props}) => {
+  (
+    {
+      items,
+      className,
+      allowExpand = true,
+      ...props
+    },
+  ) => {
     const ua = useUA();
     const CardComponent = (
       ua.mobile
@@ -51,7 +59,7 @@ export const CategoriesGrid = memo<CategoriesGridProps>(
         )}
       >
         {(
-          ua.mobile
+          allowExpand && ua.mobile
             ? (
               <ExpandableFooterContainer>
                 {(toggled) => renderContent(toggled ? Infinity : 7)}

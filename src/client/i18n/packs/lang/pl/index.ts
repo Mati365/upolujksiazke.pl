@@ -101,6 +101,7 @@ export const PL_LANG_PACK = {
       group_by: 'Grupuj wg.:',
       action: 'Akcja',
       more: 'Więcej',
+      close: 'Zamknij',
       less: 'Mniej',
       open: 'Otwórz',
       delete: 'Usuń',

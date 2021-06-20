@@ -9,3 +9,4 @@ export * from './useSafeCallback';
 export * from './useDebounce';
 export * from './usePrevious';
 export * from './useOutsideClickRef';
+export * from './useLockWebsiteScroll';

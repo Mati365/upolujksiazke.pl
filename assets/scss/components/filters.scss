@@ -62,7 +62,7 @@
       flex-shrink: 0;
     }
 
-    &__items {
+    &__items:not(:first-child) {
       margin-top: 15px;
     }
 

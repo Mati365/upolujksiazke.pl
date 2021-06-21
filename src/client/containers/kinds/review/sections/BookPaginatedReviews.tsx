@@ -13,8 +13,12 @@ import {Section, SectionProps} from '@client/components/ui';
 import {QueryLoadingSpinner} from '@client/containers/parts';
 import {CommentIcon} from '@client/components/svg';
 import {APIQuery} from '@client/modules/api/client/components';
-import {ArrowsPagination} from '@client/containers/controls/pagination/ArrowsPagination';
 import {BookReviewRecord} from '@api/types';
+import {
+  FiltersContainer,
+  FiltersToolbar,
+} from '@client/containers/filters';
+
 import {
   BookReviewsFilters,
   BookReviewsPaginationResult,
@@ -102,22 +106,27 @@ export const BookPaginatedReviews = (
           const safeResult = result || initialReviews;
 
           return (
-            <>
+            <FiltersContainer
+              toolbarRenderFn={
+                (top) => !top && (
+                  <FiltersToolbar
+                    totalItems={safeResult.meta.totalItems}
+                    l={l}
+                    hideSort
+                  />
+                )
+              }
+            >
               <BookReviewsList
                 reviews={
                   safeResult.items as BookReviewRecord[]
                 }
               />
 
-              <ArrowsPagination
-                {...l.input()}
-                totalItems={safeResult.meta.totalItems}
-              />
-
               {loading && (
                 <QueryLoadingSpinner layer />
               )}
-            </>
+            </FiltersContainer>
           );
         }}
       </APIQuery>

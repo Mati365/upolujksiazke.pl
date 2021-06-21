@@ -60,4 +60,8 @@
   hr {
     opacity: .25;
   }
+
+  @include mobile {
+    margin-top: 2.5rem;
+  }
 }

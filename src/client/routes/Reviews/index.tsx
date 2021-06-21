@@ -50,7 +50,7 @@ export const ReviewsRoute: AsyncRoute<ReviewsRouteRoute> = (
         }}
       />
 
-      <Container className='c-news-route'>
+      <Container className='c-reviews-route'>
         {breadcrumbs}
 
         <LayoutHeaderTitle margin='medium'>

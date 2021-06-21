@@ -48,16 +48,22 @@ export const FiltersContainer = (
   const ua = useUA();
 
   const noSidebar = ua.mobile || !sidebar;
-  const renderToolbar = (top: boolean) => toolbarRenderFn && (
-    <div
-      className={c(
-        'c-filters-section__toolbar',
-        `is-${top ? 'top' : 'bottom'}`,
-      )}
-    >
-      {toolbarRenderFn(top)}
-    </div>
-  );
+  const renderToolbar = (top: boolean) => {
+    if (!toolbarRenderFn)
+      return null;
+
+    const toolbarContent = toolbarRenderFn(top);
+    return toolbarContent && (
+      <div
+        className={c(
+          'c-filters-section__toolbar',
+          `is-${top ? 'top' : 'bottom'}`,
+        )}
+      >
+        {toolbarContent}
+      </div>
+    );
+  };
 
   return (
     <section

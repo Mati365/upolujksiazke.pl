@@ -8,6 +8,7 @@ import {deserializeUrlFilters} from '@client/containers/filters/hooks/useStoreFi
 import {getDefaultPaginationFilters} from '@api/helpers';
 
 import {useI18n} from '@client/i18n';
+import {useUA} from '@client/modules/ua';
 
 import {AsyncRoute} from '@client/components/utils/asyncRouteUtils';
 import {BookFullInfoRecord} from '@api/types';
@@ -39,6 +40,7 @@ export const BookAllReviewsRoute: AsyncRoute<BookAllReviewsRouteViewData> = (
   },
 ) => {
   const t = useI18n('routes.book.reviews');
+  const ua = useUA();
 
   if (!book)
     return <Redirect to={HOME_PATH} />;
@@ -61,6 +63,27 @@ export const BookAllReviewsRoute: AsyncRoute<BookAllReviewsRouteViewData> = (
     cover: book.primaryRelease.cover.preview?.file,
   };
 
+  let content = (
+    <BookPaginatedReviews
+      totalReviews={book.totalTextReviews}
+      initialReviews={initialReviews}
+      initialFilters={initialFilters}
+    />
+  );
+
+  if (ua.desktop) {
+    content = (
+      <BookSecondarySidebarContainer
+        book={book}
+        title={
+          t('title', [book.defaultTitle])
+        }
+      >
+        {content}
+      </BookSecondarySidebarContainer>
+    );
+  }
+
   return (
     <Layout {...layoutData}>
       <SEOMeta meta={seoMeta} />
@@ -75,18 +98,7 @@ export const BookAllReviewsRoute: AsyncRoute<BookAllReviewsRouteViewData> = (
           ]}
         />
 
-        <BookSecondarySidebarContainer
-          book={book}
-          title={
-            t('title', [book.defaultTitle])
-          }
-        >
-          <BookPaginatedReviews
-            totalReviews={book.totalTextReviews}
-            initialReviews={initialReviews}
-            initialFilters={initialFilters}
-          />
-        </BookSecondarySidebarContainer>
+        {content}
       </Container>
     </Layout>
   );

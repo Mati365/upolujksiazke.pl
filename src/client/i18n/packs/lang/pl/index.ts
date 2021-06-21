@@ -16,6 +16,7 @@ import {PL_TOP_BOOKS_PACK} from './routes/topBooks';
 import {PL_TAG_PACK} from './routes/tag';
 import {PL_BOOK_ROUTE_PACK} from './routes/book';
 import {PL_NEWS_ROUTE_PACK} from './routes/news';
+import {PL_REVIEWS_ROUTE_PACK} from './routes/reviews';
 
 const PL_BOOK_BINDING_PACK: Record<BookBindingKind, string> = {
   [BookBindingKind.HARDCOVER]: 'twarda okładka',
@@ -64,6 +65,7 @@ const ROUTES_PACK = {
   top_books: PL_TOP_BOOKS_PACK,
   tag: PL_TAG_PACK,
   news: PL_NEWS_ROUTE_PACK,
+  reviews: PL_REVIEWS_ROUTE_PACK,
 };
 
 export const PL_LANG_PACK = {
@@ -298,7 +300,7 @@ export const PL_LANG_PACK = {
     news: 'Aktualności',
     books: 'Wszystkie książki',
     authors: 'Autorzy',
-    series: 'Serie',
+    reviews: 'Recenzje',
     tags: 'Tagi',
     top: 'TOP książki',
   },

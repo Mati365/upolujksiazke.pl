@@ -6,30 +6,30 @@ import {
   genAuthorsLink,
   HOME_PATH,
   BOOKS_PATH,
-  BOOK_SERIES_PATH,
   TOP_BOOKS_PATH,
   NEWS_PATH,
+  BOOKS_REVIEWS_PATH,
 } from '@client/routes/Links';
 
 import {CleanList, UndecoratedLink} from '@client/components/ui';
 import {
   HomeIcon,
   TrophyIcon,
-  BookIcon,
   GroupIcon,
   CategoryIcon,
   NewsIcon,
+  CommentIcon,
 } from '@client/components/svg/Icons';
 
 export const HeaderToolbar = () => {
   const t = useI18n();
   const links: [any, string, string, boolean?][] = [
     [HomeIcon, HOME_PATH, t('links.home'), true],
-    [NewsIcon, NEWS_PATH, t('links.news')],
     [CategoryIcon, BOOKS_PATH, t('links.books')],
     [TrophyIcon, TOP_BOOKS_PATH, t('links.top')],
-    [BookIcon, BOOK_SERIES_PATH, t('links.series')],
+    [CommentIcon, BOOKS_REVIEWS_PATH, t('links.reviews')],
     [GroupIcon, genAuthorsLink(), t('links.authors')],
+    [NewsIcon, NEWS_PATH, t('links.news')],
   ];
 
   return (

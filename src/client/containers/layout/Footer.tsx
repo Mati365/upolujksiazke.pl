@@ -8,7 +8,7 @@ import {
   HOME_PATH,
   BOOKS_PATH,
   AUTHORS_PATH,
-  BOOK_SERIES_PATH,
+  BOOKS_REVIEWS_PATH,
   TOP_BOOKS_PATH,
   NEWS_PATH,
   BookCategoryLink,
@@ -40,8 +40,8 @@ export const Footer = ({popularCategories}: FooterProps) => {
   const shortcuts = [
     [HOME_PATH, t('links.home')],
     [BOOKS_PATH, t('links.books')],
+    [BOOKS_REVIEWS_PATH, t('links.reviews')],
     [AUTHORS_PATH, t('links.authors')],
-    [BOOK_SERIES_PATH, t('links.series')],
     [TOP_BOOKS_PATH, t('links.top')],
     [NEWS_PATH, t('links.news')],
   ];

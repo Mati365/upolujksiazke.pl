@@ -4,10 +4,11 @@ import {objPropsToPromise} from '@shared/helpers';
 import {useI18n} from '@client/i18n';
 
 import {NewsIcon} from '@client/components/svg';
-
 import {AsyncRoute} from '@client/components/utils/asyncRouteUtils';
 import {Breadcrumbs} from '@client/containers/Breadcrumbs';
 import {Container} from '@client/components/ui';
+import {BookReviewRecord} from '@api/types';
+import {BooksReviewsGrid} from '@client/containers/kinds/review/grids/BooksReviewsGrid';
 import {
   Layout,
   LayoutHeaderTitle,
@@ -15,24 +16,26 @@ import {
   SEOMeta,
 } from '@client/containers/layout';
 
-import {NEWS_PATH} from '../Links';
+import {BOOKS_REVIEWS_PATH} from '../Links';
 
-type NewsRouteData = {
+type ReviewsRouteRoute = {
   layoutData: LayoutViewData,
+  recentCommentedBooks: BookReviewRecord[],
 };
 
-export const NewsRoute: AsyncRoute<NewsRouteData> = (
+export const ReviewsRoute: AsyncRoute<ReviewsRouteRoute> = (
   {
     layoutData,
+    recentCommentedBooks,
   },
 ) => {
-  const t = useI18n('routes.news');
+  const t = useI18n('routes.reviews');
   const breadcrumbs = (
     <Breadcrumbs
       items={[
         {
-          id: 'news',
-          node: t('shared.breadcrumbs.news'),
+          id: 'reviews',
+          node: t('shared.breadcrumbs.reviews'),
         },
       ]}
     />
@@ -49,31 +52,42 @@ export const NewsRoute: AsyncRoute<NewsRouteData> = (
 
       <Container className='c-news-route'>
         {breadcrumbs}
+
         <LayoutHeaderTitle margin='medium'>
           <NewsIcon className='mr-2' />
           {t('title')}
         </LayoutHeaderTitle>
 
-        NEWS
+        <BooksReviewsGrid items={recentCommentedBooks} />
       </Container>
     </Layout>
   );
 };
 
-NewsRoute.displayName = 'NewsRoute';
+ReviewsRoute.displayName = 'ReviewsRoute';
 
-NewsRoute.route = {
-  path: NEWS_PATH,
+ReviewsRoute.route = {
+  path: BOOKS_REVIEWS_PATH,
 };
 
-NewsRoute.getInitialProps = async (attrs) => {
-  const {layoutData} = await objPropsToPromise(
+ReviewsRoute.getInitialProps = async (attrs) => {
+  const {api: {repo}} = attrs;
+  const {
+    layoutData,
+    recentCommentedBooks,
+  } = await objPropsToPromise(
     {
       layoutData: Layout.getInitialProps(attrs),
+      recentCommentedBooks: repo.booksReviews.findRecentCommentedBooks(
+        {
+          limit: 16,
+        },
+      ),
     },
   );
 
   return {
     layoutData,
-  } as NewsRouteData;
+    recentCommentedBooks,
+  } as ReviewsRouteRoute;
 };

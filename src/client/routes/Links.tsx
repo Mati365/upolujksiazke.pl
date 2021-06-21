@@ -86,8 +86,8 @@ export const BookGenreLink = UndecoratedLink.create<Pick<BookGenreRecord, 'param
 export const BOOK_SCHOOL_LEVEL_PATH = '/poziom/:slug,:id';
 export const BookSchoolLevelLink = UndecoratedLink.create<BookSchoolLevel>((id) => `/poziom-szkolny,${id}`);
 
-export const BOOK_SERIES_PATH = '/serie-ksiazek';
-export const BookSeriesLink = UndecoratedLink.create(BOOK_SERIES_PATH);
+export const BOOKS_REVIEWS_PATH = '/opinie';
+export const BooksReviewsLink = UndecoratedLink.create(BOOKS_REVIEWS_PATH);
 
 export const TOP_BOOKS_PATH = '/top-ksiazki';
 export const TopBooksLink = UndecoratedLink.create(TOP_BOOKS_PATH);

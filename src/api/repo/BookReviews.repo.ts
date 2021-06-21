@@ -7,7 +7,7 @@ export type BookReviewsFilters = BasicAPIPagination & {
   bookId?: number,
 };
 
-export type RecentCommentedBooksFilters = {
+export type RecentCommentedBooksFilters = BasicAPIPagination & {
   limit: number,
 };
 

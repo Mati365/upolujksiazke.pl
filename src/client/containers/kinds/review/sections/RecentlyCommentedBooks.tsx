@@ -4,8 +4,7 @@ import {useI18n} from '@client/i18n';
 
 import {BookReviewRecord} from '@api/types';
 import {Section, SectionProps} from '@client/components/ui';
-import {BookLink} from '@client/routes/Links';
-import {BookReviewsList} from '../list/BookReviewsList';
+import {BooksReviewsGrid} from '../grids/BooksReviewsGrid';
 
 type RecentlyCommendedBooksProps = SectionProps & {
   items: BookReviewRecord[],
@@ -26,26 +25,7 @@ export const RecentlyCommendedBooks = (
       }
       {...props}
     >
-      <BookReviewsList
-        grid
-        reviews={items}
-        itemPropsFn={
-          (review) => ({
-            showBookCard: true,
-            totalRatingStars: 6,
-            moreButtonRenderFn: ({expandTitle}) => (
-              <BookLink
-                className='c-promo-tag-link is-text-semibold is-text-no-wrap ml-2'
-                undecorated={false}
-                item={review.book}
-                withChevron
-              >
-                {expandTitle}
-              </BookLink>
-            ),
-          })
-        }
-      />
+      <BooksReviewsGrid items={items} />
     </Section>
   );
 };

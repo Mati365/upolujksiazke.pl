@@ -33,6 +33,7 @@ export class ScrapperService {
       new Groups.ArosScrappersGroup(PARSERS_ENV.aros),
       new Groups.MadBooksScrappersGroup(PARSERS_ENV.madbooks),
       new Groups.HrosskarScrappersGroup(PARSERS_ENV.hrosskar),
+      new Groups.KrytycznymOkiemScrappersGroup(PARSERS_ENV.krytycznymOkiem),
       new Groups.GandalfScrappersGroup(PARSERS_ENV.gandalf),
       new Groups.IbukScrappersGroup(PARSERS_ENV.ibuk),
       new Groups.WoblinkScrappersGroup(PARSERS_ENV.woblink),

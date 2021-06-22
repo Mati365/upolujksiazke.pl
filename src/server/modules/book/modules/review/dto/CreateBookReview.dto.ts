@@ -55,6 +55,14 @@ export class CreateBookReviewDto extends CreateRemoteRecordDto {
   @IsBoolean()
   readonly includeInStats: boolean;
 
+  @IsOptional()
+  @IsBoolean()
+  readonly blogger: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  readonly hiddenContent: boolean;
+
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(partial: Partial<CreateBookReviewDto>) {
     super(partial);

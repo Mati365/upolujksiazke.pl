@@ -1,14 +1,15 @@
 import {ScrapperMetadataKind} from '@scrapper/entity';
 import {SimpleWebsiteScrapperSpider} from '@scrapper/service/shared';
+import {SpiderQueueProxyScrapper} from '@importer/kinds/scrappers';
 import {
   BookShopScrappersGroup,
   BookShopScrappersGroupConfig,
 } from '@importer/kinds/scrappers/BookShop.scrapper';
 
 import {BlogspotPostsScrapper} from '../../predefined/BlogspotPosts.scrapper';
-import {HrosskarBookReviewParser} from './HrosskarBookReview.parser';
+import {KrytycznymOkiemBookReviewParser} from './KrytycznymOkiemBookReview.parser';
 
-export class HrosskarScrappersGroup extends BookShopScrappersGroup {
+export class KrytycznymOkiemScrappersGroup extends BookShopScrappersGroup {
   constructor(config: BookShopScrappersGroupConfig) {
     super(
       {
@@ -19,10 +20,11 @@ export class HrosskarScrappersGroup extends BookShopScrappersGroup {
           ],
         ),
         scrappers: {
+          [ScrapperMetadataKind.URL]: new SpiderQueueProxyScrapper,
           [ScrapperMetadataKind.BOOK_REVIEW]: new BlogspotPostsScrapper,
         },
         parsers: {
-          [ScrapperMetadataKind.BOOK_REVIEW]: new HrosskarBookReviewParser,
+          [ScrapperMetadataKind.BOOK_REVIEW]: new KrytycznymOkiemBookReviewParser,
         },
       },
     );

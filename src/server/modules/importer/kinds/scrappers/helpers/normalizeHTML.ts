@@ -3,8 +3,10 @@ import {stripHtml} from 'string-strip-html';
 export function normalizeHTML(
   html: string,
   {
+    ignoreTags = [],
     stripNewlines = true,
   }: {
+    ignoreTags?: string[],
     stripNewlines?: boolean,
   } = {},
 ) {
@@ -16,7 +18,10 @@ export function normalizeHTML(
       .replace(/&nbsp;/g, '')
       .replace(/(&quot;|"{2,})/g, '"'),
     {
-      ignoreTags: ['cite', 'br', 'spoiler', 'b', 'i', 'strong', 'em'],
+      ignoreTags: [
+        'cite', 'br', 'spoiler', 'b', 'i', 'strong', 'em',
+        ...ignoreTags,
+      ],
     },
   );
 

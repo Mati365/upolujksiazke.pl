@@ -10,7 +10,7 @@ import {
   SpiderQueueScrapperInfo,
 } from '@importer/kinds/scrappers/SpiderQueueProxy.scrapper';
 
-export class HrosskarBookReviewScrapper extends SpiderQueueProxyScrapper {
+export class BlogspotPostsScrapper extends SpiderQueueProxyScrapper {
   /**
    * @inheritdoc
    */

@@ -23,6 +23,8 @@ import {BookReleaseEntity} from '../release/BookRelease.entity';
   },
 )
 @Index(['book'])
+@Index(['book', 'hiddenContent'])
+@Index(['book', 'blogger'])
 @Check('"description" <> null OR "rating" <> null')
 export class BookReviewEntity extends RemoteRecordFields {
   @Column('timestamp')
@@ -44,6 +46,12 @@ export class BookReviewEntity extends RemoteRecordFields {
 
   @Column('boolean', {default: false, nullable: true})
   includeInStats: boolean;
+
+  @Column('boolean', {default: false, nullable: true})
+  blogger: boolean;
+
+  @Column('boolean', {default: false, nullable: true})
+  hiddenContent: boolean;
 
   @ManyToOne(() => BookEntity, (book) => book.reviews)
   @JoinColumn({name: 'bookId'})

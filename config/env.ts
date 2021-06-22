@@ -17,7 +17,7 @@ type DefaultConfigBookShopNames = (
   | 'gandalf' | 'ibuk' | 'woblink'
   | 'taniaksiazka' | 'lekturyGov'
   | 'bryk' | 'streszczenia' | 'klp'
-  | 'polskina5' | 'eszkola'
+  | 'polskina5' | 'eszkola' | 'krytycznymOkiem'
 );
 
 export type AppEnv = Partial<{
@@ -269,6 +269,10 @@ export const GLOBAL_CONFIG: Record<string, AppEnv> = {
             apiUrl: 'http://pl.wikipedia.org/w/api.php',
             origin: '*',
           },
+        },
+        krytycznymOkiem: {
+          id: 24,
+          homepageURL: 'https://krytycznymokiem.blogspot.com/',
         },
       },
     },

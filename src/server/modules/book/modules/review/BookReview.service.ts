@@ -44,12 +44,20 @@ export class BookReviewService {
   /**
    * Create basic query
    *
-   * @param {string[]} [select=BookReviewService.REVIEW_CARD_FIELDS]
+   * @param {Object} attrs
    * @return {SelectQueryBuilder<BookReviewEntity>}
    * @memberof BookReviewService
    */
-  createCardsQuery(select: string[] = BookReviewService.REVIEW_CARD_FIELDS): SelectQueryBuilder<BookReviewEntity> {
-    return (
+  createCardsQuery(
+    {
+      select = BookReviewService.REVIEW_CARD_FIELDS,
+      hiddenContent = false,
+    }: {
+      select?: string[],
+      hiddenContent?: boolean,
+    } = {},
+  ): SelectQueryBuilder<BookReviewEntity> {
+    let query = (
       BookReviewEntity
         .createQueryBuilder('review')
         .select(select)
@@ -67,6 +75,11 @@ export class BookReviewService {
           },
         )
     );
+
+    if (!R.isNil(hiddenContent))
+      query = query.andWhere('review."hiddenContent" = :hiddenContent', {hiddenContent});
+
+    return query;
   }
 
   /**
@@ -114,11 +127,22 @@ export class BookReviewService {
    * @return {Promise<BookReviewEntity[]>}
    * @memberof BookReviewService
    */
-  async findRecentBooksComments({limit}: RecentCommentedBooksFilters): Promise<BookReviewEntity[]> {
+  async findRecentBooksComments(
+    {
+      limit,
+      hiddenContent = false,
+    }: RecentCommentedBooksFilters & {
+      hiddenContent?: boolean,
+    },
+  ): Promise<BookReviewEntity[]> {
     const {cardBookSearchService} = this;
     const reviews = await (
       this
-        .createCardsQuery()
+        .createCardsQuery(
+          {
+            hiddenContent,
+          },
+        )
         .orderBy('review.publishDate', 'DESC')
         .take(limit)
         .getMany()
@@ -150,6 +174,7 @@ export class BookReviewService {
   async findBookReviews(
     {
       bookId,
+      hiddenContent = false,
       pagination = true,
       offset = 0,
       limit = 15,
@@ -158,11 +183,16 @@ export class BookReviewService {
       offset?: number,
       pagination?: boolean,
       limit?: number,
+      hiddenContent?: boolean,
     },
   ) {
     let query = (
       this
-        .createCardsQuery()
+        .createCardsQuery(
+          {
+            hiddenContent,
+          },
+        )
         .skip(offset)
         .take(limit)
         .orderBy('review.publishDate', 'DESC')

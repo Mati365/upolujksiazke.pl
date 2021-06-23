@@ -19,7 +19,11 @@ export class HrosskarScrappersGroup extends BookShopScrappersGroup {
           ],
         ),
         scrappers: {
-          [ScrapperMetadataKind.BOOK_REVIEW]: new BlogspotPostsScrapper,
+          [ScrapperMetadataKind.BOOK_REVIEW]: new BlogspotPostsScrapper(
+            {
+              latestArticlesPath: 'search/label/recenzja',
+            },
+          ),
         },
         parsers: {
           [ScrapperMetadataKind.BOOK_REVIEW]: new HrosskarBookReviewParser,

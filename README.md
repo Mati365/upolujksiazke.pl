@@ -88,7 +88,7 @@ https://coolors.co/2b2d42-8d99ae-edf2f4-ef233c-d90429
 - [x] Aros.pl
 - [x] Publio.pl
 - [x] Hrosskar.blogspot.com
-- [ ] krytycznymokiem.blogspot.com
+- [x] krytycznymokiem.blogspot.com
 - [x] Madbooks.pl
 - [x] Gandalf.com.pl
 - [x] ibuk.pl

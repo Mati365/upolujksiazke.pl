@@ -55,6 +55,7 @@ export class HrosskarBookReviewParser extends WebsiteScrapperParser<CreateBookRe
       {
         book,
         url,
+        blogger: true,
         description: normalizeParsedText(description),
         rating: (
           rating?.length === 2

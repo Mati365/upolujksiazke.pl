@@ -11,13 +11,21 @@ import {
 } from '@importer/kinds/scrappers/SpiderQueueProxy.scrapper';
 
 export class BlogspotPostsScrapper extends SpiderQueueProxyScrapper {
+  constructor(
+    private readonly config: {
+      latestArticlesPath?: string,
+    } = {},
+  ) {
+    super();
+  }
+
   /**
    * @inheritdoc
    */
   protected async processPage(page: string): Promise<ScrapperResult<SpiderQueueScrapperInfo[], string>> {
-    const {websiteURL} = this;
+    const {websiteURL, config} = this;
     const $ = (await parseAsyncURLIfOK(
-      page ?? concatUrls(websiteURL, 'search/label/recenzja'),
+      page ?? concatUrls(websiteURL, config.latestArticlesPath || '/'),
     ))?.$;
 
     if (!$)

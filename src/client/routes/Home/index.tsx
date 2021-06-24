@@ -2,6 +2,7 @@ import React from 'react';
 
 import {objPropsToPromise} from '@shared/helpers';
 import {useI18n} from '@client/i18n';
+import {useUA} from '@client/modules/ua';
 
 import {AsyncRoute} from '@client/components/utils/asyncRouteUtils';
 import {
@@ -10,13 +11,14 @@ import {
   CategoryBooksGroup,
 } from '@api/types';
 
-import {Container} from '@client/components/ui';
+import {Container, Section} from '@client/components/ui';
 import {Layout, LayoutViewData, SEOMeta} from '@client/containers/layout';
 
 import {RootCategoriesSection} from '@client/containers/kinds/category';
 import {
   RecentBooksSection,
   CategoriesGroupsBooksSection,
+  BookThumbCard,
 } from '@client/containers/kinds/book';
 
 import {LazyHydrate} from '@client/components/ui/LazyHydrate';
@@ -39,6 +41,7 @@ export const HomeRoute: AsyncRoute = (
   }: HomeRouteProps,
 ) => {
   const t = useI18n('routes.home');
+  const ua = useUA();
 
   return (
     <Layout
@@ -47,12 +50,44 @@ export const HomeRoute: AsyncRoute = (
     >
       <SEOMeta meta={t('seo') as any} />
       <Container className='c-sections-list'>
-        <RootCategoriesSection items={layoutData.rootPopularCategories} />
+        <Section className='c-home-categories-section'>
+          <RootCategoriesSection
+            items={layoutData.rootPopularCategories}
+            sectionProps={{
+              spaced: 0,
+            }}
+            gridProps={{
+              columns: {
+                default: 6,
+                xs: 1,
+              },
+            }}
+          />
+
+          {!ua.mobile && (
+            <RecentBooksSection
+              items={recentBooks}
+              sectionProps={{
+                spaced: 0,
+              }}
+              gridProps={{
+                cardComponent: BookThumbCard,
+                columns: {
+                  default: 2,
+                },
+              }}
+            />
+          )}
+        </Section>
+
         <RecentlyCommendedBooks items={recentCommentedBooks} />
 
         <LazyHydrate>
           <CategoriesGroupsBooksSection items={popularCategoriesBooks} />
-          <RecentBooksSection items={recentBooks} />
+
+          {ua.mobile && (
+            <RecentBooksSection items={recentBooks} />
+          )}
         </LazyHydrate>
       </Container>
     </Layout>
@@ -72,7 +107,7 @@ HomeRoute.getInitialProps = (attrs) => {
       layoutData: Layout.getInitialProps(attrs),
       recentBooks: repo.books.findRecentBooks(
         {
-          limit: 7,
+          limit: 6,
         },
       ),
       popularCategoriesBooks: repo.recentBooks.findCategoriesPopularBooks(

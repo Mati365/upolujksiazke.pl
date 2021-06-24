@@ -1,0 +1,9 @@
+.c-home-categories-section > .c-section__content {
+  display: grid;
+  grid-template-columns: 80% 1fr;
+  gap: 30px;
+
+  @include mobile {
+    grid-template-columns: 1fr;
+  }
+}

@@ -16,14 +16,16 @@ export const GRID_VIEW_MODE_CARDS: Record<ViewMode, any> = {
   [ViewMode.LIST]: WideBookCard,
 };
 
-type BooksGridProps = GridProps & {
+export type BooksGridProps = GridProps & {
   items: BookCardRecord[],
+  cardComponent?: any,
   viewMode?: ViewMode,
 };
 
 export const BooksGrid = memo<BooksGridProps>(
   (
     {
+      cardComponent,
       items,
       className,
       viewMode,
@@ -31,7 +33,7 @@ export const BooksGrid = memo<BooksGridProps>(
     },
   ) => {
     const ua = useUA();
-    const CardComponent = (
+    const CardComponent = cardComponent ?? (
       ua.mobile
         ? WideBookCard
         : GRID_VIEW_MODE_CARDS[viewMode ?? ViewMode.GRID]

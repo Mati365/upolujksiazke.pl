@@ -284,7 +284,7 @@ export const PL_LANG_PACK = {
       title: 'Kategorie książek',
     },
     recent_books: {
-      title: 'Ostatnio dodane książki',
+      title: 'Nowości',
     },
     recently_commented_books: {
       title: 'Ostatnio skomentowane',

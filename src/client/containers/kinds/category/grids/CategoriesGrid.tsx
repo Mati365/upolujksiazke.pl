@@ -16,7 +16,7 @@ import {
   CategoryListItemCard,
 } from '../cards';
 
-type CategoriesGridProps = GridProps & {
+export type CategoriesGridProps = GridProps & {
   items: BookCategoryRecord[],
   allowExpand?: boolean,
 };

@@ -2,15 +2,23 @@ import React from 'react';
 
 import {useI18n} from '@client/i18n';
 
-import {Section} from '@client/components/ui';
+import {Section, SectionProps} from '@client/components/ui';
 import {BookCategoryRecord} from '@api/types';
-import {CategoriesGrid} from '../grids/CategoriesGrid';
+import {CategoriesGrid, CategoriesGridProps} from '../grids/CategoriesGrid';
 
 type RecentBooksSectionProps = {
   items: BookCategoryRecord[],
+  gridProps?: Omit<CategoriesGridProps, 'items'>,
+  sectionProps?: SectionProps,
 };
 
-export const RootCategoriesSection = ({items}: RecentBooksSectionProps) => {
+export const RootCategoriesSection = (
+  {
+    items,
+    gridProps,
+    sectionProps,
+  }: RecentBooksSectionProps,
+) => {
   const t = useI18n();
 
   return (
@@ -19,8 +27,12 @@ export const RootCategoriesSection = ({items}: RecentBooksSectionProps) => {
       title={
         t('sections.root_categories.title')
       }
+      {...sectionProps}
     >
-      <CategoriesGrid items={items} />
+      <CategoriesGrid
+        items={items}
+        {...gridProps}
+      />
     </Section>
   );
 };

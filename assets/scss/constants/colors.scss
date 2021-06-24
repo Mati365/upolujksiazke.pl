@@ -40,7 +40,7 @@ $primary-light: #f44336;
   --c-button-primary:       #{$primary-secondary-red};
   --c-button-primary-text:  #fff;
   --c-button-primary-border:  #{darken($primary-secondary-red, 5%)};
-  --c-button-primary-hover:   #{darken($primary-secondary-red, 8%)};
+  --c-button-primary-hover:   #{darken($primary-secondary-red, 10%)};
 
   --c-blue-ribbon:     #0899ba;
   --c-blue-ribbon-text:#fff;

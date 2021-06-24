@@ -268,7 +268,7 @@ export const PL_LANG_PACK = {
       },
     },
     reviews: {
-      title: 'Recenzje książki',
+      title: 'Opinie o książce',
       total: '%{} recenzji',
       show_more_reviews: 'Pokaż więcej recenzji (%{})',
     },

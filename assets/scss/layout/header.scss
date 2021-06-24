@@ -43,12 +43,11 @@
   }
 
   &__search {
+    --radius: 8px;
     margin: 0 25px 0 10px;
 
     > input {
-      padding-right: 28px;
       padding: 8px 10px;
-      border-radius: 8px;
     }
   }
 
@@ -61,7 +60,7 @@
         color: color(primary);
 
         & .c-header__link-text {
-          font-weight: 500;
+          font-weight: 600;
         }
       }
     }

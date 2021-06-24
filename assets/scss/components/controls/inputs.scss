@@ -1,8 +1,15 @@
 .c {
   &-input {
+    $self: &;
+    --radius: 5px;
+
     display: inline-block;
     position: relative;
     width: inherit;
+
+    > button {
+      cursor: pointer;
+    }
 
     > input {
       width: 100%;
@@ -10,9 +17,32 @@
       margin: 0;
       font-size: .9rem;
       border: 1px solid color(gray-2);
-      border-radius: 5px;
+      border-radius: var(--radius);
       outline: 0;
       background: initial;
+    }
+
+    &.has-primary-icon {
+      &.has-icon-right input {
+        padding-right: 40px;
+      }
+
+      #{$self}__icon {
+        background: color(primary);
+        color: #fff;
+        transition: background 250ms ease-in-out;
+
+        &.is-right {
+          right: 0;
+          width: 32px;
+          border-top-right-radius: var(--radius);
+          border-bottom-right-radius: var(--radius);
+        }
+
+        &:hover {
+          background: color(button-primary-hover);
+        }
+      }
     }
 
     &.has-icon {
@@ -31,6 +61,8 @@
       position: absolute;
       top: 0;
       height: 100%;
+      border: 0;
+      appearance: none;
 
       &.is-left {
         left: 6px;

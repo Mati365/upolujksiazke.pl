@@ -58,6 +58,12 @@ export const BookInfo = (
     },
   );
 
+  const safeDescription = (
+    taggedDescription
+      || description
+      || primaryRelease.description
+  );
+
   return (
     <Section
       className='c-book-info-section'
@@ -78,22 +84,21 @@ export const BookInfo = (
           formattedTitle={formattedTitle}
         />
 
-        <h2 className='c-book-info-section__description-header'>
-          {t('book.book_description')}
-        </h2>
+        {!safeDescription ? null : (
+          <>
+            <h2 className='c-book-info-section__description-header'>
+              {t('book.book_description')}
+            </h2>
 
-        <ExpandableDescriptionBox
-          className='c-book-info-section__description'
-          maxCharactersCount={900}
-          text={(
-            taggedDescription
-              || description
-              || primaryRelease.description
-              || t('book.no_description')
-          )}
-          mobileSmaller={false}
-          html
-        />
+            <ExpandableDescriptionBox
+              className='c-book-info-section__description'
+              maxCharactersCount={900}
+              text={safeDescription}
+              mobileSmaller={false}
+              html
+            />
+          </>
+        )}
 
         {schoolBook && (
           <>

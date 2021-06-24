@@ -5,12 +5,14 @@ export type InputProps = JSX.IntrinsicElements['input'] & {
   iconLeft?: ReactNode,
   iconRight?: ReactNode,
   iconStyle?: string,
+  iconTitle?: string,
   onIconClick?: MouseEventHandler,
 };
 
 export const Input = (
   {
     className,
+    iconTitle,
     iconLeft,
     iconRight,
     iconStyle,
@@ -39,6 +41,7 @@ export const Input = (
       {iconLeft && (
         <IconHolder
           className='c-input__icon is-left'
+          aria-label={iconTitle}
           onClick={onIconClick}
         >
           {iconLeft}
@@ -48,6 +51,7 @@ export const Input = (
       {iconRight && (
         <IconHolder
           className='c-input__icon is-right'
+          aria-label={iconTitle}
           onClick={onIconClick}
         >
           {iconRight}

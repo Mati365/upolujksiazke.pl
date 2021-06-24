@@ -30,6 +30,9 @@ export const HeaderSearch = () => {
       placeholder={
         t('search.placeholder')
       }
+      iconTitle={
+        t('search.title')
+      }
       iconStyle='primary'
       iconRight={(
         <SearchIcon />

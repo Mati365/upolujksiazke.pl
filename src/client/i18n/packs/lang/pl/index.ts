@@ -72,6 +72,7 @@ export const PL_LANG_PACK = {
   routes: ROUTES_PACK,
   search: {
     placeholder: 'Wyszukaj książkę, autora lub ISBN i wciśnij enter...',
+    title: 'Wyszukaj',
   },
   shared: {
     months: [

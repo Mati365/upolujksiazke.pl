@@ -57,6 +57,10 @@ export class BookFullInfoSerializer extends BookCardSerializer implements BookFu
   summaries: BookSummarySerializer[];
 
   @Expose()
+  @Type(() => BookSummarySerializer)
+  posts: BookSummarySerializer[];
+
+  @Expose()
   @Type(() => BookPrizeSerializer)
   prizes: BookPrizeSerializer[];
 

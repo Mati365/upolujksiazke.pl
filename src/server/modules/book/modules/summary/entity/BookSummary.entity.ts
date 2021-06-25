@@ -15,7 +15,7 @@ import {BookSummaryHeaderEntity} from './BookSummaryHeader.entity';
     name: 'book_summary',
   },
 )
-@Index(['book'])
+@Index(['book', 'kind'])
 export class BookSummaryEntity extends DatedRecordEntity {
   @ManyToOne(() => BookEntity)
   @JoinColumn({name: 'bookId'})

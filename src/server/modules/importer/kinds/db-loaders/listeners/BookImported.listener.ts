@@ -8,7 +8,7 @@ import {BookImportedEvent} from '../events/BookImported.event';
 import {BookSummaryDbLoaderService} from '../BookSummary.loader';
 
 @Injectable()
-export class EntityImportedListener {
+export class BookImportedListener {
   constructor(
     private bookSummaryService: BookSummaryDbLoaderService,
   ) {}

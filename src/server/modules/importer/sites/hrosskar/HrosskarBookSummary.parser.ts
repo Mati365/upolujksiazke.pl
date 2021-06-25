@@ -5,17 +5,18 @@ import {
   normalizeParsedText,
 } from '@server/common/helpers';
 
-import {VotingStatsEmbeddable} from '@server/modules/shared/VotingStats.embeddable';
+import {BookSummaryKind} from '@shared/enums';
 import {WebsiteScrapperParser} from '@scrapper/service/shared';
 import {AsyncURLParseResult} from '@server/common/helpers/fetchAsyncHTML';
 import {CreateBookDto} from '@server/modules/book/dto/CreateBook.dto';
-import {CreateBookReviewDto} from '@server/modules/book/modules/review/dto/CreateBookReview.dto';
 import {CreateBookAuthorDto} from '@server/modules/book/modules/author/dto/CreateBookAuthor.dto';
 import {CreateBookReleaseDto} from '@server/modules/book/modules/release/dto/CreateBookRelease.dto';
-import {CreateBookReviewerDto} from '@server/modules/book/modules/reviewer/dto/CreateBookReviewer.dto';
+import {CreateBookSummaryDto} from '@server/modules/book/modules/summary/dto';
+import {CreateRemoteArticleDto} from '@server/modules/remote/dto';
+import {CreateImageAttachmentDto} from '@server/modules/attachment/dto';
 
-export class HrosskarBookReviewParser extends WebsiteScrapperParser<CreateBookReviewDto> {
-  parse({$, url}: AsyncURLParseResult): CreateBookReviewDto {
+export class HrosskarBookSummaryParser extends WebsiteScrapperParser<CreateBookSummaryDto> {
+  parse({$, url}: AsyncURLParseResult): CreateBookSummaryDto {
     const blogPost = $('[itemprop="blogPost"]');
     const postBody = $(blogPost).find('.post-body');
 
@@ -28,6 +29,7 @@ export class HrosskarBookReviewParser extends WebsiteScrapperParser<CreateBookRe
     if (!author)
       author = normalizeParsedText(bookInfo.match(/Autor:\s*(.*)\n/i)?.[1]);
 
+    const coverUrl = $('head meta[property="og:image"]').attr('content');
     const isbn = normalizeISBN(bookInfo.match(/ISBN:\s*([\w-]+)/i)?.[1]);
     const book = new CreateBookDto(
       {
@@ -50,27 +52,25 @@ export class HrosskarBookReviewParser extends WebsiteScrapperParser<CreateBookRe
       },
     );
 
-    const rating = description.match(/(?:Ocena:|Moja ocena)\s*(\d+)\s*\/\s*(\d+)/i)?.slice(1, 3);
-    return new CreateBookReviewDto(
+    return new CreateBookSummaryDto(
       {
         book,
-        url,
-        description: normalizeParsedText(description),
-        rating: (
-          rating?.length === 2
-            ? ((+rating[0]) / (+rating[1])) * 10
-            : null
-        ),
-        remoteId: $(blogPost).find('[itemprop=\'postId\']').attr('content'),
-        publishDate: new Date($('a.timestamp-link [itemprop=\'datePublished\']').attr('title')),
-        stats: new VotingStatsEmbeddable(
+        kind: BookSummaryKind.REVIEW,
+        article: new CreateRemoteArticleDto(
           {
-            comments: $('#comment-holder .comment').length,
-          },
-        ),
-        reviewer: new CreateBookReviewerDto(
-          {
-            name: $(blogPost).find('[itemprop="author"] [itemprop="name"]').text() || 'hrosskar',
+            url,
+            remoteId: $(blogPost).find('[itemprop=\'postId\']').attr('content'),
+            title: $('title').text().trim(),
+            description,
+            cover: (
+              coverUrl
+                ? new CreateImageAttachmentDto(
+                  {
+                    originalUrl: coverUrl,
+                  },
+                )
+                : null
+            ),
           },
         ),
       },

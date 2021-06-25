@@ -1,6 +1,8 @@
-import {Injectable} from '@nestjs/common';
-import * as R from 'ramda';
+import {Injectable, Logger} from '@nestjs/common';
 import pMap from 'p-map';
+import * as R from 'ramda';
+import {EventEmitter2} from '@nestjs/event-emitter';
+import {plainToClass} from 'class-transformer';
 
 import {CreateBookSummaryDto} from '@server/modules/book/modules/summary/dto';
 import {CreateRemoteArticleDto} from '@server/modules/remote/dto';
@@ -8,21 +10,81 @@ import {CreateRemoteArticleDto} from '@server/modules/remote/dto';
 import {ScrapperMatcherService} from '@scrapper/service/actions';
 import {ScrapperMetadataKind} from '@scrapper/entity';
 import {ScrapperService} from '@scrapper/service/Scrapper.service';
-import {MetadataDbLoader} from '@db-loader/MetadataDbLoader.interface';
+import {InlineMetadataObject, MetadataDbLoader} from '@db-loader/MetadataDbLoader.interface';
 
 import {BookSummaryService} from '@server/modules/book/modules/summary/BookSummary.service';
 import {BookDbLoaderService} from './Book.loader';
+import {BookSummaryImportedEvent} from './events';
 
 @Injectable()
 export class BookSummaryDbLoaderService implements MetadataDbLoader {
+  private readonly logger = new Logger(BookSummaryDbLoaderService.name);
+
   constructor(
+    private readonly eventEmitter: EventEmitter2,
     private readonly scrapperMatcherService: ScrapperMatcherService,
     private readonly scrapperService: ScrapperService,
     private readonly summaryService: BookSummaryService,
+    private readonly bookDbLoader: BookDbLoaderService,
   ) {}
 
-  extractMetadataToDb() {
-    throw new Error('Method not implemented!');
+  /**
+   * @inheritdoc
+   */
+  async extractMetadataToDb(metadata: InlineMetadataObject) {
+    const {
+      logger,
+      scrapperService,
+      summaryService,
+      bookDbLoader,
+      eventEmitter,
+    } = this;
+
+    const dto = plainToClass(CreateBookSummaryDto, metadata.content);
+    if (!dto?.article) {
+      logger.warn('Missing metadata content!');
+      return;
+    }
+
+    const websiteId = (
+      metadata.websiteId
+        ?? dto.article.websiteId
+        ?? (await scrapperService.findOrCreateWebsiteByUrl(dto.article.url))?.id
+    );
+
+    const book = await bookDbLoader.searchAndExtractToDb(
+      dto.book,
+      {
+        checkCacheBeforeSearch: true,
+        skipIfAlreadyInDb: true,
+        skipDtoMerge: true,
+      },
+    );
+
+    if (!book) {
+      logger.warn(`Unable to match summary book with title "${dto.book.title}"!`);
+      return;
+    }
+
+    const summaryEntity = await summaryService.upsert(
+      new CreateBookSummaryDto(
+        {
+          ...dto,
+          bookId: book.id,
+          article: new CreateRemoteArticleDto(
+            {
+              ...dto?.article,
+              websiteId,
+            },
+          ),
+        },
+      ),
+    );
+
+    await eventEmitter.emitAsync(
+      'loader.summary.imported',
+      new BookSummaryImportedEvent(summaryEntity, dto),
+    );
   }
 
   /**

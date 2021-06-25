@@ -23,6 +23,7 @@ export interface BookFullInfoRecord extends BookCardRecord {
   prizes: BookPrizeRecord[];
   reviews: BookReviewRecord[];
   summaries: BookSummaryRecord[];
+  posts: BookSummaryRecord[];
   hierarchy: SeriesBookRecord[];
   genre: BookGenreRecord[];
   era: BookEraRecord[];

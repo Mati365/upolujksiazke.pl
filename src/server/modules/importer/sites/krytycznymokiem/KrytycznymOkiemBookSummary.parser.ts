@@ -1,26 +1,25 @@
 import * as R from 'ramda';
 
-import {VotingStatsEmbeddable} from '@server/modules/shared/VotingStats.embeddable';
 import {WebsiteScrapperParser} from '@scrapper/service/shared';
 import {AsyncURLParseResult} from '@server/common/helpers/fetchAsyncHTML';
 import {CreateBookDto} from '@server/modules/book/dto/CreateBook.dto';
-import {CreateBookReviewDto} from '@server/modules/book/modules/review/dto/CreateBookReview.dto';
 import {CreateBookAuthorDto} from '@server/modules/book/modules/author/dto/CreateBookAuthor.dto';
 import {CreateBookReleaseDto} from '@server/modules/book/modules/release/dto/CreateBookRelease.dto';
-import {CreateBookReviewerDto} from '@server/modules/book/modules/reviewer/dto/CreateBookReviewer.dto';
+import {CreateBookSummaryDto} from '@server/modules/book/modules/summary/dto';
+import {CreateRemoteArticleDto} from '@server/modules/remote/dto';
+import {CreateImageAttachmentDto} from '@server/modules/attachment/dto';
+import {BookSummaryKind} from '@shared/enums';
 
-export class KrytycznymOkiemBookReviewParser extends WebsiteScrapperParser<CreateBookReviewDto> {
-  parse({$, url}: AsyncURLParseResult): CreateBookReviewDto {
+export class KrytycznymOkiemBookSummaryParser extends WebsiteScrapperParser<CreateBookSummaryDto> {
+  parse({$, url}: AsyncURLParseResult): CreateBookSummaryDto {
     const blogPost = $('[itemprop="blogPost"]');
-    const postBody = $(blogPost).find('.post-body');
-
-    const description = postBody.html();
     const header = $(blogPost).find('h3.post-title[itemprop=\'name\']').text();
 
     const matchResult = header.match(/["„](?<title>[^"„”]+)["”] (?<author>.*)/);
     if (!matchResult)
       return null;
 
+    const coverUrl = $('head meta[property="og:image"]').attr('content');
     const {title, author} = R.mapObjIndexed(R.trim, matchResult.groups);
     const book = new CreateBookDto(
       {
@@ -42,22 +41,25 @@ export class KrytycznymOkiemBookReviewParser extends WebsiteScrapperParser<Creat
       },
     );
 
-    return new CreateBookReviewDto(
+    return new CreateBookSummaryDto(
       {
         book,
-        url,
-        hiddenContent: true,
-        description: description.replaceAll('\n', '<br />'),
-        remoteId: $(blogPost).find('[itemprop=\'postId\']').attr('content'),
-        publishDate: new Date($('a.timestamp-link [itemprop=\'datePublished\']').attr('title')),
-        stats: new VotingStatsEmbeddable(
+        kind: BookSummaryKind.REVIEW,
+        article: new CreateRemoteArticleDto(
           {
-            comments: $('#comment-holder .comment, #comments .comment-body').length,
-          },
-        ),
-        reviewer: new CreateBookReviewerDto(
-          {
-            name: $(blogPost).find('[itemprop="author"] [itemprop="name"]').text() || 'krytycznymokiem',
+            url,
+            remoteId: $(blogPost).find('[itemprop=\'postId\']').attr('content'),
+            title: $('title').text().trim(),
+            description: 'Blog krytycznoliteracki Jarosława Czechowicza.',
+            cover: (
+              coverUrl
+                ? new CreateImageAttachmentDto(
+                  {
+                    originalUrl: coverUrl,
+                  },
+                )
+                : null
+            ),
           },
         ),
       },

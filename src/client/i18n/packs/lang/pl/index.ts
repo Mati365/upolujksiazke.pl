@@ -276,6 +276,9 @@ export const PL_LANG_PACK = {
     summaries: {
       title: 'Streszczenia książki',
     },
+    posts: {
+      title: 'Artykuły o książce',
+    },
   },
   review: {
     read_more_at: 'Czytaj więcej na',

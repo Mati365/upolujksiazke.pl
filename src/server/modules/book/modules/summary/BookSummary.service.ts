@@ -8,7 +8,7 @@ import {
   UpsertResourceAttrs,
 } from '@server/common/helpers/db';
 
-import {ImageVersion} from '@shared/enums';
+import {BookSummaryKind, ImageVersion} from '@shared/enums';
 import {RemoteArticleService} from '@server/modules/remote/service/RemoteArticle.service';
 import {CreateBookSummaryDto} from './dto';
 import {BookSummaryEntity, BookSummaryHeaderEntity} from './entity';
@@ -43,9 +43,11 @@ export class BookSummaryService {
     {
       bookId,
       limit,
+      kinds,
     }: {
       bookId: number,
       limit: number,
+      kinds?: BookSummaryKind[],
     },
   ) {
     const summaries = await (
@@ -55,6 +57,9 @@ export class BookSummaryService {
         .where(
           {
             bookId,
+            ...!R.isNil(kinds) && {
+              kind: In(kinds),
+            },
           },
         )
 

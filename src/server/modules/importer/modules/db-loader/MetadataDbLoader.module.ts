@@ -8,7 +8,7 @@ import {
   BookDbLoaderService,
   BookReviewDbLoaderService,
   BookSummaryDbLoaderService,
-  EntityImportedListener,
+  BookImportedListener,
   UrlDbLoaderService,
 } from '@importer/kinds/db-loaders';
 
@@ -45,7 +45,7 @@ import {ScrapperModule} from '../scrapper/Scrapper.module';
       MetadataDbLoaderService,
       MetadataDbLoaderQueueService,
       UrlDbLoaderService,
-      EntityImportedListener,
+      BookImportedListener,
       BookDbLoaderService,
       BookSummaryDbLoaderService,
       BookReviewDbLoaderService,

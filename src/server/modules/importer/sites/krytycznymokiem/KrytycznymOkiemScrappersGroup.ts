@@ -7,7 +7,7 @@ import {
 } from '@importer/kinds/scrappers/BookShop.scrapper';
 
 import {BlogspotPostsScrapper} from '../../predefined/BlogspotPosts.scrapper';
-import {KrytycznymOkiemBookReviewParser} from './KrytycznymOkiemBookReview.parser';
+import {KrytycznymOkiemBookSummaryParser} from './KrytycznymOkiemBookSummary.parser';
 
 export class KrytycznymOkiemScrappersGroup extends BookShopScrappersGroup {
   constructor(config: BookShopScrappersGroupConfig) {
@@ -16,15 +16,15 @@ export class KrytycznymOkiemScrappersGroup extends BookShopScrappersGroup {
         ...config,
         spider: SimpleWebsiteScrapperSpider.createForRegexMap(
           [
-            [/\d+\/\d+\/[^/]+/, () => ScrapperMetadataKind.BOOK_REVIEW],
+            [/\d+\/\d+\/[^/]+/, () => ScrapperMetadataKind.BOOK_SUMMARY],
           ],
         ),
         scrappers: {
           [ScrapperMetadataKind.URL]: new SpiderQueueProxyScrapper,
-          [ScrapperMetadataKind.BOOK_REVIEW]: new BlogspotPostsScrapper,
+          [ScrapperMetadataKind.BOOK_SUMMARY]: new BlogspotPostsScrapper,
         },
         parsers: {
-          [ScrapperMetadataKind.BOOK_REVIEW]: new KrytycznymOkiemBookReviewParser,
+          [ScrapperMetadataKind.BOOK_SUMMARY]: new KrytycznymOkiemBookSummaryParser,
         },
       },
     );

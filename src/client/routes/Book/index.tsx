@@ -24,6 +24,7 @@ import {BookLatestReviewsSection} from '@client/containers/kinds/review/sections
 import {
   BookAvailabilitySection,
   BookInfo,
+  BookPostsSection,
   BookSummariesSection,
   CategoriesGroupsBooksSection,
 } from '@client/containers/kinds/book';
@@ -104,8 +105,11 @@ export const BookRoute: AsyncRoute<BookRouteViewData> = (
             book={book}
             shrink={ua.mobile}
           />
+          {book.posts && (
+            <BookPostsSection items={book.posts} />
+          )}
           <BookLatestReviewsSection book={book} />
-          <BookSummariesSection book={book} />
+          <BookSummariesSection items={book.summaries} />
         </BookInfo>
 
         {popularCategoriesBooks?.length > 0 && (

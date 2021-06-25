@@ -9,7 +9,7 @@ import {Awaited} from '@shared/types';
 import {BasicAPIPagination} from '@api/APIClient';
 import {BooksGroupsFilters} from '@api/repo/RecentBooks.repo';
 
-import {ImageVersion} from '@shared/enums';
+import {BookSummaryKind, ImageVersion} from '@shared/enums';
 import {BookReleaseService} from '../../release/BookRelease.service';
 import {BookCategoryService} from '../../category/services/BookCategory.service';
 import {BookCategoryEntity} from '../../category/BookCategory.entity';
@@ -380,6 +380,17 @@ export class CardBookSearchService {
         prizes: prizeService.findBookPrizes(id),
         summaries: summaryService.findBookSummaries(
           {
+            kinds: [BookSummaryKind.SUMMARY],
+            bookId: id,
+            limit: summariesCount,
+          },
+        ),
+        posts: summaryService.findBookSummaries(
+          {
+            kinds: [
+              BookSummaryKind.ARTICLE,
+              BookSummaryKind.REVIEW,
+            ],
             bookId: id,
             limit: summariesCount,
           },

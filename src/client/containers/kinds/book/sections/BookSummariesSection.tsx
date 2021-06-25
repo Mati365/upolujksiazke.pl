@@ -2,30 +2,31 @@ import React from 'react';
 
 import {useI18n} from '@client/i18n';
 
-import {BookFullInfoRecord} from '@api/types';
+import {BookSummaryRecord} from '@api/types';
 import {Section} from '@client/components/ui';
 import {BookSummariesGrid} from '../grids';
 
 type BookSummariesSectionProps = {
-  book: BookFullInfoRecord,
+  items: BookSummaryRecord[],
+  title?: string,
 };
 
-export const BookSummariesSection = ({book}: BookSummariesSectionProps) => {
+export const BookSummariesSection = ({items, title}: BookSummariesSectionProps) => {
   const t = useI18n('book.summaries');
-  if (!book.summaries?.length)
+  if (!items?.length)
     return null;
 
   return (
     <Section
       spaced={3}
       title={
-        t('title')
+        title ?? t('title')
       }
       subsection
       noContentSpacing
     >
       <BookSummariesGrid
-        items={book.summaries}
+        items={items}
         gap={4}
         columns={{
           xs: 1,

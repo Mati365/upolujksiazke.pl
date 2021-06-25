@@ -20,6 +20,7 @@ import {
 
 import {BookThumbCard} from '../../book/cards/BookThumbCard';
 import {WideBookCard} from '../../book/cards/WideBookCard';
+import {BookReviewReactions} from '../controls/BookReviewReactions';
 
 export type BookReviewProps = {
   review: BookReviewRecord,
@@ -140,17 +141,21 @@ export const BookReview = (
         />
 
         {website && (
-          <div className='c-book-review__footer c-flex-row'>
-            {`${t('review.read_more_at')}:`}
-            <TitledFavicon
-              tag='a'
-              className='ml-2'
-              href={url}
-              src={website.logo.smallThumb?.file}
-              title={website.hostname}
-              target='_blank'
-              rel='noopener noreferrer'
-            />
+          <div className='c-book-review__footer'>
+            <BookReviewReactions stats={review.stats} />
+
+            <span className='c-book-review__more c-flex-row'>
+              {`${t('review.read_more_at')}:`}
+              <TitledFavicon
+                tag='a'
+                className='ml-2'
+                href={url}
+                src={website.logo.smallThumb?.file}
+                title={website.hostname}
+                target='_blank'
+                rel='noopener noreferrer'
+              />
+            </span>
           </div>
         )}
       </div>

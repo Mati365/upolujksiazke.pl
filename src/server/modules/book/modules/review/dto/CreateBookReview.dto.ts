@@ -6,6 +6,7 @@ import {
 } from 'class-validator';
 
 import {CreateBookDto} from '@server/modules/book/dto/CreateBook.dto';
+import {VotingStatsEmbeddable} from '@server/modules/shared/VotingStats.embeddable';
 import {CreateRemoteRecordDto} from '@server/modules/remote/dto/CreateRemoteRecord.dto';
 import {CreateBookReviewerDto} from '../../reviewer/dto/CreateBookReviewer.dto';
 
@@ -31,6 +32,11 @@ export class CreateBookReviewDto extends CreateRemoteRecordDto {
   @IsOptional()
   @IsString()
   readonly description: string;
+
+  @Type(() => VotingStatsEmbeddable)
+  @IsOptional()
+  @ValidateNested()
+  readonly initialConstantStats: VotingStatsEmbeddable;
 
   @Type(() => CreateBookDto)
   @IsOptional()

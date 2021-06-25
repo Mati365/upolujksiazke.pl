@@ -64,6 +64,8 @@ import MehSVG from '@assets/icons/svg/meh.svg';
 import ListSVG from '@assets/icons/svg/list-ul.svg';
 import GridSVG from '@assets/icons/svg/grid.svg';
 import MagicSVG from '@assets/icons/svg/magic.svg';
+import LikeSVG from '@assets/icons/svg/like.svg';
+import DislikeSVG from '@assets/icons/svg/dislike.svg';
 import WebsiteLogoSVG from '@assets/icons/website-logo.svg';
 import {Icon, IconProps} from '../ui/Icon';
 
@@ -149,6 +151,8 @@ export const MehIcon = Icon.createFromSVG(MehSVG);
 export const GridIcon = Icon.createFromSVG(GridSVG);
 export const ListIcon = Icon.createFromSVG(ListSVG);
 export const MagicIcon = Icon.createFromSVG(MagicSVG);
+export const LikeIcon = Icon.createFromSVG(LikeSVG);
+export const DislikeIcon = Icon.createFromSVG(DislikeSVG);
 
 export const ICON_BY_NAME = {
   WebsiteLogo: WebsiteLogoIcon,
@@ -215,6 +219,8 @@ export const ICON_BY_NAME = {
   List: ListIcon,
   Grid: GridIcon,
   Magic: MagicIcon,
+  Like: LikeIcon,
+  Dislike: DislikeIcon,
 };
 
 export const ICON_EMOJI_MAPPINGS = {

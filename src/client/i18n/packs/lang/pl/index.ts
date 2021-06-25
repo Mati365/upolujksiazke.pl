@@ -113,6 +113,10 @@ export const PL_LANG_PACK = {
       click_to_choose: 'Kliknij by wybrać',
       empty_results: 'Nic nie znaleziono!',
     },
+    reactions: {
+      like: 'Lubię to',
+      dislike: 'Nie lubię tego',
+    },
     placeholders: {
       search: 'Szukaj...',
       filter: 'Filtruj...',

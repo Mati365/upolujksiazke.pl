@@ -6,6 +6,7 @@ import {normalizeURL} from '@server/common/helpers';
 
 import {Gender, RemoteID} from '@shared/types';
 import {ScrapperMetadataKind} from '@scrapper/entity';
+import {VotingStatsEmbeddable} from '@server/modules/shared';
 import {AsyncScrapper} from '@scrapper/service/shared';
 
 import {CreateBookReviewDto} from '@server/modules/book/modules/review/dto/CreateBookReview.dto';
@@ -169,6 +170,11 @@ export class WykopBookReviewScrapper extends AsyncScrapper<BookReviewScrapperInf
           url: `https://www.wykop.pl/wpis/${remoteId}`,
           rating: properties.score,
           publishDate: new Date(post.date),
+          initialConstantStats: new VotingStatsEmbeddable(
+            {
+              upvotes: post.vote_count,
+            },
+          ),
           reviewer: new CreateBookReviewerDto(
             {
               name: author.login,

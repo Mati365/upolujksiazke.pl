@@ -10,7 +10,6 @@ import {AsyncScrapper} from '@scrapper/service/shared';
 
 import {CreateBookReviewDto} from '@server/modules/book/modules/review/dto/CreateBookReview.dto';
 import {CreateBookReviewerDto} from '@server/modules/book/modules/reviewer/dto/CreateBookReviewer.dto';
-import {VotingStatsEmbeddable} from '@server/modules/shared/VotingStats.embeddable';
 import {CreateImageAttachmentDto} from '@server/modules/attachment/dto';
 import {CreateBookDto} from '@server/modules/book/dto/CreateBook.dto';
 import {CreateBookCategoryDto} from '@server/modules/book/modules/category/dto/CreateBookCategory.dto';
@@ -170,12 +169,6 @@ export class WykopBookReviewScrapper extends AsyncScrapper<BookReviewScrapperInf
           url: `https://www.wykop.pl/wpis/${remoteId}`,
           rating: properties.score,
           publishDate: new Date(post.date),
-          stats: new VotingStatsEmbeddable(
-            {
-              upvotes: post.vote_count,
-              comments: post.comments_count,
-            },
-          ),
           reviewer: new CreateBookReviewerDto(
             {
               name: author.login,

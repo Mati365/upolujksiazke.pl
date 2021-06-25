@@ -12,11 +12,6 @@ export class VotingStatsEmbeddable {
   @Column('int', {default: 0})
   downvotes: number;
 
-  @IsOptional()
-  @IsNumber()
-  @Column('int', {default: 0})
-  comments: number;
-
   constructor(partial: Partial<VotingStatsEmbeddable>) {
     Object.assign(this, partial);
   }

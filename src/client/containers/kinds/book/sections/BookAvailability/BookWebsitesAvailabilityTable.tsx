@@ -5,7 +5,7 @@ import * as R from 'ramda';
 import {useI18n} from '@client/i18n';
 import {buildURL} from '@shared/helpers/urlEncoder';
 
-import {Table, TableProps} from '@client/components/ui';
+import {ExpandableFooterContainer, Table, TableProps} from '@client/components/ui';
 import {TitledFavicon} from '@client/components/ui/TitledFavicon';
 
 import {Price} from '@client/containers/Price';
@@ -22,6 +22,7 @@ type BookWebsitesAvailabilityTableProps = {
   shrink?: boolean,
   tableProps?: TableProps,
   availability: Array<TypedBookAvailabilityRecord>,
+  truncatedAvailabilityCount?: number,
 };
 
 export const BookWebsitesAvailabilityTable = (
@@ -30,11 +31,11 @@ export const BookWebsitesAvailabilityTable = (
     tableProps,
     withType,
     shrink,
+    truncatedAvailabilityCount = 5,
   }: BookWebsitesAvailabilityTableProps,
 ) => {
   const t = useI18n('book.availability');
-
-  return (
+  const renderContent = (expanded: boolean) => (
     <Table
       className='c-book-availability'
       layout='fixed'
@@ -62,7 +63,12 @@ export const BookWebsitesAvailabilityTable = (
         </tr>
       </thead>
       <tbody>
-        {availability.map((item) => {
+        {R.take(
+          expanded
+            ? Infinity
+            : truncatedAvailabilityCount,
+          availability,
+        ).map((item) => {
           const {website, price, prevPrice, url} = item;
           const {smallThumb} = website.logo;
 
@@ -134,6 +140,16 @@ export const BookWebsitesAvailabilityTable = (
         })}
       </tbody>
     </Table>
+  );
+
+  return (
+    <ExpandableFooterContainer
+      showFooter={
+        availability.length > truncatedAvailabilityCount
+      }
+    >
+      {renderContent}
+    </ExpandableFooterContainer>
   );
 };
 

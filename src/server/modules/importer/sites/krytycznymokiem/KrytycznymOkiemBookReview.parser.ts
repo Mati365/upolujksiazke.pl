@@ -46,7 +46,6 @@ export class KrytycznymOkiemBookReviewParser extends WebsiteScrapperParser<Creat
       {
         book,
         url,
-        blogger: true,
         hiddenContent: true,
         description: description.replaceAll('\n', '<br />'),
         remoteId: $(blogPost).find('[itemprop=\'postId\']').attr('content'),

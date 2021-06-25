@@ -1,19 +1,11 @@
 import {Column, Index} from 'typeorm';
 import {RemoteRecordEntity, RemoteRecordFields} from '@server/modules/remote/entity';
+import {
+  ScrapperMetadataKind,
+  ScrapperMetadataStatus,
+} from '../constants/enums';
 
-export enum ScrapperMetadataKind {
-  URL = 0,
-  BOOK_REVIEW = 1,
-  BOOK = 2,
-  BOOK_AUTHOR = 3,
-  BOOK_PUBLISHER = 4,
-  BOOK_SUMMARY = 5,
-}
-
-export enum ScrapperMetadataStatus {
-  IMPORTED = 1,
-  NEW = 2,
-}
+export * from '../constants/enums';
 
 /**
  * Saves already scrapped records (in case of improve scrappers)

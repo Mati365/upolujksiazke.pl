@@ -112,7 +112,9 @@ export class BookStatsService {
             select
               sum(case when br."description" is not null then 1 else 0 end) as "totalTextReviews",
               sum(case when br."includeInStats" = true then "rating" else 0 end)::float as "sumRatings",
-              count(case when "rating" is null and br."includeInStats" = true then 0 else 1 end)::int as "totalRatings"
+              count(
+                case when "rating" is null and br."includeInStats" = true then null else 1 end
+              )::int as "totalRatings"
             from book_review br
             where br."bookId" = $1
           ),

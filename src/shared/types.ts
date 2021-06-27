@@ -97,6 +97,10 @@ export type SortKeys = {
   [key: string]: SortDirection,
 };
 
+export type WithUserID<T> = T & {
+  userId: number,
+};
+
 export class Size {
   constructor(
     public w: number,

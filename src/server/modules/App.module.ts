@@ -1,7 +1,9 @@
+import {APP_GUARD} from '@nestjs/core';
 import {Module} from '@nestjs/common';
 import {ScheduleModule} from '@nestjs/schedule';
 import {BullModule} from '@nestjs/bull';
 import {EventEmitterModule} from '@nestjs/event-emitter';
+import {ThrottlerGuard, ThrottlerModule} from '@nestjs/throttler';
 
 import {SERVER_ENV} from '@server/constants/env';
 import {isDevMode} from '@shared/helpers';
@@ -24,6 +26,8 @@ import {APIModule} from './api';
 import {ElasticsearchConnectionModule} from './elasticsearch';
 import {FrontModule} from './front';
 import {TrackerModule} from './tracker';
+import {ReactionsModule} from './reactions';
+import {UserModule} from './user';
 
 @Module(
   {
@@ -74,9 +78,27 @@ import {TrackerModule} from './tracker';
           rootPath: `tmp/bookmeter-instance-${getClusterAppInstance()}`,
         },
       ),
+      ThrottlerModule.forRoot(
+        {
+          ttl: 60,
+          limit: 25,
+          ignoreUserAgents: [
+            /googlebot/gi,
+            /bingbot/gi,
+          ],
+        },
+      ),
+      UserModule,
+      ReactionsModule,
       TrackerModule,
       RemoteModule,
       ImporterModule,
+    ],
+    providers: [
+      {
+        provide: APP_GUARD,
+        useClass: ThrottlerGuard,
+      },
     ],
   },
 )

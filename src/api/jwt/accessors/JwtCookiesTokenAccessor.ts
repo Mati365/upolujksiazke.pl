@@ -1,5 +1,10 @@
 import Cookies from 'js-cookie';
 
+import {
+  JWT_TOKEN_COOKIE,
+  REFRESH_TOKEN_COOKIE,
+} from '@client/constants/cookies';
+
 import {isSSR} from '@shared/helpers/isSSR';
 import {
   JWTTokens,
@@ -7,14 +12,17 @@ import {
   JwtTokenAccessorListeners,
 } from './JwtTokenAccessor';
 
+/**
+ * Accessors allow to detect revoke token
+ */
 export class JwtCookiesTokenAccessor extends JwtTokenAccessor {
   private tokenCookie: string;
   private refreshTokenCookie: string;
 
   constructor(
     {
-      tokenCookie = 'jwt-token',
-      refreshTokenCookie = 'refresh-token',
+      tokenCookie = JWT_TOKEN_COOKIE,
+      refreshTokenCookie = REFRESH_TOKEN_COOKIE,
       listeners,
     }: {
       tokenCookie?: string,

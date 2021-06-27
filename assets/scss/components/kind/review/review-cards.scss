@@ -74,8 +74,20 @@
   }
 
   &-review-reactions {
+    transition: opacity 250ms ease-in-out;
+
+    &.is-loading {
+      pointer-events: none;
+      opacity: .5
+    }
+
     .c-text-button {
       @include flex-list;
+
+      &.is-active {
+        font-weight: 700;
+        color: color(primary);
+      }
     }
 
     .c-icon {

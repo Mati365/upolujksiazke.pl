@@ -8,6 +8,7 @@ import {buildURL} from '@shared/helpers/urlEncoder';
 import {safeArray} from '@shared/helpers/safeArray';
 import {concatUrls} from '@shared/helpers/concatUrls';
 
+import {JwtCookiesTokenAccessor} from './accessors/JwtCookiesTokenAccessor';
 import {
   JWTTokens,
   JwtTokenAccessor,
@@ -27,6 +28,7 @@ export type APIConfig = {
   camelizeResponse?: boolean,
   decamelizeFormBody?: boolean,
   tokenIsAlwaysRequired?: boolean,
+  withAuthorizationHeader?: boolean,
   customTokensRefreshFn?(prevTokens: JWTTokens): Promise<JWTTokens>,
 };
 
@@ -36,6 +38,7 @@ export type APICallConfig = {
   path?: string,
   urlParams?: object,
   body?: JSON | object | BodyInit,
+  ignoreLocks?: boolean,
 };
 
 export class APIError extends Error {
@@ -49,7 +52,7 @@ export class APIError extends Error {
 }
 
 /**
- * Simple Panel API client
+ * Simple JWT API client
  *
  * @export
  * @class APIClient
@@ -57,18 +60,54 @@ export class APIError extends Error {
 export class JwtAPIClient {
   private _config: APIConfig;
   private _tokenRefreshPromise: Promise<void>;
+  private _locks: Record<string, Promise<any>> = {};
 
   constructor(config: APIConfig) {
     this._config = {
       ...config,
       camelizeResponse: config.camelizeResponse ?? false,
       decamelizeFormBody: config.decamelizeFormBody ?? false,
-      tokenAccessor: config.tokenAccessor ?? new JwtTokenAccessor,
+      tokenAccessor: config.tokenAccessor ?? new JwtCookiesTokenAccessor,
     };
   }
 
   get config() {
     return this._config;
+  }
+
+  isLocked(name: string) {
+    return !!this._locks[name];
+  }
+
+  /**
+   * Assigns promise to locks map
+   *
+   * @param {string} name
+   * @param {Promise<any>} lock
+   * @return {this}
+   * @memberof JwtAPIClient
+   */
+  setLock(name: string, lock: Promise<any>): this {
+    this._locks[name] = new Promise<void>(
+      // eslint-disable-next-line no-async-promise-executor
+      async (resolve) => {
+        try {
+          await lock;
+        } catch (e) {
+          console.error(e);
+        }
+
+        delete this._locks[name];
+        resolve();
+      },
+    );
+
+    return this;
+  }
+
+  setLockIfNotPresent(name: string, fn: () => Promise<any>) {
+    if (!R.has(name, this._locks))
+      this.setLock(name, fn());
   }
 
   /**
@@ -78,13 +117,30 @@ export class JwtAPIClient {
    * @returns {Promise<JSON>}
    * @memberof APIClient
    */
-  async apiCall<T>({method, path, urlParams, headers, body}: APICallConfig): Promise<APIResponse<T>> {
+  async apiCall<T>(
+    {
+      method,
+      path,
+      urlParams,
+      headers,
+      body,
+      ignoreLocks,
+    }: APICallConfig,
+  ): Promise<APIResponse<T>> {
     const {
       camelizeResponse,
       decamelizeFormBody,
+      withAuthorizationHeader,
       url, tokenAccessor,
       headers: globalHeaders,
     } = this.config;
+
+    // used for silent registering user
+    if (!ignoreLocks && !R.isEmpty(this._locks)) {
+      await Promise.all(
+        R.values(this._locks),
+      );
+    }
 
     const ssr = isSSR();
     const authToken = tokenAccessor?.getTokens().token;
@@ -124,7 +180,7 @@ export class JwtAPIClient {
           ...(ssr || !R.is(FormData, body)) && {
             'Content-Type': 'application/json',
           },
-          ...authToken && {
+          ...authToken && withAuthorizationHeader && {
             Authorization: `Bearer ${authToken}`,
           },
           ...globalHeaders,
@@ -211,7 +267,7 @@ export class JwtAPIClient {
       const data = await this.apiCall<JWTTokens>(
         {
           method: 'POST',
-          path: 'auth/refresh-token',
+          path: 'users/refresh-token',
           body: tokenAccessor && {
             refreshToken,
           },

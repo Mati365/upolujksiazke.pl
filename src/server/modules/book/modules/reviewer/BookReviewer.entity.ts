@@ -7,7 +7,7 @@ import {Gender} from '@shared/types';
 import {ImageAttachmentEntity} from '@server/modules/attachment/entity';
 import {RemoteRecordEntity, RemoteRecordFields} from '@server/modules/remote/entity';
 
-import {BookReviewEntity} from '../review/BookReview.entity';
+import {BookReviewEntity} from '../review/entity/BookReview.entity';
 
 @RemoteRecordEntity(
   {

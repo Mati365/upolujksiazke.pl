@@ -68,7 +68,7 @@ export const APIQuery = <T extends unknown>(
   const api = useAjaxAPIClient();
   const prevKey = useRef<string>(null);
 
-  const [execPromise, promiseState] = usePromiseCallback<T>(
+  const [execPromise, promiseState] = usePromiseCallback<T, any>(
     () => (
       promiseFn
         ? promiseFn(

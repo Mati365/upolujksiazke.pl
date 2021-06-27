@@ -1,6 +1,13 @@
+import {REQUEST} from '@nestjs/core';
+import {Injectable, Inject, Scope, CACHE_MANAGER} from '@nestjs/common';
 import {EntityManager} from 'typeorm';
-import {Injectable, Inject, CACHE_MANAGER} from '@nestjs/common';
+import {Request} from 'express';
 import {Cache} from 'cache-manager';
+
+import {
+  JWT_TOKEN_COOKIE,
+  REFRESH_TOKEN_COOKIE,
+} from '@client/constants/cookies';
 
 import {BookCategoryService} from '@server/modules/book/modules/category';
 import {TagService} from '@server/modules/tag/Tag.service';
@@ -10,7 +17,9 @@ import {BookService} from '@server/modules/book/services/Book.service';
 import {BookAuthorService} from '@server/modules/book/modules/author/BookAuthor.service';
 import {BookReviewService} from '@server/modules/book/modules/review/BookReview.service';
 import {TrackRecordViewsService} from '@server/modules/tracker/service/TrackRecordViews.service';
+import {UserService} from '@server/modules/user/User.service';
 
+import {DecodedJWT, JWTTokens} from '@api/jwt';
 import {
   CardBookSearchService,
   EsCardBookSearchService,
@@ -18,12 +27,20 @@ import {
 
 import {ServerAPIClient} from '../client/ServerAPIClient';
 
-@Injectable()
+@Injectable(
+  {
+    scope: Scope.REQUEST,
+  },
+)
 export class APIClientService {
   public readonly client = new ServerAPIClient(this);
 
+  public decodedJWT: DecodedJWT = null;
+  public refreshJWTToken: string = null;
+
   constructor(
     @Inject(CACHE_MANAGER) public readonly cacheManager: Cache,
+    @Inject(REQUEST) public readonly request: Request,
     public readonly entityManager: EntityManager,
     public readonly bookService: BookService,
     public readonly bookCategoryService: BookCategoryService,
@@ -35,5 +52,24 @@ export class APIClientService {
     public readonly bookAuthorService: BookAuthorService,
     public readonly bookReviewService: BookReviewService,
     public readonly trackerService: TrackRecordViewsService,
-  ) {}
+    public readonly userService: UserService,
+  ) {
+    this.decodedJWT = this.getDecryptedJWT();
+    this.refreshJWTToken = this.getRefreshJWTToken();
+  }
+
+  private getRefreshJWTToken() {
+    return this.request.cookies?.[REFRESH_TOKEN_COOKIE];
+  }
+
+  private getDecryptedJWT() {
+    const token = this.request.cookies?.[JWT_TOKEN_COOKIE];
+
+    return UserService.parseJWTToken(token);
+  }
+
+  public setJWTTokens(tokens: JWTTokens) {
+    this.decodedJWT = UserService.parseJWTToken(tokens.token);
+    this.refreshJWTToken = tokens.refreshToken;
+  }
 }

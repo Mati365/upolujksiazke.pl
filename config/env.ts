@@ -28,6 +28,10 @@ export type AppEnv = Partial<{
   },
   server: {
     instances: number,
+    jwt: {
+      secret: string,
+      expireSeconds: number,
+    },
     ssl: {
       key: string,
       cert: string,
@@ -77,6 +81,8 @@ const {
   DB_USER,
   DB_PASS,
   DB_PORT,
+  JWT_SECRET,
+  JWT_EXPIRE_IN_SECONDS,
   APP_ENV = 'development',
   APP_INSTANCES = 2,
   APP_PORT = 3000,
@@ -104,6 +110,10 @@ export const GLOBAL_CONFIG: Record<string, AppEnv> = {
     },
     server: {
       instances: +APP_INSTANCES,
+      jwt: {
+        secret: JWT_SECRET,
+        expireSeconds: +JWT_EXPIRE_IN_SECONDS,
+      },
       ssl: {
         key: HTTPS_KEY_PATH,
         cert: HTTPS_CERT_PATH,

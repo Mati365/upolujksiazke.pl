@@ -4,9 +4,12 @@ import {BookReviewRecord} from '@api/types';
 import {
   BookReviewsFilters,
   BookReviewsRepo,
+  CreateBookReactionResult,
+  CreateBookReviewReactionAttrs,
   RecentCommentedBooksFilters,
 } from '@api/repo';
 
+import {Authorized} from '../../decorators/Authorized';
 import {BookReviewSerializer} from '../../serializers';
 import {ServerAPIClientChild} from '../ServerAPIClientChild';
 import {
@@ -104,5 +107,27 @@ export class BooksReviewsServerRepo extends ServerAPIClientChild implements Book
         excludeExtraneousValues: true,
       },
     );
+  }
+
+  /**
+   * Handle like / dislike
+   *
+   * @param {CreateBookReviewReactionAttrs} attrs
+   * @return {Promise<CreateBookReactionResult>}
+   * @memberof BooksReviewsServerRepo
+   */
+  @Authorized
+  async react(attrs: CreateBookReviewReactionAttrs): Promise<CreateBookReactionResult> {
+    const {bookReviewService, decodedJWT} = this.services;
+    const stats = await bookReviewService.react(
+      {
+        ...attrs,
+        userId: decodedJWT.id,
+      },
+    );
+
+    return {
+      stats,
+    };
   }
 }

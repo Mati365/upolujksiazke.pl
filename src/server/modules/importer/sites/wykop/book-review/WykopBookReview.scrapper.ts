@@ -6,7 +6,7 @@ import {normalizeURL} from '@server/common/helpers';
 
 import {Gender, RemoteID} from '@shared/types';
 import {ScrapperMetadataKind} from '@scrapper/entity';
-import {VotingStatsEmbeddable} from '@server/modules/shared';
+import {VotingStatsEmbeddable} from '@server/modules/reactions';
 import {AsyncScrapper} from '@scrapper/service/shared';
 
 import {CreateBookReviewDto} from '@server/modules/book/modules/review/dto/CreateBookReview.dto';

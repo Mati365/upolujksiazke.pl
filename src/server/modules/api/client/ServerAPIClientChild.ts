@@ -5,4 +5,8 @@ export abstract class ServerAPIClientChild extends APIClientChild<ServerAPIClien
   get services() {
     return this.api.services;
   }
+
+  get jwt() {
+    return this.api.services.decodedJWT;
+  }
 }

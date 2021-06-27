@@ -37,8 +37,8 @@ type PromiseCallbackParams<T> = {
   errorSelectorFn?: (e: any) => any,
 };
 
-type PromiseCallbackResult<T> = [
-  (...args: any[]) => Promise<T>,
+type PromiseCallbackResult<T, F> = [
+  F,
   PromiseState<T>,
 ];
 
@@ -47,8 +47,8 @@ type PromiseCallbackResult<T> = [
  *
  * @returns Callback with executes promiseFn and sets loading / error flags
  */
-export const usePromiseCallback = <T> (
-  promiseFn: PromiseFn,
+export const usePromiseCallback = <T, F extends PromiseFn> (
+  promiseFn: F,
   {
     initialPromiseState = null,
     silent = false,
@@ -57,7 +57,7 @@ export const usePromiseCallback = <T> (
     resultParserFn = R.identity,
     errorSelectorFn,
   }: PromiseCallbackParams<T> = {},
-): PromiseCallbackResult<T> => {
+): PromiseCallbackResult<T, F> => {
   const [promiseState, setPromiseState] = usePromiseState<T>(initialPromiseState);
   const mountedRef = useMountedIndicatorRef();
   const promiseFnRef = useRef<(...args: any[]) => Promise<any>>();
@@ -122,7 +122,7 @@ export const usePromiseCallback = <T> (
   );
 
   return [
-    fn,
+    fn as F,
     promiseState,
   ];
 };

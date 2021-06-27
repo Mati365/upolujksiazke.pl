@@ -305,7 +305,7 @@ export const PL_LANG_PACK = {
   },
   links: {
     home: 'Strona główna',
-    news: 'Aktualności',
+    news: 'Blogi',
     books: 'Wszystkie książki',
     authors: 'Autorzy',
     reviews: 'Recenzje',

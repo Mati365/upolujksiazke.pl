@@ -17,6 +17,7 @@ import {APP_ROUTES_LIST, PageRoot} from '@client/routes/Root';
 
 import {preloadAsyncRouteProps} from '@client/components/utils/asyncRouteUtils';
 
+import {UseRefreshJWTInterceptor} from '../api/interceptors/RefreshJWTCookie.interceptor';
 import {ManifestService} from '../manifest/Manifest.service';
 import {APIClientService} from '../api/services';
 import {
@@ -37,6 +38,7 @@ export class FrontController {
 
   @Get('*')
   @Accepts('html')
+  @UseRefreshJWTInterceptor
   async index(
     @Res() res: Response, // eslint-disable-line @typescript-eslint/indent
     @Req() req: Request,

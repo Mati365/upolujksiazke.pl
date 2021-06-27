@@ -1,6 +1,4 @@
 import * as R from 'ramda';
-
-import {ID} from '@shared/types';
 import {decodeJWT} from '../helpers';
 
 /**
@@ -9,23 +7,15 @@ import {decodeJWT} from '../helpers';
  * @export
  * @enum {number}
  */
-export enum UserScope {
-  ADMIN = 0,
-  CUSTOMER = 1,
-}
-
 export type JWTTokens = {
   token: string,
   refreshToken?: string,
 };
 
 export type DecodedJWT = {
-  iat: number,
-  exp: number,
-  id: ID,
-  username: string,
-  resetPasswordRequired?: boolean,
-  scopes: UserScope[],
+  iat?: number,
+  exp?: number,
+  id: number,
 };
 
 export type JwtTokenAccessorListeners = {

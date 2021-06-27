@@ -6,6 +6,7 @@ import {
   BooksReviewsServerRepo,
   RecentBooksServerRepo,
   TagsServerRepo,
+  UsersServerRepo,
 } from './repo';
 
 import type {APIClientService} from '../services/APIClient.service';
@@ -22,6 +23,7 @@ export class ServerAPIClient extends APIClient {
         booksReviews: new BooksReviewsServerRepo,
         authors: new BooksAuthorsServerRepo,
         tags: new TagsServerRepo,
+        users: new UsersServerRepo,
         tracker: null,
       },
     );

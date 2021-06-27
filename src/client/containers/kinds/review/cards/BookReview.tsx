@@ -142,7 +142,10 @@ export const BookReview = (
 
         {website && (
           <div className='c-book-review__footer'>
-            <BookReviewReactions stats={review.stats} />
+            <BookReviewReactions
+              reviewId={review.id}
+              stats={review.stats}
+            />
 
             <span className='c-book-review__more c-flex-row'>
               {`${t('review.read_more_at')}:`}

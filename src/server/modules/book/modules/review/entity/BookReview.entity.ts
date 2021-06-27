@@ -7,15 +7,15 @@ import {
 
 import {normalizeHTML} from '@server/modules/importer/kinds/scrappers/helpers';
 
-import {VotingStatsEmbeddable} from '@server/modules/shared/VotingStats.embeddable';
+import {VotingStatsEmbeddable} from '@server/modules/reactions';
 import {
   RemoteRecordEntity,
   RemoteRecordFields,
 } from '@server/modules/remote/entity/RemoteRecord.entity';
 
-import {BookReviewerEntity} from '../reviewer/BookReviewer.entity';
-import {BookEntity} from '../../entity/Book.entity';
-import {BookReleaseEntity} from '../release/BookRelease.entity';
+import {BookReviewerEntity} from '../../reviewer/BookReviewer.entity';
+import {BookEntity} from '../../../entity/Book.entity';
+import {BookReleaseEntity} from '../../release/BookRelease.entity';
 
 @RemoteRecordEntity(
   {

@@ -6,7 +6,7 @@ import {
 } from 'class-validator';
 
 import {CreateBookDto} from '@server/modules/book/dto/CreateBook.dto';
-import {VotingStatsEmbeddable} from '@server/modules/shared/VotingStats.embeddable';
+import {VotingStatsEmbeddable} from '@server/modules/reactions';
 import {CreateRemoteRecordDto} from '@server/modules/remote/dto/CreateRemoteRecord.dto';
 import {CreateBookReviewerDto} from '../../reviewer/dto/CreateBookReviewer.dto';
 

@@ -13,6 +13,7 @@ import {
   BookReviewsRepo,
   TagsRepo,
   TrackerRepo,
+  UsersRepo,
 } from './repo';
 
 export type BasicAPIPagination = {
@@ -54,6 +55,7 @@ export abstract class APIClient {
       tags: TagsRepo,
       tracker: TrackerRepo,
       authors: BookAuthorsRepo,
+      users: UsersRepo,
     },
   ) {
     R.forEachObjIndexed(

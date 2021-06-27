@@ -4,6 +4,7 @@ import {
   BooksAjaxRepo,
   BooksReviewsAjaxRepo,
   TrackerAjaxRepo,
+  UsersAjaxRepo,
 } from './repo';
 
 export class AjaxAPIClient extends APIClient {
@@ -15,6 +16,7 @@ export class AjaxAPIClient extends APIClient {
         books: new BooksAjaxRepo,
         booksReviews: new BooksReviewsAjaxRepo,
         tracker: new TrackerAjaxRepo,
+        users: new UsersAjaxRepo,
         booksCategories: null,
         recentBooks: null,
         tags: null,

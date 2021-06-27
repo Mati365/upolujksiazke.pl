@@ -8,7 +8,7 @@ export class TrackerAjaxRepo extends AjaxAPIClientChild implements TrackerRepo {
    * Sends tracker hit
    *
    * @param {TrackRecord} record
-   * @return {*}  {Promise<void>}
+   * @return {Promise<void>}
    * @memberof TrackerAjaxRepo
    */
   trackViewsCount(record: TrackRecord): Promise<void> {

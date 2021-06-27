@@ -19,7 +19,7 @@ import {ImageAttachmentEntity} from '@server/modules/attachment/entity/ImageAtta
 import {DatedRecordEntity} from '../../../database/DatedRecord.entity';
 import {BookEntity} from '../../entity/Book.entity';
 import {BookPublisherEntity} from '../publisher/BookPublisher.entity';
-import {BookReviewEntity} from '../review/BookReview.entity';
+import {BookReviewEntity} from '../review/entity/BookReview.entity';
 import {BookAvailabilityEntity} from '../availability/BookAvailability.entity';
 
 export {

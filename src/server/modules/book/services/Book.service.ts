@@ -27,7 +27,7 @@ import {CreateBookDto} from '../dto/CreateBook.dto';
 import {CreateBookReleaseDto} from '../modules/release/dto/CreateBookRelease.dto';
 import {BookEntity} from '../entity/Book.entity';
 import {BookVolumeEntity} from '../modules/volume/BookVolume.entity';
-import {BookReviewEntity} from '../modules/review/BookReview.entity';
+import {BookReviewEntity} from '../modules/review/entity/BookReview.entity';
 import {BookStatsService} from '../modules/stats/services/BookStats.service';
 import {BookTagsTextHydratorService} from '../modules/seo/service/BookTagsTextHydrator.service';
 import {BookGenreService} from '../modules/genre/BookGenre.service';

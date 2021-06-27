@@ -12,7 +12,7 @@ import {DatedRecordEntity} from '../../database/DatedRecord.entity';
 import {TagEntity} from '../../tag/Tag.entity';
 import {BookAuthorEntity} from '../modules/author/BookAuthor.entity';
 import {BookCategoryEntity} from '../modules/category/BookCategory.entity';
-import {BookReviewEntity} from '../modules/review/BookReview.entity';
+import {BookReviewEntity} from '../modules/review/entity/BookReview.entity';
 import {BookReleaseEntity, BookType} from '../modules/release/BookRelease.entity';
 import {BookVolumeEntity} from '../modules/volume/BookVolume.entity';
 import {BookSeriesEntity} from '../modules/series/BookSeries.entity';

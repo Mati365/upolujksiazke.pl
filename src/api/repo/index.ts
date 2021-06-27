@@ -5,3 +5,4 @@ export * from './BookAuthors.repo';
 export * from './BookReviews.repo';
 export * from './Tags.repo';
 export * from './Tracker.repo';
+export * from './Users.repo';

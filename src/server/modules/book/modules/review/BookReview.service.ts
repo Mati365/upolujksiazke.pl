@@ -10,13 +10,26 @@ import {
   UpsertResourceAttrs,
 } from '@server/common/helpers/db';
 
+import {WithUserID} from '@shared/types';
+import {VoteStatsRecord} from '@api/types';
 import {RecentCommentedBooksFilters} from '@api/repo';
-import {ImageVersion} from '@shared/enums';
-import {CreateBookReviewDto} from './dto/CreateBookReview.dto';
-import {BookReviewEntity} from './BookReview.entity';
+
+import {
+  ImageVersion,
+  UserReactionRecordType,
+  UserReactionType,
+} from '@shared/enums';
+
+import {VotingStatsEmbeddable} from '@server/modules/reactions';
+import {BookReviewEntity} from './entity/BookReview.entity';
 import {BookReviewerService} from '../reviewer/BookReviewer.service';
 import {BookStatsService} from '../stats/services/BookStats.service';
 import {CardBookSearchService} from '../search/service/CardBookSearch.service';
+import {BookReviewReactionEntity} from './entity/BookReviewReaction.entity';
+import {
+  CreateBookReviewDto,
+  BookReviewReactionDto,
+} from './dto';
 
 export type UpdateBookReviewAttrs = UpsertResourceAttrs & {
   reindexBook?: boolean,
@@ -34,6 +47,7 @@ export class BookReviewService {
 
   constructor(
     private readonly connection: Connection,
+    private readonly entityManager: EntityManager,
 
     @Inject(forwardRef(() => BookStatsService))
     private readonly bookStatsService: BookStatsService,
@@ -300,5 +314,83 @@ export class BookReviewService {
     }
 
     return reviews;
+  }
+
+  /**
+   * Calc upvotes / downvotes for post
+   *
+   * @param {number} id
+   * @return {Promise<VoteStatsRecord>}
+   * @memberof BookReviewService
+   */
+  async refreshStats(id: number): Promise<VoteStatsRecord> {
+    const {entityManager} = this;
+    const [stats]: [VoteStatsRecord] = await entityManager.query(
+      /* sql */ `
+        with reaction_stats as (
+          select
+            count(case when ur."reaction" = '${UserReactionType.LIKE}' then 1 else null end)::int as "upvotes",
+            count(case when ur."reaction" = '${UserReactionType.DISLIKE}' then 1 else null end)::int as "downvotes"
+          from user_reaction ur
+          where
+            ur."type" = '${UserReactionRecordType.BOOK_REVIEW}' and ur."reviewId" = $1
+        )
+        select
+          (br."initialConstantStatsUpvotes" + r."upvotes") as "upvotes",
+          (br."initialConstantStatsDownvotes" + r."downvotes") as "downvotes"
+        from book_review br
+        cross join reaction_stats r
+        where br.id = $1;
+      `,
+      [id],
+    );
+
+    await BookReviewEntity.update(
+      id,
+      {
+        stats: new VotingStatsEmbeddable(stats),
+      },
+    );
+
+    return stats;
+  }
+
+  /**
+   * Saves user like / dislike of review
+   *
+   * @param {WithUserID<BookReviewReactionDto>} reaction
+   * @return {Promise<VoteStatsRecord>}
+   * @memberof BookReviewService
+   */
+  async react(
+    {
+      userId,
+      id,
+      reaction,
+    }: WithUserID<BookReviewReactionDto>,
+  ): Promise<VoteStatsRecord> {
+    const {connection} = this;
+
+    await connection.transaction(async (transaction) => {
+      await transaction.delete(
+        BookReviewReactionEntity,
+        {
+          reviewId: id,
+          userId,
+        },
+      );
+
+      await transaction.save(
+        new BookReviewReactionEntity(
+          {
+            reviewId: id,
+            userId,
+            reaction,
+          },
+        ),
+      );
+    });
+
+    return this.refreshStats(id);
   }
 }

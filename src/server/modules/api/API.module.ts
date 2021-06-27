@@ -5,6 +5,7 @@ import {BookModule} from '../book/Book.module';
 import {RedisCacheModule} from '../cache';
 import {TagModule} from '../tag';
 import {APIv1Module} from './controllers/v1/APIv1.module';
+import {RefreshJWTCookieInterceptor} from './interceptors/RefreshJWTCookie.interceptor';
 import {APIClientService} from './services';
 
 @Global()
@@ -30,9 +31,11 @@ import {APIClientService} from './services';
       ),
     ],
     providers: [
+      RefreshJWTCookieInterceptor,
       APIClientService,
     ],
     exports: [
+      RefreshJWTCookieInterceptor,
       APIClientService,
     ],
   },

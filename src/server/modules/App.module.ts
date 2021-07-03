@@ -81,7 +81,7 @@ import {UserModule} from './user';
       ThrottlerModule.forRoot(
         {
           ttl: 60,
-          limit: 25,
+          limit: 60,
           ignoreUserAgents: [
             /googlebot/gi,
             /bingbot/gi,

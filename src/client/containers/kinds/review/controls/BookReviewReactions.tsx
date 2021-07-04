@@ -17,12 +17,14 @@ import {DislikeIcon, LikeIcon} from '@client/components/svg';
 type BookReviewReactionsProps = {
   reviewId: number,
   stats: VoteStatsRecord,
+  showTitles?: boolean,
 };
 
 export const BookReviewReactions = (
   {
     reviewId,
     stats,
+    showTitles = true,
   }: BookReviewReactionsProps,
 ) => {
   const t = useI18n('shared.reactions');
@@ -68,6 +70,11 @@ export const BookReviewReactions = (
     },
   );
 
+  const titles = {
+    likes: `${overrideState.upvotes || ''} ${showTitles ? t('like') : ''}`.trim(),
+    dislikes: `${overrideState.downvotes || ''} ${showTitles ? t('dislike') : ''}`.trim(),
+  };
+
   return (
     <CleanList
       className={c(
@@ -80,6 +87,9 @@ export const BookReviewReactions = (
     >
       <li>
         <TextButton
+          aria-label={
+            t('like')
+          }
           className={c(
             currentReviewValue === UserReactionType.LIKE && 'is-active',
           )}
@@ -88,12 +98,19 @@ export const BookReviewReactions = (
           }
         >
           <LikeIcon />
-          {`${overrideState.upvotes || ''} ${t('like')}`.trim()}
+          {titles.likes && (
+            <span>
+              {titles.likes}
+            </span>
+          )}
         </TextButton>
       </li>
 
       <li>
         <TextButton
+          aria-label={
+            t('dislike')
+          }
           className={c(
             currentReviewValue === UserReactionType.DISLIKE && 'is-active',
           )}
@@ -102,7 +119,11 @@ export const BookReviewReactions = (
           }
         >
           <DislikeIcon />
-          {`${overrideState.downvotes || ''} ${t('dislike')}`.trim()}
+          {titles.dislikes && (
+            <span>
+              {titles.dislikes}
+            </span>
+          )}
         </TextButton>
       </li>
     </CleanList>

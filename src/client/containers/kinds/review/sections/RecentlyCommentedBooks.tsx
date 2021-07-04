@@ -2,8 +2,9 @@ import React from 'react';
 
 import {useI18n} from '@client/i18n';
 
+import {Section, SectionMore, SectionProps} from '@client/components/ui';
 import {BookReviewRecord} from '@api/types';
-import {Section, SectionProps} from '@client/components/ui';
+import {BooksReviewsLink} from '@client/routes/Links';
 import {BooksReviewsGrid} from '../grids/BooksReviewsGrid';
 
 type RecentlyCommendedBooksProps = SectionProps & {
@@ -26,6 +27,7 @@ export const RecentlyCommendedBooks = (
       {...props}
     >
       <BooksReviewsGrid items={items} />
+      <SectionMore tag={BooksReviewsLink} />
     </Section>
   );
 };

@@ -5,7 +5,7 @@ import {Button} from '@client/components/ui';
 
 type SectionMoreProps = {
   tag: any,
-  item: any,
+  item?: any,
 };
 
 export const SectionMore = ({tag, item}: SectionMoreProps) => {

@@ -28,6 +28,7 @@ export type BookReviewProps = {
   moreButtonRenderFn?: ExpandableDescriptionBoxProps['moreButtonRenderFn'],
   totalRatingStars?: number,
   maxCharacterCount?: number,
+  showReactionsTitles?: boolean,
 };
 
 export const BookReview = (
@@ -35,6 +36,7 @@ export const BookReview = (
     review,
     showBookCard,
     moreButtonRenderFn,
+    showReactionsTitles = true,
     totalRatingStars = 10,
     maxCharacterCount = 500,
   }: BookReviewProps,
@@ -145,10 +147,11 @@ export const BookReview = (
             <BookReviewReactions
               reviewId={review.id}
               stats={review.stats}
+              showTitles={showReactionsTitles}
             />
 
             <span className='c-book-review__more c-flex-row'>
-              {`${t('review.read_more_at')}:`}
+              {!ua.mobile && `${t('review.read_more_at')}:`}
               <TitledFavicon
                 tag='a'
                 className='ml-2'

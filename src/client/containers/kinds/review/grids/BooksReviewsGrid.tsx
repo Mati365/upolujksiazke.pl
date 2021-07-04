@@ -15,6 +15,7 @@ export const BooksReviewsGrid = ({items}: BooksReviewsGridProps) => (
     itemPropsFn={
       (review) => ({
         showBookCard: true,
+        showReactionsTitles: false,
         totalRatingStars: 6,
         moreButtonRenderFn: ({expandTitle}) => (
           <BookLink

@@ -91,6 +91,10 @@ export const BooksFiltersGroups = (
       };
     };
 
+    const totalBucketItems = agg.total.bucket;
+    if (totalBucketItems <= 1)
+      return null;
+
     return (
       <CachedRender cacheKey={agg}>
         {() => (
@@ -99,13 +103,13 @@ export const BooksFiltersGroups = (
               t(`${name}.header`)
             }
             total={
-              t(`${name}.total`, [agg.total.bucket])
+              t(`${name}.total`, [totalBucketItems])
             }
           >
             <CheckboxExpandableList
               resetKey={agg}
               listComponent={CountedCheckboxList}
-              totalItems={agg.total.bucket}
+              totalItems={totalBucketItems}
               firstChunk={
                 mapCountedRecordsToCountedListItems(agg.items)
               }
@@ -148,7 +152,7 @@ export const BooksFiltersGroups = (
         </FiltersGroup>
       )}
 
-      {!overrideFilters.types && types?.items.length > 0 && (
+      {!overrideFilters.types && types?.items.length > 1 && (
         <FiltersGroup
           header={t('types.header')}
           total={t('types.total', [types.total.bucket])}
@@ -170,7 +174,7 @@ export const BooksFiltersGroups = (
 
       {renderBucketGroup('publishers', publishers)}
 
-      {!overrideFilters.schoolLevels && schoolLevels?.items.length > 0 && (
+      {!overrideFilters.schoolLevels && schoolLevels?.items.length > 1 && (
         <FiltersGroup header={t('school_levels.header')}>
           <CountedCheckboxList
             {...l.input('schoolLevels')}

@@ -84,7 +84,7 @@
     .c-text-button {
       @include flex-list;
 
-      color: color(gray-4);
+      color: color(gray-5);
       transition: color 250ms ease-in-out;
 
       &.is-active {
@@ -93,7 +93,7 @@
       }
 
       &:not(.is-active):hover {
-        color: color(gray-5);
+        color: color(gray-6);
       }
     }
 

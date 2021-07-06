@@ -60,6 +60,8 @@ OpenSource book reviews aggregator, something like Metacritic / Digg for books. 
 - [ ] tinder but for books(I'm hard, my father is..)
 - [ ] allow users to add book store by configuring JSON / XML (https://news.ycombinator.com/item?id=27739568)
 - [ ] add e-leaflets
+- [ ] youtube reviews
+- [ ] add coupons
 
 ## Resources
 

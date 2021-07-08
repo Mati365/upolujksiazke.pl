@@ -81,6 +81,7 @@ export const BookGalleryThumbs = (
           </TextButton>
         </li>
       )}
+
       {items.map(
         (item, index) => {
           const {src, expandSrc, alt, title} = item;

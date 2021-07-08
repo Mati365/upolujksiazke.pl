@@ -59,7 +59,7 @@ export class GraniceBookParser
     const title = normalizeParsedText($content.find('h1 > [itemprop="name"]').text());
 
     const categories = (
-      (normalizeParsedText(detailsText.match(/Kategoria: ([\S]+)/)?.[1]) || '')
+      (normalizeParsedText(detailsText.match(/Kategoria: ([\S ]+)/)?.[1]) || '')
         .split(',')
         .map((item) => item.trim())
         .filter(Boolean)

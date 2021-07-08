@@ -1,7 +1,7 @@
 import * as R from 'ramda';
 
-import {CreateBookDto} from '@server/modules/book/dto/CreateBook.dto';
 import {mergeWithoutNulls} from '@shared/helpers/mergeWithoutNulls';
+import {CreateBookDto} from '@server/modules/book/dto/CreateBook.dto';
 
 export function mergeBooks(books: CreateBookDto[]) {
   if (books.length === 1)
@@ -9,8 +9,9 @@ export function mergeBooks(books: CreateBookDto[]) {
 
   return mergeWithoutNulls(books, (key, a, b) => {
     switch (key) {
+      case 'defaultTitle':
       case 'authors':
-        return a?.length && a.length < b?.length ? a : b;
+        return a?.length && (!b || a.length < b.length) ? a : b;
 
       case 'releases':
         return R.uniqBy(R.prop('isbn'), [...(a || []), ...(b || [])]);

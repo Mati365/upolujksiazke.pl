@@ -5,7 +5,7 @@ import * as R from 'ramda';
 import {useI18n} from '@client/i18n';
 import {formatBookTitle} from '@client/helpers/logic';
 
-import {RatingsRow} from '@client/containers/parts/RatingsRow';
+import {RatingsRow} from '@client/containers/controls/RatingsRow';
 import {ExpandableDescriptionBox, LinksRow} from '@client/components/ui';
 import {
   AuthorLink,

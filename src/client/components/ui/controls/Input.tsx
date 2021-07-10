@@ -2,6 +2,8 @@ import React, {MouseEventHandler, ReactNode} from 'react';
 import c from 'classnames';
 
 export type InputProps = JSX.IntrinsicElements['input'] & {
+  tag?: any,
+  rows?: number,
   iconLeft?: ReactNode,
   iconRight?: ReactNode,
   iconStyle?: string,
@@ -11,6 +13,7 @@ export type InputProps = JSX.IntrinsicElements['input'] & {
 
 export const Input = (
   {
+    tag: Tag = 'input',
     className,
     iconTitle,
     iconLeft,
@@ -47,7 +50,10 @@ export const Input = (
           {iconLeft}
         </IconHolder>
       )}
-      <input {...props} />
+      <Tag
+        {...props}
+        className='c-input__field'
+      />
       {iconRight && (
         <IconHolder
           className='c-input__icon is-right'

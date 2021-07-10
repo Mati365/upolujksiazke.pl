@@ -2,14 +2,14 @@ import React from 'react';
 import c from 'classnames';
 import * as R from 'ramda';
 
-import avatarPlaceholderUrl from '@assets/img/avatar-placeholder.jpg';
+import avatarPlaceholderUrl from '@assets/img/avatar-placeholder.png';
 import {formatDate} from '@shared/helpers/format';
 
 import {useI18n} from '@client/i18n';
 import {useUA} from '@client/modules/ua';
 
 import {BookReviewRecord} from '@api/types';
-import {RatingsRow} from '@client/containers/parts/RatingsRow';
+import {RatingsRow} from '@client/containers/controls/RatingsRow';
 import {TitledFavicon} from '@client/components/ui/TitledFavicon';
 import {
   ExpandableDescriptionBox,

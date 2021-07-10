@@ -4,7 +4,7 @@ import {useI18n} from '@client/i18n';
 import {useUA} from '@client/modules/ua';
 
 import {BookFullInfoRecord} from '@api/types/BookFullInfo.record';
-import {RatingsRow} from '@client/containers/parts/RatingsRow';
+import {RatingsRow} from '@client/containers/controls/RatingsRow';
 import {AuthorLink} from '@client/routes/Links';
 import {LinksRow} from '@client/components/ui';
 

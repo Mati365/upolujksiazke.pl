@@ -5,7 +5,7 @@ import {useI18n} from '@client/i18n';
 import {formatBookTitle} from '@client/helpers/logic';
 
 import {BookCardRecord} from '@api/types';
-import {RatingsRow} from '@client/containers/parts/RatingsRow';
+import {RatingsRow} from '@client/containers/controls/RatingsRow';
 import {LinksRow} from '@client/components/ui';
 import {
   AuthorLink,

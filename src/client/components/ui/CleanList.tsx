@@ -3,7 +3,7 @@ import c from 'classnames';
 
 import {BasicWrapperProps} from '@client/components/ui';
 
-export type CleanListProps = BasicWrapperProps & {
+export type CleanListProps = Omit<JSX.IntrinsicElements['ul'], 'ref'> & BasicWrapperProps & {
   tag?: any,
   inline?: boolean,
   block?: boolean,

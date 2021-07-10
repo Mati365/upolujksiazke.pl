@@ -1,6 +1,6 @@
 import React from 'react';
 import c from 'classnames';
-import {BasicWrapperProps} from './Container';
+import {BasicWrapperProps} from '../Container';
 
 export type ButtonProps<T = {}> = T & BasicWrapperProps & {
   tag?: any,

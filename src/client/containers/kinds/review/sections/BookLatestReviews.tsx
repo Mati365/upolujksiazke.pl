@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {ReactNode} from 'react';
 
 import {useI18n} from '@client/i18n';
 
@@ -10,11 +10,13 @@ import {BookReviewsList} from '../list/BookReviewsList';
 
 type BookLatestReviewsSectionProps = SectionProps & {
   book: BookFullInfoRecord,
+  toolbar?: ReactNode,
 };
 
 export const BookLatestReviewsSection = (
   {
     book,
+    toolbar,
     ...props
   }: BookLatestReviewsSectionProps,
 ) => {
@@ -42,6 +44,8 @@ export const BookLatestReviewsSection = (
       noContentSpacing
       {...props}
     >
+      {toolbar}
+
       <BookReviewsList reviews={reviews} />
 
       {reviews.length < book.totalTextReviews && (

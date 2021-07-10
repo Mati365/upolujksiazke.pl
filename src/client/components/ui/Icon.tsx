@@ -1,7 +1,7 @@
 import React, {ComponentType, CSSProperties} from 'react';
 import c from 'classnames';
 
-export type IconProps = {
+export type IconProps = Pick<JSX.IntrinsicElements['i'], 'onClick' | 'onMouseOver'> & {
   style?: CSSProperties,
   className?: string,
   size?: string,
@@ -20,6 +20,8 @@ export const Icon = (
     viewBox,
     className,
     style,
+    onClick,
+    onMouseOver,
   }: IconProps,
 ) => (
   <i
@@ -31,6 +33,8 @@ export const Icon = (
       color && `is-text-${color}`,
       className,
     )}
+    onClick={onClick}
+    onMouseOver={onMouseOver}
   >
     <SvgComponent viewBox={viewBox} />
   </i>

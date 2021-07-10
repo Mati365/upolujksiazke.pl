@@ -4,7 +4,7 @@ import c from 'classnames';
 import {useI18n} from '@client/i18n';
 import {formatBookTitle} from '@client/helpers/logic';
 
-import {RatingsRow} from '@client/containers/parts/RatingsRow';
+import {RatingsRow} from '@client/containers/controls/RatingsRow';
 import {BookCardRecord} from '@api/types';
 import {BookLink} from '@client/routes/Links';
 import {BookCover} from './BookCard/BookCover';

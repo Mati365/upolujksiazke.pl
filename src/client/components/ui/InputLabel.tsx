@@ -3,6 +3,8 @@ import c from 'classnames';
 
 type InputLabelProps = {
   className?: string,
+  labelClassName?: string,
+  controlClassName?: string,
   label: ReactNode,
   children: ReactNode,
 };
@@ -10,6 +12,8 @@ type InputLabelProps = {
 export const InputLabel = (
   {
     className,
+    labelClassName,
+    controlClassName,
     children,
     label,
   }: InputLabelProps,
@@ -20,11 +24,21 @@ export const InputLabel = (
       className,
     )}
   >
-    <span className='c-input-label__label'>
+    <span
+      className={c(
+        'c-input-label__label',
+        labelClassName,
+      )}
+    >
       {label}
     </span>
 
-    <span className='c-input-label__control'>
+    <span
+      className={c(
+        'c-input-label__control',
+        controlClassName,
+      )}
+    >
       {children}
     </span>
   </div>

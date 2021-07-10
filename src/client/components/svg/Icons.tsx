@@ -1,6 +1,7 @@
 import React from 'react';
 import * as R from 'ramda';
 
+import WebsiteLogoSVG from '@assets/icons/website-logo.svg';
 import AnchorSVG from '@assets/icons/svg/anchor.svg';
 import BasketSVG from '@assets/icons/svg/basket.svg';
 import BookOpenSVG from '@assets/icons/svg/book-open.svg';
@@ -66,7 +67,8 @@ import GridSVG from '@assets/icons/svg/grid.svg';
 import MagicSVG from '@assets/icons/svg/magic.svg';
 import LikeSVG from '@assets/icons/svg/like.svg';
 import DislikeSVG from '@assets/icons/svg/dislike.svg';
-import WebsiteLogoSVG from '@assets/icons/website-logo.svg';
+import MailSendSVG from '@assets/icons/svg/mail-send.svg';
+import SendSVG from '@assets/icons/svg/send.svg';
 import {Icon, IconProps} from '../ui/Icon';
 
 export function getIconComponentIfString(icon: any) {
@@ -153,6 +155,8 @@ export const ListIcon = Icon.createFromSVG(ListSVG);
 export const MagicIcon = Icon.createFromSVG(MagicSVG);
 export const LikeIcon = Icon.createFromSVG(LikeSVG);
 export const DislikeIcon = Icon.createFromSVG(DislikeSVG);
+export const MailSendIcon = Icon.createFromSVG(MailSendSVG);
+export const SendIcon = Icon.createFromSVG(SendSVG);
 
 export const ICON_BY_NAME = {
   WebsiteLogo: WebsiteLogoIcon,
@@ -221,6 +225,8 @@ export const ICON_BY_NAME = {
   Magic: MagicIcon,
   Like: LikeIcon,
   Dislike: DislikeIcon,
+  MailSend: MailSendIcon,
+  Send: SendIcon,
 };
 
 export const ICON_EMOJI_MAPPINGS = {

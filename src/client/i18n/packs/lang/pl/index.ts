@@ -99,6 +99,8 @@ export const PL_LANG_PACK = {
       no_data: 'Brak danych',
       rating: 'Ocena',
       keywords: 'Słowa kluczowe',
+      quotes: 'Cytaty',
+      clear: 'Wyczyść',
       categories: 'Kategorie',
       subcategories: 'Podkategorie',
       group_by: 'Grupuj wg.:',
@@ -256,6 +258,15 @@ export const PL_LANG_PACK = {
       highest_price: 'Najwyższa cena:',
       lowest_price: 'Najniższa cena:',
       buy_cta: 'Otwórz sklep',
+    },
+    review_box: {
+      send: 'Wyślij',
+      add_quote: 'Cytuj fragment recenzji z innej strony',
+      placeholder: {
+        nick: 'Pseudonim',
+        rating: 'Ocena',
+        description: 'Wpisz treść opinii o książce...',
+      },
     },
     availability: {
       title: 'Porównaj ceny wydań w księgarniach',

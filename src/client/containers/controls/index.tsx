@@ -1,3 +1,4 @@
+export * from './RatingsRow';
 export * from './TagsList';
 export * from './ToggleableModal';
 export * from './SelectOptionTitlesRow';

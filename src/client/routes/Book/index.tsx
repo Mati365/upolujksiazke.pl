@@ -21,6 +21,7 @@ import {
 } from '@api/types';
 
 import {BookLatestReviewsSection} from '@client/containers/kinds/review/sections/BookLatestReviews';
+import {WriteBookReviewBox} from '@client/containers/kinds/review/controls';
 import {
   BookAvailabilitySection,
   BookInfo,
@@ -29,7 +30,7 @@ import {
   CategoriesGroupsBooksSection,
 } from '@client/containers/kinds/book';
 
-import {Container} from '@client/components/ui';
+import {Divider, Container} from '@client/components/ui';
 import {Layout, LayoutViewData, SEOMeta} from '@client/containers/layout';
 import {BookBreadcrumbs} from './parts';
 import {
@@ -108,7 +109,15 @@ export const BookRoute: AsyncRoute<BookRouteViewData> = (
           {book.posts && (
             <BookPostsSection items={book.posts} />
           )}
-          <BookLatestReviewsSection book={book} />
+          <BookLatestReviewsSection
+            book={book}
+            toolbar={(
+              <>
+                <WriteBookReviewBox />
+                <Divider fill='dashed' />
+              </>
+            )}
+          />
           <BookSummariesSection items={book.summaries} />
         </BookInfo>
 

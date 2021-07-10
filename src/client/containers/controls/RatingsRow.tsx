@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import c from 'classnames';
 import * as R from 'ramda';
 
@@ -24,28 +24,33 @@ type RatingsRowProps = {
   className?: string,
   textOnly?: boolean,
   showTextValue?: boolean,
+  hoverable?: boolean,
   totalStars?: number,
   totalRatings?: number,
   truncateRatingsCount?: number,
   size?: string,
-  value: number,
+  value?: number,
+  onClickStar?(score: number): void,
 };
 
 export const RatingsRow = (
   {
     className,
-    value,
     totalRatings,
     textOnly,
     showTextValue,
+    hoverable,
     truncateRatingsCount = 999,
     size = 'normal',
     totalStars = 5,
+    value = 0,
+    onClickStar,
   }: RatingsRowProps,
 ) => {
   const t = useI18n();
+  const [hoverScore, setHoverScore] = useState<number>();
 
-  const normalizedValue = value * totalStars;
+  const normalizedValue = hoverScore ?? (value * totalStars);
   const stars = !textOnly && R.times(
     (score) => {
       let Component = StarIcon;
@@ -67,7 +72,17 @@ export const RatingsRow = (
           className={c(
             'c-ratings-row__star',
             starClassName || 'is-empty',
+            hoverable && 'is-hoverable',
           )}
+          onMouseOver={
+            () => {
+              if (hoverable)
+                setHoverScore(score + 1);
+            }
+          }
+          onClick={
+            () => onClickStar?.((score + 1) / totalStars)
+          }
         />
       );
     },
@@ -88,6 +103,12 @@ export const RatingsRow = (
         size && `is-text-${size}`,
         className,
       )}
+      onMouseLeave={
+        () => {
+          if (hoverable && !R.isNil(hoverScore))
+            setHoverScore(null);
+        }
+      }
     >
       {stars}
       {(textOnly || showTextValue) && (

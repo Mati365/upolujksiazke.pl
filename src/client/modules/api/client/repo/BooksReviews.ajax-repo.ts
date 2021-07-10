@@ -1,8 +1,8 @@
+import {CreateReviewReactionInput} from '@api/types/input';
 import {
   BookReviewsRepo,
   BookReviewsFilters,
   BookReviewsPaginationResult,
-  CreateBookReviewReactionAttrs,
   CreateBookReactionResult,
 } from '@api/repo';
 
@@ -29,7 +29,7 @@ export class BooksReviewsAjaxRepo extends AjaxAPIClientChild implements BookRevi
   /**
    * Sends reaction to book review
    *
-   * @param {CreateBookReviewReactionAttrs} attrs
+   * @param {CreateReviewReactionInput} attrs
    * @return {Promise<CreateBookReactionResult>}
    * @memberof BooksReviewsAjaxRepo
    */
@@ -38,7 +38,7 @@ export class BooksReviewsAjaxRepo extends AjaxAPIClientChild implements BookRevi
     {
       id,
       reaction,
-    }: CreateBookReviewReactionAttrs,
+    }: CreateReviewReactionInput,
   ): Promise<CreateBookReactionResult> {
     return this.ajax.post(
       {

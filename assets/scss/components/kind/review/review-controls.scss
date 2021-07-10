@@ -1,0 +1,32 @@
+.c-write-book-review {
+  &__toolbar {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+
+    .c-input-label__label {
+      font-size: $text-small;
+    }
+
+    .c-ratings-row {
+      position: relative;
+      top: -1px;
+    }
+  }
+
+  &__description {
+    width: 100%;
+  }
+
+  &__nested-list {
+    margin-top: 1rem;
+    padding-left: 2.5rem;
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: .75rem;
+  }
+}

@@ -12,6 +12,10 @@
       color: #ccc;
     }
 
+    &.is-hoverable {
+      cursor: pointer;
+    }
+
     & + #{$self}__text-value {
       margin-left: 10px;
     }

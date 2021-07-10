@@ -1,7 +1,7 @@
 import React, {KeyboardEventHandler} from 'react';
 
-import {useI18n} from '@client/i18n';
 import {genBooksSearchLink} from '@client/routes/Links';
+import {useI18n} from '@client/i18n';
 import {useInputLink} from '@client/hooks/useInputLink';
 
 import {Input} from '@client/components/ui/controls';

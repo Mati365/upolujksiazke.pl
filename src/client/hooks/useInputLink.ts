@@ -39,10 +39,14 @@ export type InputLinkerFn<T> = (
   },
 ) => any;
 
+export type LinkValueSetterAttrs = {
+  merge?: boolean,
+};
+
 export type LinkInputAttachParams<T> = {
   initialData: T,
   value: T,
-  setValue: (val: T) => void,
+  setValue: (val: Partial<T>, attrs?: LinkValueSetterAttrs) => void,
 
   input: InputLinkerFn<T>,
   numericInput: (name?: string, params?: any) => LinkInputProps<T>,
@@ -132,7 +136,14 @@ export const useInputLink = <T>(
 
   valueRef.current = outerValue;
 
-  const safeUpdateValue = (newValue: T) => {
+  const safeUpdateValue = (newValue: T, {merge}: LinkValueSetterAttrs = {}) => {
+    if (merge) {
+      newValue = {
+        ...outerValue.value,
+        ...newValue,
+      };
+    }
+
     if (watchers) {
       const prevValue = valueRef.current;
       let propChanged = false;

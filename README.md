@@ -62,6 +62,7 @@ OpenSource book reviews aggregator, something like Metacritic / Digg for books. 
 - [ ] add e-leaflets
 - [ ] youtube reviews
 - [ ] add coupons
+- [ ] books cons table
 
 ## Resources
 

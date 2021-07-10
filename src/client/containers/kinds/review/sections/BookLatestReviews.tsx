@@ -21,9 +21,9 @@ export const BookLatestReviewsSection = (
   }: BookLatestReviewsSectionProps,
 ) => {
   const t = useI18n('book.reviews');
-  const {reviews} = book;
+  const {reviews, totalTextReviews} = book;
 
-  if (!reviews?.length)
+  if (!reviews?.length && !toolbar)
     return null;
 
   return (
@@ -32,14 +32,16 @@ export const BookLatestReviewsSection = (
       title={
         t('title')
       }
-      titleSuffix={(
-        <span className='c-flex-row is-inline'>
-          <CommentIcon className='mr-1' />
-          <span>
-            {t('total', [book.totalTextReviews])}
+      titleSuffix={
+        totalTextReviews > 0 && (
+          <span className='c-flex-row is-inline'>
+            <CommentIcon className='mr-1' />
+            <span>
+              {t('total', [totalTextReviews])}
+            </span>
           </span>
-        </span>
-      )}
+        )
+      }
       subsection
       noContentSpacing
       {...props}
@@ -48,7 +50,7 @@ export const BookLatestReviewsSection = (
 
       <BookReviewsList reviews={reviews} />
 
-      {reviews.length < book.totalTextReviews && (
+      {reviews.length < totalTextReviews && (
         <div className='c-flex-center mt-6'>
           <Button
             className='is-text-small has-double-link-chevron'
@@ -56,7 +58,7 @@ export const BookLatestReviewsSection = (
             item={book}
             outlined
           >
-            {t('show_more_reviews', [book.totalTextReviews - reviews.length])}
+            {t('show_more_reviews', [totalTextReviews - reviews.length])}
           </Button>
         </div>
       )}

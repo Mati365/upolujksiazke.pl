@@ -10,6 +10,7 @@ import {
   usePromiseCallback,
 } from '@client/hooks';
 
+import {EmptyResults} from '@client/containers/filters';
 import {CanBePromise} from '@shared/types';
 import {
   AsyncExpandableToolbarProps,
@@ -31,6 +32,7 @@ export type AsyncExpandableChunksProps<T> = CleanListProps & {
   resetKey?: any,
   totalItems: number,
   initialFilters?: any,
+  renderEmptyPlaceholderFn?(): ReactNode,
   renderChunkFn(attrs: AsyncChunkAttributes<T>): ReactNode,
   renderExpandToolbarFn?(attrs: AsyncExpandableToolbarProps): ReactNode,
   onRequestChunk(
@@ -57,6 +59,11 @@ export function AsyncExpandableChunks<T extends {id: any}>(
     initialFilters = {},
     renderHeaderFn,
     renderChunkFn,
+    renderEmptyPlaceholderFn = () => (
+      <li>
+        <EmptyResults />
+      </li>
+    ),
     renderExpandToolbarFn = (attrs) => (
       <DefaultAsyncExpandableToolbar
         {...attrs}
@@ -113,26 +120,36 @@ export function AsyncExpandableChunks<T extends {id: any}>(
         },
       );
 
-      const items = extractPropIfPresent('items', chunk);
+      const [items, total] = [
+        extractPropIfPresent('items', chunk),
+        extractPropIfPresent('total', chunk),
+      ];
 
-      // rerendered anyway
-      if (reset) {
-        setAllChunks(
-          {
-            items: [items],
-            total: (chunk as any).total ?? totalItems ?? 0,
-          },
-        );
+      let newValue: Partial<Pick<typeof allChunks, 'items' | 'total'>> = null;
+      if (total === 0) {
+        newValue = {
+          items: [],
+          total: 0,
+        };
+      } else if (reset) {
+        newValue = {
+          items: [items],
+          total: (chunk as any).total ?? totalItems ?? 0,
+        };
       } else if (items?.length) {
-        allChunks.items = [
-          ...allChunks.items,
-          items,
-        ];
+        newValue = {
+          items: [
+            ...allChunks.items,
+            items,
+          ],
+        };
       }
+
+      Object.assign(allChunks, newValue);
     },
   );
 
-  if (filtersLink.value !== prevFiltersValue
+  if ((prevFiltersValue !== null && filtersLink.value !== prevFiltersValue)
       || (prevResetKey !== null && !R.isNil(resetKey) && prevResetKey !== resetKey)) {
     if (!R.isEmpty(filtersLink.value))
       onExpand(true);
@@ -174,6 +191,7 @@ export function AsyncExpandableChunks<T extends {id: any}>(
           );
         },
       )}
+      {!allChunks.total && renderEmptyPlaceholderFn?.()}
       {remain > 0 && renderExpandToolbarFn(
         {
           loaded: totalLoaded,

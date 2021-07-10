@@ -26,7 +26,7 @@ export function CheckboxExpandableList<T extends ListItem>(
     <AsyncExpandableChunks<T>
       {...props}
       className={c(
-        'c-expandable-checkox-list',
+        'c-expandable-checkbox-list',
         className,
       )}
       renderChunkFn={

@@ -85,9 +85,16 @@ export const BooksFiltersGroups = (
         },
       );
 
+      if (!result?.agg) {
+        return {
+          items: [],
+          total: 0,
+        };
+      }
+
       return {
-        items: mapCountedRecordsToCountedListItems(result?.agg?.items),
-        total: result?.agg?.total.bucket,
+        items: mapCountedRecordsToCountedListItems(result.agg.items),
+        total: result.agg.total?.bucket || 0,
       };
     };
 

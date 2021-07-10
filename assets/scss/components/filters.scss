@@ -114,7 +114,7 @@
       width: 100%;
     }
 
-    .c-expandable-checkox-list {
+    .c-expandable-checkbox-list {
       .c-checkbox-group__title {
         max-width: calc(100% - 24px);
 
@@ -247,6 +247,12 @@
     &__icon {
       font-size: 2.5rem;
       margin-bottom: $text-tiny;
+    }
+
+    &.is {
+      &-medium-spacing {
+        margin: 2rem 0
+      }
     }
   }
 

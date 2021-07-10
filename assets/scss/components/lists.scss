@@ -151,4 +151,14 @@
       }
     }
   }
+
+  &-expandable-checkbox-list .c-empty-results {
+    margin-bottom: .25rem;
+    margin-top: 1.5rem;
+
+    &__icon {
+      margin-bottom: .5rem;
+      font-size: 1.75rem;
+    }
+  }
 }

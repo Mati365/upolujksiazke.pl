@@ -177,7 +177,7 @@ BookRoute.getInitialProps = async (attrs) => {
         {
           excludeIds: [book.id],
           limit: 4,
-          authorsIds: R.pluck('id', book.authors),
+          authorsIds: R.take(2, R.pluck('id', book.authors)),
         },
       ),
     },

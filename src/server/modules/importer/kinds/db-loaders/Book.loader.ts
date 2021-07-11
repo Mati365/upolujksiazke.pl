@@ -30,6 +30,7 @@ import {CreateBookPublisherDto} from '@server/modules/book/modules/publisher/dto
 import {CreateBookReleaseDto} from '@server/modules/book/modules/release/dto/CreateBookRelease.dto';
 import {CreateBookAvailabilityDto} from '@server/modules/book/modules/availability/dto/CreateBookAvailability.dto';
 import {CreateBookReviewDto} from '@server/modules/book/modules/review/dto/CreateBookReview.dto';
+import {CreateBookCategoryDto} from '@server/modules/book/modules/category/dto/CreateBookCategory.dto';
 import {
   CreateBookVolumeDto,
   DEFAULT_BOOK_VOLUME_NAME,
@@ -434,8 +435,12 @@ export class BookDbLoaderService implements MetadataDbLoader {
     return new CreateBookDto(
       {
         ...dto,
-        categories: R.reject(({root}) => root, mappedCategories),
         primaryCategoryId: primaryCategoryId ?? R.find(({root}) => root, mappedCategories)?.id,
+        categories: R.reject(({root}) => root, mappedCategories).map(({name}) => new CreateBookCategoryDto(
+          {
+            name,
+          },
+        )),
       },
     );
   }

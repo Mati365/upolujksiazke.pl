@@ -2,7 +2,7 @@ import React, {ReactNode} from 'react';
 
 import {useI18n} from '@client/i18n';
 
-import {Button, Section, SectionProps} from '@client/components/ui';
+import {Button, Section, SectionProps, UndecoratedLink} from '@client/components/ui';
 import {CommentIcon} from '@client/components/svg';
 import {BookFullInfoRecord} from '@api/types';
 import {BookAllReviewsLink} from '@client/routes/Links';
@@ -48,7 +48,25 @@ export const BookLatestReviewsSection = (
     >
       {toolbar}
 
-      <BookReviewsList reviews={reviews} />
+      <BookReviewsList
+        reviews={reviews}
+        itemPropsFn={
+          (review) => !!review.url && ({
+            moreButtonRenderFn: ({expandTitle}) => (
+              <UndecoratedLink
+                href={review.url}
+                target='_blank'
+                rel='nofollow noreferrer'
+                className='c-promo-tag-link is-text-semibold is-text-no-wrap ml-2'
+                undecorated={false}
+                withChevron
+              >
+                {expandTitle}
+              </UndecoratedLink>
+            ),
+          })
+        }
+      />
 
       {reviews.length < totalTextReviews && (
         <div className='c-flex-center mt-6'>

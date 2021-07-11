@@ -13,6 +13,7 @@ import {RatingsRow} from '@client/containers/controls/RatingsRow';
 import {TitledFavicon} from '@client/components/ui/TitledFavicon';
 import {
   ExpandableDescriptionBox,
+  UndecoratedLink,
   CleanList,
   Picture,
   ExpandableDescriptionBoxProps,
@@ -47,10 +48,26 @@ export const BookReview = (
     reviewer, description,
     rating, publishDate,
     url, website, book,
+    quote,
   } = review;
 
   if (!description)
     return null;
+
+  if (!moreButtonRenderFn && quote && url) {
+    moreButtonRenderFn = () => (
+      <UndecoratedLink
+        href={review.url}
+        target='_blank'
+        rel='nofollow noreferrer'
+        className='c-promo-tag-link is-text-no-wrap ml-2'
+        undecorated={false}
+        withChevron
+      >
+        {t('book.reviews.read_full_review')}
+      </UndecoratedLink>
+    );
+  }
 
   const bookCardVisible = showBookCard && book;
   return (

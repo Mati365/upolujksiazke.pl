@@ -18,6 +18,8 @@ type FiltersToolbarProps = {
   totalItems: number,
   hideSort?: boolean,
   hidePagination?: boolean,
+  hidePageSizeSwitch?: boolean,
+  hideViewModeSwitch?: boolean,
   pageSizes?: number[],
   urlSearchParams?: any,
 };
@@ -28,6 +30,8 @@ export const FiltersToolbar = (
     hideSort,
     hidePagination,
     urlSearchParams,
+    hidePageSizeSwitch,
+    hideViewModeSwitch,
     totalItems,
     pageSizes = DEFAULT_PAGE_SIZES,
   }: FiltersToolbarProps,
@@ -55,16 +59,20 @@ export const FiltersToolbar = (
       >
         {!ua.mobile && (
           <>
-            <li>
-              <PageSizeSelectInput
-                {...l.input('limit')}
-                sizes={pageSizes}
-              />
-            </li>
+            {!hidePageSizeSwitch && (
+              <li>
+                <PageSizeSelectInput
+                  {...l.input('limit')}
+                  sizes={pageSizes}
+                />
+              </li>
+            )}
 
-            <li>
-              <ViewModeSwitch {...l.input('viewMode')} />
-            </li>
+            {!hideViewModeSwitch && (
+              <li>
+                <ViewModeSwitch {...l.input('viewMode')} />
+              </li>
+            )}
           </>
         )}
 

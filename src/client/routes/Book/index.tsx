@@ -21,7 +21,7 @@ import {
 } from '@api/types';
 
 import {BookLatestReviewsSection} from '@client/containers/kinds/review/sections/BookLatestReviews';
-import {WriteBookReviewBox} from '@client/containers/kinds/review/controls';
+import {WriteBookReviewContainer} from '@client/containers/kinds/review/controls';
 import {
   BookAvailabilitySection,
   BookInfo,
@@ -113,7 +113,7 @@ export const BookRoute: AsyncRoute<BookRouteViewData> = (
             book={book}
             toolbar={(
               <>
-                <WriteBookReviewBox />
+                <WriteBookReviewContainer bookId={book.id} />
                 <Divider fill='dashed' />
               </>
             )}

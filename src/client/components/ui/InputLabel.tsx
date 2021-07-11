@@ -3,6 +3,8 @@ import c from 'classnames';
 
 type InputLabelProps = {
   className?: string,
+  spaced?: string,
+  expanded?: boolean,
   labelClassName?: string,
   controlClassName?: string,
   label: ReactNode,
@@ -14,6 +16,8 @@ export const InputLabel = (
     className,
     labelClassName,
     controlClassName,
+    spaced,
+    expanded,
     children,
     label,
   }: InputLabelProps,
@@ -21,6 +25,8 @@ export const InputLabel = (
   <div
     className={c(
       'c-input-label',
+      spaced && `is-spaced-${spaced}`,
+      expanded && 'is-expanded',
       className,
     )}
   >

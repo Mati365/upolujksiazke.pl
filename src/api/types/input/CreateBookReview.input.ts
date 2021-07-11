@@ -3,16 +3,14 @@ import * as R from 'ramda';
 export const MIN_BOOK_REVIEW_LENGTH = 3;
 export const MAX_BOOK_REVIEW_LENGTH = 855;
 
-export interface CreateBookReviewExternalRef {
-  __id?: any,
+export interface CreateBookReviewInput {
+  __id?: any;
+  bookId?: number;
+  quote?: boolean;
   url?: string;
   description?: string;
   rating?: number;
   nick?: string;
-}
-
-export interface CreateBookReviewInput extends CreateBookReviewExternalRef {
-  externalRefs?: CreateBookReviewExternalRef[];
 }
 
 export function prevalidateBookReview(review: CreateBookReviewInput) {

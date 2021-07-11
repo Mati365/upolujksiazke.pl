@@ -261,11 +261,12 @@ export const PL_LANG_PACK = {
     },
     review_box: {
       send: 'Wyślij',
-      add_quote: 'Cytuj fragment recenzji z innej strony',
+      mark_as_quote: 'Oznacz opinię jako cytat z innej strony',
       placeholder: {
-        nick: 'Pseudonim',
+        your_nick: 'Twój pseudonim',
         rating: 'Ocena',
         description: 'Wpisz treść opinii o książce...',
+        url: 'Link do recenzji',
       },
     },
     availability: {
@@ -287,6 +288,7 @@ export const PL_LANG_PACK = {
       title: 'Opinie o książce',
       total: '%{} recenzji',
       show_more_reviews: 'Pokaż więcej recenzji (%{})',
+      read_full_review: 'Czytaj całą recenzję',
     },
     summaries: {
       title: 'Streszczenia książki',

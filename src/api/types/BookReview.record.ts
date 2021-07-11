@@ -8,6 +8,7 @@ import type {BookCardRecord} from './BookCard.record';
 export interface BookReviewRecord extends APIRecord {
   url: string;
   publishDate: Date;
+  quote: boolean;
   description: string;
   rating: number;
   stats: VoteStatsRecord;

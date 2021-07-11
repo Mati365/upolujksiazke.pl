@@ -3,7 +3,10 @@ import {APIPaginationResult, BasicAPIPagination} from '@api/APIClient';
 import {APIRepo} from '../APIRepo';
 import {BookReviewRecord} from '../types/BookReview.record';
 import {VoteStatsRecord} from '../types/VoteStatsRecord.record';
-import {CreateReviewReactionInput} from '../types/input/CreateReviewReaction.input';
+import {
+  CreateBookReviewInput,
+  CreateReviewReactionInput,
+} from '../types/input';
 
 export type BookReviewsFilters = BasicAPIPagination & {
   bookId?: number,
@@ -21,5 +24,6 @@ export type CreateBookReactionResult = {
 
 export interface BookReviewsRepo extends APIRepo<BookReviewRecord, BookReviewsFilters> {
   findRecentCommentedBooks?(attrs: RecentCommentedBooksFilters): CanBePromise<BookReviewRecord[]>;
+  addBookReview?(input: CreateBookReviewInput): Promise<void>;
   react?(attrs: CreateReviewReactionInput): CanBePromise<CreateBookReactionResult>;
 }

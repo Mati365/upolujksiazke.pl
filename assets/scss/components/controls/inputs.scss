@@ -20,6 +20,10 @@
       border-radius: var(--radius);
       outline: 0;
       background: initial;
+
+      @at-root textarea#{&} {
+        padding: 10px;
+      }
     }
 
     &.has-primary-icon {
@@ -75,10 +79,30 @@
   }
 
   &-input-label {
+    $self: &;
+
     @include flex-list;
 
     &__label {
       margin-right: 10px;
+    }
+
+    &.is-expanded {
+      width: 100%;
+
+      #{$self}__control {
+        flex: 1;
+
+        > .c-input {
+          width: 100%;
+        }
+      }
+    }
+
+    &.is-spaced {
+      &-medium {
+        margin: 1rem 0;
+      }
     }
   }
 

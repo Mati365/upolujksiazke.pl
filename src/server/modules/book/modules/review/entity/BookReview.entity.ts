@@ -30,6 +30,14 @@ export class BookReviewEntity extends RemoteRecordFields {
   publishDate: Date;
 
   @ManyToOne(() => BookReviewerEntity, (entity) => entity.reviews)
+  @JoinColumn({name: 'linkingReviewerId'})
+  linkingReviewer: BookReviewerEntity;
+
+  @Column({nullable: true, onUpdate: 'SET NULL'})
+  @RelationId((entity: BookReviewEntity) => entity.linkingReviewer)
+  linkingReviewerId: number;
+
+  @ManyToOne(() => BookReviewerEntity, (entity) => entity.reviews)
   @JoinColumn({name: 'reviewerId'})
   reviewer: BookReviewerEntity;
 
@@ -48,6 +56,9 @@ export class BookReviewEntity extends RemoteRecordFields {
 
   @Column('boolean', {default: false, nullable: true})
   hiddenContent: boolean;
+
+  @Column('boolean', {default: true, nullable: true})
+  quote: boolean;
 
   @ManyToOne(() => BookEntity, (book) => book.reviews)
   @JoinColumn({name: 'bookId'})

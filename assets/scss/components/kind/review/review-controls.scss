@@ -1,12 +1,10 @@
 .c-write-book-review {
+  font-size: $text-small;
+
   &__toolbar {
     display: flex;
     justify-content: space-between;
     margin-bottom: 1rem;
-
-    .c-input-label__label {
-      font-size: $text-small;
-    }
 
     .c-ratings-row {
       position: relative;

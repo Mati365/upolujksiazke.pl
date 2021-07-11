@@ -1,4 +1,10 @@
-import {CreateReviewReactionInput} from '@api/types/input';
+import {timeout} from '@shared/helpers';
+
+import {
+  CreateBookReviewInput,
+  CreateReviewReactionInput,
+} from '@api/types/input';
+
 import {
   BookReviewsRepo,
   BookReviewsFilters,
@@ -48,5 +54,19 @@ export class BooksReviewsAjaxRepo extends AjaxAPIClientChild implements BookRevi
         },
       },
     );
+  }
+
+  /**
+   * Appends user review to book
+   *
+   * @param {CreateBookReviewInput} input
+   * @return {Promise<void>}
+   * @memberof BooksReviewsAjaxRepo
+   */
+  @SilentRegisterIfAnonymous()
+  async addBookReview(input: CreateBookReviewInput): Promise<void> {
+    console.info(input);
+    await timeout(360000);
+    return null;
   }
 }

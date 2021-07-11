@@ -12,6 +12,9 @@ export class BookReviewSerializer extends BaseSerializer implements BookReviewRe
   url: string;
 
   @Expose()
+  quote: boolean;
+
+  @Expose()
   @Transform(({value}) => new Date(value), {toClassOnly: true})
   publishDate: Date;
 

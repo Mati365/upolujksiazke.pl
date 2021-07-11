@@ -27,7 +27,7 @@ export const linkInputs = <NewValType extends unknown = any>(
       output: R.identity,
     },
   }: {
-    initialData?: NewValType,
+    initialData?: NewValType | ((props: any) => NewValType),
     parsers?: {
       input(inVal: any): NewValType,
       output(outVal: NewValType): any,
@@ -44,7 +44,15 @@ export const linkInputs = <NewValType extends unknown = any>(
     const newLink = useInputLink<NewValType>(
       {
         valuePropWatchers,
-        initialData: R.defaultTo(defaultInitialData, initialData),
+        initialData: () => {
+          const safeData = (
+            initialData instanceof Function
+              ? initialData(props)
+              : initialData
+          );
+
+          return R.defaultTo(defaultInitialData, safeData);
+        },
         value: parsers.input(value),
         onChange: onChange && ((newValue) => onChange(
           parsers.output(newValue),

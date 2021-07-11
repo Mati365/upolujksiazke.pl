@@ -113,6 +113,8 @@ export const BookPaginatedReviews = (
                     totalItems={safeResult.meta.totalItems}
                     l={l}
                     hideSort
+                    hidePageSizeSwitch
+                    hideViewModeSwitch
                   />
                 )
               }

@@ -1,12 +1,13 @@
 import {
   Column, ManyToMany, JoinTable,
-  OneToMany, Index,
+  OneToMany, Index, OneToOne,
+  JoinColumn, RelationId,
 } from 'typeorm';
 
 import {Gender} from '@shared/types';
 import {ImageAttachmentEntity} from '@server/modules/attachment/entity';
 import {RemoteRecordEntity, RemoteRecordFields} from '@server/modules/remote/entity';
-
+import {UserEntity} from '@server/modules/user/User.entity';
 import {BookReviewEntity} from '../review/entity/BookReview.entity';
 
 @RemoteRecordEntity(
@@ -33,6 +34,9 @@ export class BookReviewerEntity extends RemoteRecordFields {
   @OneToMany(() => BookReviewEntity, (entity) => entity.reviewer)
   reviews: BookReviewEntity[];
 
+  @OneToMany(() => BookReviewEntity, (entity) => entity.linkingReviewer)
+  linkedReviews: BookReviewEntity[];
+
   @ManyToMany(
     () => ImageAttachmentEntity,
     {
@@ -46,6 +50,21 @@ export class BookReviewerEntity extends RemoteRecordFields {
     },
   )
   avatar: ImageAttachmentEntity[];
+
+  @OneToOne(
+    () => UserEntity,
+    (entity) => entity.reviewer,
+    {
+      cascade: true,
+      onDelete: 'SET NULL',
+    },
+  )
+  @JoinColumn({name: 'userId'})
+  user: UserEntity;
+
+  @Column({nullable: true})
+  @RelationId((entity: BookReviewerEntity) => entity.user)
+  userId: number;
 
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(partial: Partial<BookReviewerEntity>) {

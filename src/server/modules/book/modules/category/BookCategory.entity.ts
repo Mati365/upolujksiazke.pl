@@ -34,7 +34,7 @@ export class BookCategoryEntity extends DatedRecordEntity {
   @Column('boolean', {default: false, nullable: true})
   promotionLock: boolean;
 
-  @Column('boolean', {default: false, nullable: true})
+  @Column('boolean', {nullable: true})
   root: boolean;
 
   @Column('int', {nullable: true})

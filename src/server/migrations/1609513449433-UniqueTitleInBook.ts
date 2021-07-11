@@ -14,10 +14,10 @@ export class UniqueTitleInBook1609513449433 implements MigrationInterface {
     await queryRunner.query(`ALTER TABLE "book_tags_tag" RENAME COLUMN "tagsId" TO "tagId"`);
     await queryRunner.query(`ALTER TABLE "book_tags_tag" RENAME CONSTRAINT "PK_76a3229b181c990bf9852aa7640" TO "PK_37a9691c5c1ae26b78b47225c72"`);
     await queryRunner.query(`COMMENT ON COLUMN "tag"."id" IS NULL`);
-    await queryRunner.query(`CREATE SEQUENCE "tag_id_seq" OWNED BY "tag"."id"`);
+    await queryRunner.query(`CREATE SEQUENCE IF NOT EXISTS "tag_id_seq" OWNED BY "tag"."id"`);
     await queryRunner.query(`ALTER TABLE "tag" ALTER COLUMN "id" SET DEFAULT nextval('tag_id_seq')`);
     await queryRunner.query(`COMMENT ON COLUMN "book_author"."id" IS NULL`);
-    await queryRunner.query(`CREATE SEQUENCE "book_author_id_seq" OWNED BY "book_author"."id"`);
+    await queryRunner.query(`CREATE SEQUENCE IF NOT EXISTS "book_author_id_seq" OWNED BY "book_author"."id"`);
     await queryRunner.query(`ALTER TABLE "book_author" ALTER COLUMN "id" SET DEFAULT nextval('book_author_id_seq')`);
     await queryRunner.query(`COMMENT ON COLUMN "book_author"."name" IS NULL`);
     await queryRunner.query(`ALTER TABLE "book_author" ADD CONSTRAINT "UQ_b62b34248c72f89fb6d27895e03" UNIQUE ("name")`);

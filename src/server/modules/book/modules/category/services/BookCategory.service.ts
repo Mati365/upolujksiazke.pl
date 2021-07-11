@@ -1,4 +1,4 @@
-import {Injectable} from '@nestjs/common';
+import {Injectable, Inject, forwardRef} from '@nestjs/common';
 import {Connection, EntityManager, In} from 'typeorm';
 import * as R from 'ramda';
 import esb from 'elastic-builder';
@@ -19,13 +19,17 @@ import {CategoriesFindOneAttrs} from '@api/repo';
 import {parameterize} from '@shared/helpers/parameterize';
 import {
   BasicLimitPaginationOptions,
-  forwardTransaction, groupRawMany, upsert,
+  forwardTransaction,
+  groupRawMany,
+  runInPostHookIfPresent,
+  upsert,
 } from '@server/common/helpers/db';
 
 import {BookGroupedSelectAttrs} from '@server/modules/book/shared/types';
 import {BookCategoryEntity} from '../BookCategory.entity';
 import {CreateBookCategoryDto} from '../dto/CreateBookCategory.dto';
 import {EsBookCategoryIndex} from '../indices/EsBookCategory.index';
+import {BookParentCategoryService} from './BookParentCategory.service';
 
 @Injectable()
 export class BookCategoryService {
@@ -37,6 +41,9 @@ export class BookCategoryService {
   constructor(
     private readonly connection: Connection,
     private readonly categoryIndex: EsBookCategoryIndex,
+
+    @Inject(forwardRef(() => BookParentCategoryService))
+    private readonly parentCategoryService: BookParentCategoryService,
   ) {}
 
   /**
@@ -303,7 +310,7 @@ export class BookCategoryService {
    * @param {CreateBookCategoryDto[]} dtos
    * @memberof BookCategoryService
    */
-  async assignRootFlagsToDtos(dtos: CreateBookCategoryDto[]) {
+  async findAndAssignRootFlags(dtos: CreateBookCategoryDto[]) {
     if (!dtos?.length)
       return [];
 
@@ -352,7 +359,12 @@ export class BookCategoryService {
     if (!dtos?.length)
       return [];
 
-    const {connection, categoryIndex} = this;
+    const {
+      connection,
+      categoryIndex,
+      parentCategoryService,
+    } = this;
+
     const uniqueDtos = R.uniqBy(
       (dto) => parameterize(dto.name),
       R.unnest(dtos.filter(Boolean).map(
@@ -373,12 +385,18 @@ export class BookCategoryService {
         connection,
         Entity: BookCategoryEntity,
         primaryKey: 'parameterizedName',
-        data: uniqueDtos,
+        data: await parentCategoryService.findAndAssignParentCategories(uniqueDtos),
       },
     );
 
-    if (result?.length)
-      await categoryIndex.reindexBulk(safePluckIds(result));
+    if (result?.length) {
+      await runInPostHookIfPresent(
+        {
+          transactionManager: entityManager,
+        },
+        () => categoryIndex.reindexBulk(safePluckIds(result)),
+      );
+    }
 
     return result;
   }

@@ -430,7 +430,7 @@ export class BookDbLoaderService implements MetadataDbLoader {
       ...dto
     }: CreateBookDto,
   ): Promise<CreateBookDto> {
-    const mappedCategories = await this.bookCategoryService.assignRootFlagsToDtos(categories);
+    const mappedCategories = await this.bookCategoryService.findAndAssignRootFlags(categories);
 
     return new CreateBookDto(
       {

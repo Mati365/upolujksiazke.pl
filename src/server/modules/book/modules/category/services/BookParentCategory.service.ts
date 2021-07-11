@@ -1,5 +1,6 @@
-import {Injectable} from '@nestjs/common';
+import {Injectable, Inject, forwardRef} from '@nestjs/common';
 import {Equal, Not} from 'typeorm';
+import pMap from 'p-map';
 import * as R from 'ramda';
 
 import {paginatedAsyncIterator} from '@server/common/helpers/db';
@@ -10,6 +11,7 @@ import {CreateBookCategoryDto} from '../dto/CreateBookCategory.dto';
 @Injectable()
 export class BookParentCategoryService {
   constructor(
+    @Inject(forwardRef(() => BookCategoryService))
     private readonly categoryService: BookCategoryService,
   ) {}
 
@@ -24,6 +26,43 @@ export class BookParentCategoryService {
       {
         root: true,
         name: 'b.d',
+      },
+    );
+  }
+
+  /**
+   * Lookups over category array and tries to assign category id to each
+   *
+   * @param {BookCategoryEntity[]} entities
+   * @return {Promise<BookCategoryEntity[]>}
+   * @memberof BookParentCategoryService
+   */
+  async findAndAssignParentCategories(entities: BookCategoryEntity[]): Promise<BookCategoryEntity[]> {
+    const {categoryService} = this;
+    const otherCategory = await this.findDefaultParentCategory();
+
+    return pMap(
+      entities,
+      async (dto) => {
+        if (!R.isNil(dto.parentCategoryId))
+          return dto;
+
+        const matchedRootCategory = await categoryService.findSimilarCategory(
+          {
+            root: true,
+            name: dto.name,
+          },
+        );
+
+        return new BookCategoryEntity(
+          {
+            ...dto,
+            parentCategoryId: matchedRootCategory?.id ?? otherCategory?.id,
+          },
+        );
+      },
+      {
+        concurrency: 2,
       },
     );
   }

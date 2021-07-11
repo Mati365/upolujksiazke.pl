@@ -6,6 +6,7 @@ import {ICON_EMOJI_MAPPINGS} from '@client/components/svg';
 
 import {formatBookTitle} from '@client/helpers/logic';
 import {
+  isDevMode,
   objPropsToPromise,
   truncateText,
 } from '@shared/helpers';
@@ -111,12 +112,14 @@ export const BookRoute: AsyncRoute<BookRouteViewData> = (
           )}
           <BookLatestReviewsSection
             book={book}
-            toolbar={(
-              <>
-                <WriteBookReviewContainer bookId={book.id} />
-                <Divider fill='dashed' />
-              </>
-            )}
+            toolbar={
+              isDevMode() && (
+                <>
+                  <WriteBookReviewContainer bookId={book.id} />
+                  <Divider fill='dashed' />
+                </>
+              )
+            }
           />
           <BookSummariesSection items={book.summaries} />
         </BookInfo>

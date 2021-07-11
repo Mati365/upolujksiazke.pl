@@ -1,6 +1,7 @@
 import React from 'react';
 
 import {useI18n} from '@client/i18n';
+import {isDevMode} from '@shared/helpers';
 
 import {
   genAuthorsLink,
@@ -29,7 +30,11 @@ export const HeaderToolbar = () => {
     [TrophyIcon, TOP_BOOKS_PATH, t('links.top')],
     [CommentIcon, BOOKS_REVIEWS_PATH, t('links.reviews')],
     [GroupIcon, genAuthorsLink(), t('links.authors')],
-    [NewsIcon, NEWS_PATH, t('links.news')],
+    ...(
+      isDevMode()
+        ? [[NewsIcon, NEWS_PATH, t('links.news')]]
+        : []
+    ) as any,
   ];
 
   return (

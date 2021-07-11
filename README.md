@@ -158,6 +158,14 @@ yarn run develop
 gulp scrapper:refresh
 ```
 
+### Remote connect
+
+Proxy local 9201 to remote ES
+
+```bash
+ssh -g -L 9201:localhost:9200 -f -N deploy@upolujksiazke.pl
+```
+
 ### REPL
 
 There is NestJS context present on window, it is called `app`. All entities are exporeted to context.

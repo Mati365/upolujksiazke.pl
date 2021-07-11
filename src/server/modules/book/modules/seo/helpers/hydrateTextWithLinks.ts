@@ -118,10 +118,11 @@ export function hydrateTextWithLinks<T>(
     linkGeneratorFn,
   }: LinkHydrateAttrs<T>,
 ): LinkHydrateOutput<T> {
+  const nonHTMLText = getHTMLInnerText(text);
   if (!tags.length || !text) {
     return {
       text,
-      nonHTMLText: null,
+      nonHTMLText,
       tags: [],
     };
   }
@@ -131,9 +132,7 @@ export function hydrateTextWithLinks<T>(
     (a, b) => b.name.length - a.name.length,
   );
 
-  const nonHTMLText = getHTMLInnerText(text);
   const similarWords = pickTextSimilarKeywords(tags, nonHTMLText);
-
   if (R.isEmpty(similarWords)) {
     return {
       text,

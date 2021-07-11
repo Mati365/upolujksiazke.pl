@@ -14,8 +14,9 @@ import {objPropsToPromise} from '@shared/helpers/async/mapObjValuesToPromise';
 import {parameterize} from '@shared/helpers/parameterize';
 import {safeToString} from '@shared/helpers';
 
-import {BookAuthorService} from '@server/modules/book/modules/author/BookAuthor.service';
 import {EsFuzzyBookSearchService} from '@server/modules/book/modules/search/service';
+import {BookAuthorService} from '@server/modules/book/modules/author/BookAuthor.service';
+import {BookCategoryService} from '@server/modules/book/modules/category/services/BookCategory.service';
 import {BookService} from '@server/modules/book/services/Book.service';
 import {BookPublisherService} from '@server/modules/book/modules/publisher/BookPublisher.service';
 
@@ -76,6 +77,8 @@ export class BookDbLoaderService implements MetadataDbLoader {
     private readonly bookService: BookService,
     @Inject(forwardRef(() => BookAuthorService))
     private readonly bookAuthorService: BookAuthorService,
+    @Inject(forwardRef(() => BookCategoryService))
+    private readonly bookCategoryService: BookCategoryService,
     @Inject(forwardRef(() => EsFuzzyBookSearchService))
     private readonly esFuzzyBookSearchService: EsFuzzyBookSearchService,
     private readonly scrapperMatcherService: ScrapperMatcherService,
@@ -373,7 +376,7 @@ export class BookDbLoaderService implements MetadataDbLoader {
       return null;
 
     const mergedBooks = mergeBooks(books);
-    const dto = this.normalizeOriginalPublishYear(
+    const dto = await this.normalizeMergedBook(
       new CreateBookDto(
         {
           ...mergedBooks,
@@ -401,11 +404,48 @@ export class BookDbLoaderService implements MetadataDbLoader {
   }
 
   /**
+   * Last step bbefore returning book
+   *
+   * @param {CreateBookDto} dto
+   * @returns {Promise<CreateBookDto>}
+   */
+  private async normalizeMergedBook(dto: CreateBookDto): Promise<CreateBookDto> {
+    let normalized = this.normalizeOriginalPublishYear(dto);
+    normalized = await this.rejectRootCategoriesFromSubcategories(normalized);
+
+    return normalized;
+  }
+
+  /**
+   * Sometimes there is primary category inside category list, it should be rejected
+   *
+   * @param {CreateBookDto} dto
+   * @returns {Promise<CreateBookDto>}
+   */
+  private async rejectRootCategoriesFromSubcategories(
+    {
+      categories,
+      primaryCategoryId,
+      ...dto
+    }: CreateBookDto,
+  ): Promise<CreateBookDto> {
+    const mappedCategories = await this.bookCategoryService.assignRootFlagsToDtos(categories);
+
+    return new CreateBookDto(
+      {
+        ...dto,
+        categories: R.reject(({root}) => root, mappedCategories),
+        primaryCategoryId: primaryCategoryId ?? R.find(({root}) => root, mappedCategories)?.id,
+      },
+    );
+  }
+
+  /**
    * Due to some editors errors validates original publish date
    *
    * @async
    * @param {CreateBookDto} dto
-   * @returns {CreateBookDto}
+   * @returns {Promise<CreateBookDto>}
    */
   private normalizeOriginalPublishYear(dto: CreateBookDto): CreateBookDto {
     const firstReleaseDate = dto.releases.reduce(

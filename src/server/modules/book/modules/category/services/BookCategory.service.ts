@@ -1,10 +1,17 @@
 import {Injectable} from '@nestjs/common';
-import {Connection, EntityManager} from 'typeorm';
+import {Connection, EntityManager, In} from 'typeorm';
 import * as R from 'ramda';
 import esb from 'elastic-builder';
 
-import {safePluckIds} from '@shared/helpers/safePluckIds';
-import {paginatedAsyncIterator, PaginationForwardIteratorAttrs} from '@server/common/helpers/db/paginatedAsyncIterator';
+import {
+  safePluckIds,
+  uniqFlatHashByProp,
+} from '@shared/helpers';
+
+import {
+  paginatedAsyncIterator,
+  PaginationForwardIteratorAttrs,
+} from '@server/common/helpers/db/paginatedAsyncIterator';
 
 import {ID} from '@shared/types';
 import {CategoriesFindOneAttrs} from '@api/repo';
@@ -287,6 +294,50 @@ export class BookCategoryService {
     );
 
     await categoryIndex.deleteEntities(ids);
+  }
+
+  /**
+   * Sets root flags to dtos, used for detect if book
+   * assigned root categories to sub categories
+   *
+   * @param {CreateBookCategoryDto[]} dtos
+   * @memberof BookCategoryService
+   */
+  async assignRootFlagsToDtos(dtos: CreateBookCategoryDto[]) {
+    if (!dtos?.length)
+      return [];
+
+    const mappedDtos = dtos.map(
+      (dto) => new CreateBookCategoryDto(
+        {
+          ...dto,
+          parameterizedName: parameterize(dto.name),
+        },
+      ),
+    );
+
+    const matchingRoots = uniqFlatHashByProp('parameterizedName', await BookCategoryEntity.find(
+      {
+        select: ['id', 'parameterizedName', 'root'],
+        where: {
+          parameterizedName: In(R.pluck('parameterizedName', mappedDtos)),
+          root: true,
+        },
+      },
+    ));
+
+    return mappedDtos.map((dto) => {
+      const rootCategory = matchingRoots[dto.parameterizedName];
+      if (!rootCategory)
+        return dto;
+
+      return new CreateBookCategoryDto(
+        {
+          ...dto,
+          ...rootCategory,
+        },
+      );
+    });
   }
 
   /**

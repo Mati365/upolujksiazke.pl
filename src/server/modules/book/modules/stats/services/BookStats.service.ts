@@ -122,8 +122,8 @@ export class BookStatsService {
             select bc."parentCategoryId" as "id"
             from book_category bc
             inner join book_categories_book_category bcbc on bcbc."bookCategoryId" = bc."id"
-            inner join book b on b.id = bcbc."bookId"
-            where bcbc."bookId" = $1
+            inner join book b on b."id" = bcbc."bookId"
+            where bcbc."bookId" = $1 and bc."root" != true and b."primaryCategoryId" is null
             group by bc."parentCategoryId"
             order by count(bc."parentCategoryId") desc
             limit 1
@@ -156,11 +156,13 @@ export class BookStatsService {
 
     await BookEntity.update(
       id,
-      {
-        ...removeNullValues(stats),
-        rankingScore,
-        primaryCategoryId,
-      },
+      removeNullValues(
+        {
+          ...stats,
+          rankingScore,
+          primaryCategoryId,
+        },
+      ),
     );
 
     if (reindex)

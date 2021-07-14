@@ -166,6 +166,12 @@ Proxy local 9201 to remote ES
 ssh -g -L 9201:localhost:9200 -f -N deploy@upolujksiazke.pl
 ```
 
+Logs
+
+```bash
+sudo journalctl -xefu node-upolujksiazke.service
+```
+
 ### REPL
 
 There is NestJS context present on window, it is called `app`. All entities are exporeted to context.

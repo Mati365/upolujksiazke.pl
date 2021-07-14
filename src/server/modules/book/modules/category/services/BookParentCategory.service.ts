@@ -39,7 +39,6 @@ export class BookParentCategoryService {
    */
   async findAndAssignParentCategories(entities: BookCategoryEntity[]): Promise<BookCategoryEntity[]> {
     const {categoryService} = this;
-    const otherCategory = await this.findDefaultParentCategory();
 
     return pMap(
       entities,
@@ -54,10 +53,13 @@ export class BookParentCategoryService {
           },
         );
 
+        if (!matchedRootCategory)
+          return dto;
+
         return new BookCategoryEntity(
           {
             ...dto,
-            parentCategoryId: matchedRootCategory?.id ?? otherCategory?.id,
+            parentCategoryId: matchedRootCategory?.id,
           },
         );
       },

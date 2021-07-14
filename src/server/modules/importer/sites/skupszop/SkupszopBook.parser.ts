@@ -60,10 +60,10 @@ export class SkupszopBookParser
     const {brand: publisher} = productSchema;
     const release = new CreateBookReleaseDto(
       {
+        title: productSchema.name,
         lang: Language.PL,
         format: normalizeParsedText(detailsText.match(/Rozmiar: ([\S]+)/)?.[1]),
         defaultPrice: normalizePrice($('.market-price > span').text())?.price,
-        title: productSchema.name,
         description: normalizeParsedText(
           $('.product-container[data-id] .product-description .desc-box').html(),
         ),
@@ -84,17 +84,19 @@ export class SkupszopBookParser
       },
     );
 
+    const authors = $('.product-author-box .authors .authors-item').toArray().map((element) => (
+      new CreateBookAuthorDto(
+        {
+          name: $(element).text(),
+        },
+      )
+    ));
+
     return new CreateBookDto(
       {
         defaultTitle: productSchema.name,
-        authors: bookSchema.author.map((author: any) => (
-          new CreateBookAuthorDto(
-            {
-              name: author.name,
-            },
-          )
-        )),
         releases: [release],
+        authors,
         categories: (
           $('.breadcrumb-item[itemscope]:not(:first-child):not(:last-child) span[itemprop="name"]').toArray().map(
             (item) => new CreateBookCategoryDto(

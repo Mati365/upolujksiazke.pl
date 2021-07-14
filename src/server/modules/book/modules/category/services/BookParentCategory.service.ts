@@ -77,6 +77,8 @@ export class BookParentCategoryService {
    */
   async findAndAssignMissingParentCategories() {
     const {categoryService} = this;
+
+    const defaultCategory = await this.findDefaultParentCategory();
     const categoriesIterator = paginatedAsyncIterator(
       {
         limit: 40,
@@ -97,8 +99,6 @@ export class BookParentCategoryService {
       },
     );
 
-    const otherCategory = await this.findDefaultParentCategory();
-
     for await (const [, categories] of categoriesIterator) {
       for await (const category of categories) {
         const matchedRootCategory = await categoryService.findSimilarCategory(
@@ -108,7 +108,7 @@ export class BookParentCategoryService {
           },
         );
 
-        const parentCategoryId = matchedRootCategory?.id ?? otherCategory?.id;
+        const parentCategoryId = matchedRootCategory?.id ?? defaultCategory?.id;
         if (!R.isNil(parentCategoryId)) {
           await BookCategoryEntity.update(
             category.id,

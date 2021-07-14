@@ -4,7 +4,10 @@ import {
   Entity, Column, OneToOne,
   ManyToMany, OneToMany, JoinTable,
   JoinColumn, ManyToOne, RelationId, Index,
+  BeforeInsert, BeforeUpdate,
 } from 'typeorm';
+
+import {truncateLevenshteinText} from '@server/common/helpers';
 
 import {Language} from '@shared/enums';
 import {TrackScrappersList} from '@server/modules/remote/entity/RemoteRecord.entity';
@@ -244,5 +247,14 @@ export class BookEntity extends DatedRecordEntity implements TrackScrappersList 
 
     if (partial)
       Object.assign(this, partial);
+  }
+
+  @BeforeInsert()
+  @BeforeUpdate()
+  transformFields() {
+    const {defaultTitle, originalTitle} = this;
+
+    this.defaultTitle = truncateLevenshteinText(defaultTitle);
+    this.originalTitle = truncateLevenshteinText(originalTitle);
   }
 }

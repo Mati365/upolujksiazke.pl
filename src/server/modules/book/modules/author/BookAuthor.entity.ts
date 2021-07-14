@@ -4,6 +4,7 @@ import {
   BeforeInsert, BeforeUpdate,
 } from 'typeorm';
 
+import {truncateLevenshteinText} from '@server/common/helpers';
 import {parameterize} from '@shared/helpers/parameterize';
 import {normalizeHTML} from '@server/modules/importer/kinds/scrappers/helpers';
 
@@ -50,9 +51,9 @@ export class BookAuthorEntity extends DatedRecordEntity {
       this.description = normalizeHTML(description);
 
     if (name)
-      this.name = name.trim();
+      this.name = truncateLevenshteinText(name);
 
-    if (!parameterizedName && name)
-      this.parameterizedName = parameterize(reorderAuthorName(name));
+    if (!parameterizedName && this.name)
+      this.parameterizedName = parameterize(reorderAuthorName(this.name));
   }
 }

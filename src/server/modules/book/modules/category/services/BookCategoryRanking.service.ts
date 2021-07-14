@@ -3,6 +3,7 @@ import {EntityManager} from 'typeorm';
 import * as R from 'ramda';
 
 import {paginatedAsyncIterator} from '@server/common/helpers/db';
+import {EsBookCategoryIndex} from '../indices/EsBookCategory.index';
 import {BookStatsService} from '../../stats/services';
 import {BookCategoryEntity} from '../BookCategory.entity';
 
@@ -10,12 +11,16 @@ import {BookCategoryEntity} from '../BookCategory.entity';
 export class BookCategoryRankingService {
   constructor(
     private readonly bookStats: BookStatsService,
+    private readonly bookCategoryIndex: EsBookCategoryIndex,
     private readonly entityManager: EntityManager,
   ) {}
 
   async refreshCategoryRanking() {
+    const {bookCategoryIndex} = this;
+
     await this.refreshNestedCategoriesRanking();
     await this.refreshRootCategoriesRating();
+    await bookCategoryIndex.reindexAllEntities();
   }
 
   /**

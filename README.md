@@ -151,7 +151,6 @@ gulp entity:reindex:all
   await app.select(ScrapperModule).get('BookParentCategoryService').findAndAssignMissingParentCategories();
   await app.select(ScrapperModule).get('BookCategoryRankingService').refreshCategoryRanking();
   await app.select(ScrapperModule).get('BookStatsService').refreshAllBooksStats();
-  ... and reindex again
 [/console]
 
 yarn run develop

@@ -1,4 +1,5 @@
 import * as R from 'ramda';
+import {truncateText} from '@shared/helpers/truncateText';
 
 export const normalizeParsedText: (str: string) => string = R.unless(
   R.isNil,
@@ -53,4 +54,15 @@ export function normalizePrice(str: string) {
  */
 export function normalizeParsedYear(str: string): number {
   return str && new Date(str.match(/\d{4}/)?.[0]).getFullYear();
+}
+
+/**
+ * Due to limit of levenshtein DB column it must be truncated
+ *
+ * @export
+ * @param {string} str
+ * @return {string}
+ */
+export function truncateLevenshteinText(str: string): string {
+  return truncateText(245, str?.trim());
 }

@@ -119,12 +119,12 @@ export class BookStatsService {
             where br."bookId" = $1
           ),
           primary_category as (
-            select bc."parentCategoryId" as "id"
+            select coalesce(b."primaryCategoryId", bc."parentCategoryId") as "id"
             from book_category bc
             inner join book_categories_book_category bcbc on bcbc."bookCategoryId" = bc."id"
             inner join book b on b."id" = bcbc."bookId"
             where bcbc."bookId" = $1 and bc."root" != true and b."primaryCategoryId" is null
-            group by bc."parentCategoryId"
+            group by coalesce(b."primaryCategoryId", bc."parentCategoryId")
             order by count(bc."parentCategoryId") desc
             limit 1
           )
@@ -158,9 +158,9 @@ export class BookStatsService {
       id,
       removeNullValues(
         {
-          ...stats,
           rankingScore,
           primaryCategoryId,
+          ...stats,
         },
       ),
     );
@@ -193,6 +193,7 @@ export class BookStatsService {
    * @memberof BookStatsService
    */
   async refreshAllBooksStats() {
+    const {bookEsIndex} = this;
     const it = this.bookSearchService.createIdsIteratedQuery(
       {
         pageLimit: 40,
@@ -201,5 +202,7 @@ export class BookStatsService {
 
     for await (const [, ids] of it)
       await this.refreshBooksStats(ids);
+
+    await bookEsIndex.reindexAllEntities();
   }
 }

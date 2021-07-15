@@ -288,6 +288,7 @@ Available scrappers:
 - [x] wykop.pl
 - [x] hrosskar.pl
 - [x] krytycznymokiem.blogspot.com
+- [x] lektury.gov.pl
 - [ ] wolnelektury.pl
 
 ## Stack

@@ -130,9 +130,10 @@ export class JwtAPIClient {
     const {
       camelizeResponse,
       decamelizeFormBody,
-      withAuthorizationHeader,
-      url, tokenAccessor,
+      url,
+      tokenAccessor,
       headers: globalHeaders,
+      withAuthorizationHeader = true,
     } = this.config;
 
     // used for silent registering user

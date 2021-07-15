@@ -206,7 +206,9 @@
 
   &__title {
     @include limit-text-lines(2);
+
     margin-top: 8px;
+    font-size: $text-normal;
   }
 
   .c-book-ribbons {

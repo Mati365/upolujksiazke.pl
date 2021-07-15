@@ -63,6 +63,7 @@ export class LekturyGovBookScrapper extends AsyncScrapper<BookScrapperInfo[], Le
     const dto = new CreateBookDto(
       {
         defaultTitle: book.title,
+        description: book.book_about,
         schoolBook: new CreateSchoolBookDto(
           {
             classLevel: findAndMap(

@@ -23,8 +23,10 @@ export class LekturyGovScrappersGroup extends BookShopScrappersGroup {
 
     this.api = new JwtAPIClient(
       {
-        tokenIsAlwaysRequired: true,
         url: options.apiURL,
+        tokenIsAlwaysRequired: true,
+        withAuthorizationHeader: true,
+        camelizeResponse: true,
         customTokensRefreshFn: async () => {
           const result = await parseAsyncURLIfOK(options.homepageURL);
 

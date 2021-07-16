@@ -7,7 +7,7 @@ import {getCurrentTimestampSuffix} from '@server/common/helpers';
 import {isDevMode, safeToString} from '@shared/helpers';
 
 import {CanBePromise, ListItem} from '@shared/types';
-import {MeasureCallDuration} from '@server/modules/api/helpers';
+import {MeasureCallDuration} from '@server/common/helpers/decorators';
 
 export type EsIdNamePair = ListItem;
 

@@ -1,6 +1,7 @@
 import {plainToClass} from 'class-transformer';
 
 import {ID} from '@shared/types';
+import {MeasureCallDuration} from '@server/common/helpers/decorators';
 import {BookCategoryRecord} from '@api/types/BookCategory.record';
 import {
   BooksCategoriesRepo,
@@ -10,10 +11,7 @@ import {
 
 import {BookCategorySerializer} from '../../serializers';
 import {ServerAPIClientChild} from '../ServerAPIClientChild';
-import {
-  MeasureCallDuration,
-  RedisMemoize,
-} from '../../helpers';
+import {RedisMemoize} from '../../helpers';
 
 export class BooksCategoriesServerRepo extends ServerAPIClientChild implements BooksCategoriesRepo {
   @MeasureCallDuration('findOneCategory')

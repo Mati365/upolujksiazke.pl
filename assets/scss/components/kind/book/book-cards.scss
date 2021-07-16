@@ -208,7 +208,7 @@
     @include limit-text-lines(2);
 
     margin-top: 8px;
-    font-size: $text-normal;
+    line-height: $text-normal;
   }
 
   .c-book-ribbons {

@@ -57,6 +57,7 @@
     --btn-x-padding: 10px;
     --btn-y-padding: 5px;
 
+    appearance: none;
     padding: var(--btn-y-padding) var(--btn-x-padding);
     border-radius: 5px;
     color: var(--btn-color);

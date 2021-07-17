@@ -27,7 +27,7 @@ namespace :deploy do
       execute "cd #{release_path} \
         && mkdir tmp \
         && chown deploy:webusers -R ./tmp ./dist \
-        && chmod 770 ./tmp ./dist \
+        && chmod -R 770 ./tmp ./dist \
         && ln -sf ../../.env ./.env \
         && ln -sf ../../.pgpass ./.pgpass \
         && yarn run bull:wait_if_has_jobs \

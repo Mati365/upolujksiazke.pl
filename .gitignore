@@ -118,6 +118,7 @@ dist
 tmp/
 backup/
 assets/cdn/
+public/sitemaps/
 
 .vscode/
 .pgpass

@@ -1,2 +1,3 @@
 User-agent: *
 Allow: /
+Sitemap: https://upolujksiazke.pl/sitemaps/sitemap.xml.gz

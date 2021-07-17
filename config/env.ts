@@ -1,3 +1,5 @@
+import * as path from 'path';
+
 import {Options as SentryOptions} from '@sentry/types';
 import {LogLevel} from '@sentry/types/dist/loglevel';
 
@@ -5,6 +7,7 @@ import {BookShopUrlsConfig} from '@importer/kinds/scrappers/BookShop.scrapper';
 import {WykopScrappersGroupConfig} from '@server/modules/importer/sites/wykop/WykopScrappersGroup';
 import {WykopAPI} from '@server/modules/importer/sites/wykop/api/WykopAPI';
 import {WikipediaScrappersGroupConfig} from '@server/modules/importer/sites/wikipedia/WikipediaScrappersGroup';
+import {SitemapServiceOptions} from '@server/modules/sitemap/services/Sitemap.service';
 
 /* eslint-disable import/no-default-export */
 require('dotenv').config();
@@ -28,6 +31,9 @@ export type AppEnv = Partial<{
   },
   server: {
     instances: number,
+    paths: {
+      public: string,
+    },
     jwt: {
       secret: string,
       expireSeconds: number,
@@ -62,6 +68,7 @@ export type AppEnv = Partial<{
       publicUrl: string,
       localPath: string,
     },
+    sitemap: SitemapServiceOptions,
     sentry: Omit<SentryOptions, 'integrations'>,
     parsers: Record<DefaultConfigBookShopNames, BookShopUrlsConfig> & {
       wykop: WykopScrappersGroupConfig,
@@ -99,20 +106,31 @@ const {
   WYKOP_ACCOUNT_KEY,
   CDN_PUBLIC_URL,
   CDN_LOCAL_PATH,
+  SITE_HOSTNAME = 'upolujksiazke.pl',
 } = process.env;
+
+const PUBLIC_PATH = path.resolve(__dirname, 'public/');
 
 export const GLOBAL_CONFIG: Record<string, AppEnv> = {
   shared: {
     shared: {
       website: {
-        name: 'upolujksiazke.pl',
+        name: SITE_HOSTNAME,
       },
     },
     server: {
       instances: +APP_INSTANCES,
+      paths: {
+        public: PUBLIC_PATH,
+      },
       jwt: {
         secret: JWT_SECRET,
         expireSeconds: +JWT_EXPIRE_IN_SECONDS,
+      },
+      sitemap: {
+        outputPath: path.resolve(PUBLIC_PATH, 'sitemaps'),
+        urlNestedPath: 'sitemaps',
+        hostname: `https://${SITE_HOSTNAME}`,
       },
       ssl: {
         key: HTTPS_KEY_PATH,
@@ -297,7 +315,7 @@ export const GLOBAL_CONFIG: Record<string, AppEnv> = {
   production: {
     client: {
       apiConfig: {
-        url: 'https://upolujksiazke.pl/api/v1',
+        url: `https://${SITE_HOSTNAME}/api/v1`,
       },
     },
   },

@@ -5,14 +5,19 @@ import {UndecoratedLink} from '@client/components/ui/Link';
 import {BookSchoolLevel} from '@shared/enums';
 import {BooksFiltersWithNames} from '@api/repo';
 import {
-  BookAuthorRecord,
-  BookCardRecord,
   BookCategoryRecord,
-  BookEraRecord,
-  BookGenreRecord,
-  BookPublisherRecord,
   TagRecord,
 } from '@api/types';
+
+export type IdNameLinkPair = {
+  parameterizedName?: string,
+  id: any,
+};
+
+export type IdSlugBookPair = {
+  parameterizedSlug: string,
+  id: any,
+};
 
 export const HOME_PATH = '/';
 export const HomeLink = UndecoratedLink.create(HOME_PATH);
@@ -59,27 +64,26 @@ export const BOOKS_CATEGORY_PATH = '/kategoria/:slug,:id';
 export const BookCategoryLink = UndecoratedLink.create<Parameters<typeof genBookCategoryLink>[0]>(genBookCategoryLink);
 
 export const BOOK_PATH = '/ksiazka/:slug,:id';
-export const BookLink = UndecoratedLink.create<Pick<BookCardRecord, 'parameterizedSlug' | 'id'>>(
-  ({id, parameterizedSlug}) => `/ksiazka/${parameterizedSlug},${id}`,
-);
+export const genBookLink = ({id, parameterizedSlug}: IdSlugBookPair) => `/ksiazka/${parameterizedSlug},${id}`;
+export const BookLink = UndecoratedLink.create<IdSlugBookPair>(genBookLink);
 
 export const BOOK_ALL_REVIEWS_PATH = `${BOOK_PATH}/recenzje`;
-export const BookAllReviewsLink = UndecoratedLink.create<Pick<BookCardRecord, 'parameterizedSlug' | 'id'>>(
+export const BookAllReviewsLink = UndecoratedLink.create<IdSlugBookPair>(
   ({id, parameterizedSlug}) => `/ksiazka/${parameterizedSlug},${id}/recenzje`,
 );
 
 export const PUBLISHER_PATH = '/wydawca/:slug,:id';
-export const PublisherLink = UndecoratedLink.create<Pick<BookPublisherRecord, 'parameterizedName' | 'id'>>(
+export const PublisherLink = UndecoratedLink.create<IdNameLinkPair>(
   ({id, parameterizedName}) => `/wydawca/${parameterizedName},${id}`,
 );
 
 export const BOOK_ERA_PATH = '/epoka/:slug,:id';
-export const BookEraLink = UndecoratedLink.create<Pick<BookEraRecord, 'parameterizedName' | 'id'>>(
+export const BookEraLink = UndecoratedLink.create<IdNameLinkPair>(
   ({id, parameterizedName}) => `/epoka/${parameterizedName},${id}`,
 );
 
 export const BOOK_GENRE_PATH = '/gatunek/:slug,:id';
-export const BookGenreLink = UndecoratedLink.create<Pick<BookGenreRecord, 'parameterizedName' | 'id'>>(
+export const BookGenreLink = UndecoratedLink.create<IdNameLinkPair>(
   ({id, parameterizedName}) => `/gatunek/${parameterizedName},${id}`,
 );
 
@@ -92,15 +96,13 @@ export const BooksReviewsLink = UndecoratedLink.create(BOOKS_REVIEWS_PATH);
 export const TOP_BOOKS_PATH = '/top-ksiazki';
 export const TopBooksLink = UndecoratedLink.create(TOP_BOOKS_PATH);
 
-export const AUTHOR_PATH = '/autor/:slug,:id';
 export const AUTHORS_PATH = '/autorzy/:letter?';
-
 export const genAuthorsLink = (letter?: string) => `/autorzy${(letter ? `/${letter}` : '')}`;
 export const AuthorsLink = UndecoratedLink.create<string>(genAuthorsLink);
 
-export const AuthorLink = UndecoratedLink.create<Pick<BookAuthorRecord, 'parameterizedName' | 'id'>>(
-  ({id, parameterizedName}) => `/autor/${parameterizedName},${id}`,
-);
+export const AUTHOR_PATH = '/autor/:slug,:id';
+export const genAuthorLink = ({id, parameterizedName}: IdNameLinkPair) => `/autor/${parameterizedName},${id}`;
+export const AuthorLink = UndecoratedLink.create<IdNameLinkPair>(genAuthorLink);
 
 export const TAG_PATH = '/tag/:slug,:id';
 

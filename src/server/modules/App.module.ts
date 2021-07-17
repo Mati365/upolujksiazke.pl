@@ -28,12 +28,14 @@ import {FrontModule} from './front';
 import {TrackerModule} from './tracker';
 import {ReactionsModule} from './reactions';
 import {UserModule} from './user';
+import {SitemapModule} from './sitemap';
 
 @Module(
   {
     imports: [
       DatabaseModule,
       EventEmitterModule.forRoot(),
+      SitemapModule.register(SERVER_ENV.sitemap),
       ...(
         isCmdAppInstance()
           ? []

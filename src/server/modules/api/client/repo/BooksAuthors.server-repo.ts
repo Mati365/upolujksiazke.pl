@@ -1,9 +1,8 @@
 import {BookAuthorsRepo, BooksAuthorsFilters} from '@api/repo';
+import {MeasureCallDuration} from '@server/common/helpers/decorators';
+
 import {ServerAPIClientChild} from '../ServerAPIClientChild';
-import {
-  MeasureCallDuration,
-  RedisMemoize,
-} from '../../helpers';
+import {RedisMemoize} from '../../helpers';
 
 export class BooksAuthorsServerRepo extends ServerAPIClientChild implements BookAuthorsRepo {
   /**

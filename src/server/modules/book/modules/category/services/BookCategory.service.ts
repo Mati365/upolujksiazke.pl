@@ -9,21 +9,20 @@ import {
 } from '@shared/helpers';
 
 import {
-  paginatedAsyncIterator,
-  PaginationForwardIteratorAttrs,
-} from '@server/common/helpers/db/paginatedAsyncIterator';
-
-import {ID} from '@shared/types';
-import {CategoriesFindOneAttrs} from '@api/repo';
-
-import {parameterize} from '@shared/helpers/parameterize';
-import {
   BasicLimitPaginationOptions,
+  PredefinedEntityDbIterator,
+  IdMappedEntityDbIterator,
+  createDbIteratedQuery,
   forwardTransaction,
   groupRawMany,
   runInPostHookIfPresent,
   upsert,
 } from '@server/common/helpers/db';
+
+import {ID} from '@shared/types';
+import {CategoriesFindOneAttrs} from '@api/repo';
+
+import {parameterize} from '@shared/helpers/parameterize';
 
 import {BookGroupedSelectAttrs} from '@server/modules/book/shared/types';
 import {BookCategoryEntity} from '../BookCategory.entity';
@@ -125,37 +124,36 @@ export class BookCategoryService {
   }
 
   /**
+   * Creates iterator that walks over Categories table
+   *
+   * @template R
+   * @param {PredefinedEntityDbIterator<BookAuthorEntity, R>} attrs
+   * @memberof BookAuthorService
+   */
+  createIteratedQuery<R>(attrs: PredefinedEntityDbIterator<BookCategoryEntity, R>) {
+    return createDbIteratedQuery(
+      {
+        prefix: 'c',
+        query: (
+          BookCategoryEntity.createQueryBuilder('c')
+        ),
+        ...attrs,
+      },
+    );
+  }
+
+  /**
    * Create query that iterates over all categories
    *
-   * @param {Object} attrs
+   * @param {IdMappedEntityDbIterator<BookCategoryEntity>} attrs
    * @returns
-   * @memberof BookCategoryService
+   * @memberof CardBookSearchService
    */
-  createIdsIteratedQuery(
-    {
-      pageLimit,
-      maxOffset = Infinity,
-      query = (
-        BookCategoryEntity.createQueryBuilder('c')
-      ),
-    }: PaginationForwardIteratorAttrs<BookCategoryEntity>,
-  ) {
-    return paginatedAsyncIterator(
+  createIdsIteratedQuery(attrs: IdMappedEntityDbIterator<BookCategoryEntity>) {
+    return this.createIteratedQuery(
       {
-        maxOffset,
-        limit: pageLimit,
-        queryExecutor: async ({limit, offset}) => {
-          const result = await (
-            query
-              .select('c.id')
-              .offset(offset)
-              .limit(limit)
-              .orderBy('c.id', 'DESC')
-              .getMany()
-          );
-
-          return R.pluck('id', result);
-        },
+        ...attrs,
+        mapperFn: (result) => R.pluck('id', result),
       },
     );
   }

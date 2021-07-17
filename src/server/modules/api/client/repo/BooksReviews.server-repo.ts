@@ -1,5 +1,6 @@
 import {plainToClass} from 'class-transformer';
 
+import {MeasureCallDuration} from '@server/common/helpers/decorators/MeasureCallDuration';
 import {BookReviewRecord} from '@api/types';
 import {CreateReviewReactionInput} from '@api/types/input';
 import {
@@ -12,10 +13,7 @@ import {
 import {Authorized} from '../../decorators/Authorized';
 import {BookReviewSerializer} from '../../serializers';
 import {ServerAPIClientChild} from '../ServerAPIClientChild';
-import {
-  MeasureCallDuration,
-  RedisMemoize,
-} from '../../helpers';
+import {RedisMemoize} from '../../helpers';
 
 export class BooksReviewsServerRepo extends ServerAPIClientChild implements BookReviewsRepo {
   /**

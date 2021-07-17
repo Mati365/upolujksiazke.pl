@@ -17,8 +17,8 @@ import {
   SingleAggBookFilters,
 } from '@api/repo';
 
+import {MeasureCallDuration} from '@server/common/helpers/decorators';
 import {RedisMemoize} from '../../helpers';
-import {MeasureCallDuration} from '../../helpers/MeasureCallDuration';
 import {
   BookAggsSerializer,
   BookAuthorSerializer,

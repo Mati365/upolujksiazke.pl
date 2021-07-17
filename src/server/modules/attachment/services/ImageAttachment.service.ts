@@ -2,7 +2,7 @@ import {Inject, Injectable, Logger} from '@nestjs/common';
 import {EntityManager} from 'typeorm';
 import {convert, resize} from 'easyimage';
 import chalk from 'chalk';
-import mkdirp from 'mkdirp';
+import {mkdirp} from 'fs-extra';
 import * as path from 'path';
 import * as mime from 'mime-types';
 import * as R from 'ramda';
@@ -241,16 +241,7 @@ export class ImageAttachmentService {
    *
    * @memberof ImageAttachmentService
    */
-  @EnterTmpFolderScope(
-    function tmpFolderConfig(this: ImageAttachmentService) {
-      return {
-        dirService: this.tmpDirService,
-        attrs: {
-          deleteOnExit: true,
-        },
-      };
-    },
-  )
+  @EnterTmpFolderScope()
   async fetchAndCreateScaled(
     {
       extension = 'webp',

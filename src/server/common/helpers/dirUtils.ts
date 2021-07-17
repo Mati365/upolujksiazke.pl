@@ -1,5 +1,5 @@
 import fs from 'fs';
-import mkdirp from 'mkdirp';
+import {mkdirpSync, mkdirp} from 'fs-extra';
 
 import {
   fileExistsSync,
@@ -18,7 +18,7 @@ export async function removeDirIfExistsAsync(path: string) {
 
 export async function removeAndCreateDirSync(path: string) {
   removeDirIfExistsSync(path);
-  mkdirp.sync(path);
+  mkdirpSync(path);
   return path;
 }
 

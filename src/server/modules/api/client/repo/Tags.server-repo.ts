@@ -2,14 +2,12 @@ import {plainToClass} from 'class-transformer';
 
 import {ID} from '@shared/types';
 import {TagRecord} from '@api/types/Tag.record';
+import {MeasureCallDuration} from '@server/common/helpers/decorators';
 import {MostPopularTagsFilters, TagsRepo} from '@api/repo';
 
 import {TagSerializer} from '../../serializers';
 import {ServerAPIClientChild} from '../ServerAPIClientChild';
-import {
-  MeasureCallDuration,
-  RedisMemoize,
-} from '../../helpers';
+import {RedisMemoize} from '../../helpers';
 
 export class TagsServerRepo extends ServerAPIClientChild implements TagsRepo {
   /**

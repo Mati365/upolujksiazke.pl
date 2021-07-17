@@ -6,11 +6,12 @@ import * as R from 'ramda';
 
 import {
   PaginationResult,
-  PaginationForwardIteratorAttrs,
+  PredefinedEntityDbIterator,
+  IdMappedEntityDbIterator,
   groupRawMany,
   upsert,
-  paginatedAsyncIterator,
   forwardTransaction,
+  createDbIteratedQuery,
 } from '@server/common/helpers/db';
 
 import {BooksAuthorsFilters} from '@api/repo';
@@ -74,37 +75,36 @@ export class BookAuthorService {
   }
 
   /**
+   * Creates iterator that walks over Authors table
+   *
+   * @template R
+   * @param {PredefinedEntityDbIterator<BookAuthorEntity, R>} attrs
+   * @memberof BookAuthorService
+   */
+  createIteratedQuery<R>(attrs: PredefinedEntityDbIterator<BookAuthorEntity, R>) {
+    return createDbIteratedQuery(
+      {
+        prefix: 'c',
+        query: (
+          BookAuthorEntity.createQueryBuilder('c')
+        ),
+        ...attrs,
+      },
+    );
+  }
+
+  /**
    * Create query that iterates over all authors
    *
-   * @param {Object} attrs
+   * @param {IdMappedEntityDbIterator<BookAuthorEntity>} attrs
    * @returns
    * @memberof BookAuthorService
    */
-  createIdsIteratedQuery(
-    {
-      pageLimit,
-      maxOffset = Infinity,
-      query = (
-        BookAuthorEntity.createQueryBuilder('c')
-      ),
-    }: PaginationForwardIteratorAttrs<BookAuthorEntity>,
-  ) {
-    return paginatedAsyncIterator(
+  createIdsIteratedQuery(attrs: IdMappedEntityDbIterator<BookAuthorEntity>) {
+    return this.createIteratedQuery(
       {
-        maxOffset,
-        limit: pageLimit,
-        queryExecutor: async ({limit, offset}) => {
-          const result = await (
-            query
-              .select('c.id')
-              .offset(offset)
-              .limit(limit)
-              .orderBy('c.id', 'DESC')
-              .getMany()
-          );
-
-          return R.pluck('id', result);
-        },
+        ...attrs,
+        mapperFn: (result) => R.pluck('id', result),
       },
     );
   }

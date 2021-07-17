@@ -46,7 +46,7 @@ export abstract class SitemapGenerator {
       {
         limit: 2500,
         getSitemapStream: (i) => {
-          const file = `./${indexFileName}-${i}.xml.gz`;
+          const file = `${indexFileName}-${i}.xml.gz`;
           const sitemapStream = new SitemapStream(
             {
               hostname,

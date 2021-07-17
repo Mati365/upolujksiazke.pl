@@ -52,7 +52,7 @@ async function forkApp(
     )
     .use(
       '/public',
-      express.static(path.resolve(__dirname, 'public/'), {fallthrough: false}),
+      express.static(SERVER_ENV.paths.public, {fallthrough: false}),
     )
     .use(cookieParser())
     .useGlobalPipes(

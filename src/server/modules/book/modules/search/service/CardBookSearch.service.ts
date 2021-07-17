@@ -3,7 +3,11 @@ import {Inject, Injectable, forwardRef} from '@nestjs/common';
 import {Connection, EntityTarget, SelectQueryBuilder} from 'typeorm';
 
 import {objPropsToPromise, preserveOrderByIds} from '@shared/helpers';
-import {paginatedAsyncIterator, PaginationForwardIteratorAttrs} from '@server/common/helpers/db/paginatedAsyncIterator';
+import {
+  PredefinedEntityDbIterator,
+  IdMappedEntityDbIterator,
+  createDbIteratedQuery,
+} from '@server/common/helpers/db';
 
 import {Awaited} from '@shared/types';
 import {BasicAPIPagination} from '@api/APIClient';
@@ -104,10 +108,10 @@ export class CardBookSearchService {
    * Creates iterator that iterates over all most popular books
    * It calculates popularity by reviews count
    *
-   * @param {Object} attrs
+   * @param {IdMappedEntityDbIterator<BookEntity>} attrs
    * @memberof CardBookSearchService
    */
-  createMostPopularIdsIteratedQuery(attrs: Omit<PaginationForwardIteratorAttrs<BookEntity>, 'query'>) {
+  createMostPopularIdsIteratedQuery(attrs: IdMappedEntityDbIterator<BookEntity>) {
     return this.createIdsIteratedQuery(
       {
         ...attrs,
@@ -121,37 +125,36 @@ export class CardBookSearchService {
   }
 
   /**
+   * Creates iterator that walks over Books table
+   *
+   * @template R
+   * @param {PredefinedEntityDbIterator<BookAuthorEntity, R>} attrs
+   * @memberof BookAuthorService
+   */
+  createIteratedQuery<R>(attrs: PredefinedEntityDbIterator<BookEntity, R>) {
+    return createDbIteratedQuery(
+      {
+        prefix: 'b',
+        query: (
+          BookEntity.createQueryBuilder('b')
+        ),
+        ...attrs,
+      },
+    );
+  }
+
+  /**
    * Create query that iterates over all books
    *
-   * @param {Object} attrs
+   * @param {IdMappedEntityDbIterator<BookEntity>} attrs
    * @returns
    * @memberof CardBookSearchService
    */
-  createIdsIteratedQuery(
-    {
-      pageLimit,
-      maxOffset = Infinity,
-      query = (
-        BookEntity.createQueryBuilder('b')
-      ),
-    }: PaginationForwardIteratorAttrs<BookEntity>,
-  ) {
-    return paginatedAsyncIterator(
+  createIdsIteratedQuery(attrs: IdMappedEntityDbIterator<BookEntity>) {
+    return this.createIteratedQuery(
       {
-        maxOffset,
-        limit: pageLimit,
-        queryExecutor: async ({limit, offset}) => {
-          const result = await (
-            query
-              .select('b.id')
-              .offset(offset)
-              .limit(limit)
-              .orderBy('b.id')
-              .getMany()
-          );
-
-          return R.pluck('id', result);
-        },
+        ...attrs,
+        mapperFn: (result) => R.pluck('id', result),
       },
     );
   }

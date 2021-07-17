@@ -5,9 +5,13 @@ import 'isomorphic-fetch';
 import gulp from 'gulp';
 
 import * as Scrapper from './scrapper';
+import * as Sitemap from './sitemap';
 import {Website, Category} from './entity';
 
 import {reindexAllTask} from './es/reindex.task';
+
+// sitemap
+gulp.task('sitemap:refresh', Sitemap.refreshSitemapTask);
 
 // entities
 gulp.task('entity:website:fetch-missing-logos', Website.fetchMissingLogosTask);

@@ -197,6 +197,12 @@ app.select(ScrapperModule).get('EsBookIndex').reindexAllEntities();
 
 ### Tasks
 
+Sitemap:
+
+```bash
+gulp sitemap:refresh
+```
+
 Fetchers:
 
 ```bash

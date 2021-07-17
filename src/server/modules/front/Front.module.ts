@@ -7,12 +7,10 @@ import {PAGE_I18N} from '@client/i18n/packs';
 import {ServerExceptionFilter} from '@server/common/filters/ServerException.filter';
 import {FrontController} from './Front.controller';
 import {I18nModule} from '../i18n';
-import {SitemapModule} from './modules';
 
 @Module(
   {
     imports: [
-      SitemapModule,
       I18nModule.register(
         {
           packs: PAGE_I18N,

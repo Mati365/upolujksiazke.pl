@@ -2,7 +2,7 @@ import {from, of, defer} from 'rxjs';
 import {filter, mergeAll, concatMap} from 'rxjs/operators';
 import * as path from 'path';
 import * as R from 'ramda';
-import mkdirp from 'mkdirp';
+import {mkdirp} from 'fs-extra';
 
 import {downloadFile} from '@server/common/helpers/downloadFile';
 import {ungzipFile} from '@server/common/helpers/extractor/gzip';

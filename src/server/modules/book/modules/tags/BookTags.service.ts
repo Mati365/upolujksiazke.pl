@@ -3,13 +3,52 @@ import {EntityManager} from 'typeorm';
 import pMap from 'p-map';
 import * as R from 'ramda';
 
-import {groupRawMany} from '@server/common/helpers/db';
+import {
+  PredefinedEntityDbIterator,
+  IdMappedEntityDbIterator,
+  createDbIteratedQuery,
+  groupRawMany,
+} from '@server/common/helpers/db';
 
 import {TagEntity} from '../../../tag/Tag.entity';
 import {BookGroupedSelectAttrs} from '../../shared/types';
 
 @Injectable()
 export class BookTagsService {
+  /**
+   * Creates iterator that walks over Tag table
+   *
+   * @template R
+   * @param {PredefinedEntityDbIterator<TagEntity, R>} attrs
+   * @memberof BookTagsService
+   */
+  createIteratedQuery<R>(attrs: PredefinedEntityDbIterator<TagEntity, R>) {
+    return createDbIteratedQuery(
+      {
+        prefix: 't',
+        query: (
+          TagEntity.createQueryBuilder('t')
+        ),
+        ...attrs,
+      },
+    );
+  }
+
+  /**
+   * Create query that iterates over all tags
+   *
+   * @param {IdMappedEntityDbIterator<TagEntity>} attrs
+   * @memberof BookTagsService
+   */
+  createIdsIteratedQuery(attrs: IdMappedEntityDbIterator<TagEntity>) {
+    return this.createIteratedQuery(
+      {
+        ...attrs,
+        mapperFn: (result) => R.pluck('id', result),
+      },
+    );
+  }
+
   /**
    * Returns array of tags for books
    *

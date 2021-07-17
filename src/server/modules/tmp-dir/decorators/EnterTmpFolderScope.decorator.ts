@@ -9,6 +9,15 @@ type EnterTmpFolderScopeConfig = {
   attrs: TmpDirScopeEnterAttrs<any>,
 };
 
+const defaultConfigFn = function tmpFolderConfig(this: any): EnterTmpFolderScopeConfig {
+  return {
+    dirService: this.tmpDirService,
+    attrs: {
+      deleteOnExit: true,
+    },
+  };
+};
+
 /**
  * Wraps function and provides them tmpFolder utils
  *
@@ -16,7 +25,7 @@ type EnterTmpFolderScopeConfig = {
  * @param {() => EnterTmpFolderScopeConfig} configFn
  * @returns
  */
-export function EnterTmpFolderScope(configFn: () => EnterTmpFolderScopeConfig) {
+export function EnterTmpFolderScope(configFn: () => EnterTmpFolderScopeConfig = defaultConfigFn) {
   const innerWrapper = function innerWrapper(wrappedFn: Function) {
     let cachedConfig: EnterTmpFolderScopeConfig = null;
 

@@ -1,5 +1,5 @@
 import path from 'path';
-import mkdirp from 'mkdirp';
+import {mkdirpSync} from 'fs-extra';
 import {Observable} from 'rxjs';
 import {Inject, Injectable, OnModuleInit} from '@nestjs/common';
 
@@ -71,7 +71,7 @@ export class TmpDirService implements OnModuleInit {
 
   onModuleInit() {
     if (this.preserveContentOnExit)
-      mkdirp.sync(this.rootPath);
+      mkdirpSync(this.rootPath);
     else
       removeAndCreateDirSync(this.rootPath);
   }

@@ -54,6 +54,10 @@ async function forkApp(
       '/public',
       express.static(SERVER_ENV.paths.public, {fallthrough: false}),
     )
+    .use(
+      '/sitemaps',
+      express.static(SERVER_ENV.sitemap.outputPath, {fallthrough: false}),
+    )
     .use(cookieParser())
     .useGlobalPipes(
       new ValidationPipe(

@@ -3,6 +3,7 @@ import {createGzip} from 'zlib';
 import {createWriteStream} from 'fs';
 import * as path from 'path';
 
+import {concatUrlParts} from '@shared/helpers/concatUrls';
 import {CanBePromise} from '@shared/types';
 
 export type SitemapGeneratorResult = {
@@ -57,7 +58,11 @@ export abstract class SitemapGenerator {
             .pipe(createWriteStream(path.resolve(outputPath, file)));
 
           return <any> [
-            path.join(hostname, urlNestedPath, file),
+            concatUrlParts([
+              hostname,
+              urlNestedPath,
+              file,
+            ]),
             sitemapStream,
           ];
         },

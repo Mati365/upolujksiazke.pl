@@ -11,6 +11,9 @@ export const isAbsoluteURL = R.test(/^https?:\/\//);
  * @returns {string}
  */
 export function concatUrls(a: string, b: string): string {
+  if (!a && b)
+    return b;
+
   if (!b || b === '/')
     return a;
 
@@ -24,4 +27,18 @@ export function concatUrls(a: string, b: string): string {
     R.endsWith('/', a) ? R.init(a) : a,
     R.startsWith('/', b) ? R.tail(b) : b,
   ].join('/');
+}
+
+/**
+ * Combines array of urls
+ *
+ * @export
+ * @param {string[]} parts
+ * @return {string}
+ */
+export function concatUrlParts(parts: string[]): string {
+  return (parts || []).reduce(
+    (acc, item) => concatUrls(acc, item),
+    null,
+  );
 }

@@ -6,6 +6,7 @@ import * as path from 'path';
 import {move} from 'fs-extra';
 
 import {removeDirIfExistsAsync} from '@server/common/helpers';
+import {concatUrlParts} from '@shared/helpers/concatUrls';
 
 import {CanBePromise} from '@shared/types';
 import {MeasureCallDuration} from '@server/common/helpers/decorators';
@@ -91,11 +92,11 @@ export class SitemapService {
         );
 
         stream.write(
-          path.join(
-            `https://${hostname}`,
+          concatUrlParts([
+            hostname,
             urlNestedPath,
             path.basename(filePath),
-          ),
+          ]),
         );
       }
     };

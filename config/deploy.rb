@@ -43,9 +43,7 @@ namespace :deploy do
 
   task :warmup_cache do
     on roles(:app) do
-      within release_path do
-        execute "node_modules/.bin/gulp cache:warmup"
-      end
+      execute "cd #{release_path} && node_modules/.bin/gulp cache:warmup"
     end
   end
 end

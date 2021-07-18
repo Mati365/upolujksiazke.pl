@@ -5,10 +5,14 @@ import 'isomorphic-fetch';
 import gulp from 'gulp';
 
 import * as Scrapper from './scrapper';
-import * as Sitemap from './sitemap';
+import * as Sitemap from './sitemap/refreshSitemap.task';
+import * as Cache from './cache/warmupCache.task';
 import {Website, Category} from './entity';
 
 import {reindexAllTask} from './es/reindex.task';
+
+// cache
+gulp.task('cache:warmup', Cache.warmupCacheTask);
 
 // sitemap
 gulp.task('sitemap:refresh', Sitemap.refreshSitemapTask);

@@ -1,21 +1,21 @@
-import {CACHE_MANAGER, Inject, Injectable} from '@nestjs/common';
+import {Injectable, Inject, CACHE_MANAGER} from '@nestjs/common';
 import {Cron, CronExpression} from '@nestjs/schedule';
 import pMap from 'p-map';
 
 import {Layout} from '@client/containers/layout';
-import {APIClientService} from '@server/modules/api/services';
 import {CardBookSearchService} from '@server/modules/book/modules/search/service/CardBookSearch.service';
+import {APIClientService} from '@server/modules/api/services/APIClient.service';
 
 import {BookRoute} from '@client/routes/Book';
 import {HomeRoute} from '@client/routes/Home';
 import {BooksRoute} from '@client/routes/Books';
 
 @Injectable()
-export class RedisCacheWarmupCron {
+export class WarmupCacheCron {
   constructor(
     private readonly bookSearchService: CardBookSearchService,
     private readonly apiService: APIClientService,
-    @Inject(CACHE_MANAGER) public readonly cacheManager: any,
+    @Inject(CACHE_MANAGER) private readonly cacheManager: any,
   ) {}
 
   @Cron(CronExpression.EVERY_DAY_AT_5AM)
@@ -45,7 +45,7 @@ export class RedisCacheWarmupCron {
   /**
    * Warmup cache for books filters page
    *
-   * @memberof RedisCacheWarmupCron
+   * @memberof WarmupCacheCron
    */
   async warmupBooksCache() {
     await BooksRoute.getInitialProps(
@@ -59,7 +59,7 @@ export class RedisCacheWarmupCron {
   /**
    * Warmup home route cache
    *
-   * @memberof RedisCacheWarmup
+   * @memberof WarmupCacheCron
    */
   async warmupHomeCache() {
     await HomeRoute.getInitialProps(
@@ -73,7 +73,7 @@ export class RedisCacheWarmupCron {
   /**
    * Warmups books routes
    *
-   * @memberof RedisCacheWarmup
+   * @memberof WarmupCacheCron
    */
   async warmupBookCache() {
     const {

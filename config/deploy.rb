@@ -40,6 +40,14 @@ namespace :deploy do
       execute :sudo, "systemctl restart #{fetch(:systemd_service)}"
     end
   end
+
+  task :warmup_cache do
+    on roles(:app) do
+      within release_path do
+        execute "node_modules/.bin/gulp cache:warmup"
+      end
+    end
+  end
 end
 
 namespace :yarn do
@@ -52,3 +60,4 @@ after 'deploy:build_yarn', 'deploy:rsync_build'
 after 'deploy:rsync_build', 'deploy:migrate'
 after 'deploy:publishing', 'deploy:cleanup_tmp'
 after 'deploy:publishing', 'deploy:restart'
+after 'deploy:restart', 'deploy:warmup_cache'

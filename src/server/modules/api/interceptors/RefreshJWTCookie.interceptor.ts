@@ -11,7 +11,7 @@ import {
   REFRESH_TOKEN_COOKIE,
 } from '@client/constants/cookies';
 
-import {APIClientService} from '../services';
+import {APIClientService} from '../services/APIClient.service';
 
 @Injectable()
 export class RefreshJWTCookieInterceptor implements NestInterceptor {

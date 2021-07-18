@@ -29,6 +29,7 @@ import {TrackerModule} from './tracker';
 import {ReactionsModule} from './reactions';
 import {UserModule} from './user';
 import {SitemapModule} from './sitemap';
+import {NopModule} from './nop';
 
 @Module(
   {
@@ -36,12 +37,20 @@ import {SitemapModule} from './sitemap';
       DatabaseModule,
       EventEmitterModule.forRoot(),
       SitemapModule.register(SERVER_ENV.sitemap),
+      NopModule,
+      RedisCacheModule,
+      APIModule,
+      FrontModule,
+      ElasticsearchConnectionModule,
+      ManifestModule.forRoot(
+        {
+          file: 'public/files-manifest.json',
+        },
+      ),
       ...(
         isCmdAppInstance()
           ? []
           : [
-            ElasticsearchConnectionModule,
-            RedisCacheModule,
             BullModule.forRoot(
               {
                 redis: SERVER_ENV.redisConfig,
@@ -49,13 +58,6 @@ import {SitemapModule} from './sitemap';
                   removeOnComplete: true,
                   removeOnFail: true,
                 },
-              },
-            ),
-            APIModule,
-            FrontModule,
-            ManifestModule.forRoot(
-              {
-                file: 'public/files-manifest.json',
               },
             ),
             ...(

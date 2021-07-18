@@ -32,6 +32,9 @@ html(lang=lang)
 
     link(rel='stylesheet' href='https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&family=Roboto:ital,wght@1,100&display=swap')
     link(rel='stylesheet' type='text/css' href=files['client.css'])
+
+    script(async src='https://www.googletagmanager.com/gtag/js?id=#{gtagKey}')
+
   body
     #app-hydrate-root
       != html

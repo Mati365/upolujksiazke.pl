@@ -1,5 +1,4 @@
-import {REQUEST} from '@nestjs/core';
-import {Injectable, Inject, Scope, CACHE_MANAGER} from '@nestjs/common';
+import {Injectable, Inject, CACHE_MANAGER} from '@nestjs/common';
 import {EntityManager} from 'typeorm';
 import {Request} from 'express';
 import {Cache} from 'cache-manager';
@@ -21,6 +20,11 @@ import {UserService} from '@server/modules/user/User.service';
 
 import {DecodedJWT, JWTTokens} from '@api/jwt';
 import {
+  SafeInjectRequest,
+  safeRequestScope,
+} from '@server/modules/nop';
+
+import {
   CardBookSearchService,
   EsCardBookSearchService,
 } from '@server/modules/book/modules/search/service';
@@ -29,7 +33,7 @@ import {ServerAPIClient} from '../client/ServerAPIClient';
 
 @Injectable(
   {
-    scope: Scope.REQUEST,
+    scope: safeRequestScope(),
   },
 )
 export class APIClientService {
@@ -40,7 +44,7 @@ export class APIClientService {
 
   constructor(
     @Inject(CACHE_MANAGER) public readonly cacheManager: Cache,
-    @Inject(REQUEST) public readonly request: Request,
+    @SafeInjectRequest() public readonly request: Request,
     public readonly entityManager: EntityManager,
     public readonly bookService: BookService,
     public readonly bookCategoryService: BookCategoryService,

@@ -75,11 +75,14 @@ export type AppEnv = Partial<{
       wikipedia: WikipediaScrappersGroupConfig,
     },
   },
-  client: {
+  client: Partial<{
+    analytics: {
+      key: string,
+    },
     apiConfig: {
       url: string,
     },
-  },
+  }>,
 }>;
 
 const {
@@ -316,6 +319,9 @@ export const GLOBAL_CONFIG: Record<string, AppEnv> = {
     client: {
       apiConfig: {
         url: `https://${SITE_HOSTNAME}/api/v1`,
+      },
+      analytics: {
+        key: 'G-DX3LGWSRBQ',
       },
     },
   },

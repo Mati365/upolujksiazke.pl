@@ -1,18 +1,18 @@
-import {CacheModule, Global, Module} from '@nestjs/common';
+import {
+  CacheModule, Global, Module,
+  Inject, OnModuleDestroy, CACHE_MANAGER,
+} from '@nestjs/common';
+
 import * as redisStore from 'cache-manager-redis-store';
 
 import {SERVER_ENV} from '@server/constants/env';
-
-import {RedisCacheWarmupCron} from './cron/RedisCacheWarmup.cron';
-import {APIModule} from '../api';
-import {BookSearchModule} from '../book/modules/search';
+import {WarmupCacheModule} from './modules/warmup/WarmupCache.module';
 
 @Global()
 @Module(
   {
     imports: [
-      APIModule,
-      BookSearchModule,
+      WarmupCacheModule,
       CacheModule.register(
         {
           store: redisStore,
@@ -21,12 +21,18 @@ import {BookSearchModule} from '../book/modules/search';
         },
       ),
     ],
-    providers: [
-      RedisCacheWarmupCron,
-    ],
     exports: [
       CacheModule,
+      WarmupCacheModule,
     ],
   },
 )
-export class RedisCacheModule {}
+export class RedisCacheModule implements OnModuleDestroy {
+  constructor(
+    @Inject(CACHE_MANAGER) private readonly cacheManager: any,
+  ) {}
+
+  async onModuleDestroy() {
+    await this.cacheManager.store?.getClient()?.quit();
+  }
+}

@@ -19,7 +19,7 @@ import {preloadAsyncRouteProps} from '@client/components/utils/asyncRouteUtils';
 
 import {UseRefreshJWTInterceptor} from '../api/interceptors/RefreshJWTCookie.interceptor';
 import {ManifestService} from '../manifest/Manifest.service';
-import {APIClientService} from '../api/services';
+import {APIClientService} from '../api/services/APIClient.service';
 import {
   I18n,
   I18nContext,
@@ -109,6 +109,7 @@ export class FrontController {
     res.send(
       baseHTMLTemplate(
         {
+          gtagKey: CLIENT_ENV.analytics?.key,
           lang: i18n.lang,
           viewData: JSON.stringify(viewData),
           meta: `

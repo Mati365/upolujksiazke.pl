@@ -3,7 +3,7 @@ import {Response} from 'express';
 
 import {Throttle} from '@nestjs/throttler';
 import {Accepts} from '@server/common/decorators/Accepts.decorator';
-import {APIClientService} from '../../services';
+import {APIClientService} from '../../services/APIClient.service';
 import {RefreshTokenDto} from './dto';
 
 @Controller('users')

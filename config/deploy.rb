@@ -31,7 +31,8 @@ namespace :deploy do
         && ln -sf ../../.env ./.env \
         && ln -sf ../../.pgpass ./.pgpass \
         && yarn run bull:wait_if_has_jobs \
-        && yarn run migration:run"
+        && yarn run migration:run \
+        && yarn run sitemap:refresh"
     end
   end
 

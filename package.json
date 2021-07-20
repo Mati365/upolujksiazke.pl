@@ -12,6 +12,7 @@
     "migration:revert": "node_modules/.bin/ts-node --project tsconfig.json -r tsconfig-paths/register ./node_modules/.bin/typeorm migration:revert --config src/server/ormconfig.js",
     "migration:run": "TS_NODE_FILES=true TS_NODE_TRANSPILE_ONLY=true node_modules/.bin/ts-node --project tsconfig.json -r tsconfig-paths/register ./node_modules/.bin/typeorm migration:run --config src/server/ormconfig.js",
     "migration:generate": "TS_NODE_FILES=true TS_NODE_TRANSPILE_ONLY=true node_modules/.bin/ts-node --project tsconfig.json -r tsconfig-paths/register ./node_modules/.bin/typeorm migration:generate --config src/server/ormconfig.js",
+    "sitemap:refresh": "node_modules/.bin/gulp sitemap:refresh",
     "schema:sync": "TS_NODE_FILES=true TS_NODE_TRANSPILE_ONLY=true node_modules/.bin/ts-node --project tsconfig.json -r tsconfig-paths/register ./node_modules/.bin/typeorm schema:sync --config src/server/ormconfig.js",
     "schema:migrate": "TS_NODE_FILES=true TS_NODE_TRANSPILE_ONLY=true node_modules/.bin/ts-node --project tsconfig.json -r tsconfig-paths/register ./node_modules/.bin/typeorm migration:run --config src/server/ormconfig.js",
     "seed:config": "node_modules/.bin/ts-node --project tsconfig.json -r tsconfig-paths/register ./node_modules/typeorm-seeding/dist/cli.js config -n src/server/ormconfig.js",

@@ -1,5 +1,5 @@
 import {Inject, Injectable} from '@nestjs/common';
-import {SitemapIndexStream} from 'sitemap';
+import {SitemapIndexStream, SitemapAndIndexStream, SitemapStream} from 'sitemap';
 import {createGzip} from 'zlib';
 import {createWriteStream} from 'fs';
 import * as path from 'path';
@@ -18,7 +18,6 @@ import {
 
 import {
   SitemapGenerator,
-  SitemapGeneratorConfig,
   BookSitemapGenerator,
   BookAuthorSitemapGenerator,
   BookCategorySitemapGenerator,
@@ -27,7 +26,11 @@ import {
 
 export const SITEMAP_OPTIONS = 'SITEMAP_OPTIONS';
 
-export type SitemapServiceOptions = SitemapGeneratorConfig & {};
+export type SitemapServiceOptions = {
+  outputPath: string,
+  hostname: string,
+  urlNestedPath?: string,
+};
 
 type SitemapStreamWriterFn = (
   attrs: {
@@ -81,28 +84,20 @@ export class SitemapService {
     }: TmpFolderScopeAttrs = null,
   ): Promise<void> {
     const {generators} = this;
-    const streamWriterFn: SitemapStreamWriterFn = async ({stream, outputWriterPath}) => {
+    const streamWriterFn: SitemapStreamWriterFn = async ({stream}) => {
       for await (const generator of generators) {
-        const {filePath} = await generator.generate(
+        await generator.generate(
           {
-            urlNestedPath,
-            hostname,
-            outputPath: outputWriterPath,
+            stream,
           },
-        );
-
-        stream.write(
-          concatUrlParts([
-            hostname,
-            urlNestedPath,
-            path.basename(filePath),
-          ]),
         );
       }
     };
 
     await SitemapService.createIndexSitemapStream(
       {
+        hostname,
+        urlNestedPath,
         outputPath,
         tmpFolderPath,
         streamWriterFn,
@@ -120,22 +115,57 @@ export class SitemapService {
    */
   static async createIndexSitemapStream(
     {
+      hostname,
+      urlNestedPath,
       tmpFolderPath,
       outputPath,
       streamWriterFn,
-    }: {
+      filename = 'sitemap',
+    }: SitemapServiceOptions & {
+      filename?: string,
       tmpFolderPath: string,
-      outputPath: string,
       streamWriterFn: SitemapStreamWriterFn,
     },
   ): Promise<void> {
     // eslint-disable-next-line no-async-promise-executor
     return new Promise<void>(async (resolve, reject) => {
       try {
-        const stream = new SitemapIndexStream;
+        const stream = new SitemapAndIndexStream(
+          {
+            limit: 2500,
+            getSitemapStream: (i) => {
+              const file = `${filename}-${i + 1}.xml.gz`;
+              const sitemapStream = new SitemapStream(
+                {
+                  hostname,
+                },
+              );
+
+              sitemapStream
+                .pipe(createGzip())
+                .pipe(createWriteStream(path.resolve(tmpFolderPath, file)));
+
+              return <any> [
+                concatUrlParts(
+                  [
+                    hostname,
+                    urlNestedPath,
+                    file,
+                  ],
+                ),
+                sitemapStream,
+              ];
+            },
+          },
+        );
+
         stream
           .pipe(createGzip())
-          .pipe(createWriteStream(path.resolve(tmpFolderPath, 'sitemap.xml.gz')));
+          .pipe(
+            createWriteStream(
+              path.resolve(tmpFolderPath, `${filename}.xml.gz`),
+            ),
+          );
 
         await streamWriterFn(
           {

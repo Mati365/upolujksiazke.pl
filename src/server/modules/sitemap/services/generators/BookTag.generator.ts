@@ -8,47 +8,33 @@ import {
 
 import {
   SitemapGenerator,
-  SitemapGeneratorResult,
   SitemapGeneratorConfig,
-  ChunkSitemapStreamAttrs,
 } from './Sitemap.generator';
 
 @Injectable()
-export class BookTagSitemapGenerator extends SitemapGenerator {
+export class BookTagSitemapGenerator implements SitemapGenerator {
   constructor(
     private readonly tagsService: BookTagsService,
-  ) {
-    super();
-  }
+  ) {}
 
-  override generate(config: SitemapGeneratorConfig): Promise<SitemapGeneratorResult> {
-    const streamWriterFn: ChunkSitemapStreamAttrs['streamWriterFn'] = async (stream) => {
-      const it = this.tagsService.createIteratedQuery<IdNameLinkPair>(
-        {
-          select: ['t.id', 't.parameterizedName'],
-          pageLimit: 50,
-        },
-      );
-
-      for await (const [, tags] of it) {
-        tags.forEach((tag) => {
-          stream.write(
-            {
-              url: genTagLink(tag),
-              changefreq: 'daily',
-              priority: 0.7,
-            },
-          );
-        });
-      }
-    };
-
-    return SitemapGenerator.createChunkedSitemapStream(
+  async generate({stream}: SitemapGeneratorConfig): Promise<void> {
+    const it = this.tagsService.createIteratedQuery<IdNameLinkPair>(
       {
-        ...config,
-        indexFileName: 'tags',
-        streamWriterFn,
+        select: ['t.id', 't.parameterizedName'],
+        pageLimit: 50,
       },
     );
+
+    for await (const [, tags] of it) {
+      tags.forEach((tag) => {
+        stream.write(
+          {
+            url: genTagLink(tag),
+            changefreq: 'daily',
+            priority: 0.7,
+          },
+        );
+      });
+    }
   }
 }

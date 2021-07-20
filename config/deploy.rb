@@ -44,8 +44,8 @@ namespace :deploy do
   task :background_jobs do
     on roles(:app) do
       execute "cd #{release_path} \
-          && nohup yarn run sitemap:refresh > /dev/null 2>&1 \
-          && nohup node_modules/.bin/gulp cache:warmup > /dev/null 2>&1"
+          && nohup yarn run sitemap:refresh \
+          && nohup node_modules/.bin/gulp cache:warmup"
     end
   end
 end

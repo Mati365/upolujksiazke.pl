@@ -43,9 +43,12 @@ namespace :deploy do
 
   task :background_jobs do
     on roles(:app) do
-      execute "cd #{release_path} \
-          && nohup yarn run sitemap:refresh & \
-          && nohup node_modules/.bin/gulp cache:warmup &"
+      def exec_background_job(command)
+        execute "sudo su web -c \"cd #{release_path} && nohup #{command} &\" &> /dev/null; sleep 1"
+      end
+
+      exec_background_job('yarn run sitemap:refresh')
+      exec_background_job('node_modules/.bin/gulp sitemap:refresh')
     end
   end
 end

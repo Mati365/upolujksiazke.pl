@@ -8,7 +8,7 @@ declare global {
 
 export function initGtag(key: string) {
   window.gtag ??= (...args: any[]) => {
-    (window.dataLayer = window.dataLayer || []).push(...args);
+    (window.dataLayer = window.dataLayer || []).push(args);
   };
 
   gtag('js', new Date());

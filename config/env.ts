@@ -109,6 +109,7 @@ const {
   WYKOP_ACCOUNT_KEY,
   CDN_PUBLIC_URL,
   CDN_LOCAL_PATH,
+  SITEMAP_OUTPUT_PATH,
   SITE_HOSTNAME = 'upolujksiazke.pl',
 } = process.env;
 
@@ -131,7 +132,7 @@ export const GLOBAL_CONFIG: Record<string, AppEnv> = {
         expireSeconds: +JWT_EXPIRE_IN_SECONDS,
       },
       sitemap: {
-        outputPath: path.resolve(PUBLIC_PATH, 'sitemaps'),
+        outputPath: SITEMAP_OUTPUT_PATH || path.resolve(PUBLIC_PATH, 'sitemaps'),
         urlNestedPath: 'sitemaps',
         hostname: `https://${SITE_HOSTNAME}`,
       },

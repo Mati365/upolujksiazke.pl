@@ -48,7 +48,7 @@ namespace :deploy do
       end
 
       exec_background_job('yarn run sitemap:refresh')
-      exec_background_job('node_modules/.bin/gulp sitemap:refresh')
+      exec_background_job('node_modules/.bin/gulp cache:warmup')
     end
   end
 end

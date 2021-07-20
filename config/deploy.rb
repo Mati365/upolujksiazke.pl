@@ -31,8 +31,7 @@ namespace :deploy do
         && ln -sf ../../.env ./.env \
         && ln -sf ../../.pgpass ./.pgpass \
         && yarn run bull:wait_if_has_jobs \
-        && yarn run migration:run \
-        && yarn run sitemap:refresh"
+        && yarn run migration:run"
     end
   end
 
@@ -42,9 +41,11 @@ namespace :deploy do
     end
   end
 
-  task :warmup_cache do
+  task :background_jobs do
     on roles(:app) do
-      execute "cd #{release_path} && node_modules/.bin/gulp cache:warmup"
+      execute "cd #{release_path} \
+          && nohup yarn run sitemap:refresh > /dev/null 2>&1 \
+          && nohup node_modules/.bin/gulp cache:warmup > /dev/null 2>&1"
     end
   end
 end
@@ -59,4 +60,4 @@ after 'deploy:build_yarn', 'deploy:rsync_build'
 after 'deploy:rsync_build', 'deploy:migrate'
 after 'deploy:publishing', 'deploy:cleanup_tmp'
 after 'deploy:publishing', 'deploy:restart'
-after 'deploy:restart', 'deploy:warmup_cache'
+after 'deploy:restart', 'deploy:background_jobs'

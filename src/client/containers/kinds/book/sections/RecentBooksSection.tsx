@@ -25,9 +25,9 @@ export const RecentBooksSection = (
 
   return (
     <Section
-      headerClassName='has-double-link-chevron'
       title={(
         <BooksLink
+          className='has-double-link-chevron'
           hoverUnderline={false}
           item={{
             sort: SortMode.RECENTLY_ADDED,

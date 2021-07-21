@@ -14,9 +14,9 @@ export const CategoriesGroupsBooksSection = ({items: groups}: CategoriesGroupsBo
     <Section
       key={category.id}
       className='c-lazy-book-section'
-      headerClassName='has-double-link-chevron'
       title={(
         <BookCategoryLink
+          className='has-double-link-chevron'
           hoverUnderline={false}
           item={category}
         >

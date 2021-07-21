@@ -30,6 +30,7 @@ namespace :deploy do
         && chmod -R 770 ./tmp ./dist \
         && ln -sf ../../.env ./.env \
         && ln -sf ../../.pgpass ./.pgpass \
+        && chmod 0600 ./.pgpass \
         && yarn run bull:wait_if_has_jobs \
         && yarn run migration:run"
     end

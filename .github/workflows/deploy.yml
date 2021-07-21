@@ -1,9 +1,8 @@
-name: Node.js CI
+name: CI Deploy
 
 on:
   push:
     branches: [ production ]
-  workflow_dispatch:
 
 jobs:
   build:

@@ -27,6 +27,7 @@ export type AppEnv = Partial<{
   shared: {
     website: {
       name: string,
+      url: string,
     },
   },
   server: {
@@ -120,6 +121,7 @@ export const GLOBAL_CONFIG: Record<string, AppEnv> = {
     shared: {
       website: {
         name: SITE_HOSTNAME,
+        url: `https://${SITE_HOSTNAME}`,
       },
     },
     server: {

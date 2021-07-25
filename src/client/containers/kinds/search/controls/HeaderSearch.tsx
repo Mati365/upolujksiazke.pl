@@ -6,6 +6,7 @@ import {useInputLink} from '@client/hooks/useInputLink';
 
 import {Input} from '@client/components/ui/controls';
 import {SearchIcon} from '@client/components/svg';
+import {SearchJsonLD} from '../seo/SearchJsonLD';
 
 export const HeaderSearch = () => {
   const t = useI18n();
@@ -25,22 +26,25 @@ export const HeaderSearch = () => {
   };
 
   return (
-    <Input
-      className='c-header__search'
-      placeholder={
-        t('search.placeholder')
-      }
-      iconTitle={
-        t('search.title')
-      }
-      iconStyle='primary'
-      iconRight={(
-        <SearchIcon />
-      )}
-      onKeyDown={onKeyDown}
-      onIconClick={onSearch}
-      {...l.input()}
-    />
+    <>
+      <SearchJsonLD />
+      <Input
+        className='c-header__search'
+        placeholder={
+          t('search.placeholder')
+        }
+        iconTitle={
+          t('search.title')
+        }
+        iconStyle='primary'
+        iconRight={(
+          <SearchIcon />
+        )}
+        onKeyDown={onKeyDown}
+        onIconClick={onSearch}
+        {...l.input()}
+      />
+    </>
   );
 };
 

@@ -7,9 +7,9 @@ import {useUA} from '@client/modules/ua';
 import {HomeLink} from '@client/routes/Links';
 import {Container} from '@client/components/ui';
 import {WebsiteLogoIcon} from '@client/components/svg/Icons';
+import {HeaderSearch} from '@client/containers/kinds/search/controls/HeaderSearch';
 import {HeaderToolbar} from './HeaderToolbar';
 import {HeaderPromoLinks, HeaderPromoLinksProps} from './HeaderPromoLinks';
-import {HeaderSearch} from './HeaderSearch';
 
 export type HeaderProps = {
   promoItems?: HeaderPromoLinksProps['items'],

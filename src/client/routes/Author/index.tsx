@@ -19,7 +19,7 @@ import {
 } from '@client/containers/kinds/book/filters/BooksFiltersContainer';
 
 import {AsyncRoute} from '@client/components/utils/asyncRouteUtils';
-import {Breadcrumbs} from '@client/containers/Breadcrumbs';
+import {Breadcrumbs} from '@client/containers/kinds/breadcrumbs';
 import {Container} from '@client/components/ui';
 import {
   Layout,
@@ -29,8 +29,8 @@ import {
 } from '@client/containers/layout';
 
 import {
-  AuthorsLink,
-  BooksLink,
+  genBooksLink,
+  genAuthorLink,
   genAuthorsLink,
   AUTHOR_PATH,
 } from '../Links';
@@ -60,22 +60,17 @@ export const AuthorRoute: AsyncRoute<AuthorRouteData> = (
       items={[
         {
           id: 'books',
-          node: (
-            <BooksLink>
-              {t('shared.breadcrumbs.books')}
-            </BooksLink>
-          ),
+          path: genBooksLink(),
+          node: t('shared.breadcrumbs.books'),
         },
         {
           id: 'authors',
-          node: (
-            <AuthorsLink>
-              {t('shared.breadcrumbs.authors')}
-            </AuthorsLink>
-          ),
+          path: genAuthorsLink(),
+          node: t('shared.breadcrumbs.authors'),
         },
         {
           id: 'author',
+          path: genAuthorLink(author),
           node: author.name,
         },
       ]}

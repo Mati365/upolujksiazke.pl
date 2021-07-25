@@ -2,6 +2,7 @@ import React, {memo, useMemo} from 'react';
 import * as R from 'ramda';
 
 import {useI18n} from '@client/i18n';
+import {pickFirstBookRelease} from '@client/containers/kinds/book/helpers';
 
 import {BookFullInfoRecord} from '@api/types';
 import {
@@ -29,15 +30,11 @@ export const BookProperties = memo(({book}: BookPropertiesProps) => {
   const {
     primaryRelease, prizes,
     avgRating, totalRatings,
-    releases,
   } = book;
 
   const firstRelease = useMemo(
-    () => R.sortBy(
-      (release) => +release.publishDate.match(/\d{4}/)?.[0],
-      releases.filter((release) => !!release.publishDate),
-    )[0],
-    [],
+    () => pickFirstBookRelease(book),
+    [book.id],
   );
 
   const publisher = firstRelease?.publisher || primaryRelease.publisher;

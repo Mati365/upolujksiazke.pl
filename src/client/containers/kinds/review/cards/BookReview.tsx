@@ -129,7 +129,7 @@ export const BookReview = (
             </li>
 
             {publishDate && (
-              <li>
+              <li className='is-text-light-muted'>
                 {formatDate(publishDate)}
               </li>
             )}

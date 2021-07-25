@@ -1,4 +1,6 @@
-import {buildURL} from '@shared/helpers';
+import {ENV} from '@client/constants/env';
+
+import {buildURL, concatUrls} from '@shared/helpers';
 import {serializeUrlFilters} from '@client/containers/filters/hooks/useStoreFiltersInURL';
 
 import {UndecoratedLink} from '@client/components/ui/Link';
@@ -19,14 +21,17 @@ export type IdSlugBookPair = {
   id: any,
 };
 
+export const prefixLinkWithHost = (url: string) => concatUrls(ENV.shared.website.url, url);
+
 export const HOME_PATH = '/';
 export const HomeLink = UndecoratedLink.create(HOME_PATH);
 
 export const NEWS_PATH = '/aktualnosci';
 export const NewsLink = UndecoratedLink.create(NEWS_PATH);
+export const genNewsLink = () => NEWS_PATH;
 
 export const BOOKS_PATH = '/ksiazki';
-export const genBooksLink = (filters: BooksFiltersWithNames) => buildURL(
+export const genBooksLink = (filters?: BooksFiltersWithNames) => buildURL(
   BOOKS_PATH,
   serializeUrlFilters(filters),
 );
@@ -68,9 +73,8 @@ export const genBookLink = ({id, parameterizedSlug}: IdSlugBookPair) => `/ksiazk
 export const BookLink = UndecoratedLink.create<IdSlugBookPair>(genBookLink);
 
 export const BOOK_ALL_REVIEWS_PATH = `${BOOK_PATH}/recenzje`;
-export const BookAllReviewsLink = UndecoratedLink.create<IdSlugBookPair>(
-  ({id, parameterizedSlug}) => `/ksiazka/${parameterizedSlug},${id}/recenzje`,
-);
+export const genAllBookReviewsLink = (attrs: IdSlugBookPair) => `${genBookLink(attrs)}/recenzje`;
+export const BookAllReviewsLink = UndecoratedLink.create(genAllBookReviewsLink);
 
 export const PUBLISHER_PATH = '/wydawca/:slug,:id';
 export const PublisherLink = UndecoratedLink.create<IdNameLinkPair>(
@@ -92,9 +96,11 @@ export const BookSchoolLevelLink = UndecoratedLink.create<BookSchoolLevel>((id) 
 
 export const BOOKS_REVIEWS_PATH = '/opinie';
 export const BooksReviewsLink = UndecoratedLink.create(BOOKS_REVIEWS_PATH);
+export const genAllBooksReviewsLink = () => BOOKS_REVIEWS_PATH;
 
 export const TOP_BOOKS_PATH = '/top-ksiazki';
 export const TopBooksLink = UndecoratedLink.create(TOP_BOOKS_PATH);
+export const genTopBooksLink = () => TOP_BOOKS_PATH;
 
 export const AUTHORS_PATH = '/autorzy/:letter?';
 export const genAuthorsLink = (letter?: string) => `/autorzy${(letter ? `/${letter}` : '')}`;
@@ -105,7 +111,6 @@ export const genAuthorLink = ({id, parameterizedName}: IdNameLinkPair) => `/auto
 export const AuthorLink = UndecoratedLink.create<IdNameLinkPair>(genAuthorLink);
 
 export const TAG_PATH = '/tag/:slug,:id';
-
 export const genTagLink = (
   {
     id,

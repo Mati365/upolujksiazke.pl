@@ -45,3 +45,5 @@ export const AsyncRoutePreloader = (
     <Component {...promiseState.result} />
   );
 };
+
+AsyncRoutePreloader.displayName = 'AsyncRoutePreloader';

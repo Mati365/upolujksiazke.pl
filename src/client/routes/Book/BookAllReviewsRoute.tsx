@@ -22,6 +22,7 @@ import {BookBreadcrumbs} from './parts';
 import {
   BOOK_ALL_REVIEWS_PATH,
   HOME_PATH,
+  genAllBookReviewsLink,
 } from '../Links';
 
 type BookAllReviewsRouteViewData = {
@@ -93,6 +94,7 @@ export const BookAllReviewsRoute: AsyncRoute<BookAllReviewsRouteViewData> = (
           additionalItems={[
             {
               id: 'reviews',
+              path: genAllBookReviewsLink(book),
               node: t('shared.breadcrumbs.reviews'),
             },
           ]}

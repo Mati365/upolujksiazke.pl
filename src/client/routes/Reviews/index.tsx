@@ -5,7 +5,7 @@ import {useI18n} from '@client/i18n';
 
 import {NewsIcon} from '@client/components/svg';
 import {AsyncRoute} from '@client/components/utils/asyncRouteUtils';
-import {Breadcrumbs} from '@client/containers/Breadcrumbs';
+import {Breadcrumbs} from '@client/containers/kinds/breadcrumbs';
 import {Container} from '@client/components/ui';
 import {BookReviewRecord} from '@api/types';
 import {BooksReviewsGrid} from '@client/containers/kinds/review/grids/BooksReviewsGrid';
@@ -16,7 +16,10 @@ import {
   SEOMeta,
 } from '@client/containers/layout';
 
-import {BOOKS_REVIEWS_PATH} from '../Links';
+import {
+  BOOKS_REVIEWS_PATH,
+  genAllBooksReviewsLink,
+} from '../Links';
 
 type ReviewsRouteRoute = {
   layoutData: LayoutViewData,
@@ -35,6 +38,7 @@ export const ReviewsRoute: AsyncRoute<ReviewsRouteRoute> = (
       items={[
         {
           id: 'reviews',
+          path: genAllBooksReviewsLink(),
           node: t('shared.breadcrumbs.reviews'),
         },
       ]}

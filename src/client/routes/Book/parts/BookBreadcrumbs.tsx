@@ -7,12 +7,12 @@ import {
 } from '@client/helpers/logic';
 
 import {useI18n} from '@client/i18n';
-import {BreadcrumbInfo, Breadcrumbs} from '@client/containers/Breadcrumbs';
+import {BreadcrumbInfo, Breadcrumbs} from '@client/containers/kinds/breadcrumbs';
 import {BookFullInfoRecord} from '@api/types';
 import {
-  BookLink,
-  BooksLink,
-  BookCategoryLink,
+  genBooksLink,
+  genBookCategoryLink,
+  genBookLink,
 } from '../../Links';
 
 type BookBreadcrumbsProps = {
@@ -34,33 +34,25 @@ export const BookBreadcrumbs = (
       items={[
         {
           id: 'books',
-          node: (
-            <BooksLink>
-              {t('shared.breadcrumbs.books')}
-            </BooksLink>
-          ),
+          path: genBooksLink(),
+          node: t('shared.breadcrumbs.books'),
         },
         primaryCategory && {
           id: 'category',
-          node: (
-            <BookCategoryLink item={primaryCategory}>
-              {capitalize(primaryCategory.name)}
-            </BookCategoryLink>
-          ),
+          path: genBookCategoryLink(primaryCategory),
+          node: capitalize(primaryCategory.name),
         },
         ...(
           volume?.name !== '1' && hierarchy?.length
             ? [
               {
                 id: 'book',
-                node: (
-                  <BookLink item={hierarchy[0]}>
-                    {hierarchy[0].defaultTitle}
-                  </BookLink>
-                ),
+                path: genBookLink(hierarchy[0]),
+                node: hierarchy[0].defaultTitle,
               },
               {
                 id: 'volume',
+                path: genBookLink(book),
                 node: formatBookVolume(
                   {
                     t,
@@ -72,15 +64,12 @@ export const BookBreadcrumbs = (
             : [
               {
                 id: 'book',
-                node: (
-                  <BookLink item={book}>
-                    {formatBookTitle(
-                      {
-                        t,
-                        book,
-                      },
-                    )}
-                  </BookLink>
+                path: genBookLink(book),
+                node: formatBookTitle(
+                  {
+                    t,
+                    book,
+                  },
                 ),
               },
             ]

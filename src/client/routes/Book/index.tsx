@@ -26,6 +26,7 @@ import {WriteBookReviewContainer} from '@client/containers/kinds/review/controls
 import {
   BookAvailabilitySection,
   BookInfo,
+  BookJsonLD,
   BookPostsSection,
   BookSummariesSection,
   CategoriesGroupsBooksSection,
@@ -96,6 +97,8 @@ export const BookRoute: AsyncRoute<BookRouteViewData> = (
   return (
     <Layout {...layoutData}>
       <SEOMeta meta={seoMeta} />
+      <BookJsonLD book={book} />
+
       <Container className='c-book-route'>
         <BookBreadcrumbs book={book} />
 

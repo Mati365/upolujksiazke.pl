@@ -13,7 +13,7 @@ import {useI18n} from '@client/i18n';
 
 import {TrophyIcon} from '@client/components/svg';
 import {AsyncRoute} from '@client/components/utils/asyncRouteUtils';
-import {Breadcrumbs} from '@client/containers/Breadcrumbs';
+import {Breadcrumbs} from '@client/containers/kinds/breadcrumbs';
 import {Container} from '@client/components/ui';
 import {ViewMode} from '@shared/enums';
 import {
@@ -25,8 +25,9 @@ import {
 
 import {BooksPaginationResultWithAggs} from '@api/repo';
 import {
-  BooksLink,
   TOP_BOOKS_PATH,
+  genBooksLink,
+  genTopBooksLink,
 } from '../Links';
 
 function serializeTopBooksFilters(filters: any) {
@@ -55,14 +56,12 @@ export const TopBooksRoute: AsyncRoute<TopBooksRouteRouteData> = (
       items={[
         {
           id: 'books',
-          node: (
-            <BooksLink>
-              {t('shared.breadcrumbs.books')}
-            </BooksLink>
-          ),
+          path: genBooksLink(),
+          node: t('shared.breadcrumbs.books'),
         },
         {
           id: 'trending books',
+          path: genTopBooksLink(),
           node: t('shared.breadcrumbs.top_books'),
         },
       ]}

@@ -6,7 +6,7 @@ import {useI18n} from '@client/i18n';
 import {NewsIcon} from '@client/components/svg';
 
 import {AsyncRoute} from '@client/components/utils/asyncRouteUtils';
-import {Breadcrumbs} from '@client/containers/Breadcrumbs';
+import {Breadcrumbs} from '@client/containers/kinds/breadcrumbs';
 import {Container} from '@client/components/ui';
 import {
   Layout,
@@ -15,7 +15,10 @@ import {
   SEOMeta,
 } from '@client/containers/layout';
 
-import {NEWS_PATH} from '../Links';
+import {
+  NEWS_PATH,
+  genNewsLink,
+} from '../Links';
 
 type NewsRouteData = {
   layoutData: LayoutViewData,
@@ -32,6 +35,7 @@ export const NewsRoute: AsyncRoute<NewsRouteData> = (
       items={[
         {
           id: 'news',
+          path: genNewsLink(),
           node: t('shared.breadcrumbs.news'),
         },
       ]}

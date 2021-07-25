@@ -50,3 +50,5 @@ export const AsyncRouter = ({routes, ...routerProps}: AsyncRouterProps) => (
     </Switch>
   </IsomorphicRouter>
 );
+
+AsyncRouter.displayName = 'AsyncRouter';

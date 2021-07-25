@@ -8,7 +8,7 @@ import {serializeAggsToSearchParams} from '@client/containers/kinds/book/filters
 import {useI18n} from '@client/i18n';
 
 import {AsyncRoute} from '@client/components/utils/asyncRouteUtils';
-import {Breadcrumbs} from '@client/containers/Breadcrumbs';
+import {Breadcrumbs} from '@client/containers/kinds/breadcrumbs';
 import {DynamicIcon, ICON_EMOJI_MAPPINGS} from '@client/components/svg';
 
 import {Container} from '@client/components/ui';
@@ -29,9 +29,10 @@ import {
 } from '@client/containers/kinds/book/filters/BooksFiltersContainer';
 
 import {
-  BooksLink,
   BOOKS_CATEGORY_PATH,
   BOOKS_PATH,
+  genBooksLink,
+  genBookCategoryLink,
 } from '../Links';
 
 type BooksRouteViewData = {
@@ -60,14 +61,12 @@ export const BooksCategoryRoute: AsyncRoute<BooksRouteViewData> = (
       items={[
         {
           id: 'books',
-          node: (
-            <BooksLink>
-              {t('shared.breadcrumbs.books')}
-            </BooksLink>
-          ),
+          path: genBooksLink(),
+          node: t('shared.breadcrumbs.books'),
         },
         {
           id: 'category',
+          path: genBookCategoryLink(category),
           node: capitalize(category.name),
         },
       ]}

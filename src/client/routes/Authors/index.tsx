@@ -5,7 +5,7 @@ import {useI18n} from '@client/i18n';
 
 import {AsyncRoute} from '@client/components/utils/asyncRouteUtils';
 import {BookAuthorRecord} from '@api/types';
-import {Breadcrumbs} from '@client/containers/Breadcrumbs';
+import {Breadcrumbs} from '@client/containers/kinds/breadcrumbs';
 import {Container} from '@client/components/ui';
 import {LettersAuthorsSection} from '@client/containers/kinds/author';
 import {
@@ -15,7 +15,11 @@ import {
   SEOMeta,
 } from '@client/containers/layout';
 
-import {AUTHORS_PATH, BooksLink} from '../Links';
+import {
+  AUTHORS_PATH,
+  genBooksLink,
+  genAuthorsLink,
+} from '../Links';
 
 type AuthorsRouteData = {
   layoutData: LayoutViewData,
@@ -49,14 +53,12 @@ export const AuthorsRoute: AsyncRoute<AuthorsRouteData> = (
           items={[
             {
               id: 'books',
-              node: (
-                <BooksLink>
-                  {t('shared.breadcrumbs.books')}
-                </BooksLink>
-              ),
+              path: genBooksLink(),
+              node: t('shared.breadcrumbs.books'),
             },
             {
               id: 'authors',
+              path: genAuthorsLink(),
               node: t('shared.breadcrumbs.authors'),
             },
           ]}

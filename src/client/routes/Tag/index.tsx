@@ -19,7 +19,7 @@ import {
 
 import {TagRecord} from '@api/types';
 import {AsyncRoute} from '@client/components/utils/asyncRouteUtils';
-import {Breadcrumbs} from '@client/containers/Breadcrumbs';
+import {Breadcrumbs} from '@client/containers/kinds/breadcrumbs';
 import {Container} from '@client/components/ui';
 import {
   Layout,
@@ -29,9 +29,10 @@ import {
 } from '@client/containers/layout';
 
 import {
-  BooksLink,
   HOME_PATH,
   TAG_PATH,
+  genTagLink,
+  genBooksLink,
 } from '../Links';
 
 type TagRouteData = {
@@ -60,14 +61,12 @@ export const TagRoute: AsyncRoute<TagRouteData> = (
       items={[
         {
           id: 'books',
-          node: (
-            <BooksLink>
-              {t('shared.breadcrumbs.books')}
-            </BooksLink>
-          ),
+          path: genBooksLink(),
+          node: t('shared.breadcrumbs.books'),
         },
         {
           id: 'tag',
+          path: genTagLink(tag),
           node: capitalizedName,
         },
       ]}

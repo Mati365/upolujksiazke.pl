@@ -7,7 +7,7 @@ import {serializeAggsToSearchParams} from '@client/containers/kinds/book/filters
 import {useI18n} from '@client/i18n';
 
 import {AsyncRoute} from '@client/components/utils/asyncRouteUtils';
-import {Breadcrumbs} from '@client/containers/Breadcrumbs';
+import {Breadcrumbs} from '@client/containers/kinds/breadcrumbs';
 
 import {Container} from '@client/components/ui';
 import {BooksPaginationResultWithAggs} from '@api/repo';
@@ -24,7 +24,10 @@ import {
   getDefaultBooksFilters,
 } from '@client/containers/kinds/book/filters/BooksFiltersContainer';
 
-import {BOOKS_PATH} from '../Links';
+import {
+  BOOKS_PATH,
+  genBooksLink,
+} from '../Links';
 
 type BooksRouteViewData = {
   layoutData: LayoutViewData,
@@ -46,6 +49,7 @@ export const BooksRoute: AsyncRoute<BooksRouteViewData> = (
       items={[
         {
           id: 'books',
+          path: genBooksLink(),
           node: t('shared.breadcrumbs.books'),
         },
       ]}

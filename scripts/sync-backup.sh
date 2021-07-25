@@ -2,7 +2,7 @@
 
 export $(egrep -v '^#' $(dirname $0)/../.env | xargs)
 
-WORKING_DIR=/tmp/bookmeter-backup
+WORKING_DIR=/tmp/upolujksiazke-backup
 PROJECT_DIR=$(pwd)
 BACKUP_FILENAME="dump-$(date +%Y%m%d%H%M%S).tar.gz"
 BACKUP_HISTORY=5

@@ -28,7 +28,12 @@ export const BookPriceBox = (
   }: BookPriceBoxProps,
 ) => {
   const t = useI18n('book.price_box');
-  const isPromotion = book.highestPrice !== book.lowestPrice;
+  const {
+    lowestPrice,
+    highestPrice,
+  } = book;
+
+  const isPromotion = highestPrice !== lowestPrice && highestPrice > 0;
 
   const onBuy = () => {
     const releases = sortReleasesByPrice(book.releases);
@@ -70,14 +75,14 @@ export const BookPriceBox = (
         <BookPriceGroup
           className='c-book-price-box__current-price'
           label={t('lowest_price')}
-          value={book.lowestPrice}
+          value={lowestPrice}
         />
 
         {isPromotion && (
           <BookPriceGroup
             className='c-book-price-box__prev-price'
             label={t('highest_price')}
-            value={book.highestPrice}
+            value={highestPrice}
           />
         )}
       </div>
@@ -94,7 +99,7 @@ export const BookPriceBox = (
             t('buy_cta')
           }
           disabled={
-            R.isNil(book.highestPrice)
+            R.isNil(highestPrice)
           }
           expanded
           onClick={onBuy}

@@ -36,7 +36,7 @@ export const NewsRoute: AsyncRoute<NewsRouteData> = (
         {
           id: 'news',
           path: genNewsLink(),
-          node: t('shared.breadcrumbs.news'),
+          title: t('shared.breadcrumbs.news'),
         },
       ]}
     />

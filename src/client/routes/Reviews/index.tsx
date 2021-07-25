@@ -39,7 +39,7 @@ export const ReviewsRoute: AsyncRoute<ReviewsRouteRoute> = (
         {
           id: 'reviews',
           path: genAllBooksReviewsLink(),
-          node: t('shared.breadcrumbs.reviews'),
+          title: t('shared.breadcrumbs.reviews'),
         },
       ]}
     />

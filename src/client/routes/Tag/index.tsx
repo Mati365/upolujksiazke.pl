@@ -62,12 +62,12 @@ export const TagRoute: AsyncRoute<TagRouteData> = (
         {
           id: 'books',
           path: genBooksLink(),
-          node: t('shared.breadcrumbs.books'),
+          title: t('shared.breadcrumbs.books'),
         },
         {
           id: 'tag',
           path: genTagLink(tag),
-          node: capitalizedName,
+          title: capitalizedName,
         },
       ]}
     />

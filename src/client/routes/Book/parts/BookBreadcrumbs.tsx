@@ -35,12 +35,12 @@ export const BookBreadcrumbs = (
         {
           id: 'books',
           path: genBooksLink(),
-          node: t('shared.breadcrumbs.books'),
+          title: t('shared.breadcrumbs.books'),
         },
         primaryCategory && {
           id: 'category',
           path: genBookCategoryLink(primaryCategory),
-          node: capitalize(primaryCategory.name),
+          title: capitalize(primaryCategory.name),
         },
         ...(
           volume?.name !== '1' && hierarchy?.length
@@ -48,12 +48,12 @@ export const BookBreadcrumbs = (
               {
                 id: 'book',
                 path: genBookLink(hierarchy[0]),
-                node: hierarchy[0].defaultTitle,
+                title: hierarchy[0].defaultTitle,
               },
               {
                 id: 'volume',
                 path: genBookLink(book),
-                node: formatBookVolume(
+                title: formatBookVolume(
                   {
                     t,
                     volume,
@@ -65,7 +65,7 @@ export const BookBreadcrumbs = (
               {
                 id: 'book',
                 path: genBookLink(book),
-                node: formatBookTitle(
+                title: formatBookTitle(
                   {
                     t,
                     book,

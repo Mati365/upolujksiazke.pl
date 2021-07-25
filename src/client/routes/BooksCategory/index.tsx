@@ -62,12 +62,12 @@ export const BooksCategoryRoute: AsyncRoute<BooksRouteViewData> = (
         {
           id: 'books',
           path: genBooksLink(),
-          node: t('shared.breadcrumbs.books'),
+          title: t('shared.breadcrumbs.books'),
         },
         {
           id: 'category',
           path: genBookCategoryLink(category),
-          node: capitalize(category.name),
+          title: capitalize(category.name),
         },
       ]}
     />

@@ -1,6 +1,8 @@
 import React, {ReactNode, Fragment} from 'react';
 import c from 'classnames';
 
+import {useI18n} from '@client/i18n';
+
 import {HOME_PATH} from '@client/routes/Links';
 
 import {CleanList} from '@client/components/ui';
@@ -14,8 +16,8 @@ import {BreadcrumbsJsonLD} from '../seo/BreadcrumbsJsonLD';
 
 export type BreadcrumbInfo = {
   id: string,
-  node: ReactNode,
   path: string,
+  node?: ReactNode,
   title?: string,
 };
 
@@ -32,10 +34,12 @@ export const Breadcrumbs = (
     className,
   }: BreadcrumbsProps,
 ) => {
+  const t = useI18n();
   const mergedItems: BreadcrumbInfo[] = [
     {
       id: 'home',
       path: HOME_PATH,
+      title: t('shared.breadcrumbs.home'),
       node: <HomeIcon />,
     },
     ...items,
@@ -55,7 +59,7 @@ export const Breadcrumbs = (
         inline
       >
         {mergedItems.map(
-          ({id, node, title, path}, index) => (
+          ({id, title, path, node = title}, index) => (
             <Fragment key={id}>
               <li className='c-breadcrumbs__item'>
                 {(

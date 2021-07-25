@@ -57,12 +57,12 @@ export const TopBooksRoute: AsyncRoute<TopBooksRouteRouteData> = (
         {
           id: 'books',
           path: genBooksLink(),
-          node: t('shared.breadcrumbs.books'),
+          title: t('shared.breadcrumbs.books'),
         },
         {
           id: 'trending books',
           path: genTopBooksLink(),
-          node: t('shared.breadcrumbs.top_books'),
+          title: t('shared.breadcrumbs.top_books'),
         },
       ]}
     />

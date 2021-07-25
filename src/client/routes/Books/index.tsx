@@ -50,7 +50,7 @@ export const BooksRoute: AsyncRoute<BooksRouteViewData> = (
         {
           id: 'books',
           path: genBooksLink(),
-          node: t('shared.breadcrumbs.books'),
+          title: t('shared.breadcrumbs.books'),
         },
       ]}
     />

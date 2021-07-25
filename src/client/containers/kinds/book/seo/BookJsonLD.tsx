@@ -33,7 +33,7 @@ export const BookJsonLD = memo(({book}: BookJsonLDProps) => {
   const {
     primaryRelease, reviews, avgRating,
     authors, totalRatings, lowestPrice,
-    totalTextReviews,
+    highestPrice, totalTextReviews,
   } = book;
 
   const {isbn} = primaryRelease;
@@ -90,6 +90,9 @@ export const BookJsonLD = memo(({book}: BookJsonLDProps) => {
     },
     offers: {
       '@type': 'AggregateOffer',
+      ...highestPrice > 0 && {
+        highPrice: highestPrice,
+      },
       ...lowestPrice && {
         lowPrice: lowestPrice,
       },
@@ -101,7 +104,7 @@ export const BookJsonLD = memo(({book}: BookJsonLDProps) => {
             '@type': 'Offer',
             url: item.url,
             availability: 'http://schema.org/InStock',
-            condition: 'http://schema.org/NewCondition',
+            itemCondition: 'NewCondition',
             priceCurrency: 'zł',
             price: item.price,
           }))
@@ -134,6 +137,7 @@ export const BookJsonLD = memo(({book}: BookJsonLDProps) => {
     },
     ...primaryRelease.publisher && {
       publisher: primaryRelease.publisher.name,
+      brand: primaryRelease.publisher.name,
     },
     author: authors.map((author) => ({
       '@type': 'Person',

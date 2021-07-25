@@ -61,17 +61,17 @@ export const AuthorRoute: AsyncRoute<AuthorRouteData> = (
         {
           id: 'books',
           path: genBooksLink(),
-          node: t('shared.breadcrumbs.books'),
+          title: t('shared.breadcrumbs.books'),
         },
         {
           id: 'authors',
           path: genAuthorsLink(),
-          node: t('shared.breadcrumbs.authors'),
+          title: t('shared.breadcrumbs.authors'),
         },
         {
           id: 'author',
           path: genAuthorLink(author),
-          node: author.name,
+          title: author.name,
         },
       ]}
     />

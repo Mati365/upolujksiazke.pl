@@ -6,13 +6,7 @@ import 'instant.page';
 
 import '@assets/scss/index.scss';
 
-import {ENV} from './constants/env';
-
-import {initGtag} from './modules/trackers/analytics';
 import {PageRoot} from './routes/Root';
-
-if (ENV.client.analytics?.key)
-  initGtag(ENV.client.analytics.key);
 
 ReactDOM.hydrate(
   <PageRoot />,

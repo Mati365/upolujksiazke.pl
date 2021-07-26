@@ -324,7 +324,7 @@ export const GLOBAL_CONFIG: Record<string, AppEnv> = {
         url: `https://${SITE_HOSTNAME}/api/v1`,
       },
       analytics: {
-        key: 'G-1EZ6QKLFBW',
+        key: 'G-DX3LGWSRBQ',
       },
     },
   },

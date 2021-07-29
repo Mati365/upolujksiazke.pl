@@ -2,7 +2,6 @@ import React from 'react';
 import c from 'classnames';
 
 import {objPropsToPromise} from '@shared/helpers';
-import {genBookCategoryLink} from '@client/routes/Links';
 import {useUA} from '@client/modules/ua';
 
 import {BasicWrapperProps} from '@client/components/ui';
@@ -10,7 +9,6 @@ import {BookCategoryRecord} from '@api/types';
 import {AsyncPropsComponent} from '@client/components/utils/asyncRouteUtils';
 import {Header} from './Header';
 import {Footer} from './Footer';
-import {BottomMenu} from './BottomMenu';
 
 export type LayoutViewData = {
   hidePromoItems?: boolean,
@@ -34,20 +32,11 @@ export const Layout: AsyncPropsComponent<LayoutProps> = (
   return (
     <>
       <Header
-        promoItems={
-          !ua.mobile && !hidePromoItems && rootPopularCategories?.map(
-            (category) => ({
-              icon: category.icon,
-              name: category.name,
-              href: genBookCategoryLink(category),
-            }),
-          )
+        popularCategories={rootPopularCategories}
+        hidePromoBar={
+          ua.mobile || hidePromoItems
         }
       />
-
-      {ua.mobile && (
-        <BottomMenu popularCategories={rootPopularCategories} />
-      )}
 
       <main
         className={c(

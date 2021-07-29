@@ -4,35 +4,35 @@ import {
   UndecoratedLinkProps,
 } from '@client/components/ui';
 
-type BottomMenuItemProps = UndecoratedLinkProps & {
+type MobileMenuItemProps = UndecoratedLinkProps & {
   icon: ReactNode,
   title: string,
   tag?: any,
 };
 
-export const BottomMenuItem = (
+export const MobileMenuItem = (
   {
     icon,
     title,
     tag: Tag = UndecoratedLink,
     ...props
-  }: BottomMenuItemProps,
+  }: MobileMenuItemProps,
 ) => (
   <Tag
-    className='c-bottom-menu__item'
+    className='c-mobile-menu__item'
     {...Tag === UndecoratedLink && {
       activeClassName: 'is-active',
     }}
     {...props}
   >
-    <div className='c-bottom-menu__item-icon'>
+    <div className='c-mobile-menu__item-icon'>
       {icon}
     </div>
 
-    <div className='c-bottom-menu__item-title'>
+    <div className='c-mobile-menu__item-title'>
       {title}
     </div>
   </Tag>
 );
 
-BottomMenuItem.displayName = 'BottomMenuItem';
+MobileMenuItem.displayName = 'MobileMenuItem';

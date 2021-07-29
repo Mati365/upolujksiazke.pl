@@ -2,28 +2,41 @@ import React from 'react';
 import c from 'classnames';
 
 import {ENV} from '@client/constants/env';
+
 import {useUA} from '@client/modules/ua';
 
-import {HomeLink} from '@client/routes/Links';
+import {BookCategoryRecord} from '@api/types';
+import {HomeLink, genBookCategoryLink} from '@client/routes/Links';
 import {Container} from '@client/components/ui';
 import {WebsiteLogoIcon} from '@client/components/svg/Icons';
 import {HeaderSearch} from '@client/containers/kinds/search/controls/HeaderSearch';
 import {HeaderToolbar} from './HeaderToolbar';
 import {HeaderPromoLinks, HeaderPromoLinksProps} from './HeaderPromoLinks';
+import {MobileMenu} from '../MobileMenu';
 
 export type HeaderProps = {
   promoItems?: HeaderPromoLinksProps['items'],
+  hidePromoBar?: boolean,
+  popularCategories?: BookCategoryRecord[],
 };
 
-export const Header = ({promoItems}: HeaderProps) => {
+export const Header = ({hidePromoBar, popularCategories}: HeaderProps) => {
   const ua = useUA();
-  const hasPromoBar = promoItems?.length > 0;
+  const promoItems = !ua.mobile && !hidePromoBar && popularCategories?.map(
+    (category) => ({
+      icon: category.icon,
+      name: category.name,
+      href: genBookCategoryLink(category),
+    }),
+  );
+
+  const promoBarVisible = !hidePromoBar && promoItems?.length > 0;
 
   return (
     <header
       className={c(
         'c-header',
-        hasPromoBar && 'has-promo-bar',
+        promoBarVisible && 'has-promo-bar',
       )}
     >
       <Container
@@ -54,10 +67,11 @@ export const Header = ({promoItems}: HeaderProps) => {
       {ua.mobile && (
         <Container>
           <HeaderSearch />
+          <MobileMenu />
         </Container>
       )}
 
-      {hasPromoBar && (
+      {promoBarVisible && (
         <Container expandable>
           <HeaderPromoLinks items={promoItems} />
         </Container>

@@ -325,12 +325,13 @@ export const PL_LANG_PACK = {
     tags: 'Tagi',
     top: 'TOP książki',
   },
-  bottom_menu: {
+  mobile_menu: {
     home: 'Start',
     news: 'Newsy',
     top: 'TOP',
     books: 'Książki',
     search: 'Szukaj',
+    reviews: 'Recenzje',
   },
   about: {
     // eslint-disable-next-line max-len

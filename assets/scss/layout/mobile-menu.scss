@@ -1,44 +1,39 @@
-.c-bottom-menu {
+.c-mobile-menu {
   $self: &;
 
-  position: fixed;
-  width: 100%;
-  left: 0;
-  bottom: 0;
-  background: #fff;
-  transition: height 150ms ease-in-out;
-  height: $mobile-bottom-menu-height;
-  z-index: 5;
-
-  &.is-active {
-    height: 100%;
-  }
+  width: calc(100% + 30px);
+  margin: 0 -15px;
 
   &__list {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    height: $mobile-bottom-menu-height;
-    box-shadow: rgb(0, 0, 0, 0.28) 0px 0px 4px 0px;
-  }
-
-  &__content {
-    max-height: calc(100% - #{$mobile-bottom-menu-height});
-    padding: 15px 20px;
-    overflow-y: auto;
   }
 
   &__item {
     @include flex-centered;
 
     position: relative;
+    padding: 5px 0 10px;
     flex: 1 1 0px;
     flex-direction: column;
+
+    &:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      top: 50%;
+      width: 1px;
+      height: 60%;
+      transform: translateY(-50%);
+      background: color(divider);
+    }
 
     &.is-active {
       color: color(primary);
 
-      &::after {
+      &::before {
         content: '';
         position: absolute;
         width: 100%;
@@ -51,6 +46,7 @@
     &-icon svg {
       width: auto;
       height: 24px;
+      opacity: .65;
     }
 
     &-title {

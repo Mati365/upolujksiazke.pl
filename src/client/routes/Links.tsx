@@ -12,6 +12,7 @@ import {
 } from '@api/types';
 
 export type IdNameLinkPair = {
+  name?: string,
   parameterizedName?: string,
   id: any,
 };
@@ -76,9 +77,17 @@ export const BOOK_ALL_REVIEWS_PATH = `${BOOK_PATH}/recenzje`;
 export const genAllBookReviewsLink = (attrs: IdSlugBookPair) => `${genBookLink(attrs)}/recenzje`;
 export const BookAllReviewsLink = UndecoratedLink.create(genAllBookReviewsLink);
 
-export const PUBLISHER_PATH = '/wydawca/:slug,:id';
 export const PublisherLink = UndecoratedLink.create<IdNameLinkPair>(
-  ({id, parameterizedName}) => `/wydawca/${parameterizedName},${id}`,
+  ({id, name}) => genBooksSearchLink(
+    {
+      publishers: [
+        {
+          id,
+          name,
+        },
+      ],
+    },
+  ),
 );
 
 export const BOOK_ERA_PATH = '/epoka/:slug,:id';

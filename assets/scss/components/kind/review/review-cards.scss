@@ -33,6 +33,10 @@
           border-radius: 100%;
         }
       }
+
+      &-rating {
+        flex-shrink: 0;
+      }
     }
 
     &__toolbar,
@@ -58,11 +62,20 @@
     }
 
     @include mobile {
-      &__user-rating {
-        align-self: flex-start;
+      &__user {
+        &-rating {
+          align-self: flex-start;
 
-        .c-ratings-row__text-value {
-          font-size: $text-normal;
+          .c-ratings-row__text-value {
+            font-size: $text-normal;
+          }
+        }
+
+        &-nick {
+          @include text-ellipsis;
+
+          display: inline-block;
+          max-width: calc(100% - 10px);
         }
       }
 

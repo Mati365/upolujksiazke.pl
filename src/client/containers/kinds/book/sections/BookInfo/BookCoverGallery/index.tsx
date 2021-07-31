@@ -2,6 +2,8 @@ import React, {useState} from 'react';
 import c from 'classnames';
 
 import {useI18n} from '@client/i18n';
+import {useUA} from '@client/modules/ua';
+
 import {formatReleaseTitle} from '@client/helpers/logic';
 
 import {BookFullInfoRecord} from '@api/types';
@@ -26,6 +28,7 @@ export const BookCoverGallery = (
   }: BookCoverGalleryProps,
 ) => {
   const t = useI18n();
+  const ua = useUA();
   const primaryReleaseCover = book.primaryRelease.cover?.preview?.file;
 
   const [thumb, setFocusedThumb] = useState<BookGalleryThumb>();
@@ -82,6 +85,11 @@ export const BookCoverGallery = (
         <BookGalleryThumbs
           active={src}
           items={thumbs}
+          showPerPage={(
+            ua.mobile
+              ? 2
+              : 3
+          )}
           onClick={setFocusedThumb}
         />
       )}

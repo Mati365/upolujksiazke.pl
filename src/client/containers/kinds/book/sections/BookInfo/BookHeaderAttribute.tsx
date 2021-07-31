@@ -2,15 +2,22 @@ import React, {ReactNode} from 'react';
 import c from 'classnames';
 
 type BookHeaderAttributeProps = {
-  className?: string,
   label: ReactNode,
   children: ReactNode,
+  className?: string,
+  wrap?: boolean,
 };
 
-export const BookHeaderAttribute = ({className, label, children}: BookHeaderAttributeProps) => (
+export const BookHeaderAttribute = (
+  {
+    className, label,
+    children, wrap = true,
+  }: BookHeaderAttributeProps,
+) => (
   <div
     className={c(
       'c-book-info-section__header-attr',
+      wrap && 'is-wrapped',
       className,
     )}
   >

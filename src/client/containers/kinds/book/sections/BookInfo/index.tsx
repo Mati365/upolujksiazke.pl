@@ -125,6 +125,7 @@ export const BookInfo = (
               label={
                 `${t('book.primary_category')}:`
               }
+              wrap={false}
             >
               <BookCategoryLink
                 className='is-primary-chevron-link is-text-small is-text-semibold'
@@ -141,6 +142,7 @@ export const BookInfo = (
               label={
                 `${t('shared.titles.subcategories')}:`
               }
+              wrap={false}
             >
               <LinksRow<BooksFiltersWithNames>
                 className='is-text-small'

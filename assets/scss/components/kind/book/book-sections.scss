@@ -18,6 +18,36 @@
     &__header {
       margin-top: 0;
       margin-bottom: 1.2rem;
+
+      &-attr {
+        @include flex-list;
+
+        align-items: flex-start;
+        margin-bottom: .25rem;
+        line-height: 20px;
+        color: color(muted-text);
+
+        @include mobile {
+          margin-bottom: .5rem;
+
+          &.is-wrapped {
+            flex-direction: column;
+
+            .c-book-info-section__header-attr-value {
+              margin-left: 0;
+            }
+          }
+        }
+
+        &-label {
+          font-size: $text-small;
+        }
+
+        &-value {
+          max-width: 100%;
+          margin-left: 7px;
+        }
+      }
     }
 
     &__description {
@@ -38,35 +68,8 @@
       }
     }
 
-    &__header-attr {
-      @include flex-list;
-
-      color: color(muted-text);
-
-      &-label {
-        font-size: $text-small;
-      }
-
-      &-value {
-        max-width: 100%;
-        margin-left: 7px;
-      }
-
-      &:not(:last-child) {
-        margin-bottom: .85rem;
-
-        @include mobile {
-          margin-bottom: 1.2rem;
-        }
-      }
-    }
-
-    &__author {
-      align-items: flex-end;
-
-      a {
-        color: color(primary);
-      }
+    &__author a {
+      color: color(primary);
     }
 
     &__categories {
@@ -76,39 +79,32 @@
       &:empty {
         display: none;
       }
-
-      > .c-book-info-section__header-attr {
-        align-items: flex-start;
-        margin-bottom: .25rem;
-        line-height: 20px;
-
-        &:last-child {
-          margin-bottom: 0;
-        }
-      }
     }
 
     &__price-box .c-book-price-box__buy-cta + * {
       margin-top: 2.5rem;
     }
 
-    &__tags {
-      &-title {
-        @include flex-list;
+    &__tags-title {
+      @include flex-list;
 
-        margin-bottom: .85rem;
+      margin-bottom: .85rem;
+
+      @include mobile {
+        margin-top: 1rem;
+        margin-bottom: .45rem;
       }
     }
 
     &__toolbar-row {
       display: grid;
-      grid-template-columns: minmax(0, .5fr) 0.5fr;
-      gap: 25px 20px;
-      margin: 2rem 0;
+      margin: 1.5rem 0 1rem;
+      gap: 10px;
+      grid-template-areas: "title title"
+                           "author price";
 
       #{$self}__header {
-        grid-column-start: 1;
-        grid-column-end: 3;
+        grid-area: title;
         margin-bottom: 0;
       }
 
@@ -117,6 +113,11 @@
       }
     }
 
+    &__cover {
+      @include mobile {
+        max-width: 250px;
+      }
+    }
 
     &__sidebar {
       > li:not(:last-child):not(.has-no-divider) {
@@ -144,16 +145,6 @@
       > .c-section__content {
         grid-template-columns: 1fr;
         gap: 30px;
-      }
-
-      &__header-attr {
-        flex-direction: column;
-        align-items: flex-start;
-
-        &-value {
-          margin-top: 5px;
-          margin-left: 0;
-        }
       }
     }
   }

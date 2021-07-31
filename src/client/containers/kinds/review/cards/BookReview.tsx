@@ -113,7 +113,6 @@ export const BookReview = (
               ua.mobile
                 ? {
                   inline: false,
-                  spaced: 1,
                 }
                 : {
                   separated: true,

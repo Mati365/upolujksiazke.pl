@@ -11,6 +11,8 @@
   }
 
   &__tab {
+    @extend .c-badge;
+
     cursor: pointer;
   }
 

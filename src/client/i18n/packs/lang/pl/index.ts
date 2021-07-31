@@ -285,7 +285,7 @@ export const PL_LANG_PACK = {
       },
     },
     reviews: {
-      title: 'Opinie o książce',
+      title: 'Fragmenty opinii o książce',
       total: '%{} recenzji',
       show_more_reviews: 'Pokaż więcej recenzji (%{})',
       read_full_review: 'Czytaj całą recenzję',
@@ -298,7 +298,7 @@ export const PL_LANG_PACK = {
     },
   },
   review: {
-    read_more_at: 'Czytaj więcej na',
+    read_more_at: 'Czytaj całość recenzji na',
   },
   sections: {
     root_categories: {

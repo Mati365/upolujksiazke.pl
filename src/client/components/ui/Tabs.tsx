@@ -126,7 +126,7 @@ export const Tabs = (
         block
         inline
         separated
-        spaced={4}
+        spaced={3}
         className={c(
           'c-tabs__nav',
           align && `is-aligned-${align}`,

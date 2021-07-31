@@ -59,7 +59,6 @@ export const BookPricesTabs = ({book, shrink}: BookPricesTabsProps) => {
   return (
     <Tabs
       textOnly
-      align='right'
       {...(
         ua.mobile
           ? {

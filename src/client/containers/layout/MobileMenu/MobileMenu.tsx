@@ -29,6 +29,7 @@ export const MobileMenu = () => {
         <MobileMenuItem
           href={HOME_PATH}
           title={t('home')}
+          anchorTitle={t('links.home')}
           icon={(
             <HomeIcon />
           )}

@@ -7,6 +7,7 @@ import {
 type MobileMenuItemProps = UndecoratedLinkProps & {
   icon: ReactNode,
   title: string,
+  anchorTitle?: string,
   tag?: any,
 };
 
@@ -14,12 +15,16 @@ export const MobileMenuItem = (
   {
     icon,
     title,
+    anchorTitle,
     tag: Tag = UndecoratedLink,
     ...props
   }: MobileMenuItemProps,
 ) => (
   <Tag
     className='c-mobile-menu__item'
+    title={
+      anchorTitle ?? title
+    }
     {...Tag === UndecoratedLink && {
       activeClassName: 'is-active',
     }}

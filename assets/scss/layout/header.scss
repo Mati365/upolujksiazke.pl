@@ -117,7 +117,7 @@
 @include mobile {
   .c-header {
     margin-bottom: .85rem;
-    border-bottom: 1px solid color(gray-2);
+    border-bottom: 1px solid color(divider);
 
     > .c-container:first-of-type {
       padding: 15px;

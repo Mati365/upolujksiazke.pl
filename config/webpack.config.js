@@ -59,7 +59,7 @@ const createConfig = ({
           use: 'raw-loader',
         },
         {
-          test: /\.(png|jpe?g|gif|ttf)$/,
+          test: /\.(png|jpe?g|gif|ttf|woff|woff2|ttf|eot)$/,
           use: [
             {
               loader: 'file-loader',

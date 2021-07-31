@@ -92,7 +92,11 @@ export const BookInfo = (
 
             <ExpandableDescriptionBox
               className='c-book-info-section__description'
-              maxCharactersCount={900}
+              maxCharactersCount={(
+                ua.mobile
+                  ? 350
+                  : 900
+              )}
               text={safeDescription}
               mobileSmaller={false}
               html

@@ -35,6 +35,16 @@ import {
   genBookCategoryLink,
 } from '../Links';
 
+export const genCategoryFilters = (category: BookCategoryRecord) => (
+  category.root
+    ? {
+      parentCategoriesIds: [category.id],
+    }
+    : {
+      categoriesIds: [category.id],
+    }
+);
+
 type BooksRouteViewData = {
   category: BookCategoryRecord,
   layoutData: LayoutViewData,
@@ -55,6 +65,7 @@ export const BooksCategoryRoute: AsyncRoute<BooksRouteViewData> = (
   if (!category)
     return <Redirect to={BOOKS_PATH} />;
 
+  const {parentCategory} = category;
   const breadcrumbs = (
     <Breadcrumbs
       padding='medium'
@@ -64,6 +75,17 @@ export const BooksCategoryRoute: AsyncRoute<BooksRouteViewData> = (
           path: genBooksLink(),
           title: t('shared.breadcrumbs.books'),
         },
+        ...(
+          category.parentCategory
+            ? [
+              {
+                id: 'parentCategory',
+                path: genBookCategoryLink(parentCategory),
+                title: capitalize(parentCategory.name),
+              },
+            ]
+            : []
+        ),
         {
           id: 'category',
           path: genBookCategoryLink(category),
@@ -96,9 +118,9 @@ export const BooksCategoryRoute: AsyncRoute<BooksRouteViewData> = (
         <BooksFiltersContainer
           initialBooks={initialBooks}
           initialFilters={initialFilters}
-          overrideFilters={{
-            parentCategoriesIds: [category.id],
-          }}
+          overrideFilters={
+            genCategoryFilters(category)
+          }
           contentHeader={
             ({searchInput}) => (
               <>
@@ -147,24 +169,19 @@ BooksCategoryRoute.getInitialProps = async (attrs) => {
   };
 
   const {
-    initialBooks,
     layoutData,
     category,
   } = await objPropsToPromise(
     {
       layoutData: Layout.getInitialProps(attrs),
-      category: repo.booksCategories.findOne(
-        params.id,
-        {
-          root: true,
-        },
-      ),
-      initialBooks: repo.books.findAggregatedBooks(
-        {
-          ...serializeAggsToSearchParams(initialFilters),
-          parentCategoriesIds: [params.id],
-        },
-      ),
+      category: repo.booksCategories.findOne(params.id),
+    },
+  );
+
+  const initialBooks = await repo.books.findAggregatedBooks(
+    {
+      ...serializeAggsToSearchParams(initialFilters),
+      ...genCategoryFilters(category),
     },
   );
 

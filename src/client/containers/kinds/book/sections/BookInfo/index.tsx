@@ -5,10 +5,9 @@ import {formatBookTitle} from '@client/helpers/logic';
 import {useUA} from '@client/modules/ua';
 import {useI18n} from '@client/i18n';
 
-import {ListItem} from '@shared/types';
 import {BookFullInfoRecord} from '@api/types';
 import {BooksAuthorsGroupedBooks, BooksFiltersWithNames} from '@api/repo';
-import {BookCategoryLink, BooksLink} from '@client/routes/Links';
+import {BookCategoryLink} from '@client/routes/Links';
 
 import {
   ExpandableDescriptionBox,
@@ -151,13 +150,10 @@ export const BookInfo = (
               <LinksRow<BooksFiltersWithNames>
                 className='is-text-small'
                 items={categories}
-                linkComponent={BooksLink}
+                linkComponent={BookCategoryLink}
                 linkProps={
-                  (item) => ({
+                  () => ({
                     withChevron: true,
-                    item: {
-                      categories: [item as ListItem],
-                    },
                   })
                 }
                 block={false}

@@ -1,15 +1,12 @@
 import {ENV} from '@client/constants/env';
 
-import {buildURL, concatUrls} from '@shared/helpers';
+import {buildURL, concatUrls, parameterize} from '@shared/helpers';
 import {serializeUrlFilters} from '@client/containers/filters/hooks/useStoreFiltersInURL';
 
 import {UndecoratedLink} from '@client/components/ui/Link';
 import {BookSchoolLevel} from '@shared/enums';
 import {BooksFiltersWithNames} from '@api/repo';
-import {
-  BookCategoryRecord,
-  TagRecord,
-} from '@api/types';
+import {TagRecord} from '@api/types';
 
 export type IdNameLinkPair = {
   name?: string,
@@ -48,26 +45,14 @@ export const genBookCategoryLink = (
   {
     id,
     name,
-    root,
     parameterizedName,
-  }: BookCategoryRecord,
+  }: IdNameLinkPair,
 ) => (
-  root === false
-    ? genBooksLink(
-      {
-        categories: [
-          {
-            id,
-            name,
-          },
-        ],
-      },
-    )
-    : `/kategoria/${parameterizedName},${id}`
+  `/kategoria/${parameterizedName ?? (name && parameterize(name))},${id}`
 );
 
 export const BOOKS_CATEGORY_PATH = '/kategoria/:slug,:id';
-export const BookCategoryLink = UndecoratedLink.create<Parameters<typeof genBookCategoryLink>[0]>(genBookCategoryLink);
+export const BookCategoryLink = UndecoratedLink.create<IdNameLinkPair>(genBookCategoryLink);
 
 export const BOOK_PATH = '/ksiazka/:slug,:id';
 export const genBookLink = ({id, parameterizedSlug}: IdSlugBookPair) => `/ksiazka/${parameterizedSlug},${id}`;

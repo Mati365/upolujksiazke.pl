@@ -114,6 +114,8 @@ export class BookCategoryService {
     return BookCategoryEntity.findOne(
       id,
       {
+        relations: ['parentCategory'],
+
         ...!R.isNil(root) && {
           where: {
             root,

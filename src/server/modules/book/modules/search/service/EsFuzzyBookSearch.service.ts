@@ -262,6 +262,9 @@ export class EsFuzzyBookSearchService {
       },
     );
 
+    if (!book?.authors?.length)
+      return [];
+
     const query = (
       esb
         .boolQuery()

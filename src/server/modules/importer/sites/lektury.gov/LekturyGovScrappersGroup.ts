@@ -1,17 +1,17 @@
 import {ScrapperMetadataKind} from '@scrapper/entity';
 import {
-  BookShopScrappersGroup,
-  BookShopScrappersGroupConfig,
-} from '@importer/kinds/scrappers/BookShop.scrapper';
+  DefaultWebsiteScrappersGroup,
+  DefaultScrappersGroupConfig,
+} from '@scrapper/service/shared/DefaultWebsiteScrappersGroup';
 
 import {parseAsyncURLIfOK} from '@server/common/helpers/fetchAsyncHTML';
 import {JwtAPIClient} from '@api/jwt';
 import {LekturyGovBookScrapper} from './LekturyGovBook.scrapper';
 
-export class LekturyGovScrappersGroup extends BookShopScrappersGroup {
+export class LekturyGovScrappersGroup extends DefaultWebsiteScrappersGroup {
   public readonly api: JwtAPIClient;
 
-  constructor(options: BookShopScrappersGroupConfig) {
+  constructor(options: DefaultScrappersGroupConfig) {
     super(
       {
         ...options,

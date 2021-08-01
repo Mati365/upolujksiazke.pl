@@ -2,15 +2,15 @@ import {ScrapperMetadataKind} from '@scrapper/entity';
 import {SpiderQueueProxyScrapper} from '@importer/kinds/scrappers';
 import {SimpleWebsiteScrapperSpider} from '@scrapper/service/shared';
 import {
-  BookShopScrappersGroup,
-  BookShopScrappersGroupConfig,
-} from '@importer/kinds/scrappers/BookShop.scrapper';
+  DefaultWebsiteScrappersGroup,
+  DefaultScrappersGroupConfig,
+} from '@scrapper/service/shared/DefaultWebsiteScrappersGroup';
 
 import {BlogspotPostsScrapper} from '../../predefined/BlogspotPosts.scrapper';
 import {HrosskarBookSummaryParser} from './HrosskarBookSummary.parser';
 
-export class HrosskarScrappersGroup extends BookShopScrappersGroup {
-  constructor(config: BookShopScrappersGroupConfig) {
+export class HrosskarScrappersGroup extends DefaultWebsiteScrappersGroup {
+  constructor(config: DefaultScrappersGroupConfig) {
     super(
       {
         ...config,

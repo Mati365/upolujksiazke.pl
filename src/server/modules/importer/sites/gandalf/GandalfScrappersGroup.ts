@@ -1,14 +1,14 @@
 import {ScrapperMetadataKind} from '@scrapper/entity';
 import {
-  BookShopScrappersGroup,
-  BookShopScrappersGroupConfig,
-} from '@importer/kinds/scrappers/BookShop.scrapper';
+  DefaultWebsiteScrappersGroup,
+  DefaultScrappersGroupConfig,
+} from '@scrapper/service/shared/DefaultWebsiteScrappersGroup';
 
 import {GandalfBookMatcher} from './GandalfBook.matcher';
 import {GandalfBookParser} from './GandalfBook.parser';
 
-export class GandalfScrappersGroup extends BookShopScrappersGroup {
-  constructor(options: BookShopScrappersGroupConfig) {
+export class GandalfScrappersGroup extends DefaultWebsiteScrappersGroup {
+  constructor(options: DefaultScrappersGroupConfig) {
     super(
       {
         ...options,

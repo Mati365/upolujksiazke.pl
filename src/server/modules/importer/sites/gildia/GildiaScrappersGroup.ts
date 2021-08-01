@@ -1,14 +1,14 @@
 import {ScrapperMetadataKind} from '@scrapper/entity';
 import {
-  BookShopScrappersGroup,
-  BookShopScrappersGroupConfig,
-} from '@importer/kinds/scrappers/BookShop.scrapper';
+  DefaultWebsiteScrappersGroup,
+  DefaultScrappersGroupConfig,
+} from '@scrapper/service/shared/DefaultWebsiteScrappersGroup';
 
 import {GildiaBookMatcher} from './GildiaBook.matcher';
 import {GildiaBookParser} from './GildiaBook.parser';
 
-export class GildiaScrappersGroup extends BookShopScrappersGroup {
-  constructor(options: BookShopScrappersGroupConfig) {
+export class GildiaScrappersGroup extends DefaultWebsiteScrappersGroup {
+  constructor(options: DefaultScrappersGroupConfig) {
     super(
       {
         ...options,

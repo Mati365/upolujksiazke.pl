@@ -1,14 +1,14 @@
 import {ScrapperMetadataKind} from '@scrapper/entity';
 import {
-  BookShopScrappersGroup,
-  BookShopScrappersGroupConfig,
-} from '@importer/kinds/scrappers/BookShop.scrapper';
+  DefaultWebsiteScrappersGroup,
+  DefaultScrappersGroupConfig,
+} from '@scrapper/service/shared/DefaultWebsiteScrappersGroup';
 
 import {TaniaksiazkaBookMatcher} from './TaniaksiazkaBook.matcher';
 import {TaniaksiazkaBookParser} from './TaniaksiazkaBook.parser';
 
-export class TaniaksiazkaScrappersGroup extends BookShopScrappersGroup {
-  constructor(options: BookShopScrappersGroupConfig) {
+export class TaniaksiazkaScrappersGroup extends DefaultWebsiteScrappersGroup {
+  constructor(options: DefaultScrappersGroupConfig) {
     super(
       {
         ...options,

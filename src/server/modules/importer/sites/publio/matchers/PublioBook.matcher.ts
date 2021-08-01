@@ -3,10 +3,10 @@ import {fuzzyFindBookAnchor} from '@importer/kinds/scrappers/helpers/fuzzyFindBo
 import {CreateBookDto} from '@server/modules/book/dto/CreateBook.dto';
 import {ScrapperMatcherResult, WebsiteScrapperMatcher} from '@scrapper/service/shared/ScrapperMatcher';
 import {MatchRecordAttrs} from '@scrapper/service/shared/WebsiteScrappersGroup';
-import {BookShopScrappersGroupConfig} from '@importer/kinds/scrappers/BookShop.scrapper';
+import {DefaultUrlsConfig} from '@scrapper/service/shared/DefaultWebsiteScrappersGroup';
 import {ScrapperMetadataKind} from '@scrapper/entity';
 
-export class PublioBookMatcher extends WebsiteScrapperMatcher<CreateBookDto, BookShopScrappersGroupConfig> {
+export class PublioBookMatcher extends WebsiteScrapperMatcher<CreateBookDto, DefaultUrlsConfig> {
   /**
    * @inheritdoc
    */

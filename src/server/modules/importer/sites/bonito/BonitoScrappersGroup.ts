@@ -1,14 +1,14 @@
 import {ScrapperMetadataKind} from '@scrapper/entity';
 import {
-  BookShopScrappersGroup,
-  BookShopScrappersGroupConfig,
-} from '@importer/kinds/scrappers/BookShop.scrapper';
+  DefaultWebsiteScrappersGroup,
+  DefaultScrappersGroupConfig,
+} from '@scrapper/service/shared/DefaultWebsiteScrappersGroup';
 
 import {BonitoBookMatcher} from './BonitoBook.matcher';
 import {BonitoBookParser} from './BonitoBook.parser';
 
-export class BonitoScrappersGroup extends BookShopScrappersGroup {
-  constructor(options: BookShopScrappersGroupConfig) {
+export class BonitoScrappersGroup extends DefaultWebsiteScrappersGroup {
+  constructor(options: DefaultScrappersGroupConfig) {
     super(
       {
         ...options,

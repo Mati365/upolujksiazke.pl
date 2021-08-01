@@ -6,9 +6,9 @@ import {
 } from '@scrapper/service/shared';
 
 import {CreateImageAttachmentDto} from '@server/modules/attachment/dto';
-import {SpiderQueueProxyScrapper} from './SpiderQueueProxy.scrapper';
+import {SpiderQueueProxyScrapper} from '../../../../kinds/scrappers/SpiderQueueProxy.scrapper';
 
-export type BookShopUrlsConfig = {
+export type DefaultUrlsConfig = {
   id: number,
   withSubdomains?: boolean,
   homepageURL?: string,
@@ -17,19 +17,19 @@ export type BookShopUrlsConfig = {
   logoURL?: string,
 };
 
-export type BookShopScrappersGroupConfig = ScrappersGroupInitializer & BookShopUrlsConfig;
+export type DefaultScrappersGroupConfig = ScrappersGroupInitializer & DefaultUrlsConfig;
 
 /**
  * Object that groups matchers, scrappers and parsers
  *
  * @export
  * @abstract
- * @class BookShopScrappersGroup
+ * @class DefaultWebsiteScrappersGroup
  * @extends {WebsiteScrappersGroup}
  * @implements {URLPathMatcher}
  */
-export abstract class BookShopScrappersGroup extends WebsiteScrappersGroup {
-  constructor({scrappers, websiteInfoScrapper, ...config}: BookShopScrappersGroupConfig) {
+export abstract class DefaultWebsiteScrappersGroup extends WebsiteScrappersGroup {
+  constructor({scrappers, websiteInfoScrapper, ...config}: DefaultScrappersGroupConfig) {
     super(
       {
         ...config,

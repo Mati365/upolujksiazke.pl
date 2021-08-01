@@ -1,14 +1,14 @@
 import {ScrapperMetadataKind} from '@scrapper/entity';
 import {
-  BookShopScrappersGroup,
-  BookShopScrappersGroupConfig,
-} from '@importer/kinds/scrappers/BookShop.scrapper';
+  DefaultWebsiteScrappersGroup,
+  DefaultScrappersGroupConfig,
+} from '@scrapper/service/shared/DefaultWebsiteScrappersGroup';
 
 import {StreszczeniaBookSummaryMatcher} from './StreszczeniaBookSummary.matcher';
 import {StreszczeniaBookSummaryParser} from './StreszczeniaBookSummary.parser';
 
-export class StreszczeniaScrappersGroup extends BookShopScrappersGroup {
-  constructor(options: BookShopScrappersGroupConfig) {
+export class StreszczeniaScrappersGroup extends DefaultWebsiteScrappersGroup {
+  constructor(options: DefaultScrappersGroupConfig) {
     super(
       {
         ...options,

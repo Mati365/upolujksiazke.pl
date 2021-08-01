@@ -3,10 +3,10 @@ import {fuzzyFindBookAnchor} from '@importer/kinds/scrappers/helpers/fuzzyFindBo
 import {CreateBookSummaryDto} from '@server/modules/book/modules/summary/dto';
 import {MatchRecordAttrs} from '@scrapper/service/shared/WebsiteScrappersGroup';
 import {WebsiteScrapperMatcher, ScrapperMatcherResult} from '@scrapper/service/shared/ScrapperMatcher';
-import {BookShopScrappersGroupConfig} from '@importer/kinds/scrappers/BookShop.scrapper';
+import {DefaultUrlsConfig} from '@scrapper/service/shared/DefaultWebsiteScrappersGroup';
 import {ScrapperMetadataKind} from '../../modules/scrapper/entity';
 
-export class BrykBookSummaryMatcher extends WebsiteScrapperMatcher<CreateBookSummaryDto, BookShopScrappersGroupConfig> {
+export class BrykBookSummaryMatcher extends WebsiteScrapperMatcher<CreateBookSummaryDto, DefaultUrlsConfig> {
   // eslint-disable-next-line max-len
   static BOOK_SEARCH_LISTING_SELECTOR = '.search-finding .results-block.lectures .lectures-main-content-wrapper .lectures-main-content .list-item .lecture-wrapper';
 

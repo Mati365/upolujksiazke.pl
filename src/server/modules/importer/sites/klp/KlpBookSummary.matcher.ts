@@ -4,10 +4,10 @@ import {parseAsyncURLIfOK} from '@server/common/helpers/fetchAsyncHTML';
 import {CreateBookSummaryDto} from '@server/modules/book/modules/summary/dto';
 import {MatchRecordAttrs} from '@scrapper/service/shared/WebsiteScrappersGroup';
 import {WebsiteScrapperMatcher, ScrapperMatcherResult} from '@scrapper/service/shared/ScrapperMatcher';
-import {BookShopScrappersGroupConfig} from '@importer/kinds/scrappers/BookShop.scrapper';
+import {DefaultUrlsConfig} from '@scrapper/service/shared/DefaultWebsiteScrappersGroup';
 import {ScrapperMetadataKind} from '../../modules/scrapper/entity';
 
-export class KlpBookSummaryMatcher extends WebsiteScrapperMatcher<CreateBookSummaryDto, BookShopScrappersGroupConfig> {
+export class KlpBookSummaryMatcher extends WebsiteScrapperMatcher<CreateBookSummaryDto, DefaultUrlsConfig> {
   /**
    * @inheritdoc
    */

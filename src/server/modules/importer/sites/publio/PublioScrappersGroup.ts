@@ -1,8 +1,8 @@
 import {ScrapperMetadataKind} from '@scrapper/entity';
 import {
-  BookShopScrappersGroup,
-  BookShopScrappersGroupConfig,
-} from '@importer/kinds/scrappers/BookShop.scrapper';
+  DefaultWebsiteScrappersGroup,
+  DefaultScrappersGroupConfig,
+} from '@scrapper/service/shared/DefaultWebsiteScrappersGroup';
 
 import {PublioBookMatcher} from './matchers/PublioBook.matcher';
 import {PublioBookPublisherMatcher} from './matchers/PublioBookPublisher.matcher';
@@ -10,8 +10,8 @@ import {PublioBookParser} from './parsers/PublioBook.parser';
 import {PublioPublisherParser} from './parsers/PublioPublisher.parser';
 import {PublioSpider} from './spiders/Publio.spider';
 
-export class PublioScrappersGroup extends BookShopScrappersGroup {
-  constructor(options: BookShopScrappersGroupConfig) {
+export class PublioScrappersGroup extends DefaultWebsiteScrappersGroup {
+  constructor(options: DefaultScrappersGroupConfig) {
     super(
       {
         ...options,

@@ -1,8 +1,8 @@
 import {ScrapperMetadataKind} from '@scrapper/entity';
 import {
-  BookShopScrappersGroup,
-  BookShopScrappersGroupConfig,
-} from '@importer/kinds/scrappers/BookShop.scrapper';
+  DefaultWebsiteScrappersGroup,
+  DefaultScrappersGroupConfig,
+} from '@scrapper/service/shared/DefaultWebsiteScrappersGroup';
 
 import {LiteraturaGildiaBookMatcher} from './matchers/LiteraturaGildiaBook.matcher';
 import {LiteraturaGildiaBookAuthorMatcher} from './matchers/LiteraturaGildiaBookAuthor.matcher';
@@ -11,8 +11,8 @@ import {LiteraturaGildiaBookParser} from './parsers/LiteraturaGildiaBook.parser'
 import {LiteraturaGildiaBookAuthorParser} from './parsers/LiteraturaGildiaBookAuthor.parser';
 import {LiteraturaGildiaBookPublisherParser} from './parsers/LiteraturaGildiaBookPublisher.parser';
 
-export class LiteraturaGildiaScrappersGroup extends BookShopScrappersGroup {
-  constructor(options: BookShopScrappersGroupConfig) {
+export class LiteraturaGildiaScrappersGroup extends DefaultWebsiteScrappersGroup {
+  constructor(options: DefaultScrappersGroupConfig) {
     super(
       {
         ...options,

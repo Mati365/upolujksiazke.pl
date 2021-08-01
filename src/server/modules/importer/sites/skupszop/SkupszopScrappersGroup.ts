@@ -1,15 +1,15 @@
 import {ScrapperMetadataKind} from '@scrapper/entity';
 import {SimpleWebsiteScrapperSpider} from '@scrapper/service/shared';
 import {
-  BookShopScrappersGroup,
-  BookShopScrappersGroupConfig,
-} from '@importer/kinds/scrappers/BookShop.scrapper';
+  DefaultWebsiteScrappersGroup,
+  DefaultScrappersGroupConfig,
+} from '@scrapper/service/shared/DefaultWebsiteScrappersGroup';
 
 import {SkupszopBookMatcher} from './SkupszopBook.matcher';
 import {SkupszopBookParser} from './SkupszopBook.parser';
 
-export class SkupszopScrappersGroup extends BookShopScrappersGroup {
-  constructor(options: BookShopScrappersGroupConfig) {
+export class SkupszopScrappersGroup extends DefaultWebsiteScrappersGroup {
+  constructor(options: DefaultScrappersGroupConfig) {
     super(
       {
         ...options,

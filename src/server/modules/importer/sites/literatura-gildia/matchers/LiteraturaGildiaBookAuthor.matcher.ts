@@ -6,11 +6,11 @@ import {CreateBookAuthorDto} from '@server/modules/book/modules/author/dto/Creat
 
 import {WebsiteScrapperMatcher, ScrapperMatcherResult} from '@scrapper/service/shared/ScrapperMatcher';
 import {MatchRecordAttrs} from '@scrapper/service/shared/WebsiteScrappersGroup';
-import {BookShopScrappersGroupConfig} from '@importer/kinds/scrappers/BookShop.scrapper';
+import {DefaultUrlsConfig} from '@scrapper/service/shared/DefaultWebsiteScrappersGroup';
 import {ScrapperMetadataKind} from '@scrapper/entity';
 
 export class LiteraturaGildiaBookAuthorMatcher
-  extends WebsiteScrapperMatcher<CreateBookAuthorDto, BookShopScrappersGroupConfig> {
+  extends WebsiteScrapperMatcher<CreateBookAuthorDto, DefaultUrlsConfig> {
   /**
    * @inheritdoc
    */

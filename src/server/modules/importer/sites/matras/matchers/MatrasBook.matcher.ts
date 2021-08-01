@@ -4,9 +4,9 @@ import {CreateBookDto} from '@server/modules/book/dto/CreateBook.dto';
 import {ScrapperMetadataKind} from '@scrapper/entity/ScrapperMetadata.entity';
 import {MatchRecordAttrs} from '@scrapper/service/shared/WebsiteScrappersGroup';
 import {WebsiteScrapperMatcher, ScrapperMatcherResult} from '@scrapper/service/shared/ScrapperMatcher';
-import {BookShopScrappersGroupConfig} from '@importer/kinds/scrappers/BookShop.scrapper';
+import {DefaultUrlsConfig} from '@scrapper/service/shared/DefaultWebsiteScrappersGroup';
 
-export class MatrasBookMatcher extends WebsiteScrapperMatcher<CreateBookDto, BookShopScrappersGroupConfig> {
+export class MatrasBookMatcher extends WebsiteScrapperMatcher<CreateBookDto, DefaultUrlsConfig> {
   /**
    * @inheritdoc
    */

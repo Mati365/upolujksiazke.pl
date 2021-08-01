@@ -1,11 +1,11 @@
 import {CreateBookPublisherDto} from '@server/modules/book/modules/publisher/dto/BookPublisher.dto';
 import {ScrapperMatcherResult, WebsiteScrapperMatcher} from '@scrapper/service/shared/ScrapperMatcher';
-import {BookShopScrappersGroupConfig} from '@importer/kinds/scrappers/BookShop.scrapper';
+import {DefaultUrlsConfig} from '@scrapper/service/shared/DefaultWebsiteScrappersGroup';
 import {MatchRecordAttrs} from '@scrapper/service/shared/WebsiteScrappersGroup';
 import {ScrapperMetadataKind} from '@scrapper/entity';
 
 export class PublioBookPublisherMatcher
-  extends WebsiteScrapperMatcher<CreateBookPublisherDto, BookShopScrappersGroupConfig> {
+  extends WebsiteScrapperMatcher<CreateBookPublisherDto, DefaultUrlsConfig> {
   /**
    * @inheritdoc
    */

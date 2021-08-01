@@ -29,7 +29,7 @@ export class WebsiteInfoScrapper {
     if (info.description && info.title)
       return info;
 
-    return WebsiteInfoScrapper.fetchWebsiteDto(info);
+    return WebsiteInfoScrapper.fetchWebsiteDTO(info);
   }
 
   /**
@@ -40,7 +40,7 @@ export class WebsiteInfoScrapper {
    * @return {Promise<CreateRemoteWebsiteDto>}
    * @memberof WebsiteInfoScrapper
    */
-  static async fetchWebsiteDto({url, logo, withSubdomains}: CreateRemoteWebsiteDto): Promise<CreateRemoteWebsiteDto> {
+  static async fetchWebsiteDTO({url, logo, withSubdomains}: CreateRemoteWebsiteDto): Promise<CreateRemoteWebsiteDto> {
     const {$} = await parseAsyncURL(url);
     let faviconUrl = logo?.originalUrl || $('[rel="shortcut icon"], [rel="icon"]').attr('href');
 

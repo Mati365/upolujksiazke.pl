@@ -3,10 +3,9 @@ import * as path from 'path';
 import {Options as SentryOptions} from '@sentry/types';
 import {LogLevel} from '@sentry/types/dist/loglevel';
 
-import {BookShopUrlsConfig} from '@importer/kinds/scrappers/BookShop.scrapper';
+import {DefaultUrlsConfig} from '@scrapper/service/shared/DefaultWebsiteScrappersGroup';
 import {WykopScrappersGroupConfig} from '@server/modules/importer/sites/wykop/WykopScrappersGroup';
 import {WykopAPI} from '@server/modules/importer/sites/wykop/api/WykopAPI';
-import {WikipediaScrappersGroupConfig} from '@server/modules/importer/sites/wikipedia/WikipediaScrappersGroup';
 import {SitemapServiceOptions} from '@server/modules/sitemap/services/Sitemap.service';
 
 /* eslint-disable import/no-default-export */
@@ -71,9 +70,8 @@ export type AppEnv = Partial<{
     },
     sitemap: SitemapServiceOptions,
     sentry: Omit<SentryOptions, 'integrations'>,
-    parsers: Record<DefaultConfigBookShopNames, BookShopUrlsConfig> & {
+    parsers: Record<DefaultConfigBookShopNames, DefaultUrlsConfig> & {
       wykop: WykopScrappersGroupConfig,
-      wikipedia: WikipediaScrappersGroupConfig,
     },
   },
   client: Partial<{
@@ -295,14 +293,6 @@ export const GLOBAL_CONFIG: Record<string, AppEnv> = {
               },
             },
           ),
-        },
-        wikipedia: {
-          id: 23,
-          homepageURL: 'https://pl.wikipedia.org',
-          clientOptions: {
-            apiUrl: 'http://pl.wikipedia.org/w/api.php',
-            origin: '*',
-          },
         },
         krytycznymOkiem: {
           id: 24,

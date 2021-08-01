@@ -1,15 +1,15 @@
 import {ScrapperMetadataKind} from '@scrapper/entity';
 import {SimpleWebsiteScrapperSpider} from '@scrapper/service/shared';
 import {
-  BookShopScrappersGroup,
-  BookShopScrappersGroupConfig,
-} from '@importer/kinds/scrappers/BookShop.scrapper';
+  DefaultWebsiteScrappersGroup,
+  DefaultScrappersGroupConfig,
+} from '@scrapper/service/shared/DefaultWebsiteScrappersGroup';
 
 import {DadadaBookMatcher} from './DadadaBook.matcher';
 import {DadadaBookParser} from './DadadaBook.parser';
 
-export class DadadaScrappersGroup extends BookShopScrappersGroup {
-  constructor(options: BookShopScrappersGroupConfig) {
+export class DadadaScrappersGroup extends DefaultWebsiteScrappersGroup {
+  constructor(options: DefaultScrappersGroupConfig) {
     super(
       {
         ...options,

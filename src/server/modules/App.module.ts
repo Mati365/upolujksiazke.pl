@@ -31,6 +31,7 @@ import {UserModule} from './user';
 import {SitemapModule} from './sitemap';
 import {NopModule} from './nop';
 import {BookModule} from './book';
+import {BrandModule} from './brand';
 
 @Module(
   {
@@ -96,6 +97,7 @@ import {BookModule} from './book';
       UserModule,
       ReactionsModule,
       TrackerModule,
+      BrandModule,
       BookModule,
       RemoteModule,
       ImporterModule,

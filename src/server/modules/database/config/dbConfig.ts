@@ -37,6 +37,7 @@ import {BookEraEntity} from '../../book/modules/era/BookEra.entity';
 import {BookGenreEntity} from '../../book/modules/genre/BookGenre.entity';
 import {UserReactionEntity} from '../../reactions/entity/UserReaction.entity';
 import {UserEntity} from '../../user/User.entity';
+import {BrandEntity} from '../../brand/entity/Brand.entity';
 
 import {
   BookSummaryEntity,
@@ -49,6 +50,7 @@ import {
 } from '../../book/modules/review/entity';
 
 export const DB_ENTITIES = {
+  BrandEntity,
   UserReactionEntity,
   UserEntity,
   RemoteWebsiteEntity,

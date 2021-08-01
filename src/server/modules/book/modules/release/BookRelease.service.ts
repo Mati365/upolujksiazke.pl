@@ -20,6 +20,7 @@ import {
 } from '@server/modules/attachment/entity';
 
 import {ImageAttachmentService, ImageResizeConfig} from '@server/modules/attachment/services';
+import {RemoteWebsiteService} from '@server/modules/remote/service';
 import {CreateBookReleaseDto} from './dto/CreateBookRelease.dto';
 import {CreateBookAvailabilityDto} from '../availability/dto/CreateBookAvailability.dto';
 import {CreateBookReviewDto} from '../review/dto/CreateBookReview.dto';
@@ -54,6 +55,7 @@ export class BookReleaseService {
     private readonly publisherService: BookPublisherService,
     private readonly availabilityService: BookAvailabilityService,
     private readonly imageAttachmentService: ImageAttachmentService,
+    private readonly remoteWebsiteService: RemoteWebsiteService,
   ) {}
 
   /**
@@ -134,6 +136,7 @@ export class BookReleaseService {
       coversSizes?: ImageVersion[],
     },
   ) {
+    const {remoteWebsiteService} = this;
     const releases = await (
       BookReleaseEntity
         .createQueryBuilder('r')
@@ -157,28 +160,28 @@ export class BookReleaseService {
 
     const {covers, availability} = await objPropsToPromise(
       {
-        availability: (
-          BookAvailabilityEntity
-            .createQueryBuilder('a')
-            .select(
-              [
-                'a.id', 'a.releaseId',
-                'a.prevPrice', 'a.price', 'a.inStock',
-                'a.totalRatings', 'a.avgRating', 'a.url',
-                'website.id', 'website.hostname', 'website.url',
-                'attachment.file', 'logo.version',
-              ],
-            )
-            .innerJoin('a.website', 'website')
-            .leftJoin('website.logo', 'logo', `logo.version = '${ImageVersion.SMALL_THUMB}'`)
-            .leftJoin('logo.attachment', 'attachment')
-            .where(
-              {
-                releaseId: In(R.pluck('id', releases)),
-              },
-            )
-            .getMany()
-        ),
+        availability: (async () => {
+          const list = await (
+            BookAvailabilityEntity
+              .createQueryBuilder('a')
+              .select(
+                [
+                  'a.id', 'a.releaseId', 'a.websiteId',
+                  'a.prevPrice', 'a.price', 'a.inStock',
+                  'a.totalRatings', 'a.avgRating', 'a.url',
+                ],
+              )
+              .where(
+                {
+                  releaseId: In(R.pluck('id', releases)),
+                },
+              )
+              .getMany()
+          );
+
+          return remoteWebsiteService.preloadWebsitesToEntities(list);
+        })(),
+
         covers: (
           coversSizes && releases?.length > 0
             ? (

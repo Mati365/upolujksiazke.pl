@@ -20,7 +20,7 @@ const nonNullPairsToObj = R.compose(
   R.fromPairs,
   R.reject(
     (array) => R.isNil(array[1]),
-  ), // remove nil values
+  ) as any, // remove nil values
 );
 
 /**

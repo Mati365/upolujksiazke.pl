@@ -1,3 +1,7 @@
+type Invalidable<T> = T & {
+  clearCache(): void;
+};
+
 /**
  * Compares two arrays
  *
@@ -35,11 +39,11 @@ export function shallowNotEqArray<A, B>(a: A[], b: B[]): boolean {
  * @returns
  */
 export function cacheOneCall<A extends [any] | any[]>(cacheFn: (prev?: A, current?: A) => boolean) {
-  return <T> (fn: (...args: A) => T): (...args: A) => T => {
+  return <T> (fn: (...args: A) => T) => {
     let previousArgs: A = null;
     let previousReturn: T = null;
 
-    return function memoize(...args: A): T {
+    const wrapped: Invalidable<(...args: A) => T> = function memoize(...args: A): T {
       if (previousArgs !== null && !cacheFn(previousArgs, args))
         return previousReturn;
 
@@ -47,6 +51,13 @@ export function cacheOneCall<A extends [any] | any[]>(cacheFn: (prev?: A, curren
       previousArgs = args;
       return previousReturn;
     };
+
+    wrapped.clearCache = () => {
+      previousArgs = null;
+      previousReturn = null;
+    };
+
+    return wrapped;
   };
 }
 
@@ -59,6 +70,6 @@ export function cacheOneCall<A extends [any] | any[]>(cacheFn: (prev?: A, curren
  * @param {(...args: A) => T} fn
  * @returns
  */
-export function shallowMemoizeOneCall<A extends [any] | any[], T>(fn: (...args: A) => T): (...args: A) => T {
+export function shallowMemoizeOneCall<A extends [any] | any[], T>(fn: (...args: A) => T) {
   return cacheOneCall<A>(shallowNotEqArray)(fn);
 }

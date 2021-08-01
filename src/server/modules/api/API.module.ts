@@ -9,12 +9,14 @@ import {TagModule} from '../tag';
 import {APIv1Module} from './controllers/v1/APIv1.module';
 import {RefreshJWTCookieInterceptor} from './interceptors/RefreshJWTCookie.interceptor';
 import {APIClientService} from './services';
+import {BrochureModule} from '../brochure';
 
 @Global()
 @Module(
   {
     imports: [
       TagModule,
+      BrochureModule,
       BookModule,
       ...(
         isCmdAppInstance()

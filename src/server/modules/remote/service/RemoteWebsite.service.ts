@@ -1,17 +1,34 @@
 import {Injectable} from '@nestjs/common';
 import {Connection, EntityManager} from 'typeorm';
+import * as R from 'ramda';
 
-import {extractHostname} from '@shared/helpers/urlExtract';
+import {
+  findObjValue,
+  shallowMemoizeOneCall,
+  extractHostname,
+  uniqFlatHashByProp,
+} from '@shared/helpers';
+
 import {
   forwardTransaction,
   upsert,
   UpsertResourceAttrs,
 } from '@server/common/helpers/db';
 
-import {ImageResizeSize} from '@shared/types';
+import {Result, errIfNil} from '@shared/monads/Result';
+import {ImageResizeSize, ImageVersion} from '@shared/types';
 import {ImageAttachmentService, ImageResizeConfig} from '@server/modules/attachment/services';
 import {RemoteWebsiteEntity} from '../entity/RemoteWebsite.entity';
 import {CreateRemoteWebsiteDto} from '../dto/CreateRemoteWebsite.dto';
+
+type WebsitesCache = {
+  [id: string]: RemoteWebsiteEntity,
+};
+
+type RecordWithWebsite = {
+  websiteId: number | string,
+  website: RemoteWebsiteEntity,
+};
 
 @Injectable()
 export class RemoteWebsiteService {
@@ -29,19 +46,90 @@ export class RemoteWebsiteService {
   ) {}
 
   /**
+   * Returns flat hash of websites list, it is safe to load
+   * all into memory, there is no so many of them
+   *
+   * @memberof RemoteWebsiteService
+   */
+  getCachedWebsitesMap = shallowMemoizeOneCall(async () => {
+    const result = await (
+      RemoteWebsiteEntity
+        .createQueryBuilder('website')
+        .addSelect(['logo', 'attachment'])
+        .leftJoin('website.logo', 'logo', `logo.version = '${ImageVersion.SMALL_THUMB}'`)
+        .leftJoin('logo.attachment', 'attachment')
+        .getMany()
+    );
+
+    return uniqFlatHashByProp('id', result);
+  });
+
+  /**
+   * If function returns err() monad result cache is flushed
+   * and websites are hash is regenerated. It can happen if
+   * scrapper adds new website in meantime
+   *
+   * @template T
+   * @param {(cache: WebsitesCache) => Result<T, true>} fn
+   * @return {T}
+   * @memberof RemoteWebsiteService
+   */
+  async lookupOrInvalidateWebsiteCache<T>(fn: (cache: WebsitesCache) => Result<T, void>): Promise<T> {
+    return fn(await this.getCachedWebsitesMap()).match(
+      {
+        ok: R.identity,
+        err: () => {
+          this.getCachedWebsitesMap.clearCache();
+          return null;
+        },
+      },
+    );
+  }
+
+  /**
+   * Assigns website attributes to list. It is faster than
+   * traditional way to load websites using join, it performs
+   * only one call to SQL and caches all websites into cache
+   *
+   *
+   * @template T
+   * @param {T[]} entities
+   * @return {Promise<T[]>}
+   * @memberof RemoteWebsiteService
+   */
+  async preloadWebsitesToEntities<T extends RecordWithWebsite>(entities: T[]): Promise<T[]> {
+    const websites = await this.getCachedWebsitesMap();
+    entities.forEach((entity) => {
+      entity.website = websites[entity.websiteId] ?? null;
+    });
+
+    return entities;
+  }
+
+  /**
    * Search signle record by plain URL
    *
    * @param {string} url
    * @returns
    * @memberof RemoteWebsiteService
    */
-  findByFullURL(url: string) {
-    return (
+  async findByFullURL(url: string) {
+    const hostname = extractHostname(url);
+    const cacheResult = await this.lookupOrInvalidateWebsiteCache(
+      (cache) => errIfNil(
+        findObjValue(
+          R.propEq('hostname', hostname),
+          cache,
+        ),
+      ),
+    );
+
+    return cacheResult || (
       RemoteWebsiteEntity
         .createQueryBuilder()
         .where(
           {
-            hostname: extractHostname(url),
+            hostname,
           },
         )
         .limit(1)

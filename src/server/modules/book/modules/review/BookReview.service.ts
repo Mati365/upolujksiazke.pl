@@ -21,6 +21,7 @@ import {
 } from '@shared/enums';
 
 import {VotingStatsEmbeddable} from '@server/modules/reactions';
+import {RemoteWebsiteService} from '@server/modules/remote/service/RemoteWebsite.service';
 import {BookReviewEntity} from './entity/BookReview.entity';
 import {BookReviewerService} from '../reviewer/BookReviewer.service';
 import {BookStatsService} from '../stats/services/BookStats.service';
@@ -37,12 +38,15 @@ export type UpdateBookReviewAttrs = UpsertResourceAttrs & {
 
 @Injectable()
 export class BookReviewService {
+  public static readonly REVIEW_WEBSITE_FIELDS = [
+    'websiteLogo.version', 'websiteAttachment.file',
+    'website.id', 'website.hostname', 'website.url',
+  ];
+
   public static readonly REVIEW_CARD_FIELDS = [
     'review',
     'reviewer.name', 'reviewer.gender',
     'avatar.version', 'attachment.file',
-    'websiteLogo.version', 'websiteAttachment.file',
-    'website.id', 'website.hostname', 'website.url',
   ];
 
   constructor(
@@ -53,6 +57,7 @@ export class BookReviewService {
     private readonly bookStatsService: BookStatsService,
     private readonly bookReviewerService: BookReviewerService,
     private readonly cardBookSearchService: CardBookSearchService,
+    private readonly remoteWebsiteService: RemoteWebsiteService,
   ) {}
 
   /**
@@ -65,30 +70,41 @@ export class BookReviewService {
   createCardsQuery(
     {
       select = BookReviewService.REVIEW_CARD_FIELDS,
+      withWebsite = true,
       hiddenContent = false,
     }: {
       select?: string[],
+      withWebsite?: boolean,
       hiddenContent?: boolean,
     } = {},
   ): SelectQueryBuilder<BookReviewEntity> {
     let query = (
       BookReviewEntity
         .createQueryBuilder('review')
-        .select(select)
+        .select(
+          [
+            ...select,
+            ...(withWebsite ? BookReviewService.REVIEW_WEBSITE_FIELDS : []),
+          ],
+        )
         .leftJoin('review.reviewer', 'reviewer')
         .leftJoin('reviewer.avatar', 'avatar', `avatar.version = '${ImageVersion.SMALL_THUMB}'`)
         .leftJoin('avatar.attachment', 'attachment')
-
-        .innerJoin('review.website', 'website')
-        .leftJoin('website.logo', 'websiteLogo', `websiteLogo.version = '${ImageVersion.SMALL_THUMB}'`)
-        .leftJoin('websiteLogo.attachment', 'websiteAttachment')
-
         .where(
           {
             description: Not(IsNull()),
           },
         )
     );
+
+    if (withWebsite) {
+      query = (
+        query
+          .innerJoin('review.website', 'website')
+          .leftJoin('website.logo', 'websiteLogo', `websiteLogo.version = '${ImageVersion.SMALL_THUMB}'`)
+          .leftJoin('websiteLogo.attachment', 'websiteAttachment')
+      );
+    }
 
     if (!R.isNil(hiddenContent))
       query = query.andWhere('review."hiddenContent" = :hiddenContent', {hiddenContent});
@@ -149,17 +165,22 @@ export class BookReviewService {
       hiddenContent?: boolean,
     },
   ): Promise<BookReviewEntity[]> {
-    const {cardBookSearchService} = this;
-    const reviews = await (
-      this
+    const {
+      cardBookSearchService,
+      remoteWebsiteService,
+    } = this;
+
+    const reviews = await remoteWebsiteService.preloadWebsitesToEntities(
+      await this
         .createCardsQuery(
           {
             hiddenContent,
+            withWebsite: false,
           },
         )
         .orderBy('review.publishDate', 'DESC')
         .take(limit)
-        .getMany()
+        .getMany(),
     );
 
     const books = uniqFlatHashByProp(
@@ -200,11 +221,13 @@ export class BookReviewService {
       hiddenContent?: boolean,
     },
   ) {
+    const {remoteWebsiteService} = this;
     let query = (
       this
         .createCardsQuery(
           {
             hiddenContent,
+            withWebsite: false,
           },
         )
         .skip(offset)
@@ -222,7 +245,7 @@ export class BookReviewService {
     );
 
     return {
-      items,
+      items: await remoteWebsiteService.preloadWebsitesToEntities(items),
       meta: {
         limit,
         offset,

@@ -38,6 +38,8 @@ import {BookGenreEntity} from '../../book/modules/genre/BookGenre.entity';
 import {UserReactionEntity} from '../../reactions/entity/UserReaction.entity';
 import {UserEntity} from '../../user/User.entity';
 import {BrandEntity} from '../../brand/entity/Brand.entity';
+import {BrochureEntity} from '../../brochure/entity/Brochure.entity';
+import {BrochurePageEntity} from '../../brochure/modules/brochure-page/BrochurePage.entity';
 
 import {
   BookSummaryEntity,
@@ -50,6 +52,8 @@ import {
 } from '../../book/modules/review/entity';
 
 export const DB_ENTITIES = {
+  BrochureEntity,
+  BrochurePageEntity,
   BrandEntity,
   UserReactionEntity,
   UserEntity,

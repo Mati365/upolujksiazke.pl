@@ -1,18 +1,37 @@
 import {Module} from '@nestjs/common';
+
+import {TagModule} from '../tag/Tag.module';
+import {BrandModule} from '../brand/Brand.module';
 import {BrochurePageModule} from './modules';
-import {BrochureService} from './services/Brochure.service';
+
+import {EsBrochureIndex} from './indices/EsBrochure.index';
+import {
+  BrochureService,
+  BrochureTagsService,
+  CardBrochureSearchService,
+  EsCardBrochureSearchService,
+} from './services';
 
 @Module(
   {
     imports: [
+      TagModule,
+      BrandModule,
       BrochurePageModule,
     ],
     providers: [
       BrochureService,
+      BrochureTagsService,
+      CardBrochureSearchService,
+      EsCardBrochureSearchService,
+      EsBrochureIndex,
     ],
     exports: [
       BrochureService,
       BrochurePageModule,
+      BrochureTagsService,
+      CardBrochureSearchService,
+      EsBrochureIndex,
     ],
   },
 )

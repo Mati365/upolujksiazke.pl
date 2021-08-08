@@ -3,8 +3,13 @@ import {Injectable} from '@nestjs/common';
 import {Connection, EntityManager} from 'typeorm';
 
 import {ID} from '@shared/types';
+import {
+  PredefinedEntityDbIterator,
+  IdMappedEntityDbIterator,
+  createDbIteratedQuery,
+  upsert,
+} from '@server/common/helpers/db';
 
-import {upsert} from '@server/common/helpers/db';
 import {parameterize} from '@shared/helpers/parameterize';
 
 import {TagEntity} from './Tag.entity';
@@ -19,6 +24,40 @@ export class TagService {
   constructor(
     private readonly connection: Connection,
   ) {}
+
+  /**
+   * Creates iterator that walks over Tag table
+   *
+   * @template R
+   * @param {PredefinedEntityDbIterator<TagEntity, R>} attrs
+   * @memberof BookTagsService
+   */
+  createIteratedQuery<R>(attrs: PredefinedEntityDbIterator<TagEntity, R>) {
+    return createDbIteratedQuery(
+      {
+        prefix: 't',
+        query: (
+          TagEntity.createQueryBuilder('t')
+        ),
+        ...attrs,
+      },
+    );
+  }
+
+  /**
+   * Create query that iterates over all tags
+   *
+   * @param {IdMappedEntityDbIterator<TagEntity>} attrs
+   * @memberof BookTagsService
+   */
+  createIdsIteratedQuery(attrs: IdMappedEntityDbIterator<TagEntity>) {
+    return this.createIteratedQuery(
+      {
+        ...attrs,
+        mapperFn: (result) => R.pluck('id', result),
+      },
+    );
+  }
 
   /**
    * Finds one tag

@@ -1,6 +1,6 @@
 import {Injectable} from '@nestjs/common';
 
-import {BookTagsService} from '@server/modules/book/modules/tags/BookTags.service';
+import {TagService} from '@server/modules/tag/Tag.service';
 import {
   IdNameLinkPair,
   genTagLink,
@@ -12,9 +12,9 @@ import {
 } from './Sitemap.generator';
 
 @Injectable()
-export class BookTagSitemapGenerator implements SitemapGenerator {
+export class TagSitemapGenerator implements SitemapGenerator {
   constructor(
-    private readonly tagsService: BookTagsService,
+    private readonly tagsService: TagService,
   ) {}
 
   async generate({stream}: SitemapGeneratorConfig): Promise<void> {

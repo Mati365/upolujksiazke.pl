@@ -1,8 +1,9 @@
 import {Module} from '@nestjs/common';
 import {BullModule} from '@nestjs/bull';
 
-import {TagModule} from '@server/modules/tag';
+import {TagModule} from '@server/modules/tag/Tag.module';
 import {BookModule} from '@server/modules/book/Book.module';
+import {BrochureModule} from '@server/modules/brochure/Brochure.module';
 
 import {
   BookDbLoaderService,
@@ -10,6 +11,7 @@ import {
   BookSummaryDbLoaderService,
   BookImportedListener,
   UrlDbLoaderService,
+  BrochureDbLoaderService,
 } from '@importer/kinds/db-loaders';
 
 import {
@@ -28,6 +30,7 @@ import {ScrapperModule} from '../scrapper/Scrapper.module';
   {
     imports: [
       BookModule,
+      BrochureModule,
       ScrapperModule,
       TagModule,
       BullModule.registerQueue(
@@ -49,6 +52,7 @@ import {ScrapperModule} from '../scrapper/Scrapper.module';
       BookDbLoaderService,
       BookSummaryDbLoaderService,
       BookReviewDbLoaderService,
+      BrochureDbLoaderService,
     ],
     exports: [
       UrlDbLoaderService,
@@ -57,6 +61,7 @@ import {ScrapperModule} from '../scrapper/Scrapper.module';
       BookSummaryDbLoaderService,
       MetadataDbLoaderService,
       MetadataDbLoaderQueueService,
+      BrochureDbLoaderService,
     ],
   },
 )

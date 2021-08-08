@@ -92,7 +92,7 @@ export class BrandService {
           image: logo,
           manyToMany: {
             tableName: BrandEntity.logoTableName,
-            idEntityColName: 'brandId',
+            idEntityColName: 'brandsId',
           },
           fetcher: {
             destSubDir: `brand/${brand.id}`,

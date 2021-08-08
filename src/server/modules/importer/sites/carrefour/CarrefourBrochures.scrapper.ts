@@ -30,6 +30,7 @@ export class CarrefourBrochuresScrapper extends AsyncScrapper<BrochureScrapperIn
   constructor(
     private readonly config: {
       latestBrochuresPath: string,
+      logoURL: string,
     },
   ) {
     super();
@@ -71,13 +72,20 @@ export class CarrefourBrochuresScrapper extends AsyncScrapper<BrochureScrapperIn
     if (!item)
       return null;
 
-    const {websiteURL} = this;
+    const {
+      websiteURL,
+      config: {
+        latestBrochuresPath,
+        logoURL,
+      },
+    } = this;
+
+    const remoteId = R.unless(R.isNil, R.slice(1, -1))(item.uuid) || item.id;
     const pdfName = item.filesMap?.pdf?.name;
     const pages = item.images.map(
-      ({name, width, height}, index: number) => new CreateBrochurePageDto(
+      ({name}, index: number) => new CreateBrochurePageDto(
         {
           index,
-          ratio: width / height,
           image: new CreateImageAttachmentDto(
             {
               originalUrl: concatUrlParts([websiteURL, 'images/newspaper/org', name]),
@@ -87,18 +95,28 @@ export class CarrefourBrochuresScrapper extends AsyncScrapper<BrochureScrapperIn
       ),
     );
 
+    const brand = new CreateBrandDto(
+      {
+        name: 'Carrefour',
+        ...logoURL && {
+          logo: new CreateImageAttachmentDto(
+            {
+              originalUrl: logoURL,
+            },
+          ),
+        },
+      },
+    );
+
     const dto = new CreateBrochureDto(
       {
+        url: concatUrlParts([websiteURL, latestBrochuresPath, remoteId]),
         title: normalizeParsedText(item.name || item.displayName),
         nsfw: item.alcohol,
         ...pdfName && {
           pdfUrl: concatUrlParts([websiteURL, 'files/newspaper', pdfName]),
         },
-        brand: new CreateBrandDto(
-          {
-            name: 'Carrefour',
-          },
-        ),
+        brand,
         validFrom: safeDateParse(item.dateFrom),
         validTo: safeDateParse(item.dateTo),
         pages,
@@ -108,7 +126,7 @@ export class CarrefourBrochuresScrapper extends AsyncScrapper<BrochureScrapperIn
     return {
       kind: ScrapperMetadataKind.BROCHURE,
       parserSource: JSON.stringify(item),
-      remoteId: R.unless(R.isNil, R.slice(1, -1))(item.uuid) || item.id,
+      remoteId,
       dto,
     };
   }

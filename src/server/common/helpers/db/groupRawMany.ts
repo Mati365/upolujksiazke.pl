@@ -1,8 +1,10 @@
+import * as R from 'ramda';
+
 export function groupRawMany<E>(
   {
     items,
     key,
-    mapperFn,
+    mapperFn = R.identity,
   }: {
     items: any[],
     key: string,

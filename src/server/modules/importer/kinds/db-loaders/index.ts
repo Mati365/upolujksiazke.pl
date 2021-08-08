@@ -1,4 +1,5 @@
 export * from './Book.loader';
+export * from './Brochure.loader';
 export * from './BookReview.loader';
 export * from './BookSummary.loader';
 export * from './Url.loader';

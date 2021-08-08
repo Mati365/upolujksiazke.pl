@@ -2,11 +2,12 @@ import {DynamicModule, Module} from '@nestjs/common';
 import {SitemapService, SitemapServiceOptions, SITEMAP_OPTIONS} from './services/Sitemap.service';
 import {SitemapRefreshCron} from './cron/SitemapRefresh.cron';
 import {BookModule} from '../book/Book.module';
+import {TagModule} from '../tag/Tag.module';
 import {
   BookAuthorSitemapGenerator,
   BookCategorySitemapGenerator,
   BookSitemapGenerator,
-  BookTagSitemapGenerator,
+  TagSitemapGenerator,
 } from './services/generators';
 
 @Module({})
@@ -15,6 +16,7 @@ export class SitemapModule {
     return {
       module: SitemapModule,
       imports: [
+        TagModule,
         BookModule,
       ],
       providers: [
@@ -27,7 +29,7 @@ export class SitemapModule {
         BookSitemapGenerator,
         BookAuthorSitemapGenerator,
         BookCategorySitemapGenerator,
-        BookTagSitemapGenerator,
+        TagSitemapGenerator,
       ],
       exports: [
         SitemapService,

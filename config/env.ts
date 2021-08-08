@@ -302,6 +302,8 @@ export const GLOBAL_CONFIG: Record<string, AppEnv> = {
         carrefour: {
           id: 25,
           homepageURL: 'https://www.carrefour.pl/',
+          // eslint-disable-next-line max-len
+          logoURL: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Carrefour_logo.svg/748px-Carrefour_logo.svg.png',
         },
       },
     },

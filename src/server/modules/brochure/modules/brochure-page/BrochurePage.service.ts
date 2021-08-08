@@ -1,9 +1,15 @@
 import {Injectable} from '@nestjs/common';
-import {Connection, EntityManager} from 'typeorm';
 import pMap from 'p-map';
+import {
+  In,
+  Connection,
+  EntityManager,
+  SelectQueryBuilder,
+} from 'typeorm';
 
 import {
   forwardTransaction,
+  groupRawMany,
   upsert,
   UpsertResourceAttrs,
 } from '@server/common/helpers/db';
@@ -11,13 +17,109 @@ import {
 import {ImageAttachmentService} from '@server/modules/attachment/services';
 import {BrochurePageEntity} from './BrochurePage.entity';
 import {CreateBrochurePageDto} from './dto/BrochurePage.dto';
+import {BrochureGroupedSelectAttrs} from '../../shared/types';
 
 @Injectable()
 export class BrochurePageService {
+  public static readonly DEFAULT_SELECT_FIELDS = [
+    'page.id', 'page.index', 'page.brochureId',
+    'image.version', 'image.ratio', 'image.nsfw', 'attachment.file',
+  ];
+
   constructor(
     private readonly connection: Connection,
     private readonly imageAttachmentService: ImageAttachmentService,
   ) {}
+
+  /**
+   * Create basic query
+   *
+   * @param {Object} attrs
+   * @return {SelectQueryBuilder<BrochurePageEntity>}
+   * @memberof BrochurePageService
+   */
+  createDefaultQuery(
+    {
+      select = BrochurePageService.DEFAULT_SELECT_FIELDS,
+    }: {
+      select?: string[],
+    } = {},
+  ): SelectQueryBuilder<BrochurePageEntity> {
+    return (
+      BrochurePageEntity
+        .createQueryBuilder('page')
+        .innerJoin('page.image', 'image')
+        .innerJoin('image.attachment', 'attachment')
+        .select(select)
+    );
+  }
+
+  /**
+   * Find pages for multiple brochures
+   *
+   * @param {BrochureGroupedSelectAttrs} attrs
+   * @return {Promise<Record<string, BrochurePageEntity[]>>}
+   * @memberof BrochurePageService
+   */
+  async findBrochuresPages(
+    {
+      brochuresIds,
+      select = BrochurePageService.DEFAULT_SELECT_FIELDS,
+    }: BrochureGroupedSelectAttrs,
+  ): Promise<Record<string, BrochurePageEntity[]>> {
+    const items = await (
+      this
+        .createDefaultQuery(
+          {
+            select,
+          },
+        )
+        .where(
+          {
+            brochureId: In(brochuresIds),
+          },
+        )
+        .getMany()
+    );
+
+    return groupRawMany(
+      {
+        items,
+        key: 'brochureId',
+      },
+    );
+  }
+
+  /**
+   * Remove multiple brochure pages at once
+   *
+   * @param {number[]} ids
+   * @param {EntityManager} [entityManager]
+   * @memberof BrochurePageService
+   */
+  async delete(ids: number[], entityManager?: EntityManager) {
+    const {
+      connection,
+      imageAttachmentService,
+    } = this;
+
+    const entities = await BrochurePageEntity.findByIds(
+      ids,
+      {
+        select: ['id'],
+        loadRelationIds: {
+          relations: ['image'],
+        },
+      },
+    );
+
+    await forwardTransaction({connection, entityManager}, async (transaction) => {
+      for await (const entity of entities)
+        await imageAttachmentService.delete(entity.image as any[], transaction);
+
+      await transaction.remove(entities);
+    });
+  }
 
   /**
    * Upsert single page
@@ -38,7 +140,7 @@ export class BrochurePageService {
     } = attrs;
 
     const executor = async (transaction: EntityManager) => {
-      const publisher = await upsert(
+      const page = await upsert(
         {
           connection,
           entityManager: transaction,
@@ -51,7 +153,7 @@ export class BrochurePageService {
       await imageAttachmentService.upsertImage(
         {
           entityManager: transaction,
-          entity: publisher,
+          entity: page,
           resourceColName: 'image',
           image,
           manyToMany: {
@@ -59,14 +161,14 @@ export class BrochurePageService {
             idEntityColName: 'brochurePageId',
           },
           fetcher: {
-            destSubDir: `brochure/page/${publisher.id}`,
+            destSubDir: `brochure/${dto.brochureId}/page/${page.id}`,
             sizes: BrochurePageEntity.IMAGE_SIZES,
           },
           upsertResources,
         },
       );
 
-      return publisher;
+      return page;
     };
 
     return forwardTransaction(

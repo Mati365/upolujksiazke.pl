@@ -129,7 +129,7 @@ export class CardBookSearchService {
    *
    * @template R
    * @param {PredefinedEntityDbIterator<BookAuthorEntity, R>} attrs
-   * @memberof BookAuthorService
+   * @memberof CardBookSearchService
    */
   createIteratedQuery<R>(attrs: PredefinedEntityDbIterator<BookEntity, R>) {
     return createDbIteratedQuery(

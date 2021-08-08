@@ -6,6 +6,7 @@ export type InlineMetadataObject = {
   content: any,
   url?: string,
   websiteId?: number,
+  remoteId?: string,
 };
 
 export interface MetadataDbLoader {

@@ -15,6 +15,7 @@ export class CarrefourScrappersGroup extends DefaultWebsiteScrappersGroup {
           [ScrapperMetadataKind.BROCHURE]: new CarrefourBrochuresScrapper(
             {
               latestBrochuresPath: 'promocje/gazetka-promocyjna',
+              logoURL: config.logoURL,
             },
           ),
         },

@@ -37,9 +37,9 @@ export const BookReview = (
     review,
     showBookCard,
     moreButtonRenderFn,
+    maxCharacterCount,
     showReactionsTitles = true,
     totalRatingStars = 10,
-    maxCharacterCount = 500,
   }: BookReviewProps,
 ) => {
   const t = useI18n();
@@ -53,6 +53,8 @@ export const BookReview = (
 
   if (!description)
     return null;
+
+  maxCharacterCount ??= ua.mobile ? 400 : 500;
 
   if (!moreButtonRenderFn && quote && url) {
     moreButtonRenderFn = () => (

@@ -21,7 +21,7 @@ import {
   BookSitemapGenerator,
   BookAuthorSitemapGenerator,
   BookCategorySitemapGenerator,
-  BookTagSitemapGenerator,
+  TagSitemapGenerator,
 } from './generators';
 
 export const SITEMAP_OPTIONS = 'SITEMAP_OPTIONS';
@@ -49,13 +49,13 @@ export class SitemapService {
     readonly bookGenerator: BookSitemapGenerator,
     readonly bookAuthorGenerator: BookAuthorSitemapGenerator,
     readonly bookCategoryGenerator: BookCategorySitemapGenerator,
-    readonly bookTagGenerator: BookTagSitemapGenerator,
+    readonly tagGenerator: TagSitemapGenerator,
   ) {
     this.generators = [
       bookGenerator,
       bookAuthorGenerator,
       bookCategoryGenerator,
-      bookTagGenerator,
+      tagGenerator,
     ];
   }
 

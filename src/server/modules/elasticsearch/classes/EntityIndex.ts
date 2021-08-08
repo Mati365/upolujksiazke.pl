@@ -3,6 +3,8 @@ import {ElasticsearchService} from '@nestjs/elasticsearch';
 import chalk from 'chalk';
 import * as R from 'ramda';
 
+import {IMAGE_VERSIONS_FIELDS} from '@api/types/ImageAttachment.record';
+
 import {getCurrentTimestampSuffix} from '@server/common/helpers';
 import {isDevMode, safeToString} from '@shared/helpers';
 
@@ -28,6 +30,26 @@ export const PredefinedProperties = Object.freeze(
         properties,
       },
     ),
+
+    imageAttachment: {
+      type: 'nested',
+      properties: R.reduce(
+        (acc, key) => ({
+          ...acc,
+          [key]: {
+            type: 'nested',
+            properties: {
+              version: {type: 'keyword'},
+              ratio: {type: 'float'},
+              nsfw: {type: 'boolean'},
+              file: {type: 'keyword'},
+            },
+          },
+        }),
+        {},
+        IMAGE_VERSIONS_FIELDS,
+      ),
+    },
   },
 );
 
@@ -307,6 +329,8 @@ export abstract class EntityIndex<E extends {id: number}, I = E> implements OnMo
           ignore_unavailable: true,
         },
       );
+
+      throw e;
     }
   }
 

@@ -4,11 +4,15 @@ import {
   BookDbLoaderService,
   BookReviewDbLoaderService,
   BookSummaryDbLoaderService,
+  BrochureDbLoaderService,
   UrlDbLoaderService,
 } from '@importer/kinds/db-loaders';
 
 import {ScrapperMetadataKind} from '../../scrapper/entity';
-import {InlineMetadataObject, MetadataDbLoader} from '../MetadataDbLoader.interface';
+import {
+  InlineMetadataObject,
+  MetadataDbLoader,
+} from '../MetadataDbLoader.interface';
 
 @Injectable()
 export class MetadataDbLoaderService implements MetadataDbLoader {
@@ -18,6 +22,7 @@ export class MetadataDbLoaderService implements MetadataDbLoader {
     readonly bookReviewDbLoader: BookReviewDbLoaderService,
     readonly bookDbLoader: BookDbLoaderService,
     readonly bookSummaryDbLoader: BookSummaryDbLoaderService,
+    readonly brochureDbLoader: BrochureDbLoaderService,
     readonly urlDbLoader: UrlDbLoaderService,
   ) {
     this.resourceLoaders = {
@@ -25,7 +30,7 @@ export class MetadataDbLoaderService implements MetadataDbLoader {
       [ScrapperMetadataKind.BOOK_REVIEW]: bookReviewDbLoader,
       [ScrapperMetadataKind.BOOK]: bookDbLoader,
       [ScrapperMetadataKind.BOOK_SUMMARY]: bookSummaryDbLoader,
-      [ScrapperMetadataKind.BROCHURE]: null,
+      [ScrapperMetadataKind.BROCHURE]: brochureDbLoader,
       [ScrapperMetadataKind.BOOK_AUTHOR]: null,
       [ScrapperMetadataKind.BOOK_PUBLISHER]: null,
     };

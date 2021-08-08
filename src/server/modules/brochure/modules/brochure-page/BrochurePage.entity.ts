@@ -28,9 +28,6 @@ export class BrochurePageEntity extends DatedRecordEntity {
   @Column('int', {nullable: false})
   index: number;
 
-  @Column('float', {nullable: false})
-  ratio: number;
-
   @ManyToMany(
     () => ImageAttachmentEntity,
     {

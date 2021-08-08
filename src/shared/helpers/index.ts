@@ -28,6 +28,7 @@ export * from './countLetter';
 export * from './safeJsonParse';
 export * from './safeToString';
 export * from './safeToNumber';
+export * from './safeDateParse';
 export * from './matchByRegex';
 export * from './getArrayWithLengthLimit';
 export * from './pickLongestArrayItem';

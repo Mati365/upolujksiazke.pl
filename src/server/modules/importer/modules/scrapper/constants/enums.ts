@@ -5,6 +5,7 @@ export enum ScrapperMetadataKind {
   BOOK_AUTHOR = 3,
   BOOK_PUBLISHER = 4,
   BOOK_SUMMARY = 5,
+  BROCHURE = 6,
 }
 
 export enum ScrapperMetadataStatus {

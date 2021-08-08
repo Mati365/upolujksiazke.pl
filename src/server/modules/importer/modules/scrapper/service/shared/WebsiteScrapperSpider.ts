@@ -47,6 +47,7 @@ export type WebsiteSpiderScrapperRunConfig = {
 export abstract class WebsiteScrapperSpider extends ScrapperGroupChild implements URLPathMatcher {
   public static readonly RESOURCE_PRIORITY: Record<ScrapperMetadataKind, number> = {
     [ScrapperMetadataKind.BOOK]: 7,
+    [ScrapperMetadataKind.BROCHURE]: 6,
     [ScrapperMetadataKind.BOOK_REVIEW]: 3,
     [ScrapperMetadataKind.BOOK_SUMMARY]: 2,
     [ScrapperMetadataKind.BOOK_AUTHOR]: 2,

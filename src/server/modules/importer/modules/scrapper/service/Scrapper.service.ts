@@ -44,6 +44,7 @@ export class ScrapperService {
       new Groups.PolskiNa5ScrappersGroup(PARSERS_ENV.polskina5),
       new Groups.EszkolaScrappersGroup(PARSERS_ENV.eszkola),
       new Groups.WykopScrappersGroup(PARSERS_ENV.wykop),
+      new Groups.CarrefourScrappersGroup(PARSERS_ENV.carrefour),
     ];
   }
 

@@ -1,8 +1,8 @@
-import * as R from 'ramda';
-
-import {buildURL} from '@shared/helpers/urlEncoder';
-import {parseAsyncURLIfOK} from '@server/common/helpers/fetchAsyncHTML';
-import {concatUrls} from '@shared/helpers/concatUrls';
+import {buildURL, concatUrls} from '@shared/helpers';
+import {
+  parseAsyncURLIfOK,
+  parseAsyncURLPathIfOK,
+} from '@server/common/helpers/fetchAsyncHTML';
 
 import {CanBePromise} from '@shared/types';
 import {
@@ -74,15 +74,7 @@ export abstract class WebsiteScrapperMatcher<
   async fetchPageByPath(path: string) {
     const {config: {homepageURL}} = this;
 
-    if (!path)
-      return null;
-
-    return parseAsyncURLIfOK(
-      R.unless(
-        R.startsWith(homepageURL),
-        R.partial(concatUrls, [homepageURL]),
-      )(path),
-    );
+    return parseAsyncURLPathIfOK(homepageURL, path);
   }
 
   /**

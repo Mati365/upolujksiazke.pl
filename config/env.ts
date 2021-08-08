@@ -20,6 +20,7 @@ type DefaultConfigBookShopNames = (
   | 'taniaksiazka' | 'lekturyGov'
   | 'bryk' | 'streszczenia' | 'klp'
   | 'polskina5' | 'eszkola' | 'krytycznymOkiem'
+  | 'carrefour'
 );
 
 export type AppEnv = Partial<{
@@ -297,6 +298,10 @@ export const GLOBAL_CONFIG: Record<string, AppEnv> = {
         krytycznymOkiem: {
           id: 24,
           homepageURL: 'https://krytycznymokiem.blogspot.com/',
+        },
+        carrefour: {
+          id: 25,
+          homepageURL: 'https://www.carrefour.pl/',
         },
       },
     },

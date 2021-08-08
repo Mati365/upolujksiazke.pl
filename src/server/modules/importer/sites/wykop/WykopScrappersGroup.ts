@@ -1,26 +1,21 @@
 import {ScrapperMetadataKind} from '@scrapper/entity';
-import {CreateRemoteWebsiteDto} from '@server/modules/remote/dto';
-import {WebsiteScrappersGroup} from '@scrapper/service/shared';
-import {WebsiteInfoScrapper} from '@scrapper/service/scrappers';
-import {WykopBookReviewScrapper, WykopBookReviewScrapperConfig} from './book-review/WykopBookReview.scrapper';
+import {
+  DefaultWebsiteScrappersGroup,
+  DefaultScrappersGroupConfig,
+} from '@scrapper/service/shared/DefaultWebsiteScrappersGroup';
 
-export type WykopScrappersGroupConfig = WykopBookReviewScrapperConfig & {
-  id: number,
-  homepageURL: string,
-};
+import {
+  WykopBookReviewScrapper,
+  WykopBookReviewScrapperConfig,
+} from './book-review/WykopBookReview.scrapper';
 
-export class WykopScrappersGroup extends WebsiteScrappersGroup {
-  constructor({id, api, homepageURL}: WykopScrappersGroupConfig) {
+export type WykopScrappersGroupConfig = WykopBookReviewScrapperConfig & DefaultScrappersGroupConfig;
+
+export class WykopScrappersGroup extends DefaultWebsiteScrappersGroup {
+  constructor({api, ...config}: WykopScrappersGroupConfig) {
     super(
       {
-        id,
-        websiteInfoScrapper: new WebsiteInfoScrapper(
-          new CreateRemoteWebsiteDto(
-            {
-              url: homepageURL,
-            },
-          ),
-        ),
+        ...config,
         scrappers: {
           [ScrapperMetadataKind.BOOK_REVIEW]: new WykopBookReviewScrapper(
             {

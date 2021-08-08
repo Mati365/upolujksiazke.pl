@@ -2,11 +2,12 @@ import {Type} from 'class-transformer';
 import {
   IsDefined, IsNumber, IsString,
   IsOptional, ArrayMaxSize, IsDate,
-  ValidateNested,
+  IsBoolean, ValidateNested,
 } from 'class-validator';
 
 import {IsTagCorrect} from '@server/modules/tag/validators/IsTagCorrect';
 import {CreateRemoteRecordDto} from '@server/modules/remote/dto/CreateRemoteRecord.dto';
+import {CreateBrandDto} from '@server/modules/brand/dto/CreateBrand.dto';
 import {CreateBrochurePageDto} from '../modules/brochure-page/dto/BrochurePage.dto';
 
 export class CreateBrochureDto extends CreateRemoteRecordDto {
@@ -26,9 +27,18 @@ export class CreateBrochureDto extends CreateRemoteRecordDto {
   @IsDate()
   readonly validTo: Date;
 
-  @IsDefined()
+  @IsOptional()
+  @IsBoolean()
+  readonly nsfw: boolean;
+
+  @IsOptional()
   @IsNumber()
   readonly brandId: number;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => CreateBrandDto)
+  readonly brand: CreateBrandDto;
 
   @IsOptional()
   @ArrayMaxSize(25)
@@ -43,7 +53,11 @@ export class CreateBrochureDto extends CreateRemoteRecordDto {
   @IsNumber()
   readonly totalPages: number;
 
-  @IsDefined()
+  @IsOptional()
+  @IsString()
+  readonly pdfUrl: string;
+
+  @IsOptional()
   @ValidateNested()
   @Type(() => CreateBrochurePageDto)
   readonly pages: CreateBrochurePageDto[];

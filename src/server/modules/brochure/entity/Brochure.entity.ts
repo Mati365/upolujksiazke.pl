@@ -38,6 +38,9 @@ export class BrochureEntity extends RemoteRecordFields {
   @Column('timestamp', {nullable: true})
   validTo: Date;
 
+  @Column('boolean', {nullable: true, default: false})
+  nsfw: boolean;
+
   @ManyToOne(() => BrandEntity)
   @JoinColumn({name: 'brandId'})
   brand: BrandEntity;
@@ -67,11 +70,17 @@ export class BrochureEntity extends RemoteRecordFields {
   @BeforeInsert()
   @BeforeUpdate()
   transformFields() {
-    const {title} = this;
+    const {title, validFrom, validTo} = this;
 
     if (title) {
       this.title = title.trim();
-      this.parameterizedName = parameterize(this.title);
+      this.parameterizedName = parameterize(
+        [
+          this.title,
+          validFrom || new Date,
+          validTo || '',
+        ].join(''),
+      );
     }
   }
 }

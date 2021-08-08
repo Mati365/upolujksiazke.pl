@@ -17,6 +17,10 @@ export class CreateBrochurePageDto {
   @IsOptional()
   readonly image: CreateImageAttachmentDto;
 
+  @IsOptional()
+  @IsNumber()
+  readonly ratio: number;
+
   constructor(partial: Partial<CreateBrochurePageDto>) {
     Object.assign(this, partial);
   }

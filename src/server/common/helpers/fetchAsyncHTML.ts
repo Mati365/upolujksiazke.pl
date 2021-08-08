@@ -1,10 +1,12 @@
 import cheerio from 'cheerio';
 import chalk from 'chalk';
 import {Logger} from '@nestjs/common';
+import * as R from 'ramda';
 
 import {HTTPCode} from '@shared/constants';
 
 import {
+  concatUrls,
   isDevMode,
   timeout,
 } from '@shared/helpers';
@@ -27,8 +29,8 @@ export async function fetchAsyncHTML(request: Request) {
   });
 
   return {
+    result: await (response as any).textConverted() as string,
     response,
-    result: await (response as any).textConverted(),
   };
 }
 
@@ -91,4 +93,24 @@ export async function parseAsyncURLIfOK(url: string, noRetry?: boolean): Promise
   } catch (e) {
     return null;
   }
+}
+
+/**
+ * Fetches website by its path
+ *
+ * @export
+ * @param {string} homepageURL
+ * @param {string} path
+ * @return {string}
+ */
+export async function parseAsyncURLPathIfOK(homepageURL: string, path: string): Promise<AsyncURLParseResult> {
+  if (!path)
+    return null;
+
+  return parseAsyncURLIfOK(
+    R.unless(
+      R.startsWith(homepageURL),
+      R.partial(concatUrls, [homepageURL]),
+    )(path),
+  );
 }

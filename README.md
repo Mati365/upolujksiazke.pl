@@ -158,6 +158,30 @@ yarn run develop
 gulp scrapper:refresh
 ```
 
+### Production
+
+Be sure that `--insecure-http-parser` is present in systemd service.
+
+```bash
+cat /etc/systemd/system/node-upolujksiazke.service
+
+[Unit]
+Description=upolujksiazke.pl
+
+[Service]
+ExecStart=/usr/bin/node /var/www/upolujksiazke.pl/current/dist/server.js --insecure-http-parser
+Restart=always
+User=web
+# Note Debian/Ubuntu uses 'nogroup', RHEL/Fedora uses 'nobody'
+Group=webusers
+Environment=PATH=/usr/bin:/usr/local/bin
+Environment=NODE_ENV=production APP_ENV=production
+WorkingDirectory=/var/www/upolujksiazke.pl/current
+
+[Install]
+WantedBy=multi-user.target
+```
+
 ### Remote connect
 
 Proxy local 9201 to remote ES

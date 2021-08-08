@@ -8,3 +8,4 @@ export * from './mimeType';
 export * from './downloadFile';
 export * from './asyncExec';
 export * from './getCurrentTimestampSuffix';
+export * from './fetchAsyncHTML';

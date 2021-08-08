@@ -1,11 +1,11 @@
-import {CreateRemoteWebsiteDto} from '@server/modules/remote/dto';
+import {CreateRemoteWebsiteDto} from '@server/modules/remote/dto/CreateRemoteWebsite.dto';
 import {WebsiteInfoScrapper} from '@scrapper/service/scrappers/WebsiteInfoScrapper';
 import {
   ScrappersGroupInitializer,
   WebsiteScrappersGroup,
-} from '@scrapper/service/shared';
+} from '@scrapper/service/shared/WebsiteScrappersGroup';
 
-import {CreateImageAttachmentDto} from '@server/modules/attachment/dto';
+import {CreateImageAttachmentDto} from '@server/modules/attachment/dto/CreateImageAttachment.dto';
 import {SpiderQueueProxyScrapper} from '../../../../kinds/scrappers/SpiderQueueProxy.scrapper';
 
 export type DefaultUrlsConfig = {

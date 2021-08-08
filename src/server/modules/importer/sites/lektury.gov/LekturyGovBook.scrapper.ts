@@ -26,7 +26,7 @@ type LekturyGovPagination = {
   number: number,
 };
 
-type LekturyGobScrapperPagination = (
+type LekturyGovScrapperPagination = (
   Promise<ScrapperResult<BookScrapperInfo[], LekturyGovPagination>>
 );
 
@@ -160,7 +160,7 @@ export class LekturyGovBookScrapper extends AsyncScrapper<BookScrapperInfo[], Le
    * @returns {LekturyGobScrapperPagination}
    * @memberof LekturyGovBookScrapper
    */
-  protected async processPage(page: LekturyGovPagination): LekturyGobScrapperPagination {
+  protected async processPage(page: LekturyGovPagination): LekturyGovScrapperPagination {
     const {api} = this;
 
     page ??= {

@@ -64,6 +64,7 @@ OpenSource book reviews aggregator, something like Metacritic / Digg for books. 
 - [ ] youtube reviews
 - [ ] add coupons
 - [ ] books cons table
+- [ ] Lookup in Empik go, Legimi 
 
 ## Resources
 

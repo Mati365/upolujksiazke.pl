@@ -345,7 +345,7 @@ export class EsFuzzyBookSearchService {
             esb.termsQuery('volumeName', volumes),
           ],
           ...!names?.length ? [] : names.map((name) => (
-            esb.matchQuery('defaultTitle', name)
+            esb.matchPhraseQuery('defaultTitle', name)
           )),
           ...!authors?.length ? [] : [
             esb.nestedQuery().path('authors').query(

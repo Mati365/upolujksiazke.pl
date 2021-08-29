@@ -22,6 +22,9 @@ export class BookReviewerEntity extends RemoteRecordFields {
   @Column('text')
   name: string;
 
+  @Column('boolean', {default: false, nullable: true})
+  hidden: boolean;
+
   @Column(
     {
       type: 'enum',

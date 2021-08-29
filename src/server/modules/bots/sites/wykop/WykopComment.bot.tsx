@@ -12,12 +12,14 @@ import {genAllBookReviewsLink, genBookLink, prefixLinkWithHost} from '@client/ro
 import {
   extractHostname,
   formatDate,
+  isDevMode,
   objPropsToPromise,
 } from '@shared/helpers';
 
 import {BookReviewEntity} from '@server/modules/book/modules/review';
 import {BookReviewImportedEvent} from '@server/modules/importer/kinds/db-loaders/events';
 import {BookEntity} from '@server/modules/book/entity/Book.entity';
+import {BookReviewerEntity} from '@server/modules/book/modules/reviewer/BookReviewer.entity';
 
 @Injectable()
 export class WykopCommentBot {
@@ -61,6 +63,10 @@ export class WykopCommentBot {
       if (!entry || WykopCommentBot.isCommentDisabled(entry))
         return;
 
+      const reviewer = await BookReviewerEntity.findOne(review.reviewerId);
+      if (!reviewer || reviewer.hidden)
+        return;
+
       const message = await this.generateBookStatsMessage(
         {
           ...review,
@@ -71,15 +77,19 @@ export class WykopCommentBot {
       if (!message)
         return;
 
-      await api.call(
-        {
-          method: 'POST',
-          path: `Entries/CommentAdd/${review.remoteId}/`,
-          body: {
-            body: message,
+      if (isDevMode())
+        logger.warn(`HTML message for wykop.pl: ${message}`);
+      else {
+        await api.call(
+          {
+            method: 'POST',
+            path: `Entries/CommentAdd/${review.remoteId}/`,
+            body: {
+              body: message,
+            },
           },
-        },
-      );
+        );
+      }
     } catch (e) {
       logger.error(e);
     }

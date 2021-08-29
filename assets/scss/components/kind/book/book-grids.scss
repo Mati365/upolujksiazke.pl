@@ -1,0 +1,53 @@
+.c-books-grid {
+  --columns: 7;
+  --gap: 25px;
+
+  gap: var(--gap);
+
+  &:not(.has-fixed-columns-count):not(.has-list-layout) {
+    grid-template-columns: repeat(var(--columns), 1fr);
+
+    @mixin clean-book-border {
+      border-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    @include except-mobile {
+      > .c-book-card:nth-last-child(-n+7) {
+        @include clean-book-border;
+      }
+    }
+
+    @include mobile {
+      --columns: 1;
+      --gap: 20px;
+
+      > .c-book-card:last-child {
+        @include clean-book-border;
+      }
+    }
+  }
+}
+
+.c-book-reviews.is-grid {
+  .c-book-review__user-nick {
+    @include text-ellipsis;
+
+    max-width: 130px;
+  }
+
+  @include except-mobile {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+
+    > li {
+      margin-bottom: 0;
+
+      &:nth-last-child(2),
+      &:last-child {
+        border-bottom: 0;
+      }
+    }
+  }
+}

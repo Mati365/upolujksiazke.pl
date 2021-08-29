@@ -1,0 +1,111 @@
+.c {
+  &-spoiler {
+    &__btn {
+      @extend .c-clean-button;
+
+      padding: 4px 8px;
+      color: color(primary);
+      border: 1px solid color(primary);
+      border-radius: 5px;
+      font-size: .9em;
+      font-weight: 600;
+      text-transform: lowercase;
+    }
+
+    &__content {
+      display: none;
+      font-family: monospace;
+      font-size: .9em;
+
+      &.is-expanded {
+        display: block;
+        margin: 10px 0;
+      }
+    }
+  }
+
+  &-description-box {
+    font-size: .95rem;
+    line-height: 1.6rem;
+    white-space: pre-line;
+
+    &.is-mobile-smaller {
+      @include mobile {
+        font-size: .9rem;
+        line-height: 1.6rem;
+      }
+    }
+
+    &.is-filled {
+      @extend .c-layer-box;
+    }
+
+    &__quote {
+      opacity: .25;
+      font-size: $text-normal;
+
+      &.is-start {
+        margin-right: 5px;
+      }
+
+      &.is-end {
+        margin-left: 5px;
+      }
+    }
+
+    em {
+      font-style: italic;
+    }
+
+    spoiler {
+      display: block;
+      margin: 5px 0;
+
+      & ~ br + br {
+        display: none;
+      }
+    }
+
+    strong, b {
+      font-weight: 600;
+    }
+
+    cite {
+      display: block;
+      margin: 1rem 0;
+      padding-left: 20px;
+      font-weight: 300;
+
+      &:first-child {
+        margin-top: 0;
+      }
+
+      & ~ br {
+        display: none;
+      }
+
+      @include mobile {
+        margin: .5rem 0;
+        padding-left: 10px;
+      }
+    }
+  }
+
+  &-layer-box {
+    padding: 1.2rem 1.5rem;
+    background: color(layer-box);
+    border-radius: 5px;
+
+    &.has-small-padding {
+      padding: .85rem 1rem;
+    }
+
+    &.has-none-padding {
+      padding: 0;
+    }
+
+    @include mobile {
+      padding: .85rem .9rem;
+    }
+  }
+}

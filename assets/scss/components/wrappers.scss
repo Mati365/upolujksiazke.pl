@@ -1,0 +1,26 @@
+.c {
+  &-container {
+    margin: 0 auto;
+    max-width: calc(100vw - 30px);
+
+    &.is-expandable {
+      min-width: $container-width;
+    }
+
+    &:not(.is-expandable) {
+      width: $container-width;
+    }
+  }
+
+  &-sections-list > .c-section:first-child {
+    margin-top: 0;
+  }
+
+  &-layer {
+    @include layer(fixed);
+
+    &.is-absolute {
+      position: absolute;
+    }
+  }
+}

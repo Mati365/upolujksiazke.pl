@@ -1,0 +1,51 @@
+{
+  "compilerOptions": {
+    "jsx": "react",
+    "target": "ES2015",
+    "module": "commonjs",
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "downlevelIteration": true,
+    "emitDecoratorMetadata": true,
+    "resolveJsonModule": true,
+    "baseUrl": "./",
+    "paths": {
+      "@api": ["src/api"],
+      "@api/*": ["src/api/*"],
+
+      "@client": ["src/client"],
+      "@client/*": ["src/client/*"],
+
+      "@server": ["src/server"],
+      "@server/*": ["src/server/*"],
+
+      "@tasks": ["src/tasks"],
+      "@tasks/*": ["src/tasks/*"],
+
+      "@shared": ["src/shared"],
+      "@shared/*": ["src/shared/*"],
+
+      "@assets": ["assets"],
+      "@assets/*": ["assets/*"],
+
+      "@scrapper": ["./src/server/modules/importer/modules/scrapper"],
+      "@scrapper/*": ["./src/server/modules/importer/modules/scrapper/*"],
+
+      "@spider": ["./src/server/modules/importer/modules/spider"],
+      "@spider/*": ["./src/server/modules/importer/modules/spider/*"],
+
+      "@db-loader": ["./src/server/modules/importer/modules/db-loader"],
+      "@db-loader/*": ["./src/server/modules/importer/modules/db-loader/*"],
+
+      "@importer": ["./src/server/modules/importer"],
+      "@importer/*": ["./src/server/modules/importer/*"],
+
+      "@sites": ["./src/server/modules/importer/sites"],
+      "@sites/*": ["./src/server/modules/importer/sites/*"]
+    }
+  },
+  "exclude": [
+    "node_modules"
+  ]
+}

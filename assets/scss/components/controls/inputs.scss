@@ -1,0 +1,123 @@
+.c {
+  &-input {
+    $self: &;
+    --radius: 5px;
+
+    display: inline-flex;
+    position: relative;
+    width: inherit;
+    max-height: 32px;
+
+    > button {
+      cursor: pointer;
+    }
+
+    &__field {
+      width: 100%;
+      padding: 5px 10px;
+      margin: 0;
+      font-size: .9rem;
+      background: color(input-background);
+      border: 1px solid color(gray-2);
+      border-radius: var(--radius);
+      outline: 0;
+
+      @at-root textarea#{&} {
+        padding: 10px;
+      }
+    }
+
+    &.has-primary-icon {
+      &.has-icon-right input {
+        padding-right: 40px;
+      }
+
+      #{$self}__icon {
+        background: color(primary);
+        color: #fff;
+        transition: background 250ms ease-in-out;
+
+        &.is-right {
+          right: -2px;
+          width: 32px;
+          border-top-right-radius: var(--radius);
+          border-bottom-right-radius: var(--radius);
+        }
+
+        &:hover {
+          background: color(button-primary-hover);
+        }
+      }
+    }
+
+    &.has-icon {
+      &-right > input {
+        padding-right: 28px;
+      }
+
+      &-left > input {
+        padding-left: 28px;
+      }
+    }
+
+    &__icon {
+      @include flex-centered;
+
+      position: absolute;
+      top: 0;
+      height: 100%;
+      border: 0;
+      appearance: none;
+
+      &.is-left {
+        left: 6px;
+      }
+
+      &.is-right {
+        right: 8px;
+      }
+    }
+  }
+
+  &-input-label {
+    $self: &;
+
+    @include flex-list;
+
+    &__label {
+      margin-right: 10px;
+    }
+
+    &.is-expanded {
+      width: 100%;
+
+      #{$self}__control {
+        flex: 1;
+
+        > .c-input {
+          width: 100%;
+        }
+      }
+    }
+
+    &.is-spaced {
+      &-medium {
+        margin: 1rem 0;
+      }
+    }
+  }
+
+  &-price-range {
+    @include flex-list;
+    max-width: 200px;
+
+    &__separator {
+      margin: 0 5px;
+    }
+
+    > .c-input {
+      flex: 1;
+      width: inherit;
+    }
+  }
+}

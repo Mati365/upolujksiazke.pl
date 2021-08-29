@@ -1,0 +1,16 @@
+/* eslint-disable max-len, quotes, @typescript-eslint/quotes */
+import {MigrationInterface, QueryRunner} from 'typeorm';
+
+export class FixMigrationCascadeOnRemoteDescription1610297463025 implements MigrationInterface {
+  name = 'FixMigrationCascadeOnRemoteDescription1610297463025';
+
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(`ALTER TABLE "book_release" DROP CONSTRAINT "FK_df06c84447ceca4046650ce72c9"`);
+    await queryRunner.query(`ALTER TABLE "book_release" ADD CONSTRAINT "FK_df06c84447ceca4046650ce72c9" FOREIGN KEY ("remoteDescriptionId") REFERENCES "scrapper_remote_record"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+  }
+
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(`ALTER TABLE "book_release" DROP CONSTRAINT "FK_df06c84447ceca4046650ce72c9"`);
+    await queryRunner.query(`ALTER TABLE "book_release" ADD CONSTRAINT "FK_df06c84447ceca4046650ce72c9" FOREIGN KEY ("remoteDescriptionId") REFERENCES "scrapper_remote_record"("id") ON DELETE SET NULL ON UPDATE NO ACTION`);
+  }
+}

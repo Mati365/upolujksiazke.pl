@@ -1,0 +1,33 @@
+.c-breadcrumbs {
+  margin-bottom: 1.5rem;
+  color: color(muted-text);
+  font-size: $text-small;
+
+  &.has {
+    &-medium-padding {
+      margin-bottom: 1rem;
+    }
+
+    &-small-padding {
+      margin-bottom: .5rem;
+    }
+
+    &-none-padding {
+      margin-bottom: 0;
+    }
+  }
+
+  &__item {
+    @include flex-centered;
+    margin-bottom: .5rem;
+
+    > a {
+      display: inline-flex;
+    }
+  }
+
+  @include mobile {
+    margin-bottom: 1.2rem;
+    font-size: .75rem;
+  }
+}

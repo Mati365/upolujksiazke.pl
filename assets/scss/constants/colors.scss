@@ -1,0 +1,63 @@
+$gray-0: #f5f5f5;
+$gray-1: #e8e8e8;
+$gray-2: #d9d9d9;
+$gray-3: #c1c1c1;
+$gray-4: #8f8f8f;
+$gray-5: #484848;
+$gray-6: #080808;
+
+$dark-box: #222;
+$dark-box-muted-border: #9a9da1;
+$dark-box-muted-text: #cecece;
+
+$primary-red: #d90429;
+$primary-secondary-red: #ef233c;
+$primary-light: #f44336;
+
+:root {
+  --c-gray-0: #{$gray-0};
+  --c-gray-1: #{$gray-1};
+  --c-gray-2: #{$gray-2};
+  --c-gray-3: #{$gray-3};
+  --c-gray-4: #{$gray-4};
+  --c-gray-6: #{$gray-6};
+
+  --c-divider: #{$gray-1};
+  --c-section-header-border: #{$gray-1};
+  --c-grid-items-border: #{$gray-1};
+
+  --c-primary: #{$primary-red};
+  --c-primary-secondary: #{$primary-secondary-red};
+  --c-primary-light: #{$primary-light};
+  --c-primary-dimmed: #cb1e33;
+
+  --c-muted-text: #{$gray-5};
+  --c-default-text: #1f1f1f;
+
+  --c-input-background: #fafafa;
+
+  --c-button-default:         initial;
+  --c-button-default-text:    inherit;
+  --c-button-default-border:  #{$gray-2};
+
+  --c-button-primary:       #{$primary-secondary-red};
+  --c-button-primary-text:  #fff;
+  --c-button-primary-border:  #{darken($primary-secondary-red, 5%)};
+  --c-button-primary-hover:   #{darken($primary-secondary-red, 10%)};
+
+  --c-blue-ribbon:     #0899ba;
+  --c-blue-ribbon-text:#fff;
+
+  --c-green-ribbon:     #9ed55b;
+  --c-green-ribbon-text:#1a270a;
+
+  --c-red-ribbon:       #{$primary-secondary-red};
+  --c-red-ribbon-text:#fff;
+
+  --c-layer-box: #{$gray-0};
+  --c-tree-divider: #dedede;
+
+  --c-dark-box: #{$dark-box};
+  --c-dark-box-muted-text: #{$dark-box-muted-text};
+  --c-dark-box-muted-border: #{$dark-box-muted-border};
+}

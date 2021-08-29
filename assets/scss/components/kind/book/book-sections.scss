@@ -1,0 +1,309 @@
+.c {
+  &-book-info-section {
+    $self: &;
+
+    > .c-section__content {
+      display: grid;
+      grid-template-columns: 240px 1fr 210px;
+      gap: 30px;
+    }
+
+    &__info {
+      @include except-mobile {
+        padding-left: 30px;
+        border-left: 1px solid color(divider);
+      }
+    }
+
+    &__header {
+      margin-top: 0;
+      margin-bottom: 1.2rem;
+
+      &-attr {
+        @include flex-list;
+
+        align-items: flex-start;
+        margin-bottom: .25rem;
+        line-height: 20px;
+        color: color(muted-text);
+
+        @include mobile {
+          margin-bottom: .5rem;
+
+          &.is-wrapped {
+            flex-direction: column;
+
+            .c-book-info-section__header-attr-value {
+              margin-left: 0;
+            }
+          }
+        }
+
+        &-label {
+          font-size: $text-small;
+        }
+
+        &-value {
+          max-width: 100%;
+          margin-left: 7px;
+        }
+      }
+    }
+
+    &__description {
+      strong, b {
+        font-weight: normal;
+      }
+
+      &-header {
+        font-size: 1rem;
+      }
+    }
+
+    &__attrs {
+      max-width: 100%;
+
+      @include except-mobile {
+        margin-bottom: 2rem
+      }
+    }
+
+    &__author a {
+      color: color(primary);
+    }
+
+    &__categories {
+      margin-top: 2.2rem;
+      margin-bottom: 0;
+
+      &:empty {
+        display: none;
+      }
+    }
+
+    &__price-box .c-book-price-box__buy-cta + * {
+      margin-top: 2.5rem;
+    }
+
+    &__tags-title {
+      @include flex-list;
+
+      margin-bottom: .85rem;
+
+      @include mobile {
+        margin-top: 1rem;
+        margin-bottom: .45rem;
+      }
+    }
+
+    &__toolbar-row {
+      display: grid;
+      margin: 1.5rem 0 1rem;
+      gap: 10px;
+      grid-template-areas: "title title"
+                           "author price";
+
+      #{$self}__header {
+        grid-area: title;
+        margin-bottom: 0;
+      }
+
+      @include small-mobile {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    &__cover {
+      @include mobile {
+        max-width: 230px;
+        margin: 0 auto;
+      }
+    }
+
+    &__sidebar {
+      > li:not(:last-child):not(.has-no-divider) {
+        padding-bottom: 1.5rem;
+        margin-bottom: 1.5rem;
+        border-bottom: 1px solid color(divider);
+      }
+
+      #{$self}__ratings {
+        margin-bottom: 1.85rem;
+      }
+
+      #{$self}__cover {
+        &:not(:last-child) {
+          margin-bottom: 1.75rem;
+        }
+
+        &:last-child > picture > img {
+          -webkit-box-reflect: below 10px -webkit-gradient(linear, left top, left bottom, from(transparent), color-stop(70%, transparent) , to(rgba(250, 250, 250, 0.1)));
+        }
+      }
+    }
+
+    @include mobile {
+      > .c-section__content {
+        grid-template-columns: 1fr;
+        gap: 30px;
+      }
+    }
+  }
+
+  &-lazy-book-section {
+    content-visibility: auto;
+    contain-intrinsic-size: 1000px;
+  }
+
+  &-book-price-box {
+    $self: &;
+
+    &.is-small {
+      #{$self}__price-wrapper {
+        padding: 1rem;
+      }
+    }
+
+    &__header {
+      @include flex-list;
+
+      margin-bottom: 1.25rem;
+      font-weight: 600;
+      font-size: 0.95rem;
+
+      > i {
+        position: relative;
+        top: 1px;
+      }
+    }
+
+    &__price-wrapper {
+      @extend .c-layer-box;
+
+      &:not(:last-child) {
+        margin-bottom: 1.25rem;
+      }
+    }
+
+    &__current-price {
+      &:not(:last-child) {
+        margin-bottom: 1rem;
+      }
+
+      .c-book-price-group__value {
+        font-size: 1.7rem;
+        color: color(primary);
+      }
+    }
+
+    &__prev-price .c-book-price-group__value {
+      font-weight: 500;
+      text-decoration: line-through;
+    }
+  }
+
+  &-book-price-group {
+    &__label {
+      margin-bottom: .35rem;
+      font-size: $text-small;
+      font-weight: 600;
+      color: color(muted-text);
+    }
+
+    &__value {
+      font-size: 1.1rem;
+      font-weight: 800;
+    }
+  }
+
+  &-book-prices,
+  &-book-availability {
+    th, tr {
+      font-size: $text-small;
+    }
+
+    @include small-mobile {
+      .c-book-cta {
+        &__prefix-icon {
+          margin-right: 0;
+        }
+
+        &__title {
+          display: none
+        }
+      }
+    }
+  }
+
+  &-book-prices {
+    &__release {
+      &-title {
+        @include capitalize;
+
+        position: relative;
+        top: -2px; // why?
+        margin: 0;
+        font-size: inherit;
+        font-weight: 500;
+      }
+
+      &-isbn {
+        font-weight: 600;
+      }
+    }
+
+    &__availability:not(:last-child) .c-book-availability {
+      margin-bottom: 1.15rem;
+    }
+  }
+
+  &-releases-tree {
+    &__item {
+      &:not(:last-child) {
+        padding-bottom: 0.3rem;
+      }
+
+      .c-expandable__header {
+        align-items: center;
+      }
+    }
+
+    .c-book-release-info {
+      margin: 5px 20px 10px;
+      width: auto;
+
+      td, th {
+        padding: .35rem .35rem !important;
+
+        &:nth-child(1) {
+          width: 100px;
+        }
+
+        &:nth-child(2) {
+          width: 110px;
+        }
+      }
+    }
+  }
+
+  &-book-school-info {
+    th:first-child {
+      width: 25%;
+
+      @include mobile {
+        width: 120px;
+      }
+    }
+  }
+
+  &-book-secondary-container {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 30px;
+
+    &__content {
+      padding-left: 30px;
+      border-left: 1px solid color(divider);
+    }
+  }
+}

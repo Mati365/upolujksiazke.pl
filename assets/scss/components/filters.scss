@@ -1,0 +1,276 @@
+.c-filters {
+  &-section {
+    $gap: 30px;
+
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    grid-gap: $gap;
+
+    &.has-no-sidebar {
+      grid-template-columns: 1fr;
+    }
+
+    &__sidebar {
+      height: 100%;
+      padding-right: $gap;
+      border-right: 1px solid color(divider);
+
+      &-header {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-end;
+        justify-content: space-between;
+        margin-top: 0;
+        margin-bottom: 1rem;
+        font-weight: 700;
+        font-size: $text-normal;
+      }
+
+      &-toolbar {
+        padding-bottom: 1.2rem;
+        margin-bottom: 1.2rem;
+        border-bottom: 1px solid color(divider);
+      }
+    }
+
+    &__toolbar {
+      @include flex-list(flex, flex-start);
+
+      --spacing: 20px;
+
+      width: 100%;
+      margin: var(--spacing) 0;
+
+      &:empty {
+        display: none;
+      }
+
+      &.is-top {
+        margin-top: 0;
+      }
+
+      &.is-bottom {
+        margin-bottom: 0;
+      }
+
+      @include mobile {
+        --spacing: 35px;
+      }
+    }
+
+    &__pagination-toolbar {
+      flex-shrink: 0;
+    }
+
+    &__items:not(:first-child) {
+      margin-top: 15px;
+    }
+
+    &__content {
+      position: relative;
+
+      .c-loading-layer__content {
+        position: absolute;
+        top: 300px;
+      }
+
+      &.is-loading .c-grid {
+        overflow: hidden;
+      }
+    }
+  }
+
+  &-group {
+    $spacing: 20px;
+
+    &:not(:first-child) {
+      margin-top: $spacing;
+    }
+
+    &:not(:last-child) {
+      padding-bottom: $spacing;
+      border-bottom: 1px solid color(divider);
+    }
+
+    &__header {
+      @include flex-list;
+
+      margin-bottom: .85rem;
+      font-size: $text-small;
+      font-weight: 600;
+      color: #000;
+
+      .c-filters-small-counter {
+        color: color(muted-text);
+        font-weight: 500;
+      }
+    }
+
+    &__content {
+      font-size: $text-small;
+    }
+
+    .c-price-range {
+      width: 100%;
+    }
+
+    .c-expandable-checkbox-list {
+      .c-checkbox-group__title {
+        max-width: calc(100% - 24px);
+
+        > span {
+          @include text-ellipsis;
+          line-height: 1rem;
+        }
+      }
+    }
+  }
+
+  &-small-counter {
+    margin-left: auto;
+    font-size: $text-tiny;
+    font-weight: 300;
+  }
+
+  &-badges {
+    align-items: flex-start;
+    margin-bottom: 10px;
+
+    &__item {
+      position: relative;
+      margin-bottom: 7px;
+      padding: 6px 32px 6px 9px;
+      overflow: hidden;
+      background: color(layer-box);
+      border-radius: 5px;
+      font-size: $text-small;
+
+      &-title > strong {
+        margin-right: 5px;
+      }
+
+      &-delete {
+        @include flex-centered;
+
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 20px;
+        height: 100%;
+        background: rgba(0, 0, 0, .05);
+
+        &:hover {
+          background: rgba(0, 0, 0, .08);
+        }
+
+        svg {
+          width: 16px;
+          height: 16px;
+        }
+      }
+    }
+  }
+
+  &-backlinks-list {
+    width: 100%;
+    font-size: $text-small;
+
+    &:not(:first-child) {
+      margin-top: 15px;
+    }
+
+    &__chunk > li {
+      line-height: 1rem;
+      margin-bottom: 7px;
+
+      &.is-active {
+        padding: 5px;
+        background: color(primary);
+        color: #fff;
+        border-radius: 4px;
+        font-weight: 700;
+        font-size: $text-small;
+      }
+    }
+  }
+
+  &-backlink-group {
+    $self: &;
+    @include flex-list;
+
+    font-size: $text-small;
+
+    &:not(:last-child) {
+      margin-bottom: 6px;
+      padding-bottom: 6px;
+    }
+
+    &__chevron {
+      position: relative;
+      top: 1px;
+      color: color(primary);
+    }
+
+    &__title {
+      margin-left: 7px;
+    }
+
+    &.is-primary #{$self}__title {
+      font-weight: 600;
+    }
+
+    &__icon-link {
+      @include flex-list;
+
+      .c-icon {
+        margin-right: 5px;
+      }
+
+      > span {
+        @include text-ellipsis;
+
+        width: calc(100% - 10px);
+      }
+    }
+  }
+}
+
+.c {
+  &-empty-results {
+    @include flex-centered;
+
+    width: 100%;
+    margin: 5rem 0;
+    flex-direction: column;
+    opacity: .4;
+
+    &__icon {
+      font-size: 2.5rem;
+      margin-bottom: $text-tiny;
+    }
+
+    &.is {
+      &-medium-spacing {
+        margin: 2rem 0
+      }
+    }
+  }
+
+  &-view-mode-switch {
+    button {
+      @include flex-centered;
+
+      &:not(.is-text-primary) {
+        opacity: .35;
+      }
+    }
+
+    &__grid {
+      font-size: 1.25rem;
+    }
+
+    &__list {
+      font-size: 1.55rem;
+    }
+  }
+}

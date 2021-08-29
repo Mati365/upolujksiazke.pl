@@ -1,0 +1,45 @@
+.c-ratings-row {
+  $self: &;
+
+  &__star {
+    display: inline-flex;
+
+    svg {
+      color: color(primary);
+    }
+
+    &.is-empty svg {
+      color: #ccc;
+    }
+
+    &.is-hoverable {
+      cursor: pointer;
+    }
+
+    & + #{$self}__text-value {
+      margin-left: 10px;
+    }
+  }
+
+  &__text-value {
+    font-weight: 700;
+    color: color(primary);
+  }
+
+  &.is-text-big #{$self}__text-value {
+    font-size: 1.1rem;
+  }
+
+  &__total {
+    text-transform: lowercase;
+    margin-left: 7px;
+    font-size: $text-tiny;
+  }
+
+  @include small-mobile {
+    &__total {
+      width: 100%;
+      margin: 5px 0 0;
+    }
+  }
+}

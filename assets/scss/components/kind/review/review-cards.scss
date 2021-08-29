@@ -1,0 +1,128 @@
+.c {
+  &-book-review {
+    &.has-book-card {
+      display: grid;
+      grid-template-columns: 110px 1fr;
+      gap: 30px;
+
+      @include mobile {
+        grid-template-columns: 1fr;
+        gap: 35px;
+      }
+    }
+
+    &:not(:last-child) {
+      border-bottom: 1px solid color(divider);
+      padding-bottom: 1.35rem;
+      margin-bottom: 1.35rem;
+    }
+
+    &__user {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      &-avatar {
+        display: flex;
+        margin-right: 10px;
+
+        > img {
+          display: inline-block;
+          width: 1.5rem;
+          height: 1.5rem;
+          border-radius: 100%;
+        }
+      }
+
+      &-rating {
+        flex-shrink: 0;
+      }
+    }
+
+    &__toolbar,
+    &__footer {
+      font-size: $text-small;
+    }
+
+    &__toolbar {
+      @include flex-list;
+
+      margin-bottom: 1rem;
+    }
+
+    &__text {
+      font-size: .9rem;
+      line-height: 1.45rem;
+    }
+
+    &__footer {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      margin-top: .85rem;
+    }
+
+    @include mobile {
+      &__user {
+        &-rating {
+          align-self: flex-start;
+
+          .c-ratings-row__text-value {
+            font-size: $text-normal;
+          }
+        }
+
+        &-nick {
+          @include text-ellipsis;
+
+          display: inline-block;
+          max-width: calc(100% - 10px);
+        }
+      }
+
+      .c-book-wide-card {
+        padding-bottom: .35rem;
+        border-bottom: 0;
+      }
+    }
+  }
+
+  &-review-reactions {
+    transition: opacity 250ms ease-in-out;
+
+    &.is-loading {
+      pointer-events: none;
+      opacity: .5
+    }
+
+    &__label {
+      @include small-mobile {
+        display: none
+      }
+    }
+
+    .c-text-button {
+      @include flex-list;
+
+      color: color(gray-5);
+      transition: color 250ms ease-in-out;
+
+      &.is-active {
+        font-weight: 700;
+        color: color(primary);
+      }
+
+      &:not(.is-active):hover {
+        color: color(gray-6);
+      }
+    }
+
+    .c-icon {
+      font-size: 1.1rem;
+
+      &:not(:last-child) {
+        margin-right: 7px;
+      }
+    }
+  }
+}

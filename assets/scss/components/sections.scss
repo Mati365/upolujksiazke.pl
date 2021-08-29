@@ -1,0 +1,108 @@
+.c {
+  &-section {
+    $self: &;
+
+    &.is-subsection {
+      #{$self}__header {
+        margin-bottom: 1.2rem;
+        font-size: 1.2rem;
+
+        @include mobile {
+          margin-bottom: 2rem;
+          font-size: 1.1rem;
+        }
+      }
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+
+    &.is-spaced {
+      @for $i from 1 through 4 {
+        &-#{$i} {
+          margin: #{$i}rem 0;
+
+          &:last-child {
+            margin-bottom: 0;
+          }
+        }
+      }
+
+      @include mobile {
+        @for $i from 1 through 4 {
+          &-#{$i} {
+            margin: #{math.div($i, 2)}rem 0;
+
+            &:last-child {
+              margin-bottom: 0;
+            }
+          }
+        }
+      }
+    }
+
+    &.is-divided > &__header {
+      padding-bottom: 1.15rem;
+      border-bottom: 1px solid color(section-header-border);
+    }
+
+    &__header {
+      position: relative;
+      margin-top: 0;
+      margin-bottom: 2rem;
+
+      &.has-medium-space {
+        margin-bottom: 1rem;
+      }
+
+      &-underline {
+        position: absolute;
+        left: 0;
+        bottom: -1px;
+        width: 64px;
+        height: 3px;
+        background: color(primary);
+      }
+
+      &-suffix {
+        margin-left: 17px;
+        font-size: $text-small;
+        font-weight: 500;
+        color: color(muted-text);
+
+        @include small-mobile {
+          display: block;
+          margin: 5px 0 -5px;
+        }
+      }
+    }
+
+    &__content:not(.has-no-spacing) {
+      padding: 0 1.75rem;
+
+      @include mobile {
+        padding-left: 0;
+        padding-right: 0;
+      }
+    }
+  }
+
+  &-sidebar-section {
+    &:not(:last-child) {
+      margin-bottom: 1.5rem;
+    }
+
+    &__title {
+      font-size: $text-small;
+      line-height: 1.15rem;
+
+      margin-top: 0;
+      margin-bottom: 1.15rem;
+
+      &.is-bold {
+        font-weight: 700;
+      }
+    }
+  }
+}

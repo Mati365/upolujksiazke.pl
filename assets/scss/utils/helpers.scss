@@ -1,0 +1,75 @@
+.is {
+  &-float {
+    &-right { float: right; }
+  }
+
+  &-text {
+    @mixin text-size($name, $size, $line-height) {
+      &-#{$name} {
+        font-size: $size;
+        line-height: $line-height;
+      }
+    }
+
+    @include text-size('tiny', $text-tiny, $text-small-line-height);
+    @include text-size('small', $text-small, $text-small-line-height);
+    @include text-size('medium', $text-medium, $text-medium-line-height);
+    @include text-size('big', $text-big, $text-big-line-height);
+
+    &-inactive { opacity: 0.35; }
+    &-truncated { overflow: hidden; }
+
+    &-ellipsis {
+      @include text-ellipsis;
+    }
+
+    &-strike    { text-decoration: line-through; }
+    &-underline { text-decoration: underline; }
+    &-uppercase { text-transform: uppercase; }
+
+    &-justify  { text-align: justify; }
+
+    &-semibold { font-weight: 600; }
+    &-bold     { font-weight: 700; }
+
+    &-inherit { color: inherit; }
+    &-muted   { color: color(muted-text); }
+    &-primary { color: color(primary); }
+    &-light-muted { color: color(gray-4); }
+
+    &-no-wrap { white-space: nowrap; }
+  }
+
+  &-cursor {
+    &-pointer { cursor: pointer; }
+  }
+
+  &-undecorated-link {
+    color: inherit;
+
+    &:not(.is-text-underline) {
+      text-decoration: none;
+
+      &:not(.has-hover-underline):hover {
+        text-decoration: none;
+      }
+
+      &.has-hover-underline:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  &-primary {
+    &-chevron-link {
+      @extend .is-undecorated-link;
+      @extend .has-double-link-chevron;
+
+      color: color(primary);
+    }
+  }
+}
+
+.has-double-link-chevron::after {
+  content: '\a0»';
+}

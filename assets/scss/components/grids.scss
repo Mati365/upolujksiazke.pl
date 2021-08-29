@@ -1,0 +1,24 @@
+.c-grid {
+  $max-columns: 10;
+
+  display: grid;
+
+  @mixin generate-cols($suffix) {
+    @for $i from 1 through $max-columns {
+      &.has-#{$i}#{$suffix}-columns {
+        grid-template-columns: repeat(#{$i}, minmax(0, 1fr));
+      }
+    }
+  }
+
+  @include generate-cols('');
+  @include mobile {
+    @include generate-cols('-xs');
+  }
+
+  @for $i from 1 through $max-columns {
+    &.has-#{$i}-gap {
+      gap: #{$i * 5}px;
+    }
+  }
+}

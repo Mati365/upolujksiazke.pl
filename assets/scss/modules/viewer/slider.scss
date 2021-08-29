@@ -1,0 +1,109 @@
+.c-viewer-slider {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  user-select: none;
+  white-space: nowrap;
+  overflow: hidden;
+
+  &__draggable-container {
+    width: inherit;
+    height: inherit;
+    will-change: transform;
+    user-select: none;
+  }
+
+  &__slide {
+    display: inline-flex;
+    vertical-align: top;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+
+    &-inner {
+      display: flex;
+      flex-direction: row;
+    }
+  }
+
+  &__page {
+    &-image {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  &__nav {
+    $self: &;
+
+    @include flex-centered;
+
+    position: absolute;
+    padding: 8px 12px;
+    transform: translateY(calc(-50% - 20px));
+    flex-shrink: 0;
+    transition: 250ms ease-in-out;
+    transition-property: color, opacity, transform, translate, background, left, right;
+    cursor: pointer;
+    z-index: 10;
+
+    &:not(#{$self}--bottom) {
+      top: 50%;
+    }
+
+    &:hover {
+      color: lighten($viewer-foreground, 10%);
+    }
+
+    &--disabled {
+      display: none;
+      pointer-events: none;
+    }
+
+    &--left {
+      left: 0;
+
+      svg {
+        transform: rotateY(180deg);
+      }
+    }
+
+    &--right {
+      right: 0;
+    }
+
+    &--small {
+      width: 38px;
+      height: 53px;
+
+      &#{$self}--right:hover { right: -3px; }
+      &#{$self}--left:hover { left: -3px; }
+    }
+
+    &--big {
+      width: 50px;
+      height: 84px;
+
+      &:hover {
+        #{$self}--right { right: -6px; }
+        #{$self}--left { left: -6px; }
+      }
+    }
+
+    svg {
+      width: 35px;
+      height: 35px;
+      color: $viewer-foreground;
+      stroke: $viewer-background;
+    }
+
+    &--bottom {
+      bottom: -5px !important;
+      transform: initial;
+
+      svg {
+        width: 28px;
+      }
+    }
+  }
+}

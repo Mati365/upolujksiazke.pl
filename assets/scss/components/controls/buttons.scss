@@ -1,0 +1,151 @@
+.c {
+  &-clean-button {
+    outline: 0;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    background: initial;
+    cursor: pointer;
+
+    &, &:focus {
+      -webkit-tap-highlight-color: transparent;
+      outline: none;
+      touch-action: manipulation;
+    }
+
+    &::-moz-focus-inner {
+      border: 0;
+      padding: 0;
+    }
+  }
+
+  &-text-button {
+    @extend .c-clean-button;
+
+    display: inline-flex;
+    white-space: nowrap;
+    background: none;
+
+    &, &:active, &:focus, &:hover {
+      background: none;
+      cursor: pointer;
+      box-shadow: none;
+    }
+
+    &[disabled] {
+      opacity: 0.3;
+      pointer-events: none;
+    }
+
+    &:hover {
+      text-decoration: underline;
+    }
+
+    &.is-direction-vertical {
+      flex-direction: column;
+      justify-content: center;
+    }
+  }
+
+  &-button {
+    @extend .c-clean-button;
+    @include flex-centered;
+
+    --btn-background: #{color(button-default)};
+    --btn-border: #{color(button-default-border)};
+    --btn-color: #{color(button-default-text)};
+    --btn-x-padding: 10px;
+    --btn-y-padding: 5px;
+
+    padding: var(--btn-y-padding) var(--btn-x-padding);
+    border-radius: 5px;
+    color: var(--btn-color);
+    background: var(--btn-background);
+    border: 1px solid var(--btn-border);
+    transition: background 250ms ease-in-out;
+    text-decoration: none;
+    appearance: none;
+    -webkit-appearance: none;
+
+    &[disabled] {
+      opacity: .55;
+      cursor: default;
+      pointer-events: none;
+    }
+
+    &.is {
+      &-primary {
+        --btn-background: #{color(button-primary)};
+        --btn-border: #{color(button-primary-border)};
+        --btn-color: #{color(button-primary-text)};
+
+        &:hover {
+          background: color(button-primary-hover);
+        }
+      }
+
+      &-small {
+        font-size: .75rem;
+      }
+
+      &-medium-small {
+        font-size: $text-small;
+      }
+
+      &-big {
+        --btn-x-padding: 12px;
+        --btn-y-padding: 8px;
+
+        font-size: 1.03rem;
+      }
+
+      &-outlined {
+        &, &:hover {
+          transition: none;
+          background: none;
+          color: var(--btn-background);
+        }
+      }
+
+      &-expanded {
+        width: 100%;
+      }
+    }
+
+    &.has-icon-suffix {
+      $suffix-width: 24px;
+
+      position: relative;
+      justify-content: space-around;
+      padding-right: calc(#{$suffix-width} + var(--btn-x-padding) + 2px);
+
+      > .c-icon:last-of-type {
+        @include flex-centered;
+
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: $suffix-width;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.15);
+      }
+
+      @include mobile {
+        justify-content: flex-start;
+      }
+
+      &.is-outlined {
+        padding-right: calc(#{math.div($suffix-width, 2)} + var(--btn-x-padding) + 2px);
+
+        > .c-icon:last-of-type {
+          background: initial;
+
+          svg {
+            position: relative;
+            top: 1px;
+          }
+        }
+      }
+    }
+  }
+}

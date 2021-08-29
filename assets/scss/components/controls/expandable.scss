@@ -1,0 +1,43 @@
+.c {
+  &-expandable {
+    $self: &;
+
+    &__chevron {
+      margin-left: 2px;
+      font-size: 1.2em;
+      transition: transform 150ms ease-in-out;
+    }
+
+    &.is-toggled {
+      #{$self}__header {
+        font-weight: 600;
+      }
+
+      #{$self}__chevron {
+        transform: rotateZ(180deg);
+      }
+    }
+  }
+
+  &-footer-expandable {
+    @include flex-centered;
+
+    padding: 1rem 0 .75rem;
+
+    > button {
+      align-items: center;
+      color: color(primary);
+      font-weight: 600;
+    }
+
+    &__chevron {
+      margin-left: 5px;
+      font-size: 1.5rem;
+      transition: transform 250ms ease-in-out;
+
+      &.is-toggled {
+        transform: rotateZ(180deg);
+      }
+    }
+  }
+}

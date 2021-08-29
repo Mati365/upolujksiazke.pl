@@ -1,0 +1,229 @@
+.c-book {
+  &-cover {
+    display: block;
+    position: relative;
+    width: 100%;
+
+    > img {
+      width: 100%;
+      height: auto;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    &.has-forced {
+      &-ratio {
+        height: 0;
+        padding-bottom: percentage($book-ratio);
+
+        > img {
+          position: absolute;
+          left: 0;
+          bottom: 0;
+          height: 100%;
+          object-fit: cover;
+        }
+      }
+
+      &-expand > img {
+        height: 100%;
+      }
+    }
+
+    &.is-aligned-top > img {
+      top: 0;
+      bottom: initial;
+    }
+  }
+
+  &-card {
+    padding-bottom: 1.5rem;
+
+    &__info {
+      color: color(muted-text);
+
+      @include except-mobile {
+        min-height: 80px;
+      }
+    }
+
+    &__types {
+      @include flex-list;
+
+      margin-top: .5rem;
+      margin-bottom: .25rem;
+    }
+
+    &__ratings {
+      margin: .75rem 0 .55rem;
+    }
+
+    &__title {
+      @include limit-text-lines(2);
+
+      margin-top: 0;
+      margin-bottom: .5rem;
+      color: #000;
+    }
+
+    &__author {
+      @include limit-text-lines(2);
+
+      font-size: .8rem;
+      line-height: 1.15rem;
+    }
+
+    &__cta {
+      width: 100%;
+      margin-top: 1rem;
+    }
+
+    @include mobile {
+      &__title {
+        -webkit-line-clamp: initial;
+      }
+
+      &__ratings {
+        font-size: 0.9rem;
+        flex-wrap: wrap;
+      }
+
+      &__types {
+        margin-bottom: .5rem;
+      }
+
+      &__cta > .c-book-cta__prefix-icon {
+        display: none;
+      }
+    }
+  }
+
+  &-wide-card {
+    display: grid;
+    gap: 32px;
+    grid-template-columns: 130px 1fr;
+    border-bottom: 1px solid color(divider);
+
+    &.has-description {
+      grid-template-columns: 130px 300px 1fr;
+    }
+
+    &__basic-info {
+      display: flex;
+      flex-direction: column;
+      max-height: 200px;
+    }
+
+    &__description {
+      font-size: .9rem;
+    }
+
+    .c-book-card {
+      &__title {
+        margin-bottom: .5rem;
+        overflow: visible;
+        font-size: $text-normal;
+      }
+
+      &__types {
+        margin-top: auto;
+      }
+    }
+
+    @include mobile {
+      grid-template-columns: 100px 1fr;
+      gap: 25px;
+
+      .c-book-ribbon {
+        @include flex-centered;
+
+        height: 19px;
+        font-size: .65rem;
+      }
+    }
+
+    @include small-mobile {
+      grid-template-columns: 80px 1fr;
+    }
+  }
+
+  &-ribbons {
+    position: absolute;
+    right: -5px;
+    bottom: 10px;
+
+    &.is-aligned-top {
+      top: 10px;
+      bottom: initial;
+    }
+  }
+
+  &-ribbon {
+    position: relative;
+    padding: 5px 10px;
+    border-radius: 5px;
+    border-bottom-right-radius: 0;
+    font-size: $text-tiny;
+    font-weight: 600;
+    box-shadow: 0 2px 4px rgb(0, 0, 0, 0.2);
+    text-align: center;
+
+    &::after {
+      content: ' ';
+      position: absolute;
+      height: 0;
+      right: 0;
+      top: 100%;
+      width: 0;
+      border-style: solid;
+      border-width: 3px;
+    }
+
+    @mixin define-color($name, $color-name) {
+      &.is-#{$name} {
+        background: color($color-name);
+        color: color($color-name + '-text');
+
+        &::after {
+          border-color: color($color-name) transparent transparent color($color-name);
+        }
+      }
+    }
+
+    @include define-color('green', 'green-ribbon');
+    @include define-color('red', 'red-ribbon');
+    @include define-color('blue', 'blue-ribbon');
+  }
+}
+
+.c-book-thumb-card {
+  &__cover {
+    margin-bottom: 8px;
+
+    img {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  &__ratings,
+  &__title {
+    font-size: $text-tiny;
+  }
+
+  &__ratings {
+    margin-top: 5px;
+  }
+
+  &__title {
+    @include limit-text-lines(2);
+
+    margin-top: 8px;
+    line-height: $text-normal;
+  }
+
+  .c-book-ribbons {
+    transform: scale(.75);
+    transform-origin: right;
+  }
+}

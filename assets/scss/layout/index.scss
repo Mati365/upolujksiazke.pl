@@ -1,0 +1,56 @@
+@import 'footer';
+@import 'header';
+@import 'mobile-menu';
+@import 'repo-ribbon';
+
+#app-hydrate-root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+
+  > .c-layout {
+    flex: 1 0 auto;
+  }
+
+  > .c-footer {
+    flex-shrink: 0;
+  }
+}
+
+.c-layout {
+  &.has-top-space {
+    margin-top: 15px;
+
+    @include mobile {
+      margin-top: 10px
+    }
+  }
+
+  &-header-title {
+    @include flex-list;
+
+    position: relative;
+    width: 100%;
+    margin-top: 0.25rem;
+    margin-bottom: 2.5rem;
+
+    > h1 {
+      display: inherit;
+      align-items: inherit;
+      margin: 0;
+      flex-shrink: 0;
+      max-width: 100%;
+      font-size: 1.15rem;
+    }
+
+    &.has-medium-margin {
+      margin-bottom: 1.5rem;
+    }
+
+    &__toolbar {
+      position: absolute;
+      right: 0;
+      bottom: 10px;
+    }
+  }
+}

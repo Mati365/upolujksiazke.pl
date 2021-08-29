@@ -1,0 +1,8 @@
+.is-flex {
+  display: flex;
+
+  &.is-inline { display: inline-flex; }
+  &.is-row    { flex-direction: row; }
+  &.is-justify-center { justify-content: center; }
+  &.is-align-center   { align-items: center; }
+}

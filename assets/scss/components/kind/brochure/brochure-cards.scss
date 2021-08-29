@@ -1,0 +1,43 @@
+.c-brochure-card {
+  &__cover {
+    @include rounded-card;
+
+    display: block;
+    position: relative;
+    height: 0;
+    padding-bottom: percentage($brochure-ratio);
+
+    > img {
+      @include layer(absolute);
+
+      object-fit: cover;
+    }
+  }
+
+  &__toolbar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 10px;
+    font-size: $text-tiny;
+  }
+
+  &__logo {
+    @include rounded-card;
+
+    margin-bottom: 10px;
+    padding: 5px;
+    width: 42px;
+    height: 42px;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+  }
+
+  &__duration {
+    text-align: center;
+  }
+}

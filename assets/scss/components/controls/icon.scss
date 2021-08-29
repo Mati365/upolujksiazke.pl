@@ -1,0 +1,18 @@
+.c-icon {
+  display: inline-flex;
+  color: inherit;
+
+  svg {
+    width: 1em;
+    height: 1em;
+
+    > path,
+    > circle {
+      color: currentColor;
+
+      &:not([fill='none']) {
+        fill: currentColor;
+      }
+    }
+  }
+}

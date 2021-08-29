@@ -1,0 +1,166 @@
+.c {
+  &-clean-list {
+    @include clean-list;
+    flex-wrap: wrap;
+
+    --divider-color: #{color(divider)};
+
+    &.is-inline {
+      @include flex-list;
+      justify-content: flex-start;
+
+      &:not(.is-block) {
+        display: inline-flex
+      }
+
+      &.is-aligned-top {
+        align-items: flex-start
+      }
+
+      &.is-separated {
+        > li:not(:last-child):not(.has-no-separator) {
+          position: relative;
+
+          &::after {
+            content: ' ';
+            position: absolute;
+            top: 50%;
+            height: 1em;
+            transform: translateY(-50%);
+            font-size: .75rem;
+            border-right: 1px solid var(--divider-color);
+          }
+        }
+      }
+    }
+
+    &.is-separated:not(.is-inline) {
+      > li:not(:last-child):not(.has-no-separator) {
+        position: relative;
+
+        &::after {
+          content: ' ';
+          position: absolute;
+          width: 100%;
+          left: 0;
+          bottom: 0;
+          height: 0;
+          border-bottom: 1px solid var(--divider-color);
+        }
+      }
+    }
+
+    &.is-spaced {
+      @for $i from 1 through 7 {
+        $spacing: $i * 5;
+
+        &-#{$i}.is-inline {
+          &.is-last-spaced > li,
+          > li:not(:last-child) {
+            margin-right: #{$spacing}px;
+          }
+
+          &.is-separated > li:not(:last-child):not(.has-no-separator)::after {
+            right: -#{math.div($spacing, 2)}px;
+          }
+        }
+
+        &-#{$i}:not(.is-inline) {
+          &.is-last-spaced > li,
+          > li:not(:last-child) {
+            margin-bottom: #{$spacing}px;
+          }
+
+          &.is-separated > li:not(:last-child):not(.has-no-separator) {
+            padding-bottom: #{$spacing}px;
+          }
+        }
+      }
+    }
+
+    &.is-wrapped {
+      flex-wrap: wrap;
+    }
+
+    &.is-justified-center {
+      justify-content: center !important;
+    }
+  }
+
+  &-icon-props-list {
+    &__item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+
+      &:not(.has-auto-width) {
+        min-width: 55px;
+      }
+    }
+
+    &__title,
+    &__icon {
+      margin-bottom: .85rem;
+    }
+
+    &__title {
+      margin-top: 0;
+      font-size: $text-tiny;
+      font-weight: 500;
+    }
+
+    &__icon {
+      margin-bottom: .65rem;
+      font-size: 1.2rem;
+    }
+
+    &__value {
+      @include text-ellipsis;
+
+      max-width: 130px;
+      color: color(primary);
+      font-size: $text-small;
+      line-height: $text-small-line-height;
+      font-weight: 600;
+    }
+
+    @include mobile {
+      display: grid !important;
+      grid-template-columns: repeat(3, 1fr);
+      align-items: center;
+      gap: 20px;
+      place-content: center;
+      place-items: center center;
+
+      &__item {
+        width: 100%;
+        margin: 0 !important;
+      }
+    }
+  }
+
+  &-links-row.is-separated {
+    > li:not(:last-child) {
+      position: relative;
+
+      &::after {
+        content: '|';
+        position: absolute;
+        top: 2px;
+        right: -11px;
+        font-size: .75rem;
+      }
+    }
+  }
+
+  &-expandable-checkbox-list .c-empty-results {
+    margin-bottom: .25rem;
+    margin-top: 1.5rem;
+
+    &__icon {
+      margin-bottom: .5rem;
+      font-size: 1.75rem;
+    }
+  }
+}

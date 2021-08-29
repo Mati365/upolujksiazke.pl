@@ -1,0 +1,20 @@
+// H1, H2, H3..
+@for $i from 1 through length($headers-sizes) {
+  $size: nth($headers-sizes, $i);
+
+  h#{$i} {
+    font-size: $size;
+    line-height: 1.4em;
+  }
+}
+
+
+@include mobile {
+  @for $i from 1 through length($mobile-headers-sizes) {
+    $size: nth($mobile-headers-sizes, $i);
+
+    h#{$i} {
+      font-size: $size;
+    }
+  }
+}

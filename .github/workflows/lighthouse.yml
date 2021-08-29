@@ -1,0 +1,24 @@
+name: Lighthouse CI
+
+on:
+  workflow_run:
+    workflows: ["CI Deploy"]
+    types:
+      - completed
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Audit URLs using Lighthouse
+        uses: treosh/lighthouse-ci-action@v8
+        with:
+          urls: |
+            https://upolujksiazke.pl/
+            https://upolujksiazke.pl/ksiazka/zbrodnia-i-kara-dostojewski-fiodor-1,650
+            https://upolujksiazke.pl/ksiazka/i-nie-bylo-juz-nikogo-agatha-christie-1,1156
+            https://upolujksiazke.pl/ksiazki
+            https://upolujksiazke.pl/kategoria/kryminal-sensacja-i-thriller,5
+          uploadArtifacts: true
+          temporaryPublicStorage: true

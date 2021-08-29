@@ -1,0 +1,22 @@
+html {
+  font-size: $text-default-global-size;
+  color: color(default-text);
+}
+
+body {
+  font-family: 'Open Sans', sans-serif;
+}
+
+small {
+  @extend .is-text-tiny;
+}
+
+input, button {
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+a.is-disabled {
+  opacity: .35;
+  pointer-events: none;
+}

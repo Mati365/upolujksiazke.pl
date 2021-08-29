@@ -1,0 +1,110 @@
+/* eslint-disable max-len, quotes, @typescript-eslint/quotes */
+import {MigrationInterface, QueryRunner} from 'typeorm';
+
+export class AddRankingScoreToBook1623489964599 implements MigrationInterface {
+  name = 'AddRankingScoreToBook1623489964599';
+
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(`ALTER TABLE "book_publisher_logo_image_attachments" DROP CONSTRAINT "FK_7275880eff612d6920a1a719948"`);
+    await queryRunner.query(`ALTER TABLE "book_publisher_logo_image_attachments" DROP CONSTRAINT "FK_37a2b137927b288fdb351c9548d"`);
+    await queryRunner.query(`ALTER TABLE "scrapper_website_logo_attachments" DROP CONSTRAINT "FK_0b756b58f19410acfce7ada1b8e"`);
+    await queryRunner.query(`ALTER TABLE "scrapper_website_logo_attachments" DROP CONSTRAINT "FK_c637c41ae2a046400bbb5706706"`);
+    await queryRunner.query(`ALTER TABLE "scrapper_article_cover_attachments" DROP CONSTRAINT "FK_f7908ca940d5090ff0f86dda13a"`);
+    await queryRunner.query(`ALTER TABLE "scrapper_article_cover_attachments" DROP CONSTRAINT "FK_9e73584654c82404987f60acdc0"`);
+    await queryRunner.query(`ALTER TABLE "book_reviewer_avatar_attachments" DROP CONSTRAINT "FK_483409920259a7faab3596e6aa1"`);
+    await queryRunner.query(`ALTER TABLE "book_reviewer_avatar_attachments" DROP CONSTRAINT "FK_c12f4a4ce6048369111050406e9"`);
+    await queryRunner.query(`ALTER TABLE "book_release_cover_image_attachments" DROP CONSTRAINT "FK_7e34b90700abd75223ff1cc5951"`);
+    await queryRunner.query(`ALTER TABLE "book_release_cover_image_attachments" DROP CONSTRAINT "FK_75077d7c8556f16f5922866287c"`);
+    await queryRunner.query(`ALTER TABLE "book_authors_book_author" DROP CONSTRAINT "FK_5d70a2909e4016261699c8fb8ef"`);
+    await queryRunner.query(`ALTER TABLE "book_authors_book_author" DROP CONSTRAINT "FK_4e35bb4384702678b696fc46e84"`);
+    await queryRunner.query(`ALTER TABLE "book_categories_book_category" DROP CONSTRAINT "FK_fbc3a8e562496effc06483995bb"`);
+    await queryRunner.query(`ALTER TABLE "book_categories_book_category" DROP CONSTRAINT "FK_be9f819dcffa84d698aca662a53"`);
+    await queryRunner.query(`ALTER TABLE "book_era_book_era" DROP CONSTRAINT "FK_544b709655550ff58588d2d0ec2"`);
+    await queryRunner.query(`ALTER TABLE "book_era_book_era" DROP CONSTRAINT "FK_8ef5f2bb34074e029e10ad81e00"`);
+    await queryRunner.query(`ALTER TABLE "book_genre_book_genre" DROP CONSTRAINT "FK_41a43e80b41cd19cbc3a30605bc"`);
+    await queryRunner.query(`ALTER TABLE "book_genre_book_genre" DROP CONSTRAINT "FK_264f8d476294784bebe65c61401"`);
+    await queryRunner.query(`ALTER TABLE "book_tags_tag" DROP CONSTRAINT "FK_918a7b7552fe5fd66f328d4fe84"`);
+    await queryRunner.query(`ALTER TABLE "book_tags_tag" DROP CONSTRAINT "FK_5274aca0a1468ed55afdfaba244"`);
+    await queryRunner.query(`ALTER TABLE "book_series_book_series" DROP CONSTRAINT "FK_e3600246780c0bbf03da9e94875"`);
+    await queryRunner.query(`ALTER TABLE "book_series_book_series" DROP CONSTRAINT "FK_f4e2fc6f902c88580ed73abba32"`);
+    await queryRunner.query(`ALTER TABLE "book_prizes_book_prize" DROP CONSTRAINT "FK_97eac7418a8bcf600415a8e6ab3"`);
+    await queryRunner.query(`ALTER TABLE "book_prizes_book_prize" DROP CONSTRAINT "FK_a7ffca9d4968ad608d374fb0189"`);
+    await queryRunner.query(`ALTER TABLE "book" ADD "rankingScore" bigint`);
+    await queryRunner.query(`ALTER TABLE "book_publisher_logo_image_attachments" ADD CONSTRAINT "FK_7275880eff612d6920a1a719948" FOREIGN KEY ("bookPublisherId") REFERENCES "book_publisher"("id") ON DELETE CASCADE ON UPDATE CASCADE`);
+    await queryRunner.query(`ALTER TABLE "book_publisher_logo_image_attachments" ADD CONSTRAINT "FK_37a2b137927b288fdb351c9548d" FOREIGN KEY ("imageAttachmentsId") REFERENCES "image_attachments"("id") ON DELETE CASCADE ON UPDATE CASCADE`);
+    await queryRunner.query(`ALTER TABLE "scrapper_website_logo_attachments" ADD CONSTRAINT "FK_0b756b58f19410acfce7ada1b8e" FOREIGN KEY ("scrapperWebsiteId") REFERENCES "scrapper_website"("id") ON DELETE CASCADE ON UPDATE CASCADE`);
+    await queryRunner.query(`ALTER TABLE "scrapper_website_logo_attachments" ADD CONSTRAINT "FK_c637c41ae2a046400bbb5706706" FOREIGN KEY ("imageAttachmentsId") REFERENCES "image_attachments"("id") ON DELETE CASCADE ON UPDATE CASCADE`);
+    await queryRunner.query(`ALTER TABLE "scrapper_article_cover_attachments" ADD CONSTRAINT "FK_9e73584654c82404987f60acdc0" FOREIGN KEY ("scrapperArticleId") REFERENCES "scrapper_article"("id") ON DELETE CASCADE ON UPDATE CASCADE`);
+    await queryRunner.query(`ALTER TABLE "scrapper_article_cover_attachments" ADD CONSTRAINT "FK_f7908ca940d5090ff0f86dda13a" FOREIGN KEY ("imageAttachmentsId") REFERENCES "image_attachments"("id") ON DELETE CASCADE ON UPDATE CASCADE`);
+    await queryRunner.query(`ALTER TABLE "book_reviewer_avatar_attachments" ADD CONSTRAINT "FK_483409920259a7faab3596e6aa1" FOREIGN KEY ("bookReviewerId") REFERENCES "book_reviewer"("id") ON DELETE CASCADE ON UPDATE CASCADE`);
+    await queryRunner.query(`ALTER TABLE "book_reviewer_avatar_attachments" ADD CONSTRAINT "FK_c12f4a4ce6048369111050406e9" FOREIGN KEY ("imageAttachmentsId") REFERENCES "image_attachments"("id") ON DELETE CASCADE ON UPDATE CASCADE`);
+    await queryRunner.query(`ALTER TABLE "book_release_cover_image_attachments" ADD CONSTRAINT "FK_7e34b90700abd75223ff1cc5951" FOREIGN KEY ("bookReleaseId") REFERENCES "book_release"("id") ON DELETE CASCADE ON UPDATE CASCADE`);
+    await queryRunner.query(`ALTER TABLE "book_release_cover_image_attachments" ADD CONSTRAINT "FK_75077d7c8556f16f5922866287c" FOREIGN KEY ("imageAttachmentsId") REFERENCES "image_attachments"("id") ON DELETE CASCADE ON UPDATE CASCADE`);
+    await queryRunner.query(`ALTER TABLE "book_authors_book_author" ADD CONSTRAINT "FK_4e35bb4384702678b696fc46e84" FOREIGN KEY ("bookId") REFERENCES "book"("id") ON DELETE CASCADE ON UPDATE CASCADE`);
+    await queryRunner.query(`ALTER TABLE "book_authors_book_author" ADD CONSTRAINT "FK_5d70a2909e4016261699c8fb8ef" FOREIGN KEY ("bookAuthorId") REFERENCES "book_author"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+    await queryRunner.query(`ALTER TABLE "book_categories_book_category" ADD CONSTRAINT "FK_fbc3a8e562496effc06483995bb" FOREIGN KEY ("bookId") REFERENCES "book"("id") ON DELETE CASCADE ON UPDATE CASCADE`);
+    await queryRunner.query(`ALTER TABLE "book_categories_book_category" ADD CONSTRAINT "FK_be9f819dcffa84d698aca662a53" FOREIGN KEY ("bookCategoryId") REFERENCES "book_category"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+    await queryRunner.query(`ALTER TABLE "book_era_book_era" ADD CONSTRAINT "FK_8ef5f2bb34074e029e10ad81e00" FOREIGN KEY ("bookId") REFERENCES "book"("id") ON DELETE CASCADE ON UPDATE CASCADE`);
+    await queryRunner.query(`ALTER TABLE "book_era_book_era" ADD CONSTRAINT "FK_544b709655550ff58588d2d0ec2" FOREIGN KEY ("bookEraId") REFERENCES "book_era"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+    await queryRunner.query(`ALTER TABLE "book_genre_book_genre" ADD CONSTRAINT "FK_264f8d476294784bebe65c61401" FOREIGN KEY ("bookId") REFERENCES "book"("id") ON DELETE CASCADE ON UPDATE CASCADE`);
+    await queryRunner.query(`ALTER TABLE "book_genre_book_genre" ADD CONSTRAINT "FK_41a43e80b41cd19cbc3a30605bc" FOREIGN KEY ("bookGenreId") REFERENCES "book_genre"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+    await queryRunner.query(`ALTER TABLE "book_tags_tag" ADD CONSTRAINT "FK_918a7b7552fe5fd66f328d4fe84" FOREIGN KEY ("bookId") REFERENCES "book"("id") ON DELETE CASCADE ON UPDATE CASCADE`);
+    await queryRunner.query(`ALTER TABLE "book_tags_tag" ADD CONSTRAINT "FK_5274aca0a1468ed55afdfaba244" FOREIGN KEY ("tagId") REFERENCES "tag"("id") ON DELETE CASCADE ON UPDATE CASCADE`);
+    await queryRunner.query(`ALTER TABLE "book_series_book_series" ADD CONSTRAINT "FK_e3600246780c0bbf03da9e94875" FOREIGN KEY ("bookId") REFERENCES "book"("id") ON DELETE CASCADE ON UPDATE CASCADE`);
+    await queryRunner.query(`ALTER TABLE "book_series_book_series" ADD CONSTRAINT "FK_f4e2fc6f902c88580ed73abba32" FOREIGN KEY ("bookSeriesId") REFERENCES "book_series"("id") ON DELETE CASCADE ON UPDATE CASCADE`);
+    await queryRunner.query(`ALTER TABLE "book_prizes_book_prize" ADD CONSTRAINT "FK_97eac7418a8bcf600415a8e6ab3" FOREIGN KEY ("bookId") REFERENCES "book"("id") ON DELETE CASCADE ON UPDATE CASCADE`);
+    await queryRunner.query(`ALTER TABLE "book_prizes_book_prize" ADD CONSTRAINT "FK_a7ffca9d4968ad608d374fb0189" FOREIGN KEY ("bookPrizeId") REFERENCES "book_prize"("id") ON DELETE CASCADE ON UPDATE CASCADE`);
+  }
+
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(`ALTER TABLE "book_prizes_book_prize" DROP CONSTRAINT "FK_a7ffca9d4968ad608d374fb0189"`);
+    await queryRunner.query(`ALTER TABLE "book_prizes_book_prize" DROP CONSTRAINT "FK_97eac7418a8bcf600415a8e6ab3"`);
+    await queryRunner.query(`ALTER TABLE "book_series_book_series" DROP CONSTRAINT "FK_f4e2fc6f902c88580ed73abba32"`);
+    await queryRunner.query(`ALTER TABLE "book_series_book_series" DROP CONSTRAINT "FK_e3600246780c0bbf03da9e94875"`);
+    await queryRunner.query(`ALTER TABLE "book_tags_tag" DROP CONSTRAINT "FK_5274aca0a1468ed55afdfaba244"`);
+    await queryRunner.query(`ALTER TABLE "book_tags_tag" DROP CONSTRAINT "FK_918a7b7552fe5fd66f328d4fe84"`);
+    await queryRunner.query(`ALTER TABLE "book_genre_book_genre" DROP CONSTRAINT "FK_41a43e80b41cd19cbc3a30605bc"`);
+    await queryRunner.query(`ALTER TABLE "book_genre_book_genre" DROP CONSTRAINT "FK_264f8d476294784bebe65c61401"`);
+    await queryRunner.query(`ALTER TABLE "book_era_book_era" DROP CONSTRAINT "FK_544b709655550ff58588d2d0ec2"`);
+    await queryRunner.query(`ALTER TABLE "book_era_book_era" DROP CONSTRAINT "FK_8ef5f2bb34074e029e10ad81e00"`);
+    await queryRunner.query(`ALTER TABLE "book_categories_book_category" DROP CONSTRAINT "FK_be9f819dcffa84d698aca662a53"`);
+    await queryRunner.query(`ALTER TABLE "book_categories_book_category" DROP CONSTRAINT "FK_fbc3a8e562496effc06483995bb"`);
+    await queryRunner.query(`ALTER TABLE "book_authors_book_author" DROP CONSTRAINT "FK_5d70a2909e4016261699c8fb8ef"`);
+    await queryRunner.query(`ALTER TABLE "book_authors_book_author" DROP CONSTRAINT "FK_4e35bb4384702678b696fc46e84"`);
+    await queryRunner.query(`ALTER TABLE "book_release_cover_image_attachments" DROP CONSTRAINT "FK_75077d7c8556f16f5922866287c"`);
+    await queryRunner.query(`ALTER TABLE "book_release_cover_image_attachments" DROP CONSTRAINT "FK_7e34b90700abd75223ff1cc5951"`);
+    await queryRunner.query(`ALTER TABLE "book_reviewer_avatar_attachments" DROP CONSTRAINT "FK_c12f4a4ce6048369111050406e9"`);
+    await queryRunner.query(`ALTER TABLE "book_reviewer_avatar_attachments" DROP CONSTRAINT "FK_483409920259a7faab3596e6aa1"`);
+    await queryRunner.query(`ALTER TABLE "scrapper_article_cover_attachments" DROP CONSTRAINT "FK_f7908ca940d5090ff0f86dda13a"`);
+    await queryRunner.query(`ALTER TABLE "scrapper_article_cover_attachments" DROP CONSTRAINT "FK_9e73584654c82404987f60acdc0"`);
+    await queryRunner.query(`ALTER TABLE "scrapper_website_logo_attachments" DROP CONSTRAINT "FK_c637c41ae2a046400bbb5706706"`);
+    await queryRunner.query(`ALTER TABLE "scrapper_website_logo_attachments" DROP CONSTRAINT "FK_0b756b58f19410acfce7ada1b8e"`);
+    await queryRunner.query(`ALTER TABLE "book_publisher_logo_image_attachments" DROP CONSTRAINT "FK_37a2b137927b288fdb351c9548d"`);
+    await queryRunner.query(`ALTER TABLE "book_publisher_logo_image_attachments" DROP CONSTRAINT "FK_7275880eff612d6920a1a719948"`);
+    await queryRunner.query(`ALTER TABLE "book" DROP COLUMN "rankingScore"`);
+    await queryRunner.query(`ALTER TABLE "book_prizes_book_prize" ADD CONSTRAINT "FK_a7ffca9d4968ad608d374fb0189" FOREIGN KEY ("bookPrizeId") REFERENCES "book_prize"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+    await queryRunner.query(`ALTER TABLE "book_prizes_book_prize" ADD CONSTRAINT "FK_97eac7418a8bcf600415a8e6ab3" FOREIGN KEY ("bookId") REFERENCES "book"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+    await queryRunner.query(`ALTER TABLE "book_series_book_series" ADD CONSTRAINT "FK_f4e2fc6f902c88580ed73abba32" FOREIGN KEY ("bookSeriesId") REFERENCES "book_series"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+    await queryRunner.query(`ALTER TABLE "book_series_book_series" ADD CONSTRAINT "FK_e3600246780c0bbf03da9e94875" FOREIGN KEY ("bookId") REFERENCES "book"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+    await queryRunner.query(`ALTER TABLE "book_tags_tag" ADD CONSTRAINT "FK_5274aca0a1468ed55afdfaba244" FOREIGN KEY ("tagId") REFERENCES "tag"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+    await queryRunner.query(`ALTER TABLE "book_tags_tag" ADD CONSTRAINT "FK_918a7b7552fe5fd66f328d4fe84" FOREIGN KEY ("bookId") REFERENCES "book"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+    await queryRunner.query(`ALTER TABLE "book_genre_book_genre" ADD CONSTRAINT "FK_264f8d476294784bebe65c61401" FOREIGN KEY ("bookId") REFERENCES "book"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+    await queryRunner.query(`ALTER TABLE "book_genre_book_genre" ADD CONSTRAINT "FK_41a43e80b41cd19cbc3a30605bc" FOREIGN KEY ("bookGenreId") REFERENCES "book_genre"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+    await queryRunner.query(`ALTER TABLE "book_era_book_era" ADD CONSTRAINT "FK_8ef5f2bb34074e029e10ad81e00" FOREIGN KEY ("bookId") REFERENCES "book"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+    await queryRunner.query(`ALTER TABLE "book_era_book_era" ADD CONSTRAINT "FK_544b709655550ff58588d2d0ec2" FOREIGN KEY ("bookEraId") REFERENCES "book_era"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+    await queryRunner.query(`ALTER TABLE "book_categories_book_category" ADD CONSTRAINT "FK_be9f819dcffa84d698aca662a53" FOREIGN KEY ("bookCategoryId") REFERENCES "book_category"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+    await queryRunner.query(`ALTER TABLE "book_categories_book_category" ADD CONSTRAINT "FK_fbc3a8e562496effc06483995bb" FOREIGN KEY ("bookId") REFERENCES "book"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+    await queryRunner.query(`ALTER TABLE "book_authors_book_author" ADD CONSTRAINT "FK_4e35bb4384702678b696fc46e84" FOREIGN KEY ("bookId") REFERENCES "book"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+    await queryRunner.query(`ALTER TABLE "book_authors_book_author" ADD CONSTRAINT "FK_5d70a2909e4016261699c8fb8ef" FOREIGN KEY ("bookAuthorId") REFERENCES "book_author"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+    await queryRunner.query(`ALTER TABLE "book_release_cover_image_attachments" ADD CONSTRAINT "FK_75077d7c8556f16f5922866287c" FOREIGN KEY ("imageAttachmentsId") REFERENCES "image_attachments"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+    await queryRunner.query(`ALTER TABLE "book_release_cover_image_attachments" ADD CONSTRAINT "FK_7e34b90700abd75223ff1cc5951" FOREIGN KEY ("bookReleaseId") REFERENCES "book_release"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+    await queryRunner.query(`ALTER TABLE "book_reviewer_avatar_attachments" ADD CONSTRAINT "FK_c12f4a4ce6048369111050406e9" FOREIGN KEY ("imageAttachmentsId") REFERENCES "image_attachments"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+    await queryRunner.query(`ALTER TABLE "book_reviewer_avatar_attachments" ADD CONSTRAINT "FK_483409920259a7faab3596e6aa1" FOREIGN KEY ("bookReviewerId") REFERENCES "book_reviewer"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+    await queryRunner.query(`ALTER TABLE "scrapper_article_cover_attachments" ADD CONSTRAINT "FK_9e73584654c82404987f60acdc0" FOREIGN KEY ("scrapperArticleId") REFERENCES "scrapper_article"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+    await queryRunner.query(`ALTER TABLE "scrapper_article_cover_attachments" ADD CONSTRAINT "FK_f7908ca940d5090ff0f86dda13a" FOREIGN KEY ("imageAttachmentsId") REFERENCES "image_attachments"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+    await queryRunner.query(`ALTER TABLE "scrapper_website_logo_attachments" ADD CONSTRAINT "FK_c637c41ae2a046400bbb5706706" FOREIGN KEY ("imageAttachmentsId") REFERENCES "image_attachments"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+    await queryRunner.query(`ALTER TABLE "scrapper_website_logo_attachments" ADD CONSTRAINT "FK_0b756b58f19410acfce7ada1b8e" FOREIGN KEY ("scrapperWebsiteId") REFERENCES "scrapper_website"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+    await queryRunner.query(`ALTER TABLE "book_publisher_logo_image_attachments" ADD CONSTRAINT "FK_37a2b137927b288fdb351c9548d" FOREIGN KEY ("imageAttachmentsId") REFERENCES "image_attachments"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+    await queryRunner.query(`ALTER TABLE "book_publisher_logo_image_attachments" ADD CONSTRAINT "FK_7275880eff612d6920a1a719948" FOREIGN KEY ("bookPublisherId") REFERENCES "book_publisher"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+  }
+}

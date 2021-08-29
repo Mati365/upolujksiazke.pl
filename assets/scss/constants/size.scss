@@ -1,0 +1,22 @@
+$container-width: 1260px;
+
+$text-default-global-size: 15px;
+$text-small-line-height: 1.15rem;
+$text-medium-line-height: 1.30rem;
+$text-big-line-height: 1.45rem;
+
+$text-tiny:   .75rem;
+$text-small:  .85rem;
+$text-normal: 1rem;
+$text-medium: 1.25rem;
+$text-big:    1.5rem;
+
+$breakpoint-small-mobile: 0, 370px;
+$breakpoint-mobile: 0, 480px;
+$breakpoint-tablet: 481px, 768px;
+$breakpoint-small-desktop: 769px, 1200px;
+$breakpoint-medium-desktop: 1201px, 1500px;
+$breakpoint-large-desktop: 1501px;
+
+$headers-sizes: 1.7rem 1.35rem 1.17rem 1.12rem 1rem 1rem;
+$mobile-headers-sizes: 1.25rem 1.17rem 1.1rem 1.05rem 1rem 1rem;

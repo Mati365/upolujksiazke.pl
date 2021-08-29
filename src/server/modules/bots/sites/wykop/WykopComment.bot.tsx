@@ -46,7 +46,6 @@ export class WykopCommentBot {
   @OnEvent('loader.review.imported')
   async handleImportedEvent(
     {
-      dto,
       review,
     }: BookReviewImportedEvent,
   ) {
@@ -64,13 +63,13 @@ export class WykopCommentBot {
         return;
 
       const reviewer = await BookReviewerEntity.findOne(review.reviewerId);
-      if (!reviewer || reviewer.hidden)
+      if (!reviewer)
         return;
 
       const message = await this.generateBookStatsMessage(
         {
           ...review,
-          reviewer: dto.reviewer,
+          reviewer,
         } as any,
       );
 
@@ -107,7 +106,6 @@ export class WykopCommentBot {
       id,
       bookId,
       websiteId,
-      reviewerId,
       reviewer,
     }: BookReviewEntity,
   ) {
@@ -152,7 +150,7 @@ export class WykopCommentBot {
         from book_review br
         where br."bookId" = $1 and br."includeInStats" = true
       `,
-      [bookId, reviewerId],
+      [bookId, reviewer.id],
     );
 
     const html = ReactDOM.renderToStaticMarkup(
@@ -239,19 +237,24 @@ export class WykopCommentBot {
             </>
           )}
 
-        <br />
-        <br />
-        {`@${reviewer.name}: fragment Twojej recenzji został umieszczony na stronie open-source `}
-        <a
-          href={
-            prefixLinkWithHost(genBookLink(book))
-          }
-          target='_blank'
-          rel='noreferrer'
-        >
-          upolujksiazke.pl
-        </a>
-        {' jeśli nie chcesz by cytaty z Twoich recenzji widniały na tej stronie to odpisz na ten komentarz lub na PW.'}
+        {!reviewer.hidden && (
+          <>
+            <br />
+            <br />
+            {`@${reviewer.name}: fragment Twojej recenzji został umieszczony na stronie open-source `}
+            <a
+              href={
+                prefixLinkWithHost(genBookLink(book))
+              }
+              target='_blank'
+              rel='noreferrer'
+            >
+              upolujksiazke.pl
+            </a>
+            {' jeśli nie chcesz by cytaty z Twoich recenzji widniały na tej stronie to'}
+            {' odpisz na ten komentarz lub na PW.'}
+          </>
+        )}
 
         <br />
         <br />

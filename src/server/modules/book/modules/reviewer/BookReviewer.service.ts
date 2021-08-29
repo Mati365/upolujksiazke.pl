@@ -84,6 +84,7 @@ export class BookReviewerService {
       const reviewer = await upsert(
         {
           connection,
+          skip: ['id', 'createdAt', 'hidden'],
           entityManager: transaction,
           Entity: BookReviewerEntity,
           constraint: 'book_reviewer_unique_remote',

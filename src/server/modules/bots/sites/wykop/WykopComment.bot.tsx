@@ -102,8 +102,6 @@ export class WykopCommentBot {
     }: BookReviewEntity,
   ) {
     const {entityManager} = this;
-    console.info('aa');
-
     const {reviews, book} = await objPropsToPromise(
       {
         reviews: BookReviewEntity.find(

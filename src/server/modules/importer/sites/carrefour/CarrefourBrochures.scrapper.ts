@@ -54,7 +54,7 @@ export class CarrefourBrochuresScrapper extends AsyncScrapper<BrochureScrapperIn
       return null;
 
     return {
-      result: props?.pageProps?.items.map(this.mapSingleItemResponse.bind(this)).filter(Boolean),
+      result: (props?.pageProps?.items || []).map(this.mapSingleItemResponse.bind(this)).filter(Boolean),
       ptr: {
         nextPage: null,
       },
@@ -69,7 +69,7 @@ export class CarrefourBrochuresScrapper extends AsyncScrapper<BrochureScrapperIn
    * @memberof CarrefourBrochuresScrapper
    */
   mapSingleItemResponse(item: any): BrochureScrapperInfo {
-    if (!item)
+    if (!item?.images)
       return null;
 
     const {

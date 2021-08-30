@@ -18,6 +18,8 @@ import {ScrapperService} from '@importer/modules/scrapper/service';
  * @exports
  */
 export const reanalyzeAllTask: TaskFunction = async () => {
+  const {kind} = minimist(process.argv.slice(2));
+
   logger.log('Reanalyzing all items...');
 
   const app = await NestFactory.create(AppModule);
@@ -27,7 +29,11 @@ export const reanalyzeAllTask: TaskFunction = async () => {
     app
       .select(ScrapperModule)
       .get(ScrapperReanalyzerService)
-      .reanalyze()
+      .reanalyze(
+        {
+          kind: safeToNumber(ScrapperMetadataKind[kind]),
+        },
+      )
   );
   await app.close();
 

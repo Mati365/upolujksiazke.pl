@@ -31,10 +31,17 @@ export class ScrapperReanalyzerService {
    * Iterates over database and reanalyzes data,
    * if review does not pass check, remove it
    *
+   * @param {Object} attrs
    * @returns {Promise<ScrapperAnalyzerStats>}
    * @memberof ScrapperService
    */
-  async reanalyze(): Promise<ScrapperAnalyzerStats> {
+  async reanalyze(
+    {
+      kind,
+    }: {
+      kind: ScrapperMetadataKind,
+    },
+  ): Promise<ScrapperAnalyzerStats> {
     const {
       connection,
       scrapperService,
@@ -54,7 +61,12 @@ export class ScrapperReanalyzerService {
         queryExecutor: ({limit, offset}) => ScrapperMetadataEntity.find(
           {
             relations: ['website'],
-            order: {id: 'DESC'},
+            where: {
+              kind,
+            },
+            order: {
+              id: 'DESC',
+            },
             skip: offset,
             take: limit,
           },

@@ -49,7 +49,8 @@ export class WykopCommentBot {
       review,
     }: BookReviewImportedEvent,
   ) {
-    if (!WykopCommentBot.isValidReview(review))
+    if (!WykopCommentBot.isValidReview(review)
+        || WykopCommentBot.isExpiredReview(review))
       return;
 
     const {api, logger} = this;
@@ -315,6 +316,23 @@ export class WykopCommentBot {
       R.includes(WykopCommentBot.MAGIC_COMMENT_HEADER),
       comments,
     );
+  }
+
+  /**
+   * Check if review is old
+   *
+   * @static
+   * @param {BookReviewEntity} review
+   * @param {number} [maxHours=5]
+   * @return {boolean}
+   * @memberof WykopCommentBot
+   */
+  static isExpiredReview(review: BookReviewEntity, maxHours: number = 5): boolean {
+    if (!review?.publishDate)
+      return true;
+
+    const diff = new Date().getTime() - new Date(review.publishDate).getTime();
+    return Math.abs(diff) / 3600000 > maxHours;
   }
 
   /**

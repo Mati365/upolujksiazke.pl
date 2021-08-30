@@ -54,6 +54,7 @@ import {BotsModule} from './bots';
         isCmdAppInstance()
           ? []
           : [
+            BotsModule,
             BullModule.forRoot(
               {
                 redis: SERVER_ENV.redisConfig,
@@ -95,7 +96,6 @@ import {BotsModule} from './bots';
           ],
         },
       ),
-      BotsModule,
       UserModule,
       ReactionsModule,
       TrackerModule,

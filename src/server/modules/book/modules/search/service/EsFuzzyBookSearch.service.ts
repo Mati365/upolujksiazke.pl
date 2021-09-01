@@ -279,9 +279,21 @@ export class EsFuzzyBookSearchService {
         .must([
           esb.disMaxQuery().tieBreaker(0.7).queries(
             [
-              esb.matchQuery('defaultTitle', book.defaultTitle),
+              EsFuzzyBookSearchService.createSimilarBookTitleEsQuery(
+                {
+                  title: book.defaultTitle,
+                  field: 'defaultTitle',
+                  operator: 'or',
+                },
+              ),
               book.originalTitle
-                ? esb.matchQuery('originalTitle', book.originalTitle)
+                ? EsFuzzyBookSearchService.createSimilarBookTitleEsQuery(
+                  {
+                    title: book.originalTitle,
+                    field: 'originalTitle',
+                    operator: 'or',
+                  },
+                )
                 : null,
             ].filter(Boolean),
           ),
@@ -342,31 +354,29 @@ export class EsFuzzyBookSearchService {
           ...!volumes?.length ? [] : [
             esb.termsQuery('volumeName', volumes),
           ],
-          ...!names?.length ? [] : names.map((name) => (
-            esb
-              .boolQuery()
-              .minimumShouldMatch(1)
-              .should([
-                esb
-                  .matchPhraseQuery('defaultTitle', name)
-                  .boost(2),
-
-                esb
-                  .matchQuery('defaultTitle', name)
-                  .operator('and')
-                  .fuzziness(0.9),
-              ])
-          )),
-          ...!authors?.length ? [] : [
-            esb.nestedQuery().path('authors').query(
-              esb
-                .boolQuery()
-                .minimumShouldMatch(1)
-                .should(authors.map(
-                  (author) => esb.matchQuery('authors.name', author),
-                )),
-            ),
-          ],
+          ...(
+            !names?.length
+              ? []
+              : names.map((title) => EsFuzzyBookSearchService.createSimilarBookTitleEsQuery(
+                {
+                  title,
+                },
+              ))
+          ),
+          ...(
+            !authors?.length
+              ? []
+              : [
+                esb.nestedQuery().path('authors').query(
+                  esb
+                    .boolQuery()
+                    .minimumShouldMatch(1)
+                    .should(authors.map(
+                      (author) => esb.matchQuery('authors.name', author),
+                    )),
+                ),
+              ]
+          ),
         ];
 
         return !mustFields.length ? [] : [
@@ -396,5 +406,41 @@ export class EsFuzzyBookSearchService {
     );
 
     return result?.[0]?._id ?? null;
+  }
+
+  /**
+   * Create fuzzy search query
+   *
+   * @static
+   * @param {Object} attrs
+   * @return {esb.Query}
+   * @memberof EsFuzzyBookSearchService
+   */
+  static createSimilarBookTitleEsQuery(
+    {
+      title,
+      field = 'defaultTitle',
+      operator = 'and',
+    }: {
+      title: string,
+      field?: string,
+      operator?: 'and' | 'or',
+    },
+  ): esb.Query {
+    return (
+      esb
+        .boolQuery()
+        .minimumShouldMatch(1)
+        .should([
+          esb
+            .matchPhraseQuery(field, title)
+            .boost(2),
+
+          esb
+            .matchQuery(field, title)
+            .operator(operator)
+            .fuzziness(0.9),
+        ])
+    );
   }
 }

@@ -52,7 +52,10 @@ export class EsBookIndex extends EntityIndex<BookEntity, BookIndexEntity> {
   static readonly BOOK_INDEX_MAPPING: Record<keyof BookIndexEntity, any> = {
     id: {type: 'integer'},
     createdAt: {type: 'date'},
-    originalTitle: {type: 'text'},
+    originalTitle: {
+      type: 'text',
+      analyzer: 'lowercase_analyzer',
+    },
     defaultTitle: {
       type: 'text',
       analyzer: 'lowercase_analyzer',

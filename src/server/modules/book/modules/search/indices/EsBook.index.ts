@@ -55,6 +55,7 @@ export class EsBookIndex extends EntityIndex<BookEntity, BookIndexEntity> {
     originalTitle: {type: 'text'},
     defaultTitle: {
       type: 'text',
+      analyzer: 'lowercase_analyzer',
       fields: {
         raw: {type: 'keyword'},
         autocomplete: {type: 'search_as_you_type'},
@@ -161,6 +162,12 @@ export class EsBookIndex extends EntityIndex<BookEntity, BookIndexEntity> {
           settings: {
             'index.number_of_replicas': 0,
             analysis: {
+              analyzer: {
+                lowercase_analyzer: {
+                  tokenizer: 'standard',
+                  filter: ['lowercase', 'asciifolding'],
+                },
+              },
               normalizer: {
                 lowercase_normalizer: {
                   type: 'custom',

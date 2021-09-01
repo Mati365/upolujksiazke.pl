@@ -9,3 +9,4 @@ export * from './downloadFile';
 export * from './asyncExec';
 export * from './getCurrentTimestampSuffix';
 export * from './fetchAsyncHTML';
+export * from './isLockAvailable';

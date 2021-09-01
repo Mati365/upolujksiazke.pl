@@ -64,7 +64,7 @@ OpenSource book reviews aggregator, something like Metacritic / Digg for books. 
 - [ ] youtube reviews
 - [ ] add coupons
 - [ ] books cons table
-- [ ] Lookup in Empik go, Legimi 
+- [ ] Lookup in Empik go, Legimi
 
 ## Resources
 
@@ -289,6 +289,14 @@ Refresh all books from all websites:
 ```bash
  node_modules/.bin/gulp scrapper:refresh:all --kind BOOK_REVIEW --initialPage 1 --website wykop.pl
  node_modules/.bin/gulp scrapper:refresh:all --kind BOOK_REVIEW --website hrosskar.blogspot.com
+```
+
+### Locks
+
+Prevent clearing redis when warmup when lock is available (used for long tasks)
+
+```bash
+dist/locks/redis_warmup_flushdb.lock
 ```
 
 ### Importers

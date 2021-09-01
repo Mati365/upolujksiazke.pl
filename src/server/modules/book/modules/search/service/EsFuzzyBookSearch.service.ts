@@ -78,17 +78,15 @@ export class EsFuzzyBookSearchService {
     } else {
       // lookup in DB
       if (!similarity) {
-        similarity = (
-          R
-            .pluck('defaultTitle', books)
-            .filter(Boolean)
-            .reduce(
-              (acc, item) => Math.max(
-                Math.ceil(item.length * 0.3),
-                acc,
-              ),
-              0,
-            )
+        similarity = R.clamp(
+          0,
+          3,
+          Math.floor(
+            R
+              .pluck('defaultTitle', books)
+              .filter(Boolean)
+              .reduce(R.minBy(R.length), Infinity),
+          ),
         );
       }
 
@@ -345,7 +343,19 @@ export class EsFuzzyBookSearchService {
             esb.termsQuery('volumeName', volumes),
           ],
           ...!names?.length ? [] : names.map((name) => (
-            esb.matchPhraseQuery('defaultTitle', name)
+            esb
+              .boolQuery()
+              .minimumShouldMatch(1)
+              .should([
+                esb
+                  .matchPhraseQuery('defaultTitle', name)
+                  .boost(2),
+
+                esb
+                  .matchQuery('defaultTitle', name)
+                  .operator('and')
+                  .fuzziness(0.9),
+              ])
           )),
           ...!authors?.length ? [] : [
             esb.nestedQuery().path('authors').query(

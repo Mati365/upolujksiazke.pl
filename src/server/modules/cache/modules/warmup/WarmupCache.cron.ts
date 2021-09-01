@@ -1,4 +1,4 @@
-import {Injectable} from '@nestjs/common';
+import {Injectable, Inject, CACHE_MANAGER} from '@nestjs/common';
 import {Cron, CronExpression} from '@nestjs/schedule';
 import pMap from 'p-map';
 
@@ -15,10 +15,13 @@ export class WarmupCacheCron {
   constructor(
     private readonly bookSearchService: CardBookSearchService,
     private readonly apiService: APIClientService,
+    @Inject(CACHE_MANAGER) private readonly cacheManager: any,
   ) {}
 
   @Cron(CronExpression.EVERY_DAY_AT_5AM)
   async warmupCache() {
+    await this.cacheManager.store.getClient().flushdb();
+
     await this.warmupHomeCache();
     await this.warmupLayoutCache();
     await this.warmupBooksCache();

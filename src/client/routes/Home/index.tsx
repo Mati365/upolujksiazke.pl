@@ -54,8 +54,6 @@ export const HomeRoute: AsyncRoute = (
     >
       <SEOMeta meta={t('seo') as any} />
       <Container className='c-sections-list'>
-        <RecentBrochuresSection items={recentBrochures} />
-
         <Section className='c-home-categories-section'>
           <RootCategoriesSection
             items={layoutData.rootPopularCategories}
@@ -89,6 +87,8 @@ export const HomeRoute: AsyncRoute = (
         <RecentlyCommendedBooks items={recentCommentedBooks} />
 
         <LazyHydrate>
+          <RecentBrochuresSection items={recentBrochures} />
+
           <CategoriesGroupsBooksSection items={popularCategoriesBooks} />
 
           {ua.mobile && (

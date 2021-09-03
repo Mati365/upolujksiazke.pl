@@ -11,11 +11,13 @@ import {useUA} from '@client/modules/ua';
 import {BookReviewRecord} from '@api/types';
 import {RatingsRow} from '@client/containers/controls/RatingsRow';
 import {TitledFavicon} from '@client/components/ui/TitledFavicon';
+import {MessageAltIcon} from '@client/components/svg';
 import {
   ExpandableDescriptionBox,
   UndecoratedLink,
   CleanList,
   Picture,
+  Button,
   ExpandableDescriptionBoxProps,
 } from '@client/components/ui';
 
@@ -44,6 +46,7 @@ export const BookReview = (
 ) => {
   const t = useI18n();
   const ua = useUA();
+  const customMoreButton = !!moreButtonRenderFn;
   const {
     reviewer, description,
     rating, publishDate,
@@ -56,13 +59,13 @@ export const BookReview = (
 
   maxCharacterCount ??= ua.mobile ? 400 : 500;
 
-  if (!moreButtonRenderFn && quote && url) {
+  if (!customMoreButton && quote && url) {
     moreButtonRenderFn = () => (
       <UndecoratedLink
         href={review.url}
         target='_blank'
         rel='nofollow noreferrer'
-        className='c-promo-tag-link is-text-no-wrap ml-2'
+        className='c-book-review__see-more c-promo-tag-link is-text-no-wrap ml-2'
         undecorated={false}
         withChevron
       >
@@ -78,6 +81,7 @@ export const BookReview = (
       className={c(
         'c-book-review',
         bookCardVisible && 'has-book-card',
+        reviewer.hidden && 'has-blurred-content',
       )}
     >
       {bookCardVisible && (
@@ -156,10 +160,28 @@ export const BookReview = (
           padding='small'
           quote={!!website}
           text={description}
-          moreButtonRenderFn={moreButtonRenderFn}
+          moreButtonRenderFn={(
+            !customMoreButton && reviewer.hidden
+              ? R.F
+              : moreButtonRenderFn
+          )}
           filled
           html
-        />
+        >
+          {reviewer.hidden && website && (
+            <div className='c-book-review__hidden-layer'>
+              <Button
+                className='is-text-semibold is-text-small has-double-link-chevron'
+                type='primary'
+                tag='a'
+                href={url}
+              >
+                <MessageAltIcon className='mr-1' />
+                {t('review.marked_as_hidden', [website.hostname])}
+              </Button>
+            </div>
+          )}
+        </ExpandableDescriptionBox>
 
         {website && (
           <div className='c-book-review__footer'>

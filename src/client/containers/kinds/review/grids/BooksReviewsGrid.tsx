@@ -19,7 +19,7 @@ export const BooksReviewsGrid = ({items}: BooksReviewsGridProps) => (
         totalRatingStars: 6,
         moreButtonRenderFn: ({expandTitle}) => (
           <BookLink
-            className='c-promo-tag-link is-text-semibold is-text-no-wrap ml-2'
+            className='c-book-review__see-more c-promo-tag-link is-text-semibold is-text-no-wrap ml-2'
             undecorated={false}
             item={review.book}
             withChevron

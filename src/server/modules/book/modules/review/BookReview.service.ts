@@ -45,7 +45,7 @@ export class BookReviewService {
 
   public static readonly REVIEW_CARD_FIELDS = [
     'review',
-    'reviewer.name', 'reviewer.gender',
+    'reviewer.name', 'reviewer.gender', 'reviewer.hidden',
     'avatar.version', 'attachment.file',
   ];
 
@@ -90,7 +90,6 @@ export class BookReviewService {
         .leftJoin('review.reviewer', 'reviewer')
         .leftJoin('reviewer.avatar', 'avatar', `avatar.version = '${ImageVersion.SMALL_THUMB}'`)
         .leftJoin('avatar.attachment', 'attachment')
-        .andWhere('reviewer.hidden in (null, false)')
         .andWhere(
           {
             description: Not(IsNull()),

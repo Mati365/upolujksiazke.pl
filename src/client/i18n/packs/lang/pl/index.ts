@@ -324,6 +324,7 @@ export const PL_LANG_PACK = {
   },
   review: {
     read_more_at: 'Czytaj całość recenzji na',
+    marked_as_hidden: 'Recenzja dostępna na %{}!',
   },
   sections: {
     root_categories: {

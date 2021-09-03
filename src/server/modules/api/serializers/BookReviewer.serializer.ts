@@ -11,6 +11,7 @@ import {
 export class BookReviewerSerializer extends BaseSerializer implements BookReviewerRecord {
   @Expose() name: string;
   @Expose() gender: Gender;
+  @Expose() hidden: boolean;
 
   @Expose()
   @Type(() => ImageAttachmentDbResult)

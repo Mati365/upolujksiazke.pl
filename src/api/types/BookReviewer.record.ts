@@ -6,4 +6,5 @@ export interface BookReviewerRecord extends APIRecord {
   name: string;
   gender: Gender;
   avatar: ImageVersionedRecord;
+  hidden: boolean;
 }

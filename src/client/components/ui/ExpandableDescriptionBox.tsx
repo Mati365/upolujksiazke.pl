@@ -16,6 +16,7 @@ export type ExpandableDescriptionBoxProps = Omit<DescriptionBoxProps, 'children'
   text: string,
   html?: boolean,
   renderHiddenChunk?: boolean,
+  children?: ReactNode,
   moreButtonRenderFn?(
     attrs: {
       expandTitle: string,
@@ -31,6 +32,7 @@ export const ExpandableDescriptionBox = (
     text,
     html,
     moreButtonRenderFn,
+    children,
     renderHiddenChunk = true,
     ...props
   }: ExpandableDescriptionBoxProps,
@@ -73,7 +75,10 @@ export const ExpandableDescriptionBox = (
 
   const renderFullHTML = (innerHTML: string = hydratedText) => (
     <span
-      dangerouslySetInnerHTML={{__html: innerHTML}}
+      className='c-description-box__text'
+      dangerouslySetInnerHTML={{
+        __html: innerHTML,
+      }}
       onClick={onClickHTML}
     />
   );
@@ -107,12 +112,13 @@ export const ExpandableDescriptionBox = (
           )}
 
           {!toggled && (
-            <span>...</span>
+            <span className='c-description-box__text'>...</span>
           )}
 
           {(toggled || renderHiddenChunk) && (
             <span
               className={c(
+                'c-description-box__text',
                 !toggled && 'is-hidden',
               )}
               {...(
@@ -168,6 +174,7 @@ export const ExpandableDescriptionBox = (
   return (
     <DescriptionBox {...props}>
       {content}
+      {children}
     </DescriptionBox>
   );
 };

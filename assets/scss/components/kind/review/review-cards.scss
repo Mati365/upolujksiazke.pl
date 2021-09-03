@@ -1,5 +1,21 @@
 .c {
   &-book-review {
+    &:not(:last-child) {
+      border-bottom: 1px solid color(divider);
+      padding-bottom: 1.35rem;
+      margin-bottom: 1.35rem;
+    }
+
+    &.has-blurred-content .c-description-box {
+      position: relative;
+      min-height: 100px;
+
+      &__text {
+        user-select: none;
+        filter: blur(2.5px);
+      }
+    }
+
     &.has-book-card {
       display: grid;
       grid-template-columns: 110px 1fr;
@@ -11,10 +27,18 @@
       }
     }
 
-    &:not(:last-child) {
-      border-bottom: 1px solid color(divider);
-      padding-bottom: 1.35rem;
-      margin-bottom: 1.35rem;
+    &__hidden-layer {
+      @include layer(absolute);
+      @include flex-centered;
+
+      > a {
+        background: color(button-primary-hover);
+      }
+    }
+
+    &__see-more {
+      position: relative;
+      z-index: 9;
     }
 
     &__user {

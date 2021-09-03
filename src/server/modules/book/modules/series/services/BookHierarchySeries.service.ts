@@ -52,7 +52,7 @@ export class BookHierarchySeriesService {
         .getRawMany()
     );
 
-    return results.map((b) => new BookEntity(
+    const mappedResults = results.map((b) => new BookEntity(
       {
         id: b.book_id,
         defaultTitle: b.book_defaultTitle,
@@ -68,6 +68,23 @@ export class BookHierarchySeriesService {
         ),
       },
     ));
+
+    const {numbered, other} = R.groupBy(
+      ({volume}) => (
+        Number.isInteger(+volume?.name)
+          ? 'numbered'
+          : 'other'
+      ),
+      mappedResults,
+    );
+
+    return [
+      ...R.sortBy(
+        ({volume}) => +volume.name,
+        numbered || [],
+      ),
+      ...(other || []),
+    ];
   }
 
   /**

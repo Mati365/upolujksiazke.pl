@@ -8,6 +8,7 @@ OpenSource book reviews aggregator, something like Metacritic / Digg for books. 
 ## Screens
 
 ![Filtered books](/doc/screens/filtered-books.png) <br />
+![Book](/doc/screens/reviews.png) <br />
 ![Book](/doc/screens/book.png) <br />
 ![Home](/doc/screens/home.png)
 

@@ -10,6 +10,7 @@ import {
   upsert,
 } from '@server/common/helpers/db';
 
+import {BookType} from '@shared/enums';
 import {TagService} from '../../tag/Tag.service';
 import {BookAuthorService} from '../modules/author/BookAuthor.service';
 import {BookReleaseService} from '../modules/release/BookRelease.service';
@@ -313,6 +314,7 @@ export class BookService {
         dto.primaryReleaseId
           ?? book.primaryReleaseId
           ?? (primaryRelease && findByProp('isbn')(primaryRelease.isbn)(upsertedReleases))
+          ?? findByProp('type')([BookType.PAPER, BookType.EBOOK])(upsertedReleases)
           ?? upsertedReleases[0]
       );
 

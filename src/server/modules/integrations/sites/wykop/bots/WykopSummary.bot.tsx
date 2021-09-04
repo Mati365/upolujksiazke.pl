@@ -51,7 +51,7 @@ export class WykopSummaryBot {
    *
    * @memberof WykopSummaryBot
    */
-  @Cron(CronExpression.EVERY_WEEKEND)
+  @Cron(CronExpression.EVERY_WEEK)
   async postSummary() {
     const {
       wykopStatsService,

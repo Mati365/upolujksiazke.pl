@@ -8,4 +8,4 @@ import {WykopBotModule} from './sites';
     ],
   },
 )
-export class BotsModule {}
+export class IntegrationsModule {}

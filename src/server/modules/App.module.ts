@@ -32,7 +32,7 @@ import {SitemapModule} from './sitemap';
 import {NopModule} from './nop';
 import {BookModule} from './book';
 import {BrandModule} from './brand';
-import {BotsModule} from './bots';
+import {IntegrationsModule} from './integrations';
 
 @Module(
   {
@@ -54,7 +54,7 @@ import {BotsModule} from './bots';
         isCmdAppInstance()
           ? []
           : [
-            BotsModule,
+            IntegrationsModule,
             BullModule.forRoot(
               {
                 redis: SERVER_ENV.redisConfig,

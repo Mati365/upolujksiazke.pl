@@ -95,7 +95,8 @@ export class EsBookIndex extends EntityIndex<BookEntity, BookIndexEntity> {
         id: {type: 'keyword'},
         parameterizedName: {type: 'keyword'},
         name: {
-          type: 'keyword',
+          type: 'text',
+          analyzer: 'lowercase_analyzer',
           ...EsBookIndex.BOOK_INDEX_NESTED_AUTOCOMPLETE,
         },
       },

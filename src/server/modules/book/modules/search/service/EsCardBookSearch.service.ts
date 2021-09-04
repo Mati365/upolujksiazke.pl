@@ -223,32 +223,12 @@ export class EsCardBookSearchService {
       esQuery ??= esb.boolQuery();
       esQuery = esQuery.minimumShouldMatch(1).should(
         [
-          esb
-            .multiMatchQuery(
-              [
-                'isbns',
-                'defaultTitle.autocomplete',
-                'defaultTitle.autocomplete._2gram',
-                'defaultTitle.autocomplete._3gram',
-              ],
-              phrase,
-            )
-            .type('bool_prefix'),
-
-          esb
-            .nestedQuery(
-              esb
-                .multiMatchQuery(
-                  [
-                    'authors.name.autocomplete',
-                    'authors.name.autocomplete._2gram',
-                    'authors.name.autocomplete._3gram',
-                  ],
-                  phrase,
-                )
-                .type('bool_prefix'),
-              'authors',
-            ),
+          esb.matchPhraseQuery('defaultTitle', phrase).boost(3),
+          esb.nestedQuery(
+            esb.matchPhraseQuery('authors.name', phrase).boost(2),
+            'authors',
+          ),
+          esb.termQuery('isbns', phrase),
         ],
       );
     }

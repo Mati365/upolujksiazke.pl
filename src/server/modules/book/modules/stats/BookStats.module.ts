@@ -4,7 +4,6 @@ import {TrackerModule} from '@server/modules/tracker';
 import {BookCategoryModule} from '../category/BookCategory.module';
 import {BookSearchModule} from '../search/BookSearch.module';
 import {
-  BooksAnalyticsService,
   BookStatsService,
   BookTagsStatsService,
 } from './services';
@@ -19,12 +18,10 @@ import {
     providers: [
       BookStatsService,
       BookTagsStatsService,
-      BooksAnalyticsService,
     ],
     exports: [
       BookStatsService,
       BookTagsStatsService,
-      BooksAnalyticsService,
     ],
   },
 )

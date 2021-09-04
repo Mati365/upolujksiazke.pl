@@ -175,6 +175,15 @@ export class WykopCommentBot {
           </>
         )}
 
+        {book.primaryRelease?.totalPages && (
+          <>
+            <br />
+            <strong>Liczba stron książki:</strong>
+            {' '}
+            {book.primaryRelease.totalPages}
+          </>
+        )}
+
         {book.kind && (
           <>
             <br />

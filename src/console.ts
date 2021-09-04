@@ -2,6 +2,7 @@
 
 import * as path from 'path';
 import * as R from 'ramda';
+import fetch from 'node-fetch';
 
 import {NestFactory} from '@nestjs/core';
 import Logger from 'purdy';
@@ -34,6 +35,7 @@ const LOGGER_OPTIONS = {
   Object.assign(
     server.context,
     {
+      fetch,
       R,
       Helpers,
       app: context,

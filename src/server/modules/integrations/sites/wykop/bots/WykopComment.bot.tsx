@@ -1,17 +1,12 @@
+import React, {Fragment} from 'react';
 import {Injectable, Logger} from '@nestjs/common';
 import {OnEvent} from '@nestjs/event-emitter';
 import {EntityManager, Equal, Not} from 'typeorm';
-import React from 'react';
-import ReactDOM from 'react-dom/server';
-import TurndownService from 'turndown';
 import * as R from 'ramda';
 
-import {ENV} from '@client/constants/env';
-
-import {genAllBookReviewsLink, genBookLink, prefixLinkWithHost} from '@client/routes/Links';
+import {genBookLink, prefixLinkWithHost} from '@client/routes/Links';
 import {
   extractHostname,
-  formatDate,
   isDevMode,
   objPropsToPromise,
 } from '@shared/helpers';
@@ -21,11 +16,22 @@ import {BookReviewImportedEvent} from '@server/modules/importer/kinds/db-loaders
 import {BookEntity} from '@server/modules/book/entity/Book.entity';
 import {BookReviewerEntity} from '@server/modules/book/modules/reviewer/BookReviewer.entity';
 
+import {ENV, WYKOP_ENV} from '../constants/wykopEnv';
+import {CommentedBookStats} from '../constants/types';
+
+import {
+  BotMessageFooter,
+  LatestCommentBookReviews,
+} from '../components';
+
+import {
+  renderJSXToMessage,
+  formatRatingStars,
+} from '../helpers';
+
 @Injectable()
 export class WykopCommentBot {
   private readonly logger = new Logger(WykopCommentBot.name);
-
-  static readonly ENV = ENV.server.parsers.wykop;
 
   static readonly MAGIC_COMMENT_HEADER = 'Informacje nt. książki z tagu';
 
@@ -34,7 +40,7 @@ export class WykopCommentBot {
   ) {}
 
   get api() {
-    return WykopCommentBot.ENV.api;
+    return WYKOP_ENV.api;
   }
 
   /**
@@ -138,11 +144,7 @@ export class WykopCommentBot {
       },
     );
 
-    const [stats]: {
-      avgRatings: number,
-      totalReviews: number,
-      totalReviewerReviews: number,
-    }[] = await entityManager.query(
+    const [stats]: CommentedBookStats[] = await entityManager.query(
       /* sql */ `
         select
           avg(br."rating")::float as "avgRatings",
@@ -154,7 +156,7 @@ export class WykopCommentBot {
       [bookId, reviewer.id],
     );
 
-    const html = ReactDOM.renderToStaticMarkup(
+    const html = (
       <>
         {`${WykopCommentBot.MAGIC_COMMENT_HEADER} #bookmeter:`}
 
@@ -163,7 +165,7 @@ export class WykopCommentBot {
 
         <strong>Średnia ocena z Wykopu:</strong>
         {' '}
-        {WykopCommentBot.formatRatingStars(stats.avgRatings)}
+        {formatRatingStars(stats.avgRatings)}
         {` (${stats.totalReviews} recenzji)`}
 
         {book.primaryCategory && (
@@ -195,57 +197,11 @@ export class WykopCommentBot {
 
         <br />
         <br />
-        {R.isEmpty(reviews)
-          ? (
-            <strong>Jesteś pierwszym recenzentem tej książki tutaj :)</strong>
-          )
-          : (
-            <>
-              <strong>Ostatnie recenzje tej książki:</strong>
-              <>
-                {reviews.map(
-                  (review, index) => (
-                    <React.Fragment key={review.id}>
-                      <br />
-                      {`${index + 1}. `}
-                      <strong>
-                        {formatDate(review.publishDate)}
-                      </strong>
-                      {' - Użytkownik '}
-                      <strong>
-                        {review.reviewer.name}
-                      </strong>
-                      {' ocenił na: '}
-                      {WykopCommentBot.formatRatingStars(review.rating)}
-                      {' - '}
-                      <a
-                        href={review.url}
-                        target='_blank'
-                        rel='noreferrer'
-                      >
-                        Link do recenzji
-                      </a>
-                    </React.Fragment>
-                  ),
-                )}
-                {reviews.length < stats.totalReviews && (
-                  <>
-                    <br />
-                    {`... zobacz resztę fragmentów recenzji (${stats.totalReviews - reviews.length}) na: `}
-                    <a
-                      href={
-                        prefixLinkWithHost(genAllBookReviewsLink(book))
-                      }
-                      target='_blank'
-                      rel='noreferrer'
-                    >
-                      upolujksiazke.pl
-                    </a>
-                  </>
-                )}
-              </>
-            </>
-          )}
+        <LatestCommentBookReviews
+          reviews={reviews}
+          stats={stats}
+          book={book}
+        />
 
         {!reviewer.hidden && (
           <>
@@ -259,52 +215,18 @@ export class WykopCommentBot {
               target='_blank'
               rel='noreferrer'
             >
-              upolujksiazke.pl
+              {ENV.shared.website.name}
             </a>
             {' jeśli nie chcesz by cytaty z Twoich recenzji widniały na tej stronie to'}
             {' odpisz na ten komentarz lub na PW.'}
           </>
         )}
 
-        <br />
-        <br />
-        Wygenerowane przez bota książkowego :) Jeśli masz sugestie / pomysły / uwagi /
-        chcesz wspomóc prace nad nim pisz na PW. Github:
-        {' '}
-        <a href={ENV.shared.repo.url}>
-          Kod źródłowy witryny
-        </a>
-      </>,
+        <BotMessageFooter />
+      </>
     );
 
-    return (
-      new TurndownService()
-        .turndown(html)
-        .toString()
-        .replace(/([ ]*\n)/g, '\n')
-    );
-  }
-
-  /**
-   * Format rating to string of stars
-   *
-   * @static
-   * @param {number} total
-   * @return {string}
-   * @memberof WykopCommentBot
-   */
-  static formatRatingStars(total: number): string {
-    return (
-      R
-        .times(
-          (i) => (
-            i >= total
-              ? '☆'
-              : '★'
-          ),
-          10,
-        ).join('')
-    );
+    return renderJSXToMessage(html);
   }
 
   /**
@@ -359,7 +281,7 @@ export class WykopCommentBot {
     };
 
     return (
-      extractHostname(WykopCommentBot.ENV.homepageURL, hostnameConfig)
+      extractHostname(WYKOP_ENV.homepageURL, hostnameConfig)
         === extractHostname(review.url, hostnameConfig)
     );
   }

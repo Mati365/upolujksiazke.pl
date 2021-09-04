@@ -44,6 +44,7 @@ import {IntegrationsModule} from './integrations';
       RedisCacheModule,
       APIModule,
       FrontModule,
+      IntegrationsModule,
       ElasticsearchConnectionModule,
       ManifestModule.forRoot(
         {
@@ -54,7 +55,6 @@ import {IntegrationsModule} from './integrations';
         isCmdAppInstance()
           ? []
           : [
-            IntegrationsModule,
             BullModule.forRoot(
               {
                 redis: SERVER_ENV.redisConfig,

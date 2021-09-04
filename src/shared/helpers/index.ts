@@ -35,7 +35,7 @@ export * from './pickLongestArrayItem';
 export * from './findAndMap';
 export * from './uniqFlatHashByProp';
 export * from './parameterize';
-export * from './time/conversion';
+export * from './time';
 export * from './findObjNonCasedKey';
 export * from './findObjValue';
 export * from './filterAndMap';

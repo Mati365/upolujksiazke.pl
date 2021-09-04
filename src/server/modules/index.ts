@@ -13,4 +13,5 @@ export {BookVolumeModule} from './book/modules/volume/BookVolume.module';
 export {BookModule} from './book/Book.module';
 export {RedisCacheModule} from './cache/RedisCache.module';
 export {RemoteModule} from './remote/Remote.module';
+export {IntegrationsModule} from './integrations/Integrations.module';
 export {AppModule} from './App.module';

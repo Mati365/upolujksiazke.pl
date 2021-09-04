@@ -1,8 +1,11 @@
 import {Injectable} from '@nestjs/common';
-
 import {classToPlain} from 'class-transformer';
-import {safeToString} from '@shared/helpers';
+import {Not, Equal, Between} from 'typeorm';
 
+import {safeToString} from '@shared/helpers';
+import {paginatedAsyncIterator} from '@server/common/helpers/db';
+
+import {Duration} from '@shared/types';
 import {RemoteWebsiteEntity} from '@server/modules/remote/entity/RemoteWebsite.entity';
 import {WebsiteScrapperItemInfo} from './shared/AsyncScrapper';
 import {
@@ -65,6 +68,50 @@ export class ScrapperMetadataService {
             kind: ScrapperMetadataKind.URL,
           },
         )
+    );
+  }
+
+  /**
+   * Creates iterator that iterates over website scrapper metadata
+   *
+   * @param {Object} attrs
+   * @memberof ScrapperMetadataService
+   */
+  createWebsiteMetadataIterator(
+    {
+      kind,
+      websiteId,
+      duration,
+    }: {
+      kind: ScrapperMetadataKind,
+      websiteId: number,
+      duration: Duration,
+    },
+  ) {
+    return paginatedAsyncIterator(
+      {
+        limit: 40,
+        queryExecutor: ({limit, offset}) => (
+          ScrapperMetadataEntity
+            .createQueryBuilder('m')
+            .select([
+              'm.id', 'm.remoteId', 'm.parserSource',
+              'm.content', 'm.status', 'm.url',
+            ])
+            .offset(offset)
+            .limit(limit)
+            .where(
+              {
+                kind,
+                websiteId,
+                createdAt: Between(duration.begin, duration.end),
+                content: Not(Equal(true)),
+              },
+            )
+            .orderBy('m.id', 'DESC')
+            .getMany()
+        ),
+      },
     );
   }
 

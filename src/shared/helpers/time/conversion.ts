@@ -1,3 +1,7 @@
+export function convertDaysToSeconds(hours: number) {
+  return hours * 86400;
+}
+
 export function convertHoursToSeconds(hours: number) {
   return hours * 3600;
 }

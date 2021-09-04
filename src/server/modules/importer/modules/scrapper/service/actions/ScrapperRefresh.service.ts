@@ -9,7 +9,10 @@ import {safeToString} from '@shared/helpers/safeToString';
 
 import {RemoteID, IdentifiedItem} from '@shared/types';
 import {RemoteWebsiteEntity} from '@server/modules/remote/entity';
-import {MetadataDbLoaderQueueService} from '@importer/modules/db-loader/services';
+import {
+  MetadataDbLoaderQueueService,
+  MetadataDbLoaderService,
+} from '@importer/modules/db-loader/services';
 
 import {SentryService} from '@server/modules/sentry/Sentry.service';
 import {WebsiteInfoScrapperService} from '../scrappers/WebsiteInfoScrapper';
@@ -28,6 +31,7 @@ export class ScrapperRefreshService {
   constructor(
     private readonly connection: Connection,
     private readonly websiteInfoScrapperService: WebsiteInfoScrapperService,
+    private readonly metadataDbLoaderService: MetadataDbLoaderService,
     private readonly dbLoaderQueueService: MetadataDbLoaderQueueService,
     private readonly scrapperService: ScrapperService,
     private readonly sentryService: SentryService,
@@ -200,10 +204,12 @@ export class ScrapperRefreshService {
       remoteId,
       scrappersGroup,
       kind,
+      queued = true,
     }: {
       remoteId: RemoteID,
       scrappersGroup: WebsiteScrappersGroup,
       kind: ScrapperMetadataKind,
+      queued?: boolean,
     },
   ): Promise<IdentifiedItem> {
     kind ??= ScrapperMetadataKind.URL;
@@ -218,6 +224,7 @@ export class ScrapperRefreshService {
     const {
       connection,
       dbLoaderQueueService,
+      metadataDbLoaderService,
       websiteInfoScrapperService,
     } = this;
 
@@ -233,7 +240,11 @@ export class ScrapperRefreshService {
       },
     );
 
-    await dbLoaderQueueService.addMetadataToQueue(updatedEntity);
+    if (queued)
+      await dbLoaderQueueService.addMetadataToQueue(updatedEntity);
+    else
+      await metadataDbLoaderService.extractMetadataToDb(<any> updatedEntity);
+
     return updatedEntity;
   }
 

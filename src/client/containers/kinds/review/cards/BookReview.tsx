@@ -21,9 +21,14 @@ import {
   ExpandableDescriptionBoxProps,
 } from '@client/components/ui';
 
+import {truncateReviewerName} from '../helpers/truncateReviewerName';
+
 import {BookThumbCard} from '../../book/cards/BookThumbCard';
 import {WideBookCard} from '../../book/cards/WideBookCard';
 import {BookReviewReactions} from '../controls/BookReviewReactions';
+
+// eslint-disable-next-line max-len
+const HIDDEN_PLACEHOLDER = 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. <br /><br /> Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. <br /> It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.';
 
 export type BookReviewProps = {
   review: BookReviewRecord,
@@ -129,7 +134,11 @@ export const BookReview = (
           >
             <li>
               <span className='c-book-review__user-nick is-text-bold'>
-                {reviewer.name}
+                {(
+                  reviewer.hidden
+                    ? truncateReviewerName(reviewer.name)
+                    : reviewer.name
+                )}
               </span>
             </li>
 
@@ -159,7 +168,11 @@ export const BookReview = (
           maxCharactersCount={maxCharacterCount}
           padding='small'
           quote={!!website}
-          text={description}
+          text={(
+            reviewer.hidden
+              ? HIDDEN_PLACEHOLDER
+              : description
+          )}
           moreButtonRenderFn={(
             !customMoreButton && reviewer.hidden
               ? R.F

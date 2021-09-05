@@ -76,7 +76,7 @@ export const SimilarCommentBooks = (
       )}
 
       <br />
-      {`... zobacz resztę więcej książek z kategorii ${rootBook.primaryCategory.name} na: `}
+      {`... zobacz więcej książek z kategorii ${rootBook.primaryCategory.name} na: `}
       <a
         href={
           prefixLinkWithHost(genBookCategoryLink(rootBook.primaryCategory))

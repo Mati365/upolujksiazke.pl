@@ -58,7 +58,9 @@ export const LatestCommentBookReviews = (
                 target='_blank'
                 rel='noreferrer'
               >
-                Recenzja »
+                <strong>
+                  Wpis »
+                </strong>
               </a>
             </Fragment>
           ),

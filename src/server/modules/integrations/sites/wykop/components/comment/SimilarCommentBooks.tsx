@@ -58,14 +58,14 @@ export const SimilarCommentBooks = (
                   <strong>
                     {latestReview.reviewer.name}
                   </strong>
-                  {` ${formatRatingStars(latestReview.rating, 5)} `}
+                  {` ${formatRatingStars(latestReview.rating, 5)} - `}
                   <a
                     href={latestReview.url}
                     target='_blank'
                     rel='noreferrer'
                   >
                     <strong>
-                      wpis »
+                      Wpis »
                     </strong>
                   </a>
                 </>

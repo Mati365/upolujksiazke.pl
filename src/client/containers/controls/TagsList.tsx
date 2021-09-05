@@ -24,6 +24,9 @@ export const TagsList = ({items, className}: TagsListProps) => {
     <ExpandableFooterContainer
       translationPath='shared.buttons.expand_tags'
       footerClassName='is-text-small pt-2'
+      showFooter={
+        items.length > maxCount
+      }
     >
       {(expanded) => (
         <CleanList

@@ -52,6 +52,11 @@ import {IntegrationsModule} from './integrations';
         },
       ),
       ...(
+        isRootClusterAppInstance()
+          ? [ScheduleModule.forRoot()]
+          : []
+      ),
+      ...(
         isCmdAppInstance()
           ? []
           : [
@@ -63,11 +68,6 @@ import {IntegrationsModule} from './integrations';
                   removeOnFail: true,
                 },
               },
-            ),
-            ...(
-              isRootClusterAppInstance()
-                ? [ScheduleModule.forRoot()]
-                : []
             ),
           ]
       ),

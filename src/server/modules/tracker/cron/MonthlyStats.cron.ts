@@ -1,6 +1,7 @@
 import {Injectable} from '@nestjs/common';
 import {Cron, CronExpression} from '@nestjs/schedule';
 
+import {isCmdAppInstance} from '@server/common/helpers';
 import {TrackRecordViewsService} from '../service/TrackRecordViews.service';
 
 @Injectable()
@@ -16,6 +17,7 @@ export class MonthlyStatsCron {
    */
   @Cron(CronExpression.EVERY_DAY_AT_11PM)
   async refreshCurrentMonthStats() {
-    await this.viewsTrack.refreshCurrentMonthStats();
+    if (!isCmdAppInstance())
+      await this.viewsTrack.refreshCurrentMonthStats();
   }
 }

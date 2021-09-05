@@ -3,7 +3,8 @@ import {Injectable, Logger} from '@nestjs/common';
 import {Cron, CronExpression} from '@nestjs/schedule';
 import * as R from 'ramda';
 
-import {nthWeeksAgoDuration, isDevMode} from '@shared/helpers';
+import {nthMonthsAgoDuration, isDevMode} from '@shared/helpers';
+import {isCmdAppInstance} from '@server/common/helpers';
 import {renderJSXToMessage} from '../helpers';
 
 import {WykopOptionalMatchReview} from '../constants/types';
@@ -19,7 +20,10 @@ import {
   WykopStatsService,
 } from '../WykopStats.service';
 
-import {WYKOP_ENV} from '../constants/wykopEnv';
+import {
+  WYKOP_ENV,
+  SUMMARY_CRONTAB_NAME,
+} from '../constants';
 
 type SummaryMessageGeneratorAttrs = WykopRanking & DurationAttrs & {
   tags?: string[],
@@ -42,6 +46,10 @@ export class WykopSummaryBot {
     private readonly wykopStatsService: WykopStatsService,
   ) {}
 
+  get botEnv() {
+    return WYKOP_ENV.bots.summary;
+  }
+
   get api() {
     return WYKOP_ENV.api;
   }
@@ -51,8 +59,16 @@ export class WykopSummaryBot {
    *
    * @memberof WykopSummaryBot
    */
-  @Cron(CronExpression.EVERY_WEEK)
+  @Cron(
+    CronExpression.EVERY_1ST_DAY_OF_MONTH_AT_NOON,
+    {
+      name: SUMMARY_CRONTAB_NAME,
+    },
+  )
   async postSummary() {
+    if (isCmdAppInstance())
+      return;
+
     const {
       wykopStatsService,
       logger,
@@ -60,7 +76,7 @@ export class WykopSummaryBot {
     } = this;
 
     const durationAttrs = {
-      duration: nthWeeksAgoDuration(1),
+      duration: nthMonthsAgoDuration(1),
     };
 
     if (!isDevMode()) {
@@ -104,7 +120,7 @@ export class WykopSummaryBot {
     {
       tags = [
         '#bookmeter', '#ksiazki', '#czytajzwykopem',
-        '#literatura', '#ksiazka', '#bookmeterstats',
+        '#literatura', '#ksiazka',
       ],
       duration,
       topUpvoted,
@@ -135,7 +151,10 @@ export class WykopSummaryBot {
           ),
         )}
         <BotMessageFooter>
-          {!isDevMode() && tags.join(' ')}
+          {!isDevMode() && [
+            ...tags,
+            `#${this.botEnv.tag}`,
+          ].join(' ')}
         </BotMessageFooter>
       </>
     );

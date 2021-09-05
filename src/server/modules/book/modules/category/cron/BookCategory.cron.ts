@@ -1,5 +1,7 @@
 import {Injectable} from '@nestjs/common';
 import {Cron, CronExpression} from '@nestjs/schedule';
+
+import {isCmdAppInstance} from '@server/common/helpers';
 import {BookCategoryRankingService} from '../services/BookCategoryRanking.service';
 
 @Injectable()
@@ -10,6 +12,7 @@ export class BookCategoryCron {
 
   @Cron(CronExpression.EVERY_DAY_AT_3AM)
   async refreshRanking() {
-    await this.categoryRanking.refreshCategoryRanking();
+    if (!isCmdAppInstance())
+      await this.categoryRanking.refreshCategoryRanking();
   }
 }

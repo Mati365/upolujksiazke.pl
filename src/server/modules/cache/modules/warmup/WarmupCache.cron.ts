@@ -2,7 +2,10 @@ import {Injectable, Inject, CACHE_MANAGER} from '@nestjs/common';
 import {Cron, CronExpression} from '@nestjs/schedule';
 import pMap from 'p-map';
 
-import {isLockAvailable} from '@server/common/helpers';
+import {
+  isCmdAppInstance,
+  isLockAvailable,
+} from '@server/common/helpers';
 
 import {Layout} from '@client/containers/layout';
 import {CardBookSearchService} from '@server/modules/book/modules/search/service/CardBookSearch.service';
@@ -22,6 +25,9 @@ export class WarmupCacheCron {
 
   @Cron(CronExpression.EVERY_DAY_AT_5AM)
   async warmupCache() {
+    if (isCmdAppInstance())
+      return;
+
     if (!await isLockAvailable('redis_warmup_flushdb'))
       await this.cacheManager.store.getClient().flushdb();
 

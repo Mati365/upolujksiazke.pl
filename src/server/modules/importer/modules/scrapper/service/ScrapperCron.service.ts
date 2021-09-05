@@ -2,6 +2,8 @@ import {Injectable} from '@nestjs/common';
 import {Cron, CronExpression} from '@nestjs/schedule';
 
 import {isDevMode} from '@shared/helpers';
+import {isCmdAppInstance} from '@server/common/helpers';
+
 import {ScrapperMetadataKind} from '../entity';
 import {ScrapperRefreshService} from './actions';
 
@@ -13,7 +15,7 @@ export class ScrapperCronService {
 
   @Cron(CronExpression.EVERY_5_MINUTES)
   async fetchLatestReviews() {
-    if (isDevMode())
+    if (isDevMode() || isCmdAppInstance())
       return;
 
     await this.scrapperRefreshService.refreshLatest(

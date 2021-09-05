@@ -1,6 +1,7 @@
 import {Injectable} from '@nestjs/common';
 import {Cron, CronExpression} from '@nestjs/schedule';
 
+import {isCmdAppInstance} from '@server/common/helpers';
 import {BookTagsTextHydratorService} from '../service/BookTagsTextHydrator.service';
 
 @Injectable()
@@ -11,6 +12,7 @@ export class BookSEOCron {
 
   @Cron(CronExpression.EVERY_DAY_AT_4AM)
   async refreshRanking() {
-    await this.tagsHydrator.refreshAllBooksHydratedTags();
+    if (!isCmdAppInstance())
+      await this.tagsHydrator.refreshAllBooksHydratedTags();
   }
 }

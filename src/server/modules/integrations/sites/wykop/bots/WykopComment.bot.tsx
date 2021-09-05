@@ -1,4 +1,5 @@
-import React, {Fragment} from 'react';
+import React from 'react';
+import {SchedulerRegistry} from '@nestjs/schedule';
 import {Injectable, Logger} from '@nestjs/common';
 import {OnEvent} from '@nestjs/event-emitter';
 import {EntityManager, Equal, Not} from 'typeorm';
@@ -6,7 +7,9 @@ import * as R from 'ramda';
 
 import {genBookLink, prefixLinkWithHost} from '@client/routes/Links';
 import {
+  concatUrls,
   extractHostname,
+  formatDate,
   isDevMode,
   objPropsToPromise,
 } from '@shared/helpers';
@@ -16,9 +19,13 @@ import {BookReviewImportedEvent} from '@server/modules/importer/kinds/db-loaders
 import {BookEntity} from '@server/modules/book/entity/Book.entity';
 import {BookReviewerEntity} from '@server/modules/book/modules/reviewer/BookReviewer.entity';
 
-import {ENV, WYKOP_ENV} from '../constants/wykopEnv';
-import {CommentedBookStats} from '../constants/types';
+import {
+  SUMMARY_CRONTAB_NAME,
+  ENV,
+  WYKOP_ENV,
+} from '../constants';
 
+import {CommentedBookStats} from '../constants/types';
 import {
   BotMessageFooter,
   LatestCommentBookReviews,
@@ -37,6 +44,7 @@ export class WykopCommentBot {
 
   constructor(
     private readonly entityManager: EntityManager,
+    private readonly schedulerRegistry: SchedulerRegistry,
   ) {}
 
   get api() {
@@ -60,12 +68,14 @@ export class WykopCommentBot {
       return;
 
     const {api, logger} = this;
+
     try {
       const entry = await api.call(
         {
           path: `Entries/Entry/${review.remoteId}/`,
         },
       );
+
       if (!entry || WykopCommentBot.isCommentDisabled(entry))
         return;
 
@@ -99,6 +109,23 @@ export class WykopCommentBot {
     } catch (e) {
       logger.error(e);
     }
+  }
+
+  /**
+   * Returns next date when bot post summary
+   *
+   * @private
+   * @return {Date}
+   * @memberof WykopCommentBot
+   */
+  private getNextCronDate(): Date {
+    return (
+      this
+        .schedulerRegistry
+        .getCronJob(SUMMARY_CRONTAB_NAME)
+        .nextDate()
+        .toDate()
+    );
   }
 
   /**
@@ -167,6 +194,23 @@ export class WykopCommentBot {
         {' '}
         {formatRatingStars(stats.avgRatings)}
         {` (${stats.totalReviews} recenzji)`}
+
+        <br />
+        <strong>Następne podsumowanie tagu:</strong>
+        {' '}
+        {formatDate(this.getNextCronDate(), true, true)}
+        {' '}
+        <a
+          href={
+            concatUrls(WYKOP_ENV.homepageURL, `tag/${WYKOP_ENV.bots.summary.tag}`)
+          }
+          target='_blank'
+          rel='noreferrer'
+        >
+          <strong>
+            tag z historią podsumowań »
+          </strong>
+        </a>
 
         {book.primaryCategory && (
           <>
@@ -240,6 +284,9 @@ export class WykopCommentBot {
   static isCommentDisabled({data: entry}: any): boolean {
     if (!entry.can_comment)
       return true;
+
+    if (isDevMode())
+      return false;
 
     const comments = R.pluck('body', (entry.comments || []) as {body: string}[]);
 

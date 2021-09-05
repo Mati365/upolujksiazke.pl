@@ -76,7 +76,13 @@ export type AppEnv = Partial<{
     sitemap: SitemapServiceOptions,
     sentry: Omit<SentryOptions, 'integrations'>,
     parsers: Record<DefaultConfigBookShopNames, DefaultUrlsConfig> & {
-      wykop: WykopScrappersGroupConfig,
+      wykop: WykopScrappersGroupConfig & {
+        bots: {
+          summary: {
+            tag: string,
+          },
+        },
+      },
     },
   },
   client: Partial<{
@@ -290,6 +296,11 @@ export const GLOBAL_CONFIG: Record<string, AppEnv> = {
         wykop: {
           id: 22,
           homepageURL: 'https://wykop.pl',
+          bots: {
+            summary: {
+              tag: 'bookmeterstats',
+            },
+          },
           api: new WykopAPI(
             {
               authConfig: {

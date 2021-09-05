@@ -26,5 +26,5 @@ export function formatRatingStars(total: number, maxStars: number = 10): string 
       ).join('')
   );
 
-  return `${stars} (${total} / 10)`;
+  return `${stars} (${total.toFixed(1)} / 10)`;
 }

@@ -1,5 +1,7 @@
 import React from 'react';
 
+import {capitalize} from '@shared/helpers';
+
 import {Section, SectionMore} from '@client/components/ui';
 import {CategoryBooksGroup} from '@api/types/CategoryBooksGroup.record';
 import {BookCategoryLink} from '@client/routes/Links';
@@ -20,7 +22,7 @@ export const CategoriesGroupsBooksSection = ({items: groups}: CategoriesGroupsBo
           hoverUnderline={false}
           item={category}
         >
-          {category.name}
+          {capitalize(category.name)}
         </BookCategoryLink>
       )}
     >

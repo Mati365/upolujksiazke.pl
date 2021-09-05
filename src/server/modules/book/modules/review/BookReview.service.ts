@@ -208,13 +208,17 @@ export class BookReviewService {
    */
   async findBookReviews(
     {
+      ids,
       bookId,
+      booksIds,
       hiddenContent = false,
       pagination = true,
       offset = 0,
       limit = 15,
     }: {
+      ids?: number[],
       bookId?: number,
+      booksIds?: number[],
       offset?: number,
       pagination?: boolean,
       limit?: number,
@@ -235,7 +239,12 @@ export class BookReviewService {
         .orderBy('review.publishDate', 'DESC')
     );
 
-    if (!R.isNil(bookId))
+    if (!R.isNil(ids))
+      query = query.andWhere('review."id" in (:...ids)', {ids});
+
+    if (!R.isNil(booksIds))
+      query = query.andWhere('review."bookId" in (:...booksIds)', {booksIds});
+    else if (!R.isNil(bookId))
       query = query.andWhere('review."bookId" = :bookId', {bookId});
 
     const [items, totalItems] = (

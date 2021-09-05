@@ -33,6 +33,7 @@ import {NopModule} from './nop';
 import {BookModule} from './book';
 import {BrandModule} from './brand';
 import {IntegrationsModule} from './integrations';
+import {RecommendationModule} from './recommendation';
 
 @Module(
   {
@@ -45,6 +46,7 @@ import {IntegrationsModule} from './integrations';
       APIModule,
       FrontModule,
       IntegrationsModule,
+      RecommendationModule,
       ElasticsearchConnectionModule,
       ManifestModule.forRoot(
         {

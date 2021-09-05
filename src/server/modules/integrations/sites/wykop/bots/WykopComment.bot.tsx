@@ -12,8 +12,12 @@ import {
   formatDate,
   isDevMode,
   objPropsToPromise,
+  uniqFlatHashByProp,
 } from '@shared/helpers';
 
+// eslint-disable-next-line max-len
+import {BookRecommendationService} from '@server/modules/recommendation/modules/BookRecommendation/BookRecommendation.service';
+import {BookReviewService} from '@server/modules/book/modules/review/BookReview.service';
 import {BookReviewEntity} from '@server/modules/book/modules/review';
 import {BookReviewImportedEvent} from '@server/modules/importer/kinds/db-loaders/events';
 import {BookEntity} from '@server/modules/book/entity/Book.entity';
@@ -29,6 +33,8 @@ import {CommentedBookStats} from '../constants/types';
 import {
   BotMessageFooter,
   LatestCommentBookReviews,
+  OptionalMatchedReviewBook,
+  SimilarCommentBooks,
 } from '../components';
 
 import {
@@ -45,6 +51,8 @@ export class WykopCommentBot {
   constructor(
     private readonly entityManager: EntityManager,
     private readonly schedulerRegistry: SchedulerRegistry,
+    private readonly bookReviewService: BookReviewService,
+    private readonly bookRecommendationService: BookRecommendationService,
   ) {}
 
   get api() {
@@ -132,56 +140,17 @@ export class WykopCommentBot {
    * Return recent comments
    *
    * @private
-   * @param {BookReviewEntity} {bookId}
+   * @param {BookReviewEntity} review
    * @memberof WykopCommentBot
    */
-  private async generateBookStatsMessage(
-    {
-      id,
-      bookId,
-      websiteId,
-      reviewer,
-    }: BookReviewEntity,
-  ) {
-    const {entityManager} = this;
-    const {reviews, book} = await objPropsToPromise(
-      {
-        reviews: BookReviewEntity.find(
-          {
-            take: 5,
-            order: {
-              publishDate: 'DESC',
-            },
-            select: ['id', 'url', 'rating', 'publishDate'],
-            relations: ['reviewer'],
-            where: {
-              id: Not(Equal(id)),
-              bookId,
-              websiteId,
-            },
-          },
-        ),
-        book: BookEntity.findOne(
-          bookId,
-          {
-            select: ['id', 'parameterizedSlug', 'originalTitle'],
-            relations: ['primaryRelease', 'kind', 'primaryCategory'],
-          },
-        ),
-      },
-    );
-
-    const [stats]: CommentedBookStats[] = await entityManager.query(
-      /* sql */ `
-        select
-          avg(br."rating")::float as "avgRatings",
-          count(case when "rating" is null then null else 1 end)::int as "totalReviews",
-          count(case when "rating" is null or "reviewerId" != $2 then null else 1 end)::int as "totalReviewerReviews"
-        from book_review br
-        where br."bookId" = $1 and br."includeInStats" = true
-      `,
-      [bookId, reviewer.id],
-    );
+  private async generateBookStatsMessage(review: BookReviewEntity) {
+    const {reviewer} = review;
+    const {
+      reviews,
+      book,
+      similarBooks,
+      stats,
+    } = await this.fetchCommentStats(review);
 
     const html = (
       <>
@@ -247,6 +216,17 @@ export class WykopCommentBot {
           book={book}
         />
 
+        {similarBooks && !R.isEmpty(similarBooks) && (
+          <>
+            <br />
+            <br />
+            <SimilarCommentBooks
+              books={similarBooks}
+              book={book}
+            />
+          </>
+        )}
+
         {!reviewer.hidden && (
           <>
             <br />
@@ -272,6 +252,121 @@ export class WykopCommentBot {
 
     return renderJSXToMessage(html);
   }
+
+  /* eslint-disable max-len */
+  /**
+   * Resolves stats used to generate comment
+   *
+   * @private
+   * @param {BookReviewEntity} review
+   * @memberof WykopCommentBot
+   */
+  private async fetchCommentStats(
+    {
+      id,
+      bookId,
+      websiteId,
+      reviewer,
+    }: BookReviewEntity,
+  ) {
+    const {
+      entityManager,
+      bookRecommendationService,
+      bookReviewService,
+    } = this;
+
+    const fetchSimilarBooks = async () => {
+      const similarBooks = await bookRecommendationService.findBookAlternativesCards(
+        {
+          limit: 4,
+          bookId,
+        },
+      ) as OptionalMatchedReviewBook[];
+
+      const reviewsIds = R.pluck('id', (await entityManager.query(
+        /* sql */ `
+          select
+            (
+              select review."id"
+              from
+                book_review review
+              left join book_reviewer reviewer on review."reviewerId" = reviewer."id"
+              where review."bookId" = books."bookId"
+              order by review."createdAt" desc
+              limit 1
+            ) as "id"
+          from (
+            select unnest(string_to_array($1, ',')::int[]) as "bookId"
+          ) as books
+        `,
+        [
+          R.pluck('id', similarBooks).join(','),
+        ],
+      )) as any[]);
+
+      const reviewsMap = uniqFlatHashByProp(
+        'bookId',
+        (await bookReviewService.findBookReviews(
+          {
+            pagination: false,
+            ids: reviewsIds,
+          },
+        )).items,
+      );
+
+      return similarBooks.map((book) => {
+        book.latestReview = reviewsMap[book.id];
+        return book;
+      });
+    };
+
+    return objPropsToPromise(
+      {
+        reviews: BookReviewEntity.find(
+          {
+            take: 5,
+            order: {
+              publishDate: 'DESC',
+            },
+            select: ['id', 'url', 'rating', 'publishDate'],
+            relations: ['reviewer'],
+            where: {
+              id: Not(Equal(id)),
+              bookId,
+              websiteId,
+            },
+          },
+        ),
+
+        book: BookEntity.findOne(
+          bookId,
+          {
+            select: ['id', 'parameterizedSlug', 'originalTitle'],
+            relations: ['primaryRelease', 'kind', 'primaryCategory'],
+          },
+        ),
+
+        stats: (
+          entityManager
+            .query(
+              /* sql */ `
+                select
+                  avg(br."rating")::float as "avgRatings",
+                  count(case when "rating" is null then null else 1 end)::int as "totalReviews",
+                  count(case when "rating" is null or "reviewerId" != $2 then null else 1 end)::int as "totalReviewerReviews"
+                from book_review br
+                where br."bookId" = $1 and br."includeInStats" = true
+              `,
+              [bookId, reviewer.id],
+            )
+            .then(R.nth(0)) as Promise<CommentedBookStats>
+        ),
+
+        similarBooks: fetchSimilarBooks(),
+      },
+    );
+  }
+  /* eslint-enable max-len */
 
   /**
    * Check if bot already commented entry

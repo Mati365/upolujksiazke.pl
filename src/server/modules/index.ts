@@ -14,4 +14,5 @@ export {BookModule} from './book/Book.module';
 export {RedisCacheModule} from './cache/RedisCache.module';
 export {RemoteModule} from './remote/Remote.module';
 export {IntegrationsModule} from './integrations/Integrations.module';
+export {RecommendationModule} from './recommendation';
 export {AppModule} from './App.module';

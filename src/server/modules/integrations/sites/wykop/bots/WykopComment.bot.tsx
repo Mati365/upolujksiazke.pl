@@ -304,6 +304,9 @@ export class WykopCommentBot {
         ],
       )) as any[]);
 
+      if (R.isEmpty(reviewsIds))
+        return [];
+
       const reviewsMap = uniqFlatHashByProp(
         'bookId',
         (await bookReviewService.findBookReviews(

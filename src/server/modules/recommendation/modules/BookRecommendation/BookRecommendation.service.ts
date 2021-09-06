@@ -125,6 +125,9 @@ export class BookRecommendationService {
       ),
     ].filter(Boolean);
 
+    if (R.isEmpty(tieQueries))
+      return [];
+
     const query = (
       esb
         .boolQuery()

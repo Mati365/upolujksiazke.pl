@@ -8,6 +8,9 @@ import * as R from 'ramda';
  * @return {string}
  */
 export function formatRatingStars(total: number, maxStars: number = 10): string {
+  if (R.isNil(total))
+    return '';
+
   const mapepdTotal = (
     maxStars === 10
       ? total

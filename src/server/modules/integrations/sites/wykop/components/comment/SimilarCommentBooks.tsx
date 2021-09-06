@@ -58,7 +58,8 @@ export const SimilarCommentBooks = (
                   <strong>
                     {latestReview.reviewer.name}
                   </strong>
-                  {` ${formatRatingStars(latestReview.rating, 5)} - `}
+                  {!R.isNil(latestReview.rating) && ` ${formatRatingStars(latestReview.rating, 5)}`}
+                  {' - '}
                   <a
                     href={latestReview.url}
                     target='_blank'

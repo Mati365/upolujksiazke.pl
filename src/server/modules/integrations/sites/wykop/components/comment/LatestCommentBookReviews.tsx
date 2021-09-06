@@ -50,8 +50,12 @@ export const LatestCommentBookReviews = (
               <strong>
                 {review.reviewer.name}
               </strong>
-              {' ocenił na: '}
-              {formatRatingStars(review.rating)}
+              {!R.isNil(review.rating) && (
+                <>
+                  {' ocenił na: '}
+                  {formatRatingStars(review.rating)}
+                </>
+              )}
               {' - '}
               <a
                 href={review.url}

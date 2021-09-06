@@ -161,7 +161,7 @@ export class WykopCommentBot {
 
         <strong>Średnia ocena z Wykopu:</strong>
         {' '}
-        {formatRatingStars(stats.avgRatings)}
+        {formatRatingStars(stats.avgRatings) ?? '?'}
         {` (${stats.totalReviews} recenzji)`}
 
         <br />

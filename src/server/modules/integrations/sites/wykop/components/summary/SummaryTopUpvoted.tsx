@@ -1,4 +1,5 @@
 import React, {Fragment, ReactNode} from 'react';
+import * as R from 'ramda';
 
 import {BookCardRecord} from '@api/types';
 import {
@@ -65,8 +66,8 @@ export const BotSummaryTopUpvoted = ({top}: BotSummaryTopUpvotedProps) => {
               </strong>
             </a>
 
-            {` - ${formatRatingStars(review.rating, 5)} - usera `}
-
+            {!R.isNil(review.rating) && ` - ${formatRatingStars(review.rating, 5)}`}
+            {' - usera '}
             <strong>
               {review.reviewer}
             </strong>

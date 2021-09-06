@@ -4,6 +4,8 @@ import pMap from 'p-map';
 import * as R from 'ramda';
 
 import {paginatedAsyncIterator} from '@server/common/helpers/db';
+import {MemoizeMethod} from '@shared/helpers/decorators/ExpirableMemoizeMethod';
+
 import {BookCategoryEntity} from '../BookCategory.entity';
 import {BookCategoryService} from './BookCategory.service';
 import {CreateBookCategoryDto} from '../dto/CreateBookCategory.dto';
@@ -21,6 +23,7 @@ export class BookParentCategoryService {
    * @return {Promise<CreateBookCategoryDto>}
    * @memberof BookParentCategoryService
    */
+  @MemoizeMethod
   async findDefaultParentCategory(): Promise<CreateBookCategoryDto> {
     return this.categoryService.findSimilarCategory(
       {

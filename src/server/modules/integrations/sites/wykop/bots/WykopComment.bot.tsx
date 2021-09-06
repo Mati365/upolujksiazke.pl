@@ -401,6 +401,9 @@ export class WykopCommentBot {
    * @memberof WykopCommentBot
    */
   static isExpiredReview(review: BookReviewEntity, maxHours: number = 32): boolean {
+    if (isDevMode())
+      return false;
+
     if (!review?.publishDate)
       return true;
 

@@ -82,16 +82,9 @@ export class BookRecommendationService {
     }
 
     const tieQueries: esb.Query[] = [
-      esb.nestedQuery(
-        esb
-          .termQuery('primaryCategory.id', book.primaryCategoryId)
-          .boost(2.5),
-        'primaryCategory',
-      ),
-
       BookRecommendationService.createShouldTieQuery(
         {
-          boost: 2.5,
+          boost: 3.5,
           queries: (book.era || []).map((era) => esb.nestedQuery(
             esb.termQuery('era.id', era.id),
             'era',
@@ -101,7 +94,7 @@ export class BookRecommendationService {
 
       BookRecommendationService.createShouldTieQuery(
         {
-          boost: 2,
+          boost: 3,
           queries: (book.genre || []).map((genre) => esb.nestedQuery(
             esb.termQuery('genre.id', genre.id),
             'genre',
@@ -111,7 +104,7 @@ export class BookRecommendationService {
 
       BookRecommendationService.createShouldTieQuery(
         {
-          percentage: '20%',
+          percentage: '40%',
           boost: 1.25,
           queries: (book.categories || []).map((category) => esb.nestedQuery(
             esb.termQuery('categories.id', category.id),
@@ -123,14 +116,14 @@ export class BookRecommendationService {
       BookRecommendationService.createShouldTieQuery(
         {
           percentage: '30%',
-          boost: 1.0,
+          boost: 1.8,
           queries: (book.tags || []).map((tag) => esb.nestedQuery(
             esb.termQuery('tags.id', tag.id),
             'tags',
           )),
         },
       ),
-    ];
+    ].filter(Boolean);
 
     const query = (
       esb
@@ -139,10 +132,16 @@ export class BookRecommendationService {
           esb.termQuery('id', book.id),
         )
         .must(
-          esb
-            .disMaxQuery()
-            .tieBreaker(0.7)
-            .queries(tieQueries),
+          [
+            esb.nestedQuery(
+              esb.termQuery('primaryCategory.id', book.primaryCategoryId),
+              'primaryCategory',
+            ),
+            esb
+              .disMaxQuery()
+              .tieBreaker(0.7)
+              .queries(tieQueries),
+          ],
         )
     );
 
@@ -186,6 +185,9 @@ export class BookRecommendationService {
       queries: esb.Query[],
     },
   ) {
+    if (!queries || R.isEmpty(queries))
+      return null;
+
     let query = esb.boolQuery();
     if (percentage)
       query = query.minimumShouldMatch(percentage);

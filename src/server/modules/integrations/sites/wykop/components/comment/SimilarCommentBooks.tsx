@@ -3,6 +3,7 @@ import * as R from 'ramda';
 
 import {ENV} from '@client/constants/env';
 
+import {truncateText} from '@shared/helpers';
 import {genBookCategoryLink, genBookLink, prefixLinkWithHost} from '@client/routes/Links';
 import {BookReviewEntity} from '@server/modules/book/modules/review';
 import {BookEntity} from '@server/modules/book';
@@ -47,8 +48,10 @@ export const SimilarCommentBooks = (
                 rel='noreferrer'
               >
                 <strong>
-                  {book.defaultTitle}
-                  {!R.isEmpty(book.authors) && ` (${book.authors[0]?.name})`}
+                  {truncateText(
+                    60,
+                    `${book.defaultTitle}${!R.isEmpty(book.authors) ? ` (${book.authors[0]?.name})` : ''}`,
+                  )}
                 </strong>
               </a>
 

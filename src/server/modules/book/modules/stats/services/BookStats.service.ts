@@ -87,6 +87,7 @@ export class BookStatsService {
       bookParentCategoryService,
     } = this;
 
+    const defaultCategoryId = await bookParentCategoryService.findDefaultParentCategory().then(R.prop('id'));
     const [stats]: [BookStats] = await entityManager.query(
       /* sql */ `
         with
@@ -123,7 +124,7 @@ export class BookStatsService {
             from book_category bc
             inner join book_categories_book_category bcbc on bcbc."bookCategoryId" = bc."id"
             inner join book b on b."id" = bcbc."bookId"
-            where bcbc."bookId" = $1 and bc."root" != true and b."primaryCategoryId" is null
+            where bcbc."bookId" = $1 and bc."root" != true and bc."parentCategoryId" <> $2
             group by coalesce(b."primaryCategoryId", bc."parentCategoryId")
             order by count(bc."parentCategoryId") desc
             limit 1
@@ -141,16 +142,13 @@ export class BookStatsService {
         cross join reviews r
         cross join release_types rt
       `,
-      [id],
+      [id, defaultCategoryId],
     );
 
     const {rankingScore, primaryCategoryId} = await objPropsToPromise(
       {
         rankingScore: this.calcBookRankingScore(id, stats),
-        primaryCategoryId: (
-          stats.primaryCategoryId
-            ?? bookParentCategoryService.findDefaultParentCategory().then(R.prop('id'))
-        ),
+        primaryCategoryId: stats.primaryCategoryId ?? defaultCategoryId,
       },
     );
 
@@ -158,9 +156,9 @@ export class BookStatsService {
       id,
       removeNullValues(
         {
+          ...stats,
           rankingScore,
           primaryCategoryId,
-          ...stats,
         },
       ),
     );

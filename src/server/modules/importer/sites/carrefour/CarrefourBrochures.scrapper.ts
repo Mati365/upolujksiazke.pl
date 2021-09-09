@@ -1,4 +1,4 @@
-import * as R from 'ramda';
+import pMap from 'p-map';
 
 import {
   concatUrlParts,
@@ -10,6 +10,7 @@ import {
 import {
   normalizeParsedText,
   parseAsyncURLPathIfOK,
+  parseCookies,
 } from '@server/common/helpers';
 
 import {BrochureScrapperInfo} from '@importer/kinds/scrappers';
@@ -30,6 +31,7 @@ export class CarrefourBrochuresScrapper extends AsyncScrapper<BrochureScrapperIn
   constructor(
     private readonly config: {
       latestBrochuresPath: string,
+      singleBrochurePath: string,
       logoURL: string,
     },
   ) {
@@ -49,12 +51,44 @@ export class CarrefourBrochuresScrapper extends AsyncScrapper<BrochureScrapperIn
   }
 
   protected async processPage(): Promise<CarrefourScrapperPagination> {
-    const props = (await this.fetchPathInitialState(this.config.latestBrochuresPath))?.props;
-    if (!props)
+    const {
+      websiteURL,
+      config: {
+        latestBrochuresPath,
+        singleBrochurePath,
+      },
+    } = this;
+
+    const response = await this.fetchPathInitialState(latestBrochuresPath);
+    if (!response?.props)
       return null;
 
+    const {props, cookies} = response;
+    const leaflets = await pMap(
+      props.pageProps?.items || [],
+      async ({uuid}) => this.mapSingleItemResponse(
+        await fetch(
+          concatUrlParts(
+            [
+              websiteURL,
+              singleBrochurePath,
+              uuid,
+            ],
+          ),
+          {
+            headers: {
+              cookie: `SESSION=${cookies.SESSION.value}`,
+            },
+          },
+        ).then((r) => r.json()),
+      ),
+      {
+        concurrency: 2,
+      },
+    );
+
     return {
-      result: (props?.pageProps?.items || []).map(this.mapSingleItemResponse.bind(this)).filter(Boolean),
+      result: leaflets.filter(Boolean),
       ptr: {
         nextPage: null,
       },
@@ -80,7 +114,7 @@ export class CarrefourBrochuresScrapper extends AsyncScrapper<BrochureScrapperIn
       },
     } = this;
 
-    const remoteId = R.unless(R.isNil, R.slice(1, -1))(item.uuid) || item.id;
+    const remoteId = item.uuid ?? item.id;
     const pdfName = item.filesMap?.pdf?.name;
     const pages = item.images.map(
       ({name}, index: number) => new CreateBrochurePageDto(
@@ -140,13 +174,15 @@ export class CarrefourBrochuresScrapper extends AsyncScrapper<BrochureScrapperIn
    */
   private async fetchPathInitialState(path: string) {
     const {websiteURL} = this;
-    const $ = (await parseAsyncURLPathIfOK(websiteURL, path))?.$;
+    const result = (await parseAsyncURLPathIfOK(websiteURL, path));
 
-    if (!$)
+    if (!result)
       return null;
 
+    const {$, response} = result;
     return {
       $,
+      cookies: parseCookies(response),
       props: safeJsonParse($('#__NEXT_DATA__').contents().text())?.props?.initialProps,
     };
   }

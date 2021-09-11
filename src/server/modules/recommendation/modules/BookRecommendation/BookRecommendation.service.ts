@@ -104,7 +104,6 @@ export class BookRecommendationService {
 
       BookRecommendationService.createShouldTieQuery(
         {
-          percentage: '40%',
           boost: 1.25,
           queries: (book.categories || []).map((category) => esb.nestedQuery(
             esb.termQuery('categories.id', category.id),
@@ -115,7 +114,6 @@ export class BookRecommendationService {
 
       BookRecommendationService.createShouldTieQuery(
         {
-          percentage: '30%',
           boost: 1.8,
           queries: (book.tags || []).map((tag) => esb.nestedQuery(
             esb.termQuery('tags.id', tag.id),

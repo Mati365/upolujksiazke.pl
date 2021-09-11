@@ -16,6 +16,7 @@ import {CreateBookReleaseDto} from '@server/modules/book/modules/release/dto/Cre
 import {CreateBookPublisherDto} from '@server/modules/book/modules/publisher/dto/BookPublisher.dto';
 import {CreateImageAttachmentDto} from '@server/modules/attachment/dto';
 import {CreateBookAvailabilityDto} from '@server/modules/book/modules/availability/dto/CreateBookAvailability.dto';
+import {CreateBookCategoryDto} from '@server/modules/book/modules/category/dto/CreateBookCategory.dto';
 
 import {
   BINDING_TRANSLATION_MAPPINGS,
@@ -75,6 +76,7 @@ export class GildiaBookParser
     return new CreateBookDto(
       {
         authors: GildiaBookParser.parseAuthors(bookPage.$),
+        categories: GildiaBookParser.parseCategories(bookPage.$),
         defaultTitle: release.title,
         releases: [
           release,
@@ -83,6 +85,23 @@ export class GildiaBookParser
     );
   }
   /* eslint-enable @typescript-eslint/dot-notation */
+
+  /**
+   * Fetch all book categories
+   *
+   * @static
+   * @param {cheerio.Root} $
+   * @memberof GildiaBookParser
+   */
+  static parseCategories($: cheerio.Root) {
+    return $('.product-show-page .main-content ol.breadcrumb.hidden-xs > li:not(:first-child)').toArray().map(
+      (el) => new CreateBookCategoryDto(
+        {
+          name: $(el).text(),
+        },
+      ),
+    );
+  }
 
   /**
    * Extracts multiple book authors from page

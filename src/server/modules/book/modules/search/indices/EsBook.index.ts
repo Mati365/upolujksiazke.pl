@@ -94,6 +94,7 @@ export class EsBookIndex extends EntityIndex<BookEntity, BookIndexEntity> {
       properties: {
         id: {type: 'keyword'},
         parameterizedName: {type: 'keyword'},
+        nameAliases: {type: 'text'},
         name: {
           type: 'text',
           analyzer: 'lowercase_analyzer',
@@ -143,13 +144,21 @@ export class EsBookIndex extends EntityIndex<BookEntity, BookIndexEntity> {
    * @static
    * @param {number[]} ids
    * @param {string} alias
+   * @param {string[]} select
    * @returns
    * @memberof EsBookIndex
    */
-  static createBooksNestedListItemSelector(ids: number[], alias: string) {
+  static createBooksNestedListItemSelector(
+    ids: number[],
+    alias: string,
+    select: string[] = [],
+  ) {
     return {
       booksIds: ids,
-      select: createMapperListItemSelector(alias),
+      select: [
+        ...createMapperListItemSelector(alias),
+        ...select,
+      ],
     };
   }
 
@@ -236,7 +245,13 @@ export class EsBookIndex extends EntityIndex<BookEntity, BookIndexEntity> {
           EsBookIndex.createBooksNestedListItemSelector(ids, 'b'),
         ),
         authors: bookAuthorService.findBooksAuthors(
-          EsBookIndex.createBooksNestedListItemSelector(ids, 'b'),
+          EsBookIndex.createBooksNestedListItemSelector(
+            ids,
+            'b',
+            [
+              'b.nameAliases as "nameAliases"',
+            ],
+          ),
         ),
         categories: bookCategoriesService.findBooksCategories(
           {

@@ -372,7 +372,15 @@ export class EsFuzzyBookSearchService {
                     .boolQuery()
                     .minimumShouldMatch(1)
                     .should(authors.map(
-                      (author) => esb.matchQuery('authors.name', author),
+                      (author) => (
+                        esb
+                          .multiMatchQuery(
+                            ['authors.name', 'authors.nameAliases'],
+                            author,
+                          )
+                          .fuzziness(0.75)
+                          .operator('and')
+                      ),
                     )),
                 ),
               ]

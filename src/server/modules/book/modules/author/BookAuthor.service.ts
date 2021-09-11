@@ -246,6 +246,7 @@ export class BookAuthorService {
         'b.id as "id"',
         'b.name as "name"',
         'b.parameterizedName as "parameterizedName"',
+        'b.nameAliases as "nameAliases"',
       ],
     }: BookGroupedSelectAttrs,
   ) {

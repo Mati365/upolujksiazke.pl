@@ -31,6 +31,7 @@
     "url": "git@github.com:upolujksiazke/upolujksiazke.pl.git"
   },
   "devDependencies": {
+    "@alex_neo/jest-expect-message": "^1.0.5",
     "@babel/preset-react": "^7.14.5",
     "@sentry/webpack-plugin": "^1.15.1",
     "@testing-library/jest-dom": "^5.14.1",
@@ -84,7 +85,7 @@
     "file-loader": "^6.2.0",
     "fork-ts-checker-webpack-plugin": "^6.2.12",
     "husky": "^6.0.0",
-    "jest": "^27.0.4",
+    "jest": "^27.1.0",
     "jest-expect-message": "^1.0.2",
     "mini-css-extract-plugin": "^1.6.0",
     "nodemon-webpack-plugin": "^4.5.2",

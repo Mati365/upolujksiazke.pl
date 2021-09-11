@@ -13,7 +13,7 @@ const SHARED_CONFIG: Config.InitialOptions = {
   ),
   setupFilesAfterEnv: [
     '@testing-library/jest-dom/extend-expect',
-    'jest-expect-message',
+    '@alex_neo/jest-expect-message',
   ],
   testPathIgnorePatterns: [
     '<rootDir>/node_modules',
@@ -29,7 +29,7 @@ const SHARED_CONFIG: Config.InitialOptions = {
 module.exports = {
   projects: [
     {
-      displayName: 'bookmeter',
+      displayName: 'upolujksiazke.pl',
       rootDir: resolve(__dirname, '../'),
       ...SHARED_CONFIG,
     },

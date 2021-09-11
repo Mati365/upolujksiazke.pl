@@ -46,6 +46,7 @@ export type WykopBookReviewScrapperConfig = {
  * https://www.wykop.pl/wpis/51668249/133-1-134-tytul-piter-bitwa-blizniakow-autor-szymu/
  * https://www.wykop.pl/wpis/51623383/122-1-123-tytul-zabic-drozda-autor-harper-lee-gatu/
  * https://www.wykop.pl/wpis/11633869/8-185-5-8-180-8185-1-8184-tytul-nowa-rebelia-autor/
+ * https://www.wykop.pl/wpis/60320891/1715-1-1716-tytul-nowy-wspanialy-swiat-autor-aldou/
  */
 export class WykopBookReviewScrapper extends AsyncScrapper<BookReviewScrapperInfo[]> {
   private readonly logger = new Logger(WykopBookReviewScrapper.name);
@@ -76,7 +77,7 @@ export class WykopBookReviewScrapper extends AsyncScrapper<BookReviewScrapperInf
    * @memberof WykopScrapper
    */
   static isTemplatePost(content: string): boolean {
-    return !!R.match(/(<strong>)?Tytuł:(<\/strong>)?\s/, content)?.length;
+    return !!R.match(/(<strong>)?Tytuł[:]?(<\/strong>)?[\s:]/, content)?.length;
   }
 
   /**

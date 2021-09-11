@@ -1,5 +1,4 @@
 import * as R from 'ramda';
-import 'jest-expect-message';
 
 import {WykopAPI} from '@sites/wykop/api/WykopAPI';
 import {WykopBookReviewScrapper} from '@sites/wykop/book-review/WykopBookReview.scrapper';

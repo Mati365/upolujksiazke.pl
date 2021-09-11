@@ -3,23 +3,14 @@ import * as R from 'ramda';
 import {normalizeISBN} from '@server/common/helpers';
 import {removeNullValues} from '@shared/helpers';
 import {
+  dropTagAnchors,
+  countStars,
+} from './helpers';
+
+import {
   WykopBookReviewHeader,
   WykopEntryContentParser,
 } from './WykopEntryContentParser';
-
-/**
- * Count all star characters
- *
- * @export
- * @param {string} str
- * @returns
- */
-export function countStars(str: string) {
-  return R.countBy(
-    (val) => (val === '★' ? 'filled' : 'notFilled'),
-    str as any,
-  ).filled || 0;
-}
 
 /**
  * Primarly parses result of:
@@ -132,10 +123,10 @@ export class WykopEntryLatestParser extends WykopEntryContentParser {
    */
   protected matchDescription(body: string): string {
     let match = (
-      body
-        .replaceAll('\n', '')
+      WykopEntryLatestParser
+        .normalizeBody(body)
         // eslint-disable-next-line max-len
-        .match(/(?:[☆★]|\d+\s*\/\s*\d+(?:<br \/><br \/>[☆★]+)?)(?:<br\s\/>)+(.*?)(?<!<a)(?:<br \/>)*(?:Wpis dodano za pomocą stron|#?<a href="#bookmeter).*/mi)
+        .match(/(?:[☆★]+|\d+\s*\/\s*\d+(?:(?:<br \/>)+[☆★]+)?)\s*(?:<br\s\/>)+(.*?)(?<!<a)(?:<br \/>)*(?:Wpis dodano za pomocą stron|#bookmeter|$).*/mi)
     )?.[1] ?? null;
 
     if (!match)
@@ -154,5 +145,38 @@ export class WykopEntryLatestParser extends WykopEntryContentParser {
         .replaceAll('&quot;', '"')
         .replace(/(Wpis dodany za pomocą <.*$)/, '')
     );
+  }
+
+  /**
+   * Prevent body to contain magic tag inside comment. It prevents
+   * accidential match content from review
+   *
+   * @example
+   *  https://www.wykop.pl/wpis/60320891/1715-1-1716-tytul-nowy-wspanialy-swiat-autor-aldou/
+   *
+   * @static
+   * @param {string} body
+   * @return {string}
+   * @memberof WykopEntryLatestParser
+   */
+  static normalizeBody(body: string): string {
+    const html = {
+      current: dropTagAnchors(body.replaceAll('\n', '')),
+    };
+
+    const totalMagicTags: number[] = [
+      ...html.current.matchAll(new RegExp('#bookmeter', 'gi')),
+    ].map(R.prop('index') as any);
+
+    if (totalMagicTags.length > 1) {
+      // drops hashtag, except last
+      for (let i = 0; i < totalMagicTags.length - 1; ++i) {
+        const index = totalMagicTags[i];
+
+        html.current = `${html.current.substring(0, index - i)}${html.current.substring(index - i + 1)}`;
+      }
+    }
+
+    return html.current;
   }
 }

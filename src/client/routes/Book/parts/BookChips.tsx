@@ -26,7 +26,7 @@ export const BookChips = ({book}: BookChipsProps) => {
         return null;
 
       return book.releases.reduce(
-        (acc, item) => item.availability.length + acc,
+        (acc, item) => (item.availability?.length || 0) + acc,
         0,
       );
     },

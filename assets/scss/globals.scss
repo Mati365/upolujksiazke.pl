@@ -20,3 +20,9 @@ a.is-disabled {
   opacity: .35;
   pointer-events: none;
 }
+
+@include mobile {
+  *::-webkit-scrollbar {
+    display: none;
+  }
+}

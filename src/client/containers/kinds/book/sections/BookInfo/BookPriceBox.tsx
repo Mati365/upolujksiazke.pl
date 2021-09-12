@@ -51,6 +51,25 @@ export const BookPriceBox = (
     );
   };
 
+  const cta = (
+    <BookCtaButton
+      className='c-book-price-box__buy-cta'
+      size={(
+        small
+          ? 'medium'
+          : 'big'
+      )}
+      title={
+        t('buy_cta')
+      }
+      disabled={
+        R.isNil(highestPrice)
+      }
+      expanded={!small}
+      onClick={onBuy}
+    />
+  );
+
   return (
     <div
       className={c(
@@ -78,32 +97,18 @@ export const BookPriceBox = (
           value={lowestPrice}
         />
 
-        {isPromotion && (
+        {!small && isPromotion && (
           <BookPriceGroup
             className='c-book-price-box__prev-price'
             label={t('highest_price')}
             value={highestPrice}
           />
         )}
+
+        {small && cta}
       </div>
 
-      <BookCtaButton
-        className='c-book-price-box__buy-cta'
-        size={(
-          small
-            ? 'medium'
-            : 'big'
-        )}
-        title={
-          t('buy_cta')
-        }
-        disabled={
-          R.isNil(highestPrice)
-        }
-        expanded
-        onClick={onBuy}
-      />
-
+      {!small && cta}
       {children}
     </div>
   );

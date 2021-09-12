@@ -58,9 +58,12 @@ export const BookHeaderSection = ({book, formattedTitle}: BookHeaderSectionProps
           <RatingsRow
             size='big'
             value={avgRating / 10}
-            totalStars={10}
+            totalStars={(
+              ua.mobile
+                ? 8
+                : 10
+            )}
             totalRatings={totalRatings}
-            textOnly={ua.mobile}
             truncateRatingsCount={Infinity}
             showTextValue
           />
@@ -78,29 +81,30 @@ export const BookHeaderSection = ({book, formattedTitle}: BookHeaderSectionProps
           book={book}
           layout='grid'
         />
-        <div className='c-book-info-section__toolbar-row'>
+
+        <div className='c-book-info-section__cover-description'>
           {info}
+
+          {book.hierarchy?.length > 0 && (
+            <BookHeaderAttribute
+              className='c-book-info-section__volumes'
+              label={
+                `${t('book.volumes')}:`
+              }
+            >
+              <BookSeriesTree
+                size='small'
+                activeBookId={book.id}
+                items={book.hierarchy}
+              />
+            </BookHeaderAttribute>
+          )}
 
           <BookPriceBox
             book={book}
             small
           />
         </div>
-
-        {book.hierarchy?.length > 0 && (
-          <BookHeaderAttribute
-            className='c-book-info-section__volumes'
-            label={
-              `${t('book.volumes')}:`
-            }
-          >
-            <BookSeriesTree
-              size='small'
-              activeBookId={book.id}
-              items={book.hierarchy}
-            />
-          </BookHeaderAttribute>
-        )}
       </>
     );
   }

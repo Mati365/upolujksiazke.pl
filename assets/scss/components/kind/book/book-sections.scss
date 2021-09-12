@@ -19,6 +19,10 @@
       margin-top: 0;
       margin-bottom: 1.2rem;
 
+      @include mobile {
+        margin-bottom: 0
+      }
+
       &-attr {
         @include flex-list;
 
@@ -96,27 +100,22 @@
       }
     }
 
-    &__toolbar-row {
+    &__cover-description {
       display: grid;
-      margin: 1.5rem 0 1rem;
+      margin: 1.5rem 0 1.75rem 0;
+      padding-bottom: 2rem;
       gap: 10px;
-      grid-template-areas: "title title"
-                           "author price";
-
-      #{$self}__header {
-        grid-area: title;
-        margin-bottom: 0;
-      }
-
-      @include small-mobile {
-        grid-template-columns: 1fr;
-      }
+      border-bottom: 1px solid color(divider);
     }
 
     &__cover {
       @include mobile {
-        max-width: 230px;
+        max-width: 260px;
         margin: 0 auto;
+      }
+
+      @include small-mobile {
+        max-width: 240px;
       }
     }
 
@@ -160,7 +159,26 @@
 
     &.is-small {
       #{$self}__price-wrapper {
-        padding: 1rem;
+        display: flex;
+        flex-direction: row;
+        padding: 0;
+        background: #fff
+      }
+
+      #{$self}__current-price {
+        margin-bottom: 0;
+      }
+
+      .c-book {
+        &-cta {
+          height: 34px;
+          align-self: flex-end;
+          margin-left: auto;
+        }
+
+        &-price-group__label {
+          font-weight: normal
+        }
       }
     }
 

@@ -1,4 +1,5 @@
 import React from 'react';
+import * as R from 'ramda';
 
 import {useI18n} from '@client/i18n';
 
@@ -13,7 +14,7 @@ type BookAvailabilitySectionProps = {
 
 export const BookAvailabilitySection = ({book, shrink}: BookAvailabilitySectionProps) => {
   const t = useI18n('book.availability');
-  if (!book.releases)
+  if (!book.releases || R.all((release) => R.isEmpty(release.availability), book.releases))
     return null;
 
   return (

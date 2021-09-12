@@ -1,6 +1,6 @@
 import {Module} from '@nestjs/common';
 import {BookModule} from '@server/modules/book/Book.module';
-import {BookRecommendationService} from './BookRecommendation.service';
+import {BookSimilarityFilterService} from './BookSimilarityFilter.service';
 
 @Module(
   {
@@ -8,10 +8,10 @@ import {BookRecommendationService} from './BookRecommendation.service';
       BookModule,
     ],
     providers: [
-      BookRecommendationService,
+      BookSimilarityFilterService,
     ],
     exports: [
-      BookRecommendationService,
+      BookSimilarityFilterService,
     ],
   },
 )

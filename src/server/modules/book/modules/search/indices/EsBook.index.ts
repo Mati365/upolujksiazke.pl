@@ -2,7 +2,7 @@ import {forwardRef, Inject, Injectable} from '@nestjs/common';
 import {ElasticsearchService} from '@nestjs/elasticsearch';
 import * as R from 'ramda';
 
-import {objPropsToPromise, pickIdName} from '@shared/helpers';
+import {objPropsToPromise, pickIdName, safeToNumber} from '@shared/helpers';
 import {createMapperListItemSelector} from '@server/modules/elasticsearch/helpers';
 
 import {ListItem} from '@shared/types';
@@ -27,7 +27,7 @@ export type BookIndexEntity = Pick<
   BookEntity,
   'id' | 'era' | 'genre' | 'tags' | 'categories' | 'prizes' | 'authors'
   | 'originalTitle' | 'defaultTitle' | 'lowestPrice' | 'highestPrice'
-  | 'allTypes' | 'schoolBook' | 'totalRatings' | 'rankingScore' | 'createdAt'
+  | 'allTypes' | 'schoolBook' | 'totalRatings' | 'rankingScore' | 'createdAt' | 'avgRating'
 /* eslint-enable @typescript-eslint/indent */
 > & {
   volumeName: string,
@@ -65,6 +65,7 @@ export class EsBookIndex extends EntityIndex<BookEntity, BookIndexEntity> {
       },
     },
     allTypes: {type: 'keyword'},
+    avgRating: {type: 'float'},
     lowestPrice: {type: 'float'},
     highestPrice: {type: 'float'},
     rankingScore: {type: 'integer'},
@@ -226,6 +227,7 @@ export class EsBookIndex extends EntityIndex<BookEntity, BookIndexEntity> {
               'id', 'originalTitle', 'defaultTitle',
               'lowestPrice', 'highestPrice', 'allTypes',
               'totalRatings', 'createdAt', 'rankingScore',
+              'avgRating',
             ],
             relations: [
               'schoolBook', 'volume', 'primaryCategory',
@@ -315,6 +317,10 @@ export class EsBookIndex extends EntityIndex<BookEntity, BookIndexEntity> {
       volume,
       releases,
       primaryCategory,
+      lowestPrice,
+      highestPrice,
+      rankingScore,
+      avgRating,
       ...entity
     }: BookEntity,
   ): EsMappedDoc<BookIndexEntity> {
@@ -324,6 +330,10 @@ export class EsBookIndex extends EntityIndex<BookEntity, BookIndexEntity> {
       isbns: R.pluck('isbn', releases || []),
       publishers: R.pluck('publisher', releases || []),
       primaryCategory: pickIdName(primaryCategory),
+      lowestPrice: safeToNumber(lowestPrice),
+      highestPrice: safeToNumber(highestPrice),
+      rankingScore: safeToNumber(rankingScore),
+      avgRating: safeToNumber(avgRating),
       ...entity,
     };
   }

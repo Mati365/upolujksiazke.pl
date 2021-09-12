@@ -44,7 +44,7 @@ export const TagsList = ({items, className}: TagsListProps) => {
                 key={item.id}
                 className={c(
                   {
-                    'is-hidden': !expanded && index > maxCount,
+                    'is-hidden': !expanded && index >= maxCount,
                   },
                 )}
               >

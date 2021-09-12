@@ -16,7 +16,7 @@ import {
 } from '@shared/helpers';
 
 // eslint-disable-next-line max-len
-import {BookRecommendationService} from '@server/modules/recommendation/modules/BookRecommendation/BookRecommendation.service';
+import {BookSimilarityFilterService} from '@server/modules/recommendation/modules/BookRecommendation/BookSimilarityFilter.service';
 import {BookReviewService} from '@server/modules/book/modules/review/BookReview.service';
 import {BookReviewEntity} from '@server/modules/book/modules/review';
 import {BookReviewImportedEvent} from '@server/modules/importer/kinds/db-loaders/events';
@@ -52,7 +52,7 @@ export class WykopCommentBot {
     private readonly entityManager: EntityManager,
     private readonly schedulerRegistry: SchedulerRegistry,
     private readonly bookReviewService: BookReviewService,
-    private readonly bookRecommendationService: BookRecommendationService,
+    private readonly bookRecommendationService: BookSimilarityFilterService,
   ) {}
 
   get api() {

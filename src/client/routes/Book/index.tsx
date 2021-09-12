@@ -111,7 +111,17 @@ export const BookRoute: AsyncRoute<BookRouteViewData> = (
       )}
 
       <Container className='c-book-route'>
-        <BookBreadcrumbs book={book} />
+        <BookBreadcrumbs
+          book={book}
+          {...!ua.mobile && {
+            toolbar: (
+              <BookChips
+                book={book}
+                noSpace
+              />
+            ),
+          }}
+        />
 
         <BookInfo
           book={book}

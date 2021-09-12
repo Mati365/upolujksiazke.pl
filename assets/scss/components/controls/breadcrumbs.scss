@@ -26,6 +26,11 @@
     }
   }
 
+  &__toolbar {
+    margin-left: auto;
+    padding-left: 7px;
+  }
+
   @include mobile {
     margin-bottom: 1.2rem;
     font-size: .75rem;

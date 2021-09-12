@@ -25,11 +25,13 @@ export type BreadcrumbInfo = {
 type BreadcrumbsProps = {
   padding?: string,
   className?: string,
+  toolbar?: ReactNode,
   items?: BreadcrumbInfo[],
 };
 
 export const Breadcrumbs = (
   {
+    toolbar,
     padding,
     items = [],
     className,
@@ -89,6 +91,11 @@ export const Breadcrumbs = (
               )}
             </Fragment>
           ),
+        )}
+        {toolbar && (
+          <li className='c-breadcrumbs__toolbar'>
+            {toolbar}
+          </li>
         )}
       </CleanList>
     </>

@@ -5,7 +5,7 @@ import {useI18n} from '@client/i18n';
 import {hasBookAvailability} from '@client/containers/kinds/book/helpers';
 
 import {BookFullInfoRecord} from '@api/types';
-import {ChipsList, Chips} from '@client/containers/kinds/chips';
+import {ChipsList, ChipsListProps, Chips} from '@client/containers/kinds/chips';
 import {
   CommentIcon,
   PurchaseIcon,
@@ -14,11 +14,11 @@ import {
   CategoryIcon,
 } from '@client/components/svg';
 
-type BookChipsProps = {
+type BookChipsProps = ChipsListProps & {
   book: BookFullInfoRecord,
 };
 
-export const BookChips = ({book}: BookChipsProps) => {
+export const BookChips = ({book, ...props}: BookChipsProps) => {
   const t = useI18n('routes.book.chips');
   const totalAvailability = useMemo(
     () => {
@@ -34,7 +34,7 @@ export const BookChips = ({book}: BookChipsProps) => {
   );
 
   return (
-    <ChipsList>
+    <ChipsList {...props}>
       {!R.isEmpty(book.reviews) && (
         <Chips
           hash='latest-reviews'

@@ -8,6 +8,10 @@
     display: none;
   }
 
+  &.has-no-space {
+    margin: 0;
+  }
+
   &__item {
     margin: 3px 2px;
     background: color(gray-1);

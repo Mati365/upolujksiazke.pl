@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {ReactNode} from 'react';
 
 import {capitalize} from '@shared/helpers';
 import {
@@ -18,10 +18,12 @@ import {
 type BookBreadcrumbsProps = {
   book: BookFullInfoRecord,
   additionalItems?: BreadcrumbInfo[],
+  toolbar?: ReactNode,
 };
 
 export const BookBreadcrumbs = (
   {
+    toolbar,
     book,
     additionalItems = [],
   }: BookBreadcrumbsProps,
@@ -31,6 +33,7 @@ export const BookBreadcrumbs = (
 
   return (
     <Breadcrumbs
+      toolbar={toolbar}
       items={[
         {
           id: 'books',

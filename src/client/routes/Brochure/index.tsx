@@ -62,6 +62,9 @@ export const BrochureRoute: AsyncRoute<BrochureRouteViewData> = (
         meta={{
           title: t('seo.title', translatorAttrs),
           description: t('seo.description', translatorAttrs),
+          cover: {
+            url: brochure.pages[0].image.preview.file,
+          },
         }}
       />
 

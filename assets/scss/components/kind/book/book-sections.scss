@@ -8,6 +8,10 @@
       gap: 30px;
     }
 
+    &__volumes {
+      min-width: 0;
+    }
+
     &__info {
       @include except-mobile {
         padding-left: 30px;

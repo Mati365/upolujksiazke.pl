@@ -47,11 +47,18 @@
       }
     }
 
+    &__types,
+    &__author {
+      margin-top: .5rem;
+      margin-bottom: .25rem;
+    }
+
     &__types {
       @include flex-list;
 
-      margin-top: .5rem;
-      margin-bottom: .25rem;
+      > ul > li {
+        @include flex-centered;
+      }
     }
 
     &__ratings {
@@ -86,10 +93,6 @@
       &__ratings {
         font-size: 0.9rem;
         flex-wrap: wrap;
-      }
-
-      &__types {
-        margin-bottom: .5rem;
       }
 
       &__cta > .c-book-cta__prefix-icon {

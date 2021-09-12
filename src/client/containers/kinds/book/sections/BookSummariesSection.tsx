@@ -18,6 +18,7 @@ export const BookSummariesSection = ({items, title}: BookSummariesSectionProps) 
 
   return (
     <Section
+      id='summaries'
       spaced={3}
       title={
         title ?? t('title')

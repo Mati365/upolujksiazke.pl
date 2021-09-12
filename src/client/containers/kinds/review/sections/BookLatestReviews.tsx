@@ -28,6 +28,7 @@ export const BookLatestReviewsSection = (
 
   return (
     <Section
+      id='latest-reviews'
       spaced={3}
       title={
         t('title')

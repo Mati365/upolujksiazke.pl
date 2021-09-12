@@ -16,12 +16,20 @@ import {MobileMenu} from '../MobileMenu';
 
 export type HeaderProps = {
   promoItems?: HeaderPromoLinksProps['items'],
+  noSpace?: boolean,
   hidePromoBar?: boolean,
   hideMobileMenu?: boolean,
   popularCategories?: BookCategoryRecord[],
 };
 
-export const Header = ({hidePromoBar, hideMobileMenu, popularCategories}: HeaderProps) => {
+export const Header = (
+  {
+    hidePromoBar,
+    hideMobileMenu,
+    popularCategories,
+    noSpace,
+  }: HeaderProps,
+) => {
   const ua = useUA();
   const promoItems = !ua.mobile && !hidePromoBar && popularCategories?.map(
     (category) => ({
@@ -38,6 +46,7 @@ export const Header = ({hidePromoBar, hideMobileMenu, popularCategories}: Header
       className={c(
         'c-header',
         promoBarVisible && 'has-promo-bar',
+        noSpace && 'has-no-space',
       )}
     >
       <Container className='c-header__brand'>

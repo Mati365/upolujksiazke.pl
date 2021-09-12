@@ -1,11 +1,12 @@
 import React from 'react';
-import * as R from 'ramda';
 
 import {useI18n} from '@client/i18n';
 
 import {BookFullInfoRecord} from '@api/types';
 import {Section} from '@client/components/ui';
 import {BookPricesTabs} from './BookPricesTabs';
+
+import {hasBookAvailability} from '../../helpers/hasBookAvailability';
 
 type BookAvailabilitySectionProps = {
   book: BookFullInfoRecord,
@@ -14,11 +15,13 @@ type BookAvailabilitySectionProps = {
 
 export const BookAvailabilitySection = ({book, shrink}: BookAvailabilitySectionProps) => {
   const t = useI18n('book.availability');
-  if (!book.releases || R.all((release) => R.isEmpty(release.availability), book.releases))
+
+  if (!hasBookAvailability(book))
     return null;
 
   return (
     <Section
+      id='availability'
       spaced={3}
       title={
         t('title')

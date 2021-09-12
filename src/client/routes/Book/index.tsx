@@ -35,7 +35,7 @@ import {
 
 import {Divider, Container} from '@client/components/ui';
 import {Layout, LayoutViewData, SEOMeta} from '@client/containers/layout';
-import {BookBreadcrumbs} from './parts';
+import {BookBreadcrumbs, BookChips} from './parts';
 import {
   BOOK_PATH,
   HOME_PATH,
@@ -96,9 +96,19 @@ export const BookRoute: AsyncRoute<BookRouteViewData> = (
   };
 
   return (
-    <Layout {...layoutData}>
+    <Layout
+      {...layoutData}
+      noLayoutSpace
+      headerProps={{
+        noSpace: ua.mobile,
+      }}
+    >
       <SEOMeta meta={seoMeta} />
       <BookJsonLD book={book} />
+
+      {ua.mobile && (
+        <BookChips book={book} />
+      )}
 
       <Container className='c-book-route'>
         <BookBreadcrumbs book={book} />

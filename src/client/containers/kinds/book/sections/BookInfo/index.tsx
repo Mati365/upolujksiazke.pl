@@ -85,7 +85,10 @@ export const BookInfo = (
 
         {!safeDescription ? null : (
           <>
-            <h2 className='c-book-info-section__description-header'>
+            <h2
+              id='description'
+              className='c-book-info-section__description-header'
+            >
               {t('book.book_description')}
             </h2>
 
@@ -122,7 +125,10 @@ export const BookInfo = (
 
         <BookProperties book={book} />
 
-        <div className='c-book-info-section__categories'>
+        <div
+          id='categories'
+          className='c-book-info-section__categories'
+        >
           {primaryCategory && (
             <BookHeaderAttribute
               label={

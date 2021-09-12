@@ -4,6 +4,7 @@ import c from 'classnames';
 import {BasicWrapperProps} from '@client/components/ui';
 
 export type SectionProps = BasicWrapperProps & {
+  id?: string,
   title?: ReactNode,
   titleSuffix?: ReactNode,
   spaced?: number,
@@ -19,6 +20,7 @@ export type SectionProps = BasicWrapperProps & {
 export const Section = (
   {
     headerTag: HeaderTag = 'h2',
+    id,
     title,
     titleSuffix,
     spaced = 4,
@@ -33,6 +35,7 @@ export const Section = (
   }: SectionProps,
 ) => (
   <section
+    id={id}
     className={c(
       'c-section',
       spaced && `is-spaced-${spaced}`,

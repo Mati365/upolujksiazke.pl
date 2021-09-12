@@ -60,6 +60,9 @@ export function UndecoratedLink<I = {}, P = {}>(
   if (!url && urlGeneratorFn)
     url = urlGeneratorFn(item, props as P, action);
 
+  if (!url)
+    url = location.pathname;
+
   if (utm) {
     searchParams = searchParams || {};
     R.forEachObjIndexed(

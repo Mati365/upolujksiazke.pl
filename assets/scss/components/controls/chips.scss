@@ -1,0 +1,42 @@
+.c-chips {
+  margin: 1rem 0 1.25rem;
+  padding: 0 7px;
+  flex-wrap: nowrap;
+  overflow: auto;
+
+  &:empty {
+    display: none;
+  }
+
+  &__item {
+    margin: 3px 2px;
+    background: color(gray-1);
+    border-radius: 16px;
+    font-size: .8rem;
+
+    > a {
+      @include flex-list;
+
+      padding: 7px 15px;
+      font-weight: 600;
+    }
+
+    &.has-icon > a {
+      padding-left: 10px;
+    }
+
+    &-icon {
+      margin-right: 8px;
+      font-size: 13px;
+    }
+
+    &-count {
+      margin-left: 8px;
+      padding: 2px 4px;
+      background: color(gray-3);
+      border-radius: 3px;
+      font-size: .65rem;
+      font-weight: 600;
+    }
+  }
+}

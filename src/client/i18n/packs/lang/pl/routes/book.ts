@@ -13,4 +13,12 @@ export const PL_BOOK_ROUTE_PACK = {
       title: '💬 Opinie o książce %{title} - %{authors} | Porównaj ceny książek, oceny i recenzje  - upolujksiazke.pl',
     },
   },
+
+  chips: {
+    reviews: 'Opinie',
+    summaries: 'Opracowania',
+    description: 'Opis',
+    availability: 'Ceny',
+    categories: 'Kategorie',
+  },
 };

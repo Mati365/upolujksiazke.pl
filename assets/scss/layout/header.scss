@@ -3,10 +3,13 @@
 
   position: relative;
   width: 100%;
-  margin-bottom: 1.2rem;
 
-  &.has-promo-bar {
-    margin-bottom: 2.5rem;
+  &:not(.has-no-space) {
+    margin-bottom: 1.2rem;
+
+    &.has-promo-bar {
+      margin-bottom: 2.5rem;
+    }
   }
 
   &__brand {
@@ -118,8 +121,11 @@
 
 @include mobile {
   .c-header {
-    margin-bottom: .85rem;
     border-bottom: 1px solid color(divider);
+
+    &:not(.has-no-space) {
+      margin-bottom: .85rem;
+    }
 
     &__brand {
       padding: 15px 0 10px 15px;

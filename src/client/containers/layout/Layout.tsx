@@ -7,7 +7,7 @@ import {useUA} from '@client/modules/ua';
 import {BasicWrapperProps} from '@client/components/ui';
 import {BookCategoryRecord} from '@api/types';
 import {AsyncPropsComponent} from '@client/components/utils/asyncRouteUtils';
-import {Header} from './Header';
+import {Header, HeaderProps} from './Header';
 import {Footer} from './Footer';
 import {RepoRibbon} from './RepoRibbon';
 
@@ -16,6 +16,7 @@ export type LayoutViewData = {
   hidePromoItems?: boolean,
   hideMobileMenu?: boolean,
   noLayoutSpace?: boolean,
+  headerProps?: Partial<HeaderProps>,
   rootPopularCategories?: BookCategoryRecord[],
   popularCategories: BookCategoryRecord[],
 };
@@ -28,6 +29,7 @@ export const Layout: AsyncPropsComponent<LayoutProps> = (
     hidePromoItems,
     hideMobileMenu,
     noLayoutSpace,
+    headerProps,
     rootPopularCategories,
     popularCategories,
     children,
@@ -45,6 +47,7 @@ export const Layout: AsyncPropsComponent<LayoutProps> = (
           hidePromoBar={
             ua.mobile || hidePromoItems
           }
+          {...headerProps}
         />
       )}
 

@@ -115,7 +115,6 @@
     &__cover {
       @include mobile {
         max-width: 260px;
-        margin: 0 auto;
       }
 
       @include small-mobile {

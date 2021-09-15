@@ -291,7 +291,7 @@ export class WykopCommentBot {
               from
                 book_review review
               left join book_reviewer reviewer on review."reviewerId" = reviewer."id"
-              where review."bookId" = books."bookId"
+              where review."bookId" = books."bookId" and review."websiteId" = $2
               order by review."createdAt" desc
               limit 1
             ) as "id"
@@ -301,6 +301,7 @@ export class WykopCommentBot {
         `,
         [
           R.pluck('id', similarBooks).join(','),
+          websiteId,
         ],
       )) as any[]);
 

@@ -40,12 +40,12 @@
       position: relative;
       margin-left: 10px;
       z-index: 9;
+      font-weight: 600;
 
       @include mobile {
         display: block;
         margin-top: 10px;
         margin-left: 0;
-        font-weight: 600;
       }
     }
 

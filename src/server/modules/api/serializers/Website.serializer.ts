@@ -13,6 +13,7 @@ export class WebsiteSerializer extends BaseSerializer implements WebsiteRecord {
   @Expose() description: string;
   @Expose() title: string;
   @Expose() hostname: string;
+  @Expose() shop: boolean;
 
   @Expose()
   @Type(() => ImageAttachmentDbResult)

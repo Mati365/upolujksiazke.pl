@@ -38,6 +38,15 @@ export class RemoteWebsiteEntity extends DatedRecordEntity {
   )
   withSubdomains: boolean;
 
+  @Column(
+    'boolean',
+    {
+      nullable: true,
+      default: false,
+    },
+  )
+  shop: boolean;
+
   @ManyToMany(
     () => ImageAttachmentEntity,
     {

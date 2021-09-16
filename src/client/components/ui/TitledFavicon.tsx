@@ -7,6 +7,7 @@ import {Favicon} from './Favicon';
 type TitledFaviconProps = JSX.IntrinsicElements['span'] & {
   src: string,
   bold?: boolean,
+  centered?: boolean,
   title?: string,
   tag?: any,
   href?: string,
@@ -17,30 +18,39 @@ type TitledFaviconProps = JSX.IntrinsicElements['span'] & {
 export const TitledFavicon = (
   {
     src, title, children, className,
-    bold = true,
+    centered, bold = true,
     tag: Tag = 'span',
     ...props
   }: TitledFaviconProps,
-) => (
-  <Tag
-    className={c(
-      'c-titled-favicon c-flex-row',
-      bold && 'is-text-semibold',
-      Tag === 'a' && (
-        'is-undecorated-link has-hover-underline has-double-link-chevron'
-      ),
-      className,
-    )}
-    {...props}
-  >
-    <Favicon
-      className='mr-2'
-      src={src || noImagePlaceholderUrl}
-      title={title}
-      alt='Logo'
-    />
-    {children || title}
-  </Tag>
-);
+) => {
+  const faviconTitle = children || title;
+
+  return (
+    <Tag
+      className={c(
+        'c-titled-favicon c-flex-row',
+        bold && 'is-text-semibold',
+        centered && 'is-centered',
+        Tag === 'a' && (
+          'is-undecorated-link has-hover-underline has-double-link-chevron'
+        ),
+        className,
+      )}
+      {...props}
+    >
+      <Favicon
+        src={src || noImagePlaceholderUrl}
+        title={title}
+        alt='Logo'
+      />
+
+      {!!faviconTitle && (
+        <span className='c-titled-favicon__title'>
+          {faviconTitle}
+        </span>
+      )}
+    </Tag>
+  );
+};
 
 TitledFavicon.displayName = 'TitledFavicon';

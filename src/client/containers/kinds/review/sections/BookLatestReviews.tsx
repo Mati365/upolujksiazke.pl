@@ -1,4 +1,4 @@
-import React, {ReactNode} from 'react';
+import React, {ReactNode, useMemo} from 'react';
 
 import {useI18n} from '@client/i18n';
 
@@ -7,6 +7,8 @@ import {CommentIcon} from '@client/components/svg';
 import {BookFullInfoRecord} from '@api/types';
 import {BookAllReviewsLink} from '@client/routes/Links';
 import {BookReviewsList} from '../list/BookReviewsList';
+
+import {pickBookAvailabilityList} from '../../book/helpers';
 
 type BookLatestReviewsSectionProps = SectionProps & {
   book: BookFullInfoRecord,
@@ -22,6 +24,10 @@ export const BookLatestReviewsSection = (
 ) => {
   const t = useI18n('book.reviews');
   const {reviews, totalTextReviews} = book;
+  const availability = useMemo(
+    () => pickBookAvailabilityList(book),
+    [book.id],
+  );
 
   if (!reviews?.length && !toolbar)
     return null;
@@ -48,7 +54,12 @@ export const BookLatestReviewsSection = (
       {...props}
     >
       {toolbar}
-      <BookReviewsList reviews={reviews} />
+
+      <BookReviewsList
+        reviews={reviews}
+        availability={availability}
+      />
+
       {reviews.length < totalTextReviews && (
         <div className='c-flex-center mt-6'>
           <Button

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {ReactNode} from 'react';
 import c from 'classnames';
 import * as R from 'ramda';
 
@@ -37,10 +37,12 @@ export type BookReviewProps = {
   totalRatingStars?: number,
   maxCharacterCount?: number,
   showReactionsTitles?: boolean,
+  footer?: ReactNode,
 };
 
 export const BookReview = (
   {
+    footer,
     review,
     showBookCard,
     moreButtonRenderFn,
@@ -62,7 +64,7 @@ export const BookReview = (
   if (!description)
     return null;
 
-  maxCharacterCount ??= ua.mobile ? 400 : 500;
+  maxCharacterCount ??= (ua.mobile ? 400 : 500) / (website.shop ? 2.5 : 1);
 
   if (!customMoreButton && quote && url) {
     moreButtonRenderFn = () => (
@@ -70,7 +72,7 @@ export const BookReview = (
         href={review.url}
         target='_blank'
         rel='nofollow noreferrer'
-        className='c-book-review__see-more c-promo-tag-link is-text-no-wrap ml-2'
+        className='c-book-review__see-more c-promo-tag-link is-text-no-wrap'
         undecorated={false}
         withChevron
       >
@@ -178,6 +180,7 @@ export const BookReview = (
               ? R.F
               : moreButtonRenderFn
           )}
+          renderHiddenChunk={false}
           filled
           html
         >
@@ -211,7 +214,9 @@ export const BookReview = (
                 className='ml-2'
                 href={url}
                 src={website.logo.smallThumb?.file}
-                title={website.hostname}
+                title={
+                  !ua.mobile && website.hostname
+                }
                 target='_blank'
                 rel='noopener noreferrer'
               />
@@ -219,6 +224,8 @@ export const BookReview = (
           </div>
         )}
       </div>
+
+      {footer}
     </li>
   );
 };

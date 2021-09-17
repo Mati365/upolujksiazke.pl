@@ -13,7 +13,7 @@ import {TypedBookAvailabilityRecord} from './pickAllBookTypedReleases';
 export function pickBookAvailabilityList(book: BookFullInfoRecord): TypedBookAvailabilityRecord[] {
   return R.reduce<BookFullInfoReleaseRecord, TypedBookAvailabilityRecord[]>(
     (acc, release) => {
-      if (!R.isEmpty(release.availability)) {
+      if (release.availability && !R.isEmpty(release.availability)) {
         acc.push(
           ...release.availability.map((availability) => ({
             ...availability,

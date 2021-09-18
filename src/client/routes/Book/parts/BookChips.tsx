@@ -4,21 +4,38 @@ import * as R from 'ramda';
 import {useI18n} from '@client/i18n';
 import {hasBookAvailability} from '@client/containers/kinds/book/helpers';
 
-import {BookFullInfoRecord} from '@api/types';
-import {ChipsList, ChipsListProps, Chips} from '@client/containers/kinds/chips';
+import {
+  ChipsList,
+  ChipsListProps,
+  Chips,
+} from '@client/containers/kinds/chips';
+
+import {
+  BookCardRecord,
+  BookFullInfoRecord,
+} from '@api/types';
+
 import {
   CommentIcon,
   PurchaseIcon,
   NewsIcon,
+  SearchIcon,
   BookOpenIcon,
   CategoryIcon,
 } from '@client/components/svg';
 
 type BookChipsProps = ChipsListProps & {
   book: BookFullInfoRecord,
+  similarBooks?: BookCardRecord[],
 };
 
-export const BookChips = ({book, ...props}: BookChipsProps) => {
+export const BookChips = (
+  {
+    book,
+    similarBooks = [],
+    ...props
+  }: BookChipsProps,
+) => {
   const t = useI18n('routes.book.chips');
   const totalAvailability = useMemo(
     () => {
@@ -62,6 +79,16 @@ export const BookChips = ({book, ...props}: BookChipsProps) => {
           icon={NewsIcon}
         >
           {t('summaries')}
+        </Chips>
+      )}
+
+      {!R.isEmpty(similarBooks) && (
+        <Chips
+          hash='similar'
+          count={similarBooks.length}
+          icon={SearchIcon}
+        >
+          {t('similar')}
         </Chips>
       )}
 

@@ -73,6 +73,12 @@ export type BooksFilters = BooksNonNestedFilters & {
   tagsIds?: number[],
 };
 
+export type SimilarBooksFilters = {
+  bookId?: number,
+  excludeAuthorsIds?: number[],
+  limit?: number,
+};
+
 export type SingleAggBookFilters = {
   filters: BooksFilters,
   agg: {
@@ -113,4 +119,5 @@ export interface BooksRepo extends APIRepo<BookFullInfoRecord, BooksFilters, Boo
   findTopRankingBooks?(filters?: APIPaginationFilters): CanBePromise<BooksPaginationResult>;
   findGroupedAuthorsBooks?(filters?: AuthorsBooksFilters): CanBePromise<BooksAuthorsGroupedBooks>;
   findRecentBooks?(filters?: BasicAPIPagination): CanBePromise<BookCardRecord[]>;
+  findSimilarBooks?(filters?: SimilarBooksFilters): CanBePromise<BookCardRecord[]>;
 }

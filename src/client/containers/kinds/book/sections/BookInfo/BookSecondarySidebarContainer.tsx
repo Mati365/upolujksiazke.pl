@@ -1,8 +1,8 @@
 import React, {ReactNode} from 'react';
 
 import {BookFullInfoRecord} from '@api/types';
-import {BookSidebar} from './BookInfo/sidebars';
-import {BookHeaderSection} from './BookInfo/BookHeaderSection';
+import {BookSidebar} from './sidebars';
+import {BookHeaderSection} from './BookHeaderSection';
 
 type BookSecondarySidebarContainerProps = {
   children?: ReactNode,

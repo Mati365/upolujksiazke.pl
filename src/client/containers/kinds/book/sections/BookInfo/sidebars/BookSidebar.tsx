@@ -10,6 +10,7 @@ import {
 
 import {BookFullInfoRecord} from '@api/types';
 import {BookCoverGallery} from '../BookCoverGallery';
+import {BookTags} from '../BookTags';
 import {
   BookSeriesTree,
   BookReleasesList,
@@ -29,6 +30,7 @@ export const BookSidebar = (
   }: BookSidebarProps,
 ) => {
   const t = useI18n();
+  const {hierarchy, releases, tags} = book;
 
   return (
     <CleanList
@@ -46,7 +48,7 @@ export const BookSidebar = (
         book={book}
       />
 
-      {book.hierarchy?.length > 0 && (
+      {hierarchy?.length > 0 && (
         <SidebarSection
           tag='li'
           className='c-book-info-section__volumes'
@@ -57,12 +59,12 @@ export const BookSidebar = (
           <BookSeriesTree
             size='small'
             activeBookId={book.id}
-            items={book.hierarchy}
+            items={hierarchy}
           />
         </SidebarSection>
       )}
 
-      {book.releases?.length > 0 && (
+      {releases?.length > 0 && (
         <SidebarSection
           tag='li'
           className='c-book-info-section__releases'
@@ -75,6 +77,10 @@ export const BookSidebar = (
             book={book}
           />
         </SidebarSection>
+      )}
+
+      {tags.length > 0 && (
+        <BookTags tags={book.tags} />
       )}
     </CleanList>
   );

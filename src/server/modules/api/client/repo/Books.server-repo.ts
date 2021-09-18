@@ -14,6 +14,7 @@ import {
   BooksFilters,
   BooksPaginationResult,
   BooksRepo,
+  SimilarBooksFilters,
   SingleAggBookFilters,
 } from '@api/repo';
 
@@ -241,6 +242,46 @@ export class BooksServerRepo extends ServerAPIClientChild implements BooksRepo {
   async findRecentBooks(attrs: BasicAPIPagination = {}) {
     const {cardBookSearchService} = this.services;
     const books = await cardBookSearchService.findRecentBooks(attrs);
+
+    return plainToClass(
+      BookCardSerializer,
+      books,
+      {
+        excludeExtraneousValues: true,
+      },
+    );
+  }
+
+  /**
+   * Picks similar to book books
+   *
+   * @param {SimilarBooksFilters} filters
+   * @returns
+   * @memberof RecentBooksServerRepo
+   */
+  @MeasureCallDuration('findSimilarBooks')
+  @RedisMemoize(
+    {
+      keyFn: (filters) => ({
+        key: `similar-books-${JSON.stringify(filters)}`,
+      }),
+    },
+  )
+  async findSimilarBooks(
+    {
+      limit = 6,
+      excludeAuthorsIds,
+      bookId,
+    }: SimilarBooksFilters = {},
+  ) {
+    const {bookSimilarityFilterService} = this.services;
+    const books = await bookSimilarityFilterService.findBookAlternativesCards(
+      {
+        bookId,
+        excludeAuthorsIds,
+        limit,
+      },
+    );
 
     return plainToClass(
       BookCardSerializer,

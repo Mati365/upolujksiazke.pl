@@ -18,6 +18,7 @@ import {useI18n} from '@client/i18n';
 import {AsyncRoute} from '@client/components/utils/asyncRouteUtils';
 import {BooksAuthorsGroupedBooks} from '@api/repo';
 import {
+  BookCardRecord,
   BookFullInfoRecord,
   CategoryBooksGroup,
 } from '@api/types';
@@ -31,6 +32,7 @@ import {
   BookPostsSection,
   BookSummariesSection,
   CategoriesGroupsBooksSection,
+  SimilarBooksSection,
 } from '@client/containers/kinds/book';
 
 import {Divider, Container} from '@client/components/ui';
@@ -47,6 +49,7 @@ type BookRouteViewData = {
   layoutData: LayoutViewData,
   book: BookFullInfoRecord,
   authorsBooks: BooksAuthorsGroupedBooks,
+  similarBooks: BookCardRecord[],
   popularCategoriesBooks: CategoryBooksGroup[],
 };
 
@@ -54,6 +57,7 @@ export const BookRoute: AsyncRoute<BookRouteViewData> = (
   {
     book,
     authorsBooks,
+    similarBooks,
     layoutData,
     popularCategoriesBooks,
   },
@@ -107,7 +111,10 @@ export const BookRoute: AsyncRoute<BookRouteViewData> = (
       <BookJsonLD book={book} />
 
       {ua.mobile && (
-        <BookChips book={book} />
+        <BookChips
+          book={book}
+          similarBooks={similarBooks}
+        />
       )}
 
       <Container className='c-book-route'>
@@ -126,6 +133,7 @@ export const BookRoute: AsyncRoute<BookRouteViewData> = (
         <BookInfo
           book={book}
           authorsBooks={authorsBooks}
+          similarBooks={similarBooks}
         >
           <BookAvailabilitySection
             book={book}
@@ -147,6 +155,10 @@ export const BookRoute: AsyncRoute<BookRouteViewData> = (
           />
           <BookSummariesSection items={book.summaries} />
         </BookInfo>
+
+        {ua.mobile && similarBooks?.length > 0 && (
+          <SimilarBooksSection items={similarBooks} />
+        )}
 
         {popularCategoriesBooks?.length > 0 && (
           <CategoriesGroupsBooksSection items={popularCategoriesBooks} />
@@ -180,6 +192,7 @@ BookRoute.getInitialProps = async (attrs) => {
     return {};
 
   const categoriesIds = R.pluck('id', book.categories || []);
+  const authorsIds = R.take(2, R.pluck('id', book.authors));
   const excludeBooksIds = R.pluck(
     'id',
     book.hierarchy?.length
@@ -188,10 +201,17 @@ BookRoute.getInitialProps = async (attrs) => {
   );
 
   const {
+    similarBooks,
     authorsBooks,
     popularCategoriesBooks,
   } = await objPropsToPromise(
     {
+      similarBooks: repo.books.findSimilarBooks(
+        {
+          bookId: book.id,
+          excludeAuthorsIds: authorsIds,
+        },
+      ),
       popularCategoriesBooks: repo.recentBooks.findCategoriesPopularBooks(
         {
           categoriesIds: R.take(5, categoriesIds),
@@ -204,13 +224,14 @@ BookRoute.getInitialProps = async (attrs) => {
         {
           excludeIds: [book.id],
           limit: 4,
-          authorsIds: R.take(2, R.pluck('id', book.authors)),
+          authorsIds,
         },
       ),
     },
   );
 
   return {
+    similarBooks,
     authorsBooks,
     popularCategoriesBooks,
     book,

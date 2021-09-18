@@ -12,16 +12,25 @@ import {
 } from '@api/types';
 
 import {BookPriceBox} from '../BookPriceBox';
-import {AuthorOtherBooks} from '../AuthorOtherBooks';
-import {BookTags} from '../BookTags';
+import {
+  AuthorOtherBooks,
+  SimilarBooks,
+} from './parts';
 
 type BookPriceSidebarProps = {
   book: BookFullInfoRecord,
   authorsBooks?: BooksAuthorsGroupedBooks,
+  similarBooks?: BookCardRecord[],
 };
 
-export const BookPriceSidebar = ({book, authorsBooks}: BookPriceSidebarProps) => {
-  const {tags, authors} = book;
+export const BookPriceSidebar = (
+  {
+    book,
+    authorsBooks,
+    similarBooks,
+  }: BookPriceSidebarProps,
+) => {
+  const {authors} = book;
   const groupedAuthorsBooks = useMemo(
     () => (
       R
@@ -62,8 +71,8 @@ export const BookPriceSidebar = ({book, authorsBooks}: BookPriceSidebarProps) =>
         </>
       )}
 
-      {tags.length > 0 && (
-        <BookTags tags={book.tags} />
+      {similarBooks?.length > 0 && (
+        <SimilarBooks books={similarBooks} />
       )}
     </BookPriceBox>
   );

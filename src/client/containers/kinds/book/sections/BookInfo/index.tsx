@@ -5,7 +5,7 @@ import {formatBookTitle} from '@client/helpers/logic';
 import {useUA} from '@client/modules/ua';
 import {useI18n} from '@client/i18n';
 
-import {BookFullInfoRecord} from '@api/types';
+import {BookCardRecord, BookFullInfoRecord} from '@api/types';
 import {BooksAuthorsGroupedBooks, BooksFiltersWithNames} from '@api/repo';
 import {BookCategoryLink} from '@client/routes/Links';
 
@@ -29,6 +29,7 @@ import {
 type BookInfoProps = {
   book: BookFullInfoRecord,
   authorsBooks?: BooksAuthorsGroupedBooks,
+  similarBooks?: BookCardRecord[],
   children?: ReactNode,
   toolbar?: ReactNode,
 };
@@ -38,6 +39,7 @@ export const BookInfo = (
     toolbar,
     book,
     authorsBooks,
+    similarBooks,
     children,
   }: BookInfoProps,
 ) => {
@@ -180,6 +182,7 @@ export const BookInfo = (
         <BookPriceSidebar
           book={book}
           authorsBooks={authorsBooks}
+          similarBooks={similarBooks}
         />
       )}
     </Section>

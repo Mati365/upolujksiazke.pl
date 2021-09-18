@@ -17,6 +17,7 @@ export const PL_BOOK_ROUTE_PACK = {
   chips: {
     reviews: 'Opinie',
     summaries: 'Opracowania',
+    similar: 'Podobne',
     description: 'Opis',
     availability: 'Ceny',
     categories: 'Kategorie',

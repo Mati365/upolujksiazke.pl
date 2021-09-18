@@ -40,7 +40,7 @@ export const TitledFavicon = (
     >
       <Favicon
         src={src || noImagePlaceholderUrl}
-        title={title}
+        title={title || undefined}
         alt='Logo'
       />
 

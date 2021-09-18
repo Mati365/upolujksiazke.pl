@@ -19,6 +19,8 @@ import {TrackRecordViewsService} from '@server/modules/tracker/service/TrackReco
 import {UserService} from '@server/modules/user/User.service';
 import {EsCardBrochureSearchService} from '@server/modules/brochure/services/search/EsCardBrochureSearch.service';
 import {BrandService} from '@server/modules/brand/Brand.service';
+// eslint-disable-next-line max-len
+import {BookSimilarityFilterService} from '@server/modules/recommendation/modules/BookRecommendation/BookSimilarityFilter.service';
 
 import {DecodedJWT, JWTTokens} from '@api/jwt';
 import {
@@ -51,6 +53,7 @@ export class APIClientService {
     public readonly bookService: BookService,
     public readonly bookCategoryService: BookCategoryService,
     public readonly cardBookSearchService: CardBookSearchService,
+    public readonly bookSimilarityFilterService: BookSimilarityFilterService,
     public readonly esCardBookSearchService: EsCardBookSearchService,
     public readonly esBrochureSearchService: EsCardBrochureSearchService,
     public readonly brandsService: BrandService,

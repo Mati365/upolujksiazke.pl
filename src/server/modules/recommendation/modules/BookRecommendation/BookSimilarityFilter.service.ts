@@ -2,26 +2,21 @@ import {Injectable} from '@nestjs/common';
 import esb from 'elastic-builder';
 import * as R from 'ramda';
 
-import {objPropsToPromise} from '@shared/helpers';
-
 import {BookEntity} from '@server/modules/book';
-import {BookTagsService} from '@server/modules/book/modules/tags/BookTags.service';
 import {BookIndexEntity, EsBookIndex} from '@server/modules/book/modules/search/indices/EsBook.index';
-import {BookGenreService} from '@server/modules/book/modules/genre';
-import {BookEraService} from '@server/modules/book/modules/era';
-import {BookCategoryService, BookParentCategoryService} from '@server/modules/book/modules/category';
+import {BookParentCategoryService} from '@server/modules/book/modules/category';
 import {CardBookSearchService} from '@server/modules/book/modules/search/service';
 
 export type BookAlternativesAttrs = {
   source?: string[],
   limit?: number,
-  book?: BookEntity,
   bookId?: number,
+  excludeAuthorsIds?: number[],
   minScore?: number,
 };
 
 export type BookAlternativesResults = {
-  book: BookEntity,
+  book: BookIndexEntity,
   hits: BookIndexEntity[],
 };
 
@@ -29,10 +24,6 @@ export type BookAlternativesResults = {
 export class BookSimilarityFilterService {
   constructor(
     private readonly bookEsIndex: EsBookIndex,
-    private readonly categoryService: BookCategoryService,
-    private readonly genreService: BookGenreService,
-    private readonly eraService: BookEraService,
-    private readonly bookTagService: BookTagsService,
     private readonly bookParentCategoryService: BookParentCategoryService,
     private readonly cardBookSearchService: CardBookSearchService,
   ) {}
@@ -50,47 +41,17 @@ export class BookSimilarityFilterService {
       source = [],
       limit = 15,
       minScore = 5.5,
-      book,
+      excludeAuthorsIds,
       bookId,
     }: BookAlternativesAttrs,
   ): Promise<BookAlternativesResults> {
     const {
-      bookTagService,
-      eraService,
-      genreService,
-      categoryService,
       bookParentCategoryService,
       bookEsIndex,
     } = this;
 
     const defaultParentCategory = await bookParentCategoryService.findDefaultParentCategory();
-
-    if (!book && bookId) {
-      const result = await objPropsToPromise(
-        {
-          tags: bookTagService.findBookTags(bookId),
-          genre: genreService.findBookGenre(bookId),
-          era: eraService.findBookEra(bookId),
-          categories: categoryService.findBookCategories(bookId),
-          book: BookEntity.findOne(
-            bookId,
-            {
-              select: ['id', 'primaryCategoryId', 'defaultTitle'],
-            },
-          ),
-        },
-      );
-
-      book = new BookEntity(
-        {
-          ...result.book,
-          genre: result.genre,
-          era: result.era,
-          tags: result.tags,
-          categories: result.categories,
-        },
-      );
-    }
+    const book = await bookEsIndex.getByID(bookId);
 
     const self = BookSimilarityFilterService;
     const tieQueries: esb.Query[] = [
@@ -101,13 +62,13 @@ export class BookSimilarityFilterService {
         .minTermFreq(1)
         .boost(1.1),
 
-      book.primaryCategoryId !== defaultParentCategory.id && (
+      book.primaryCategory.id !== defaultParentCategory.id && (
         esb
           .boolQuery()
           .boost(4.5)
           .should(
             esb.nestedQuery(
-              esb.termQuery('primaryCategory.id', book.primaryCategoryId),
+              esb.termQuery('primaryCategory.id', book.primaryCategory.id),
               'primaryCategory',
             ),
           )
@@ -167,6 +128,19 @@ export class BookSimilarityFilterService {
         .tieBreaker(0.7)
         .queries(tieQueries),
     ];
+
+    if (excludeAuthorsIds) {
+      mustQueries.push(
+        esb
+          .boolQuery()
+          .mustNot(
+            esb.nestedQuery(
+              esb.termsQuery('authors.id', excludeAuthorsIds),
+              'authors',
+            ),
+          ),
+      );
+    }
 
     if (minScore) {
       mustQueries.push(

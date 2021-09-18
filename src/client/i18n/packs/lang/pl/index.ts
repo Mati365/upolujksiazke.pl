@@ -229,6 +229,7 @@ export const PL_LANG_PACK = {
     releases: 'Wydania książki',
     about_school_book: 'O lekturze',
     primary_category: 'Kategoria główna',
+    similar_books: 'Podobne książki',
     filters: {
       phrase: {
         single: 'Fraza',

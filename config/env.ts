@@ -293,10 +293,6 @@ export const GLOBAL_CONFIG: Record<string, AppEnv> = {
           homepageURL: 'https://www.publio.pl',
           searchURL: 'https://www.publio.pl/szukaj.html',
         },
-        legimi: {
-          id: 21,
-          homepageURL: 'https://www.legimi.pl',
-        },
         wykop: {
           id: 22,
           homepageURL: 'https://wykop.pl',
@@ -327,6 +323,10 @@ export const GLOBAL_CONFIG: Record<string, AppEnv> = {
           homepageURL: 'https://www.carrefour.pl/',
           // eslint-disable-next-line max-len
           logoURL: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Carrefour_logo.svg/748px-Carrefour_logo.svg.png',
+        },
+        legimi: {
+          id: 26,
+          homepageURL: 'https://www.legimi.pl',
         },
       },
     },

@@ -56,6 +56,9 @@ export class BookAvailabilityEntity extends RemoteRecordFields {
   @Column('boolean', {default: true, nullable: true})
   inStock: boolean;
 
+  @Column('boolean', {default: false, nullable: true})
+  inAbonament: boolean;
+
   @ManyToOne(
     () => BookReleaseEntity,
     (entity) => entity.availability,

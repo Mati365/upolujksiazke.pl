@@ -22,3 +22,4 @@ export * from './polskina5';
 export * from './eszkola';
 export * from './krytycznymokiem';
 export * from './carrefour';
+export * from './legimi';

@@ -20,7 +20,7 @@ type DefaultConfigBookShopNames = (
   | 'taniaksiazka' | 'lekturyGov'
   | 'bryk' | 'streszczenia' | 'klp'
   | 'polskina5' | 'eszkola' | 'krytycznymOkiem'
-  | 'carrefour'
+  | 'carrefour' | 'legimi'
 );
 
 export type AppEnv = Partial<{
@@ -292,6 +292,10 @@ export const GLOBAL_CONFIG: Record<string, AppEnv> = {
           id: 21,
           homepageURL: 'https://www.publio.pl',
           searchURL: 'https://www.publio.pl/szukaj.html',
+        },
+        legimi: {
+          id: 21,
+          homepageURL: 'https://www.legimi.pl',
         },
         wykop: {
           id: 22,

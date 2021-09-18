@@ -1,4 +1,4 @@
-import {IsNumber, IsOptional} from 'class-validator';
+import {IsNumber, IsOptional, IsBoolean} from 'class-validator';
 import {CreateRemoteRecordDto} from '@server/modules/remote/dto/CreateRemoteRecord.dto';
 
 export class CreateBookAvailabilityDto extends CreateRemoteRecordDto {
@@ -23,8 +23,12 @@ export class CreateBookAvailabilityDto extends CreateRemoteRecordDto {
   readonly totalRatings: number;
 
   @IsOptional()
-  @IsNumber()
+  @IsBoolean()
   readonly inStock: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  readonly inAbonament: boolean;
 
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(partial: Partial<CreateBookAvailabilityDto>) {

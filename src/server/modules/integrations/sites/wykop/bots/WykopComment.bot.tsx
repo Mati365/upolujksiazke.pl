@@ -387,7 +387,11 @@ export class WykopCommentBot {
     if (isDevMode())
       return false;
 
-    const comments = R.pluck('body', (entry.comments || []) as {body: string}[]);
+    const comments = (
+      R
+        .pluck('body', (entry.comments || []) as {body: string}[])
+        .filter(Boolean)
+    );
 
     return R.any(
       R.includes(WykopCommentBot.MAGIC_COMMENT_HEADER),

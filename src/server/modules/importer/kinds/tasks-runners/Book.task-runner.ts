@@ -136,6 +136,7 @@ export class BookScrapperTaskRunner {
       logger,
     } = this;
 
+    const {scrappersIds} = await BookEntity.findOne(bookId, {select: ['scrappersIds']});
     const book = await bookEsIndex.getByID(
       bookId,
       {
@@ -243,6 +244,17 @@ export class BookScrapperTaskRunner {
 
     if (!R.isEmpty(releasesToBeCreated))
       await bookReleaseService.upsertList(releasesToBeCreated);
+
+    // update list of scrappers
+    await BookEntity.update(
+      bookId,
+      {
+        scrappersIds: [
+          ...(scrappersIds || []),
+          ...scrapperGroupsIds,
+        ],
+      },
+    );
 
     // refresh prices stats etc
     await bookStatsService.refreshBookStats(bookId);

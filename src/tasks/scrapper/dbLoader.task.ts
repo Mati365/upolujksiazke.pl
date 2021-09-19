@@ -16,8 +16,6 @@ export const fetchAvailabilityForScrapper: TaskFunction = async () => {
     return;
   }
 
-  console.info(scrapperGroupId);
-
   const app = await NestFactory.create(AppModule);
   const scrapperMod = app.select(ScrapperModule);
   app.enableShutdownHooks();

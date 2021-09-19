@@ -203,7 +203,7 @@ export const GLOBAL_CONFIG: Record<string, AppEnv> = {
           id: 3,
           homepageURL: 'https://skupszop.pl/',
           searchURL: 'https://skupszop.pl/wyszukiwarka',
-          logoURL: 'https://skupszop.pl/favicon.ico',
+          logoURL: 'https://skupszop.pl/static/store/img/webp/icon11.webp',
         },
         dadada: {
           id: 4,

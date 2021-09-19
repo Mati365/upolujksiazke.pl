@@ -1,10 +1,11 @@
 import React, {ReactNode} from 'react';
 import c from 'classnames';
 
-type SidebarSectionProps = JSX.IntrinsicElements['div'] & {
+export type SidebarSectionProps = JSX.IntrinsicElements['div'] & {
   bold?: boolean,
   title?: ReactNode,
   tag?: any,
+  sticky?: boolean,
 };
 
 export const SidebarSection = (
@@ -13,6 +14,7 @@ export const SidebarSection = (
     children,
     className,
     bold = true,
+    sticky,
     title,
     ...props
   }: SidebarSectionProps,
@@ -20,6 +22,7 @@ export const SidebarSection = (
   <Tag
     className={c(
       'c-sidebar-section',
+      sticky && 'is-sticky',
       className,
     )}
     {...props}

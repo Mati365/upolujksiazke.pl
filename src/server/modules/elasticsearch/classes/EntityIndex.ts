@@ -113,10 +113,11 @@ export abstract class EntityIndex<E extends {id: number}, I = E> implements OnMo
    * Returns single record by id
    *
    * @param {(string|number)} id
+   * @param {*} options
    * @returns {Promise<I>}
    * @memberof EntityIndex
    */
-  async getByID(id: string | number): Promise<I> {
+  async getByID(id: string | number, options?: any): Promise<I> {
     const {es, indexName} = this;
 
     try {
@@ -124,6 +125,7 @@ export abstract class EntityIndex<E extends {id: number}, I = E> implements OnMo
         {
           index: indexName,
           id: safeToString(id),
+          ...options,
         },
       );
 

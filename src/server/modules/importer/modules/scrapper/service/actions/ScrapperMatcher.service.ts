@@ -13,6 +13,10 @@ type ServiceMatcherResult<R> = {
   notMatchedInScrappers: WebsiteScrappersGroup[],
 };
 
+type SearchRemoteRecordMatchAttrs = MatchRecordAttrs & {
+  scrapperGroupsIds?: number[],
+};
+
 @Injectable()
 export class ScrapperMatcherService {
   private readonly logger = new Logger(ScrapperMatcherService.name);
@@ -26,11 +30,16 @@ export class ScrapperMatcherService {
    * Iterate sequentially over scrappers and tries
    *
    * @template R
-   * @param {MatcherSearchAttrs} attrs
+   * @param {SearchRemoteRecordMatchAttrs} attrs
    * @returns {Promise<ServiceMatcherResult<R>>}
    * @memberof ScrapperMatcherService
    */
-  async searchRemoteRecord<R>(attrs: MatchRecordAttrs): Promise<ServiceMatcherResult<R>> {
+  async searchRemoteRecord<R>(
+    {
+      scrapperGroupsIds,
+      ...attrs
+    }: SearchRemoteRecordMatchAttrs,
+  ): Promise<ServiceMatcherResult<R>> {
     const {
       logger,
       sentryService,
@@ -41,6 +50,9 @@ export class ScrapperMatcherService {
     const items = await pMap(
       scrappersGroups,
       async (group) => {
+        if (scrapperGroupsIds && !R.includes(group.id, scrapperGroupsIds))
+          return null;
+
         try {
           const result = await group.searchRemoteRecord(attrs);
 
@@ -65,7 +77,7 @@ export class ScrapperMatcherService {
           ? 'matched'
           : 'notMatched'
       ),
-      items,
+      items.filter(Boolean),
     );
 
     return {

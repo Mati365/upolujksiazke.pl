@@ -1,5 +1,8 @@
 import * as R from 'ramda';
-import {truncateText} from '@shared/helpers/truncateText';
+import {
+  truncateText,
+  safeToString,
+} from '@shared/helpers';
 
 export const normalizeParsedText: (str: string) => string = R.unless(
   R.isNil,
@@ -49,11 +52,14 @@ export function normalizePrice(str: string) {
  * Extracts year from date
  *
  * @export
- * @param {string} str
+ * @param {string | number} str
  * @return {number}
  */
-export function normalizeParsedYear(str: string): number {
-  return str && new Date(str.match(/\d{4}/)?.[0]).getFullYear();
+export function normalizeParsedYear(str: string | number): number {
+  if (R.is(Number, str))
+    str = safeToString(str);
+
+  return str && new Date((<string> str).match(/\d{4}/)?.[0]).getFullYear();
 }
 
 /**

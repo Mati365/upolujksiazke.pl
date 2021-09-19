@@ -3,6 +3,7 @@ import {Injectable, Logger} from '@nestjs/common';
 import chalk from 'chalk';
 
 import {SERVER_ENV} from '@server/constants/env';
+import {findById} from '@shared/helpers';
 
 import {RemoteWebsiteEntity} from '@server/modules/remote/entity';
 import * as Groups from '@importer/sites';
@@ -47,6 +48,17 @@ export class ScrapperService {
       new Groups.WykopScrappersGroup(PARSERS_ENV.wykop),
       new Groups.CarrefourScrappersGroup(PARSERS_ENV.carrefour),
     ];
+  }
+
+  /**
+   * Search website scrapper group by id
+   *
+   * @param {number} id
+   * @return {WebsiteScrappersGroup}
+   * @memberof ScrapperService
+   */
+  getScrapperGroupById(id: number): WebsiteScrappersGroup {
+    return findById(id)(this.scrappersGroups);
   }
 
   /**

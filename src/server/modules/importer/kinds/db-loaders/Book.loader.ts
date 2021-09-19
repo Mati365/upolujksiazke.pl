@@ -50,6 +50,7 @@ import {
 } from '../scrappers/helpers';
 
 type BookExtractorAttrs = {
+  scrapperGroupsIds?: number[],
   checkCacheBeforeSearch?: boolean,
   skipIfAlreadyInDb?: boolean,
   skipCacheLookup?: boolean,
@@ -132,7 +133,10 @@ export class BookDbLoaderService implements MetadataDbLoader {
    */
   async searchAndExtractToDb(
     book: CreateBookDto,
-    attrs: BookExtractorAttrs = {},
+    {
+      scrapperGroupsIds,
+      ...attrs
+    }: BookExtractorAttrs = {},
   ) {
     const {
       esFuzzyBookSearchService,
@@ -158,6 +162,7 @@ export class BookDbLoaderService implements MetadataDbLoader {
       {
         kind: ScrapperMetadataKind.BOOK,
         data: book,
+        scrapperGroupsIds,
       },
     );
 

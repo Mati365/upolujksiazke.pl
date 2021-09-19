@@ -25,6 +25,8 @@ gulp.task('entity:category:refresh-ranking', Category.refreshCategoriesRanking);
 gulp.task('entity:reindex:all', reindexAllTask);
 
 // scrapper
+gulp.task('scrapper:loader:fetch-availability', Scrapper.fetchAvailabilityForScrapper);
+
 gulp.task('scrapper:refresh:single', Scrapper.refreshSingleTask);
 gulp.task('scrapper:refresh:latest', Scrapper.refreshLatestTask);
 gulp.task('scrapper:refresh:all', Scrapper.refreshAllTask);

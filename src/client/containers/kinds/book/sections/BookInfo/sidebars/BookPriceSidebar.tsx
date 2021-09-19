@@ -72,7 +72,10 @@ export const BookPriceSidebar = (
       )}
 
       {similarBooks?.length > 0 && (
-        <SimilarBooks books={similarBooks} />
+        <SimilarBooks
+          books={similarBooks}
+          sticky
+        />
       )}
     </BookPriceBox>
   );

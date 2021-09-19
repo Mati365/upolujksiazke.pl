@@ -1,15 +1,20 @@
 import React from 'react';
 
 import {useI18n} from '@client/i18n';
-import {Grid, SidebarSection} from '@client/components/ui';
+import {
+  Grid,
+  SidebarSection,
+  SidebarSectionProps,
+} from '@client/components/ui';
+
 import {BookCardRecord} from '@api/types';
 import {BookThumbCard} from '../../../../cards/BookThumbCard';
 
-type SimilarBooksProps = {
+type SimilarBooksProps = SidebarSectionProps & {
   books: BookCardRecord[],
 };
 
-export const SimilarBooks = ({books}: SimilarBooksProps) => {
+export const SimilarBooks = ({books, ...props}: SimilarBooksProps) => {
   const t = useI18n();
 
   return (
@@ -17,6 +22,7 @@ export const SimilarBooks = ({books}: SimilarBooksProps) => {
       title={
         `${t('book.similar_books')}:`
       }
+      {...props}
     >
       <Grid
         columns={{

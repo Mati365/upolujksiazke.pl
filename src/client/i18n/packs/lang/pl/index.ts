@@ -222,6 +222,7 @@ export const PL_LANG_PACK = {
     },
   },
   book: {
+    abonaments: 'Dostępna w abonamencie',
     created_by: 'Autor',
     no_description: 'Brak opisu :(',
     book_description: 'Opis książki',

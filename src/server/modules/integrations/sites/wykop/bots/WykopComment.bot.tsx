@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {Fragment} from 'react';
 import {SchedulerRegistry} from '@nestjs/schedule';
 import {Injectable, Logger} from '@nestjs/common';
 import {OnEvent} from '@nestjs/event-emitter';
@@ -6,6 +6,8 @@ import {EntityManager, Equal, Not} from 'typeorm';
 import * as R from 'ramda';
 
 import {genBookLink, prefixLinkWithHost} from '@client/routes/Links';
+import {pickBookAbonamentList} from '@client/containers/kinds/book/helpers';
+
 import {
   concatUrls,
   extractHostname,
@@ -18,6 +20,7 @@ import {
 // eslint-disable-next-line max-len
 import {BookSimilarityFilterService} from '@server/modules/recommendation/modules/BookRecommendation/BookSimilarityFilter.service';
 import {BookReviewService} from '@server/modules/book/modules/review/BookReview.service';
+import {BookReleaseService} from '@server/modules/book/modules/release/BookRelease.service';
 import {BookReviewEntity} from '@server/modules/book/modules/review';
 import {BookReviewImportedEvent} from '@server/modules/importer/kinds/db-loaders/events';
 import {BookEntity} from '@server/modules/book/entity/Book.entity';
@@ -53,6 +56,7 @@ export class WykopCommentBot {
     private readonly schedulerRegistry: SchedulerRegistry,
     private readonly bookReviewService: BookReviewService,
     private readonly bookRecommendationService: BookSimilarityFilterService,
+    private readonly bookReleaseService: BookReleaseService,
   ) {}
 
   get api() {
@@ -149,9 +153,11 @@ export class WykopCommentBot {
       reviews,
       book,
       similarBooks,
+      releases,
       stats,
     } = await this.fetchCommentStats(review);
 
+    const abonaments = pickBookAbonamentList(releases as any);
     const html = (
       <>
         {`${WykopCommentBot.MAGIC_COMMENT_HEADER} #bookmeter:`}
@@ -180,6 +186,24 @@ export class WykopCommentBot {
             tag z historią podsumowań »
           </strong>
         </a>
+
+        {abonaments?.length > 0 && (
+          <>
+            <br />
+            <strong>W abonamentach:</strong>
+            {' '}
+            {abonaments.map(
+              (availability) => (
+                <Fragment key={availability.id}>
+                  <a href={availability.url}>
+                    {availability.website.hostname}
+                  </a>
+                  {' '}
+                </Fragment>
+              ),
+            )}
+          </>
+        )}
 
         {book.primaryCategory && (
           <>
@@ -273,6 +297,7 @@ export class WykopCommentBot {
       entityManager,
       bookRecommendationService,
       bookReviewService,
+      bookReleaseService,
     } = this;
 
     const fetchSimilarBooks = async () => {
@@ -339,6 +364,12 @@ export class WykopCommentBot {
               bookId,
               websiteId,
             },
+          },
+        ),
+
+        releases: bookReleaseService.findBookReleases(
+          {
+            bookId,
           },
         ),
 

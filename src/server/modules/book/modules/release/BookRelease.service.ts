@@ -167,7 +167,8 @@ export class BookReleaseService {
               .select(
                 [
                   'a.id', 'a.releaseId', 'a.websiteId',
-                  'a.prevPrice', 'a.price', 'a.inStock',
+                  'a.prevPrice', 'a.price',
+                  'a.inStock', 'a.inAbonament',
                   'a.totalRatings', 'a.avgRating', 'a.url',
                 ],
               )

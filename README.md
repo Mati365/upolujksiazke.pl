@@ -259,6 +259,9 @@ gulp entity:website:fetch-missing-logos
 
 # Refreshes promotion value in categories
 gulp entity:category:refresh-ranking
+
+# After adding new scrapper fetch availability for books
+gulp scrapper:loader:fetch-availability --scrapperGroupId=26
 ```
 
 Analyzers:

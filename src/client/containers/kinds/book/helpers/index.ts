@@ -3,6 +3,7 @@ export * from './sortReleasesByPrice';
 export * from './sortAvailabilityByPrice';
 export * from './pickAllBookTypedReleases';
 export * from './pickFirstBookRelease';
+export * from './pickBookAbonamentList';
 export * from './pickBookAvailabilityList';
 export * from './getMetaBookCoverAttrs';
 export * from './hasBookAvailability';

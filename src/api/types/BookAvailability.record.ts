@@ -7,6 +7,7 @@ export interface BookAvailabilityRecord extends APIRecord {
   avgRating: number;
   totalRatings: number;
   inStock: boolean;
+  inAbonament: boolean;
   url: string;
   website: WebsiteRecord;
 }

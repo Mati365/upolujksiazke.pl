@@ -1,7 +1,10 @@
-import React from 'react';
+import React, {useMemo} from 'react';
+import c from 'classnames';
 
 import {useI18n} from '@client/i18n';
 import {useUA} from '@client/modules/ua';
+
+import {pickBookAbonamentList} from '@client/containers/kinds/book/helpers';
 
 import {BookFullInfoRecord} from '@api/types';
 import {RatingsRow} from '@client/containers/controls/RatingsRow';
@@ -12,6 +15,7 @@ import {BookHeaderAttribute} from './BookHeaderAttribute';
 import {BookCoverGallery} from './BookCoverGallery';
 import {BookPriceBox} from './BookPriceBox';
 import {BookSeriesTree} from './trees';
+import {BookAbonamentsList} from './BookAbonamentsList';
 
 type BookHeaderSectionProps = {
   book: BookFullInfoRecord,
@@ -21,7 +25,15 @@ type BookHeaderSectionProps = {
 export const BookHeaderSection = ({book, formattedTitle}: BookHeaderSectionProps) => {
   const t = useI18n();
   const ua = useUA();
-  const {authors, avgRating, totalRatings} = book;
+  const {
+    authors, releases,
+    avgRating, totalRatings,
+  } = book;
+
+  const abonamentsList = useMemo(
+    () => pickBookAbonamentList(releases),
+    [releases],
+  );
 
   const info = (
     <>
@@ -68,6 +80,22 @@ export const BookHeaderSection = ({book, formattedTitle}: BookHeaderSectionProps
             showTextValue
           />
         </BookHeaderAttribute>
+
+        {abonamentsList.length > 0 && (
+          <BookHeaderAttribute
+            className='c-book-info-section__abonaments'
+            label={
+              `${t('book.abonaments')}:`
+            }
+          >
+            <BookAbonamentsList
+              availability={abonamentsList}
+              className={c(
+                ua.mobile && 'mt-2',
+              )}
+            />
+          </BookHeaderAttribute>
+        )}
       </div>
     </>
   );

@@ -4,7 +4,7 @@
 ![Website](https://img.shields.io/website?url=https%3A%2F%2Fupolujksiazke.pl&style=flat-square)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 
-OpenSource book reviews aggregator, something like Metacritic / Digg for books. It allows to compare book price between different shops.
+Real world open source book reviews aggregator, something like Metacritic / Digg for books. It allows to compare book price between different shops.
 
 ## Screens
 
@@ -106,6 +106,7 @@ https://coolors.co/2b2d42-8d99ae-edf2f4-ef233c-d90429
 - [x] Bryk.pl
 - [x] Streszczenia.pl
 - [x] klp.pl
+- [x] - legimi.pl
 - [ ] polskina5.pl
 - [ ] Virtualo.pl
 - [ ] tantis.pl

@@ -196,7 +196,9 @@ export class WykopCommentBot {
               (availability) => (
                 <Fragment key={availability.id}>
                   <a href={availability.url}>
-                    {availability.website.hostname}
+                    <strong>
+                      {availability.website.hostname}
+                    </strong>
                   </a>
                   {' '}
                 </Fragment>

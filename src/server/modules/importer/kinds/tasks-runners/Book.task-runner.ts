@@ -165,6 +165,17 @@ export class BookScrapperTaskRunner {
       },
     );
 
+    // update list of scrappers
+    await BookEntity.update(
+      bookId,
+      {
+        scrappersIds: [
+          ...(scrappersIds || []),
+          ...scrapperGroupsIds,
+        ],
+      },
+    );
+
     if (!matchedItems?.length) {
       logger.warn(`Book with ID ${bookId} not matched in scrapper group!`);
       return;
@@ -244,17 +255,6 @@ export class BookScrapperTaskRunner {
 
     if (!R.isEmpty(releasesToBeCreated))
       await bookReleaseService.upsertList(releasesToBeCreated);
-
-    // update list of scrappers
-    await BookEntity.update(
-      bookId,
-      {
-        scrappersIds: [
-          ...(scrappersIds || []),
-          ...scrapperGroupsIds,
-        ],
-      },
-    );
 
     // refresh prices stats etc
     await bookStatsService.refreshBookStats(bookId);

@@ -5,6 +5,7 @@ import {isDevMode} from '@shared/helpers';
 
 import {
   genAuthorsLink,
+  genBookmeterTopBooksPath,
   HOME_PATH,
   BOOKS_PATH,
   TOP_BOOKS_PATH,
@@ -20,6 +21,7 @@ import {
   CategoryIcon,
   NewsIcon,
   CommentIcon,
+  UserVoiceIcon,
 } from '@client/components/svg/Icons';
 
 export const HeaderToolbar = () => {
@@ -30,6 +32,7 @@ export const HeaderToolbar = () => {
     [TrophyIcon, TOP_BOOKS_PATH, t('links.top')],
     [CommentIcon, BOOKS_REVIEWS_PATH, t('links.reviews')],
     [GroupIcon, genAuthorsLink(), t('links.authors')],
+    [UserVoiceIcon, genBookmeterTopBooksPath(), t('links.bookmeter_top')],
     ...(
       isDevMode()
         ? [[NewsIcon, NEWS_PATH, t('links.news')]]

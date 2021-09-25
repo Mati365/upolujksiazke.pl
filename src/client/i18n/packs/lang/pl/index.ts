@@ -18,6 +18,7 @@ import {PL_BOOK_ROUTE_PACK} from './routes/book';
 import {PL_NEWS_ROUTE_PACK} from './routes/news';
 import {PL_REVIEWS_ROUTE_PACK} from './routes/reviews';
 import {PL_BROCHURE_PACK} from './routes/brochure';
+import {PL_BOOKMETER_PACK} from './routes/bookmeter';
 
 const PL_BOOK_BINDING_PACK: Record<BookBindingKind, string> = {
   [BookBindingKind.HARDCOVER]: 'twarda okładka',
@@ -68,6 +69,7 @@ const ROUTES_PACK = {
   news: PL_NEWS_ROUTE_PACK,
   reviews: PL_REVIEWS_ROUTE_PACK,
   brochure: PL_BROCHURE_PACK,
+  bookmeter: PL_BOOKMETER_PACK,
 };
 
 export const PL_LANG_PACK = {
@@ -198,6 +200,7 @@ export const PL_LANG_PACK = {
       reviews: 'Recenzje',
       news: 'Newsy',
       brochures: 'Gazetki',
+      bookmeter: 'Bookmeter',
     },
     filters: {
       header: 'Filtry',
@@ -358,6 +361,7 @@ export const PL_LANG_PACK = {
     reviews: 'Recenzje',
     tags: 'Tagi',
     top: 'TOP książki',
+    bookmeter_top: '#Bookmeter',
   },
   mobile_menu: {
     home: 'Start',

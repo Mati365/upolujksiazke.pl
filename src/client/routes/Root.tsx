@@ -26,6 +26,7 @@ import {NewsRoute} from './News';
 import {ReviewsRoute} from './Reviews';
 import {BrochureRoute} from './Brochure';
 import {BrandBrochuresRoute} from './BrandBrochures';
+import {BookmeterTopBooksRoute} from './Bookmeter';
 
 export const APP_ROUTES_LIST: AsyncRouterRouteInfo[] = [
   {
@@ -66,6 +67,9 @@ export const APP_ROUTES_LIST: AsyncRouterRouteInfo[] = [
   },
   {
     component: TagRoute,
+  },
+  {
+    component: BookmeterTopBooksRoute,
   },
 ];
 

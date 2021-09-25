@@ -4,7 +4,6 @@ import {Cron, CronExpression} from '@nestjs/schedule';
 import * as R from 'ramda';
 
 import {nthMonthsAgoDuration, isDevMode} from '@shared/helpers';
-import {isCmdAppInstance} from '@server/common/helpers';
 import {renderJSXToMessage} from '../helpers';
 
 import {WykopOptionalMatchReview} from '../constants/types';
@@ -66,9 +65,6 @@ export class WykopSummaryBot {
     },
   )
   async postSummary() {
-    if (isCmdAppInstance())
-      return;
-
     const {
       wykopStatsService,
       logger,

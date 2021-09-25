@@ -1,4 +1,5 @@
 import pMap from 'p-map';
+import {mapObjIndexed, prop} from 'ramda';
 
 import {
   concatUrlParts,
@@ -8,6 +9,7 @@ import {
 } from '@shared/helpers';
 
 import {
+  cookiesObjToSetCookie,
   normalizeParsedText,
   parseAsyncURLPathIfOK,
   parseCookies,
@@ -77,7 +79,9 @@ export class CarrefourBrochuresScrapper extends AsyncScrapper<BrochureScrapperIn
           ),
           {
             headers: {
-              cookie: `SESSION=${cookies.SESSION.value}`,
+              cookie: cookiesObjToSetCookie(
+                mapObjIndexed(prop('value'), cookies.parsed),
+              ),
             },
           },
         ).then((r) => r.json()),

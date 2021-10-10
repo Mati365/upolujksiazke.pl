@@ -20,7 +20,7 @@ type DefaultConfigBookShopNames = (
   | 'taniaksiazka' | 'lekturyGov'
   | 'bryk' | 'streszczenia' | 'klp'
   | 'polskina5' | 'eszkola' | 'krytycznymOkiem'
-  | 'carrefour' | 'legimi'
+  | 'carrefour' | 'legimi' | 'biedronka'
 );
 
 export type AppEnv = Partial<{
@@ -327,6 +327,12 @@ export const GLOBAL_CONFIG: Record<string, AppEnv> = {
         legimi: {
           id: 26,
           homepageURL: 'https://www.legimi.pl',
+        },
+        biedronka: {
+          id: 27,
+          homepageURL: 'https://biedronka.pl/',
+          // eslint-disable-next-line max-len
+          logoURL: 'https://prowly-uploads.s3.eu-west-1.amazonaws.com/uploads/8222/assets/147468/original-26306b7177f0be2509e0e785e9b7e1c4.png',
         },
       },
     },

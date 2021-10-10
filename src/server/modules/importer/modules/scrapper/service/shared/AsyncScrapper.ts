@@ -170,9 +170,9 @@ export abstract class AsyncScrapper<
    *
    * @abstract
    * @param {any} item
-   * @returns {ArrayElement<Result>}
+   * @returns {CanBePromise<ArrayElement<Result>>}
    */
-  abstract mapSingleItemResponse(item: any): ArrayElement<Result>;
+  abstract mapSingleItemResponse(item: any): CanBePromise<ArrayElement<Result>>;
 
   /**
    * Fetches single item

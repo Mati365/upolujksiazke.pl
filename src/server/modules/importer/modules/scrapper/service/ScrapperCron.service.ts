@@ -9,6 +9,11 @@ import {ScrapperRefreshService} from './actions';
 
 @Injectable()
 export class ScrapperCronService {
+  static readonly REFRESHABLE_KINDS = [
+    ScrapperMetadataKind.BOOK_REVIEW,
+    ScrapperMetadataKind.BROCHURE,
+  ];
+
   constructor(
     private readonly scrapperRefreshService: ScrapperRefreshService,
   ) {}
@@ -18,11 +23,13 @@ export class ScrapperCronService {
     if (isDevMode() || isCmdAppInstance())
       return;
 
-    await this.scrapperRefreshService.refreshLatest(
-      {
-        kind: ScrapperMetadataKind.BOOK_REVIEW,
-        maxIterations: 1,
-      },
-    );
+    for await (const kind of ScrapperCronService.REFRESHABLE_KINDS) {
+      await this.scrapperRefreshService.refreshLatest(
+        {
+          maxIterations: 1,
+          kind,
+        },
+      );
+    }
   }
 }

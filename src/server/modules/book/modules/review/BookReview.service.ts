@@ -90,6 +90,7 @@ export class BookReviewService {
         .leftJoin('review.reviewer', 'reviewer')
         .leftJoin('reviewer.avatar', 'avatar', `avatar.version = '${ImageVersion.SMALL_THUMB}'`)
         .leftJoin('avatar.attachment', 'attachment')
+        .andWhere('reviewer.hidden <> true')
         .andWhere(
           {
             description: Not(IsNull()),

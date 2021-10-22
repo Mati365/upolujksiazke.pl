@@ -111,12 +111,15 @@ export class BookStatsService {
           ),
           reviews as (
             select
-              sum(case when br."description" is not null then 1 else 0 end) as "totalTextReviews",
+              sum(
+                case when br."description" is not null and bv."hidden" <> true then 1 else 0 end
+              ) as "totalTextReviews",
               sum(case when br."includeInStats" = true then "rating" else 0 end)::float as "sumRatings",
               count(
                 case when "rating" is null and br."includeInStats" = true then null else 1 end
               )::int as "totalRatings"
             from book_review br
+            left join book_reviewer bv on bv."id" = br."reviewerId"
             where br."bookId" = $1
           ),
           primary_category as (

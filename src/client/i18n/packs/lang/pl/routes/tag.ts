@@ -2,7 +2,7 @@
 export const PL_TAG_PACK = {
   seo: {
     title: '🔖 Książki o %{} | Porównaj ceny książek, oceny i recenzje  - upolujksiazke.pl',
-    description: 'Zobacz najpopularniejsze książki i streszczenia lektur szkolnych o %{} w księgarniach w całej Polsce!',
+    description: 'Książki z tagiem %{name} - zobacz i streszczenia lektur szkolnych o %{name} w księgarniach w całej Polsce!',
   },
   books: {
     title: 'Książki z tagiem "%{}"',

@@ -79,7 +79,7 @@ export const TagRoute: AsyncRoute<TagRouteData> = (
       <SEOMeta
         meta={{
           title: t('seo.title', [tag.name]),
-          description: t('seo.description', [tag.name]),
+          description: t('seo.description', tag),
           cover: getMetaBookCoverAttrs(initialBooks[0]?.primaryRelease),
         }}
       />

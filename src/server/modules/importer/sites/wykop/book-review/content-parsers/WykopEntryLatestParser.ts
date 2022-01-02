@@ -63,6 +63,9 @@ export class WykopEntryLatestParser extends WykopEntryContentParser {
     (obj): WykopBookReviewHeader => removeNullValues(
       R.mapObjIndexed(
         (item) => {
+          if (R.isNil(item) || R.is(Number, item))
+            return item;
+
           if (R.is(Array, item))
             return item.map(getHTMLInnerText);
 

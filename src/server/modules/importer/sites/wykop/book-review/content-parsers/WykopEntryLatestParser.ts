@@ -1,6 +1,7 @@
 import * as R from 'ramda';
 
 import {normalizeISBN} from '@server/common/helpers';
+import {getHTMLInnerText} from '@shared/helpers/html';
 import {removeNullValues} from '@shared/helpers';
 import {
   dropTagAnchors,
@@ -60,15 +61,23 @@ export class WykopEntryLatestParser extends WykopEntryContentParser {
       },
     ),
     (obj): WykopBookReviewHeader => removeNullValues(
-      {
-        /* eslint-disable @typescript-eslint/dot-notation */
-        title: obj['tytuł'],
-        tags: obj['gatunek'] || '',
-        isbn: obj['isbn'],
-        authors: obj['autor'],
-        score: obj['ocena'],
-        /* eslint-enable @typescript-eslint/dot-notation */
-      },
+      R.mapObjIndexed(
+        (item) => {
+          if (R.is(Array, item))
+            return item.map(getHTMLInnerText);
+
+          return getHTMLInnerText(item);
+        },
+        {
+          /* eslint-disable @typescript-eslint/dot-notation */
+          title: obj['tytuł'],
+          tags: obj['gatunek'] || '',
+          isbn: obj['isbn'],
+          authors: obj['autor'],
+          score: obj['ocena'],
+          /* eslint-enable @typescript-eslint/dot-notation */
+        },
+      ),
     ),
     (array) => R.reduce(
       (acc, [key, value]) => {

@@ -47,7 +47,7 @@ export class TaniaksiazkaBookParser
               remoteId,
               url,
               totalRatings: +TaniaksiazkaBookParser.extractProp($, 'product:reviews_cnt') || null,
-              avgRating: +TaniaksiazkaBookParser.extractProp($, 'product:reviews_avg') || null,
+              avgRating: (+TaniaksiazkaBookParser.extractProp($, 'product:reviews_avg') * 2) || null,
               price: normalizePrice(TaniaksiazkaBookParser.extractProp($, 'product:price:amount'))?.price,
             },
           ),

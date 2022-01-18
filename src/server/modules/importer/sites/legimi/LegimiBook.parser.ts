@@ -55,7 +55,7 @@ export class LegimiBookParser
               inStock: bookState.isAvailable,
               inAbonament: bookState.isInSubscription,
               totalRatings: bookState.rating.totalVotes || null,
-              avgRating: bookState.rating.averageRate || null,
+              avgRating: (bookState.rating.averageRate * 2) || null,
               price: bookState.priceValue,
             },
           ),

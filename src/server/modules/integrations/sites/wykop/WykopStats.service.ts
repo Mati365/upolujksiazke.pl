@@ -50,7 +50,7 @@ export class WykopStatsService {
   async refreshMetadataReviewsStats(
     {
       duration,
-      delay = 1500,
+      delay = 2500,
     }: DurationAttrs & {
       delay?: number,
     },
@@ -111,7 +111,7 @@ export class WykopStatsService {
       {
         topUpvoted: this.findTopUpvotedReviews(
           {
-            limit: 20,
+            limit: 12,
             duration,
           },
         ),

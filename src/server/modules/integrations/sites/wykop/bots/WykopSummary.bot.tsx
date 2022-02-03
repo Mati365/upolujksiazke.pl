@@ -59,7 +59,7 @@ export class WykopSummaryBot {
    * @memberof WykopSummaryBot
    */
   @Cron(
-    CronExpression.EVERY_1ST_DAY_OF_MONTH_AT_NOON,
+    CronExpression.EVERY_WEEKEND,
     {
       name: SUMMARY_CRONTAB_NAME,
     },

@@ -6,6 +6,7 @@ import {ScrapperModule} from '@server/modules/importer/modules/scrapper/Scrapper
 import {WykopCommentBot} from './bots/WykopComment.bot';
 import {WykopSummaryBot} from './bots/WykopSummary.bot';
 import {WykopStatsService} from './WykopStats.service';
+import {WykopStatsCron} from './WykopStats.cron';
 
 @Module(
   {
@@ -18,6 +19,7 @@ import {WykopStatsService} from './WykopStats.service';
       WykopStatsService,
       WykopCommentBot,
       WykopSummaryBot,
+      WykopStatsCron,
     ],
     exports: [
       WykopStatsService,

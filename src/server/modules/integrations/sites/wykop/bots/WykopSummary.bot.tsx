@@ -75,10 +75,6 @@ export class WykopSummaryBot {
       duration: nthMonthsAgoDuration(1),
     };
 
-    if (!isDevMode() && !process.env.SKIP_REVIEWS_STATS_REFRESH) {
-      await wykopStatsService.refreshMetadataReviewsStats(durationAttrs);
-    }
-
     const message = await this.generateSummaryMessage(
       {
         ...durationAttrs,

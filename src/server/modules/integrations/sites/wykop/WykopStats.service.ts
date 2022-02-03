@@ -111,7 +111,7 @@ export class WykopStatsService {
       {
         topUpvoted: this.findTopUpvotedReviews(
           {
-            limit: 12,
+            limit: 20,
             duration,
           },
         ),

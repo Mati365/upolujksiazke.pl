@@ -75,7 +75,7 @@ export class WykopSummaryBot {
       duration: nthMonthsAgoDuration(1),
     };
 
-    if (!isDevMode()) {
+    if (!isDevMode() && !process.env.SKIP_REVIEWS_STATS_REFRESH) {
       await wykopStatsService.refreshMetadataReviewsStats(durationAttrs);
     }
 
@@ -89,9 +89,8 @@ export class WykopSummaryBot {
     if (!message)
       return;
 
-    if (isDevMode())
-      logger.warn(`HTML message for wykop.pl: ${message}`);
-    else {
+    logger.warn(`HTML message for wykop.pl: ${message}`);
+    if (!isDevMode()) {
       await api.call(
         {
           method: 'POST',

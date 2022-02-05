@@ -10,6 +10,7 @@ Real world open source book reviews aggregator, something like Metacritic / Digg
 
 ![Filtered books](/doc/screens/filtered-books.png) <br />
 ![Book](/doc/screens/reviews.png) <br />
+![Book](/doc/screens/book-2.png) <br />
 ![Book](/doc/screens/book.png) <br />
 ![Home](/doc/screens/home.png) <br />
 ![Bot](/doc/screens/integration.png)

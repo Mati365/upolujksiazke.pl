@@ -106,7 +106,7 @@
   },
   "dependencies": {
     "@elastic/elasticsearch": "^7.13.0",
-    "@nestjs/bull": "^0.3.1",
+    "@nestjs/bull": "^0.5.3",
     "@nestjs/common": "^7.6.17",
     "@nestjs/core": "^7.6.17",
     "@nestjs/elasticsearch": "^7.1.0",
@@ -123,7 +123,7 @@
     "@types/to-snake-case": "^1.0.0",
     "@types/turndown": "^5.0.1",
     "await-outside": "^3.0.0",
-    "bull": "^3.26.0",
+    "bull": "^4.7.0",
     "cache-manager": "^3.4.4",
     "cache-manager-redis-store": "^2.0.0",
     "camelcase-keys": "^7.0.0",

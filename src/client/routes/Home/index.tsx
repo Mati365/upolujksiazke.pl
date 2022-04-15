@@ -130,7 +130,7 @@ HomeRoute.getInitialProps = (attrs) => {
       ),
       recentCommentedBooks: repo.booksReviews.findRecentCommentedBooks(
         {
-          limit: 4,
+          limit: 12,
         },
       ),
     },

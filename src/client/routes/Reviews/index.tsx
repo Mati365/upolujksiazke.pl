@@ -84,7 +84,7 @@ ReviewsRoute.getInitialProps = async (attrs) => {
       layoutData: Layout.getInitialProps(attrs),
       recentCommentedBooks: repo.booksReviews.findRecentCommentedBooks(
         {
-          limit: 16,
+          limit: 48,
         },
       ),
     },

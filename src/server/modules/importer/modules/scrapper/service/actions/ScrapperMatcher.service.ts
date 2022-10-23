@@ -3,7 +3,6 @@ import pMap from 'p-map';
 import chalk from 'chalk';
 import * as R from 'ramda';
 
-import {SentryService} from '@server/modules/sentry/Sentry.service';
 import {ScrapperService} from '../Scrapper.service';
 import {ScrapperMatcherResult} from '../shared/ScrapperMatcher';
 import {MatchRecordAttrs, WebsiteScrappersGroup} from '../shared';
@@ -23,7 +22,6 @@ export class ScrapperMatcherService {
 
   constructor(
     private readonly scrapperService: ScrapperService,
-    private readonly sentryService: SentryService,
   ) {}
 
   /**
@@ -42,7 +40,6 @@ export class ScrapperMatcherService {
   ): Promise<ServiceMatcherResult<R>> {
     const {
       logger,
-      sentryService,
       scrapperService,
     } = this;
 
@@ -62,7 +59,6 @@ export class ScrapperMatcherService {
           };
         } catch (e) {
           logger.error(`Scrapper ${chalk.bold(group.websiteURL)}:`, e);
-          sentryService.instance.captureException(e);
           return null;
         }
       },

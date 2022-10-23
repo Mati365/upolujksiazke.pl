@@ -5,7 +5,6 @@ import {Job, Queue} from 'bull';
 import pMap from 'p-map';
 import * as R from 'ramda';
 
-import {SentryService} from '@server/modules/sentry/Sentry.service';
 import {ScrapperMetadataEntity} from '../../scrapper/entity';
 import {MetadataDbLoaderService} from '../services/MetadataDbLoader.service';
 import {InlineMetadataObject} from '../MetadataDbLoader.interface';
@@ -32,7 +31,6 @@ export class MetadataDbLoaderConsumerProcessor {
 
   constructor(
     private readonly metadataDbLoaderService: MetadataDbLoaderService,
-    private readonly sentryService: SentryService,
   ) {}
 
   /**
@@ -57,10 +55,7 @@ export class MetadataDbLoaderConsumerProcessor {
    */
   @Process()
   async process(job: Job<DbLoaderJobValue>) {
-    const {
-      sentryService,
-      metadataDbLoaderService,
-    } = this;
+    const {metadataDbLoaderService} = this;
 
     const dbMetadataIds = R.pluck('metadataId', <DbStoredLoaderMetadata[]> job.data).filter(Boolean);
     const metadataItems: InlineMetadataObject[] = [
@@ -85,7 +80,6 @@ export class MetadataDbLoaderConsumerProcessor {
           await metadataDbLoaderService.extractMetadataToDb(item);
         } catch (e) {
           console.error(e);
-          sentryService.instance.captureException(e);
         }
       },
       {

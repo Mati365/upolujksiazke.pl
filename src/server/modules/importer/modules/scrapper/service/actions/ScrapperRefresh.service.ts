@@ -14,7 +14,6 @@ import {
   MetadataDbLoaderService,
 } from '@importer/modules/db-loader/services';
 
-import {SentryService} from '@server/modules/sentry/Sentry.service';
 import {WebsiteInfoScrapperService} from '../scrappers/WebsiteInfoScrapper';
 import {ScrapperMetadataService} from '../ScrapperMetadata.service';
 import {ScrapperService} from '../Scrapper.service';
@@ -34,7 +33,6 @@ export class ScrapperRefreshService {
     private readonly metadataDbLoaderService: MetadataDbLoaderService,
     private readonly dbLoaderQueueService: MetadataDbLoaderQueueService,
     private readonly scrapperService: ScrapperService,
-    private readonly sentryService: SentryService,
   ) {}
 
   /**
@@ -159,7 +157,6 @@ export class ScrapperRefreshService {
     },
   ) {
     const {
-      sentryService,
       logger,
       scrapperService,
     } = this;
@@ -180,7 +177,6 @@ export class ScrapperRefreshService {
           );
         } catch (e) {
           logger.error(e);
-          sentryService.instance.captureException(e);
         }
       },
       {

@@ -119,6 +119,7 @@ const {
   WYKOP_ACCOUNT_KEY,
   CDN_PUBLIC_URL,
   CDN_LOCAL_PATH,
+  ES_HOST,
   SITEMAP_OUTPUT_PATH,
   SITE_HOSTNAME = 'upolujksiazke.pl',
 } = process.env;
@@ -163,7 +164,7 @@ export const GLOBAL_CONFIG: Record<string, AppEnv> = {
         address: APP_LISTEN_ADDRESS,
       },
       elasticsearchConfig: {
-        node: 'http://localhost:9200',
+        node: `http://${ES_HOST}:9200`,
       },
       redisConfig: {
         port: +REDIS_PORT,

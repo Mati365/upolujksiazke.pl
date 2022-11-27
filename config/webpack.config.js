@@ -134,7 +134,7 @@ const createConfig = ({
       ...(
         !devMode
           ? [
-            new SentryPlugin(
+            SENTRY_AUTH_TOKEN && new SentryPlugin(
               {
                 authToken: SENTRY_AUTH_TOKEN,
                 org: SENTRY_ORG,
@@ -142,7 +142,7 @@ const createConfig = ({
                 include: outputPath,
               },
             ),
-          ]
+          ].filter(Boolean)
           : [
             new ESLintPlugin(
               {

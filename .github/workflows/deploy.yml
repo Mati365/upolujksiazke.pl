@@ -16,6 +16,18 @@ jobs:
         with:
           buildkitd-flags: --debug
 
+      - name: Overwrite file
+        uses: "DamianReeves/write-file-action@master"
+        with:
+          path: /etc/docker/daemon.json
+          write-mode: overwrite
+          contents: |
+            {
+              "insecure-registries": [
+                "${{ secrets.DOCKER_REGISTRY_URL }}:5000"
+              ]
+            }
+
       - name: Login to private registry
         uses: docker/login-action@v1
         with:

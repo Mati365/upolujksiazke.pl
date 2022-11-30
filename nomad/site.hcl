@@ -17,6 +17,7 @@ job "upolujksiazke-site" {
       mode = "bridge"
 
       port "http" {
+        host_network = "internal-cluster-network"
         to = 3002
       }
     }

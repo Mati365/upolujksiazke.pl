@@ -73,12 +73,12 @@ job "upolujksiazke-site" {
             ES_HOST=elasticsearch.service.consul
 
             {{ with secret "kv-v2/site/upolujksiazke" }}
-              CDN_PUBLIC_URL={{ .Data.data.CDN_PUBLIC_URL }}
               DB_NAME={{ .Data.data.DB_NAME }}
               DB_PASS={{ .Data.data.DB_PASS }}
               DB_USER={{ .Data.data.DB_USER }}
               JWT_EXPIRE_IN_SECONDS={{ .Data.data.JWT_EXPIRE_IN_SECONDS }}
               JWT_SECRET={{ .Data.data.JWT_SECRET }}
+              CDN_PUBLIC_URL={{ .Data.data.CDN_PUBLIC_URL }}
               WYKOP_ACCOUNT_KEY={{ .Data.data.WYKOP_ACCOUNT_KEY }}
               WYKOP_ACCOUNT_NAME={{ .Data.data.WYKOP_ACCOUNT_NAME }}
               WYKOP_KEY={{ .Data.data.WYKOP_KEY }}

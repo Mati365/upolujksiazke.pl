@@ -13,7 +13,7 @@ RUN apk add python3 make g++
 
 COPY . ./
 
-RUN yarn install --frozen-lockfile --production=false \
+RUN --mount=type=cache,id=yarn-cache,target=/root/.yarn YARN_CACHE_FOLDER=/root/.yarn yarn install --frozen-lockfile --production=false \
   && yarn build:production
 
 FROM node:16-alpine3.15 as runner
@@ -35,7 +35,7 @@ COPY ./docker/entrypoint.sh /usr/bin/
 RUN chmod +x /usr/bin/entrypoint.sh \
   && apk add exiv2 imagemagick
 
-RUN yarn install --frozen-lockfile --production=true
+RUN --mount=type=cache,id=yarn-cache,target=/root/.yarn YARN_CACHE_FOLDER=/root/.yarn yarn install --frozen-lockfile --production=true
 
 COPY --from=builder dist /app/dist
 COPY --from=builder public /app/public

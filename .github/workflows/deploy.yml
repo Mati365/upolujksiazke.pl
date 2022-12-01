@@ -21,7 +21,7 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
           password: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
-          registry: ${{ secrets.DOCKER_REGISTRY_URL }}
+          registry: https://registry.upolujksiazke.pl
 
       - name: Build
         uses: docker/build-push-action@v3
@@ -29,4 +29,4 @@ jobs:
           push: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          tags: ${{ secrets.DOCKER_REGISTRY_URL }}/upolujksiazke-front:latest
+          tags: registry.upolujksiazke.pl/upolujksiazke-front:latest

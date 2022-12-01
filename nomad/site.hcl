@@ -32,12 +32,12 @@ job "upolujksiazke-site" {
       name = "upolujksiazke-front"
       port = "http"
 
-      check {
-        name = "upolujksiazke-front-check"
-        type = "tcp"
-        interval = "15s"
-        timeout = "3s"
-      }
+      // check {
+      //   name = "upolujksiazke-front-check"
+      //   type = "tcp"
+      //   interval = "15s"
+      //   timeout = "3s"
+      // }
     }
 
     task "upolujksiazke-front" {

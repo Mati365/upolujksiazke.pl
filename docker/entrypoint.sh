@@ -2,4 +2,7 @@
 
 export $(grep -v '^#' /etc/app.envs | xargs)
 
-node /app/dist/server.js
+cd /app
+
+yarn migration:run
+node /dist/server.js

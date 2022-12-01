@@ -31,12 +31,14 @@ ENV APP_LISTEN_ADDRESS 0.0.0.0
 ENV CDN_LOCAL_PATH /data/upolujksiazke/cdn
 ENV SITEMAP_OUTPUT_PATH /data/upolujksiazke/sitemaps
 
+RUN apk add exiv2 imagemagick
+
 COPY ./docker/entrypoint.sh /usr/bin/
-RUN chmod +x /usr/bin/entrypoint.sh \
-  && apk add exiv2 imagemagick
 
-RUN --mount=type=cache,id=yarn-cache,target=/root/.yarn YARN_CACHE_FOLDER=/root/.yarn yarn install --frozen-lockfile --production=true
+RUN --mount=type=cache,id=yarn-cache,target=/root/.yarn YARN_CACHE_FOLDER=/root/.yarn yarn install --frozen-lockfile --production=true \
+  && chmod +x /usr/bin/entrypoint.sh
 
+COPY --from=builder config /app/config
 COPY --from=builder dist /app/dist
 COPY --from=builder public /app/public
 COPY --from=builder package.json /app

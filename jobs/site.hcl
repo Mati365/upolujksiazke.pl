@@ -48,7 +48,7 @@ job "upolujksiazke-site" {
       }
 
       config {
-        image = "{{ addresses.registry }}:5000/upolujksiazke-front"
+        image = "0.0.0.0:5000/upolujksiazke-front"
         ports = ["http"]
         network_mode = "host"
 

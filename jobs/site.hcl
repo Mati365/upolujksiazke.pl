@@ -1,3 +1,34 @@
+variable "nginx_assets_config" {
+  type =  string
+  default = <<EOH
+    autoindex off;
+    access_log off;
+    log_not_found off;
+
+    gzip_static on;
+    gzip_comp_level 6;
+    gzip_min_length 1100;
+    gzip_buffers 16 8k;
+    gzip_proxied any;
+    gzip_types
+        text/plain
+        text/css
+        text/js
+        text/xml
+        text/javascript
+        application/javascript
+        application/json
+        application/xml
+        application/rss+xml
+        image/svg+xml;
+
+    add_header Pragma public;
+    add_header Vary Accept-Encoding;
+    add_header Cache-Control "public, no-transform, max-age=31536000, immutable";
+    expires 3d;
+  EOH
+}
+
 job "upolujksiazke-site" {
   datacenters = ["dc1"]
   type = "service"
@@ -56,31 +87,12 @@ job "upolujksiazke-site" {
 
             location /cdn/ {
               alias /data/upolujksiazke/cdn;
-              autoindex off;
-              access_log off;
-              log_not_found off;
+              ${var.nginx_assets_config}
+            }
 
-              gzip_static on;
-              gzip_comp_level 6;
-              gzip_min_length 1100;
-              gzip_buffers 16 8k;
-              gzip_proxied any;
-              gzip_types
-                  text/plain
-                  text/css
-                  text/js
-                  text/xml
-                  text/javascript
-                  application/javascript
-                  application/json
-                  application/xml
-                  application/rss+xml
-                  image/svg+xml;
-
-              add_header Pragma public;
-              add_header Vary Accept-Encoding;
-              add_header Cache-Control "public, no-transform, max-age=31536000, immutable";
-              expires 3d;
+            location /sitemaps/ {
+              alias /data/upolujksiazke/sitemaps;
+              ${var.nginx_assets_config}
             }
           }
         EOH
@@ -100,7 +112,7 @@ job "upolujksiazke-site" {
 
       tags = [
         "traefik.enable=true",
-        "traefik.http.routers.upolujksiazke-assets.rule=Host(`upolujksiazke.pl`) && (PathPrefix(`/cdn`) || PathPrefix(`/sitemaps))",
+        "traefik.http.routers.upolujksiazke-assets.rule=Host(`upolujksiazke.pl`) && (PathPrefix(`/cdn`) || PathPrefix(`/sitemaps`))",
         "traefik.http.routers.upolujksiazke-assets.entrypoints=http,https",
         "traefik.http.routers.upolujksiazke-assets.tls=true",
         "traefik.http.routers.upolujksiazke-assets.tls.certresolver=https-resolver",

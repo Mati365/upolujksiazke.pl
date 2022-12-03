@@ -11,7 +11,7 @@ sleep 7
 chmod 755 /data
 
 rm -rf /data/upolujksiazke/public 2>/dev/null
-cp -r public/ /data/upolujksiazke/public
+cp -r dist/public/ /data/upolujksiazke/public
 
 yarn migration:run
 node dist/server.js

@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: ./.github/actions/shared-deploy-steps
+      - uses: ./.github/workflows/shared-deploy-steps
 
       - name: Copy job file
         uses: appleboy/scp-action@master

@@ -2,6 +2,10 @@ job "upolujksiazke-site" {
   datacenters = ["dc1"]
   type = "service"
 
+  meta {
+    run_uuid = "${uuidv4()}"
+  }
+
   update {
     max_parallel = 1
     min_healthy_time = "5s"
@@ -88,7 +92,7 @@ job "upolujksiazke-site" {
 
       resources {
         cpu    = 1200
-        memory = 512
+        memory = 350
       }
     }
   }

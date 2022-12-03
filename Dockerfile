@@ -11,10 +11,11 @@ ENV SENTRY_AUTH_TOKEN $sentry_auth_token
 
 RUN apk add python3 make g++
 
-COPY . ./
+COPY package.json ./
+RUN --mount=type=cache,id=yarn-cache,target=/root/.yarn YARN_CACHE_FOLDER=/root/.yarn yarn install --frozen-lockfile --production=false
 
-RUN --mount=type=cache,id=yarn-cache,target=/root/.yarn YARN_CACHE_FOLDER=/root/.yarn yarn install --frozen-lockfile --production=false \
-  && yarn build:production
+COPY . ./
+RUN yarn build:production
 
 FROM node:16-alpine3.15 as runner
 

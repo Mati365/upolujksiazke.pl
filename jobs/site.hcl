@@ -22,7 +22,7 @@ job "upolujksiazke-site" {
 
       port "http" {
         host_network = "internal-cluster-network"
-        to = 3002
+        to = 80
       }
     }
 

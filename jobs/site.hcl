@@ -38,20 +38,20 @@ job "upolujksiazke-site" {
 
       tags = [
         "traefik.enable=true",
-        "traefik.http.routers.traefik.rule=Host(`upolujksiazke.pl`)",
-        "traefik.http.routers.traefik.entrypoints=http,https",
-        "traefik.http.routers.traefik.tls=true",
-        "traefik.http.routers.traefik.tls.certresolver=https-resolver",
-        "traefik.http.routers.traefik.tls.domains[0].main=upolujksiazke.pl"
+        "traefik.http.routers.upolujksiazke-front.rule=Host(`upolujksiazke.pl`)",
+        "traefik.http.routers.upolujksiazke-front.entrypoints=http,https",
+        "traefik.http.routers.upolujksiazke-front.tls=true",
+        "traefik.http.routers.upolujksiazke-front.tls.certresolver=https-resolver",
+        "traefik.http.routers.upolujksiazke-front.tls.domains[0].main=upolujksiazke.pl"
       ]
 
-      // check {
-      //   name = "upolujksiazke-front-check"
-      //   type = "http"
-      //   path     = "/"
-      //   interval = "2s"
-      //   timeout = "1s"
-      // }
+      check {
+        name = "upolujksiazke-front-check"
+        type = "http"
+        path     = "/"
+        interval = "2s"
+        timeout = "1s"
+      }
     }
 
     task "upolujksiazke-front" {

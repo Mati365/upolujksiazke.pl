@@ -36,7 +36,10 @@ WORKDIR /app
 RUN apk add exiv2 imagemagick python3 make g++
 
 COPY ./docker/entrypoint.sh ./
-COPY --from=builder gulpfile.js tsconfig.json package.json config src dist public ./
+COPY --from=builder gulpfile.js tsconfig.json package.json ./
+COPY --from=builder gulpfile.js src ./src/
+COPY --from=builder gulpfile.js dist ./dist/
+COPY --from=builder gulpfile.js public ./public/
 
 RUN --mount=type=cache,id=yarn-cache,target=/root/.yarn YARN_CACHE_FOLDER=/root/.yarn yarn install --frozen-lockfile --production=true \
   && chmod +x ./entrypoint.sh

@@ -4,28 +4,6 @@ variable "nginx_assets_config" {
     autoindex off;
     access_log off;
     log_not_found off;
-
-    gzip_static on;
-    gzip_comp_level 6;
-    gzip_min_length 1100;
-    gzip_buffers 16 8k;
-    gzip_proxied any;
-    gzip_types
-        text/plain
-        text/css
-        text/js
-        text/xml
-        text/javascript
-        application/javascript
-        application/json
-        application/xml
-        application/rss+xml
-        image/svg+xml;
-
-    add_header Pragma public;
-    add_header Vary Accept-Encoding;
-    add_header Cache-Control "public, no-transform, max-age=31536000, immutable";
-    expires 3d;
   EOH
 }
 
@@ -121,7 +99,9 @@ job "upolujksiazke-assets" {
         "traefik.http.routers.upolujksiazke-assets.entrypoints=http,https",
         "traefik.http.routers.upolujksiazke-assets.tls=true",
         "traefik.http.routers.upolujksiazke-assets.tls.certresolver=https-resolver",
-        "traefik.http.routers.upolujksiazke-assets.tls.domains[0].main=upolujksiazke.pl"
+        "traefik.http.routers.upolujksiazke-assets.tls.domains[0].main=upolujksiazke.pl",
+        "traefik.http.middlewares.upolujksiazke-assets-compress.compress=true",
+        "traefik.http.routers.upolujksiazke-assets.middlewares=upolujksiazke-assets-compress"
       ]
 
       check {

@@ -42,7 +42,9 @@ job "upolujksiazke-site" {
         "traefik.http.routers.upolujksiazke-front.entrypoints=http,https",
         "traefik.http.routers.upolujksiazke-front.tls=true",
         "traefik.http.routers.upolujksiazke-front.tls.certresolver=https-resolver",
-        "traefik.http.routers.upolujksiazke-front.tls.domains[0].main=upolujksiazke.pl"
+        "traefik.http.routers.upolujksiazke-front.tls.domains[0].main=upolujksiazke.pl",
+        "traefik.http.middlewares.upolujksiazke-front-compress.compress=true",
+        "traefik.http.routers.upolujksiazke-front.middlewares=upolujksiazke-front-compress"
       ]
 
       check {

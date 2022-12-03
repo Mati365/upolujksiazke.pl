@@ -176,6 +176,7 @@
     "to-snake-case": "^1.0.0",
     "ts-enum-util": "^4.0.2",
     "ts-node": "^10.1.0",
+    "tsconfig-paths": "^3.9.0",
     "turndown": "^7.1.1",
     "typeorm": "^0.2.36",
     "typeorm-seeding": "^1.6.1",

@@ -47,11 +47,10 @@ job "upolujksiazke-site" {
 
       check {
         name = "upolujksiazke-front-check"
-        port = "http"
         type = "http"
         path     = "/"
-        interval = "5s"
-        timeout = "10s"
+        interval = "2s"
+        timeout = "1s"
       }
     }
 

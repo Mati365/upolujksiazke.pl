@@ -95,16 +95,16 @@ job "upolujksiazke-site" {
     }
 
     service {
-      name = "upolujksiazke-front"
+      name = "upolujksiazke-assets"
       port = "http"
 
       tags = [
         "traefik.enable=true",
-        "traefik.http.routers.upolujksiazke-front.rule=Host(`upolujksiazke.pl`) && (PathPrefix(`/cdn`) || PathPrefix(`/sitemaps))",
-        "traefik.http.routers.upolujksiazke-front.entrypoints=http,https",
-        "traefik.http.routers.upolujksiazke-front.tls=true",
-        "traefik.http.routers.upolujksiazke-front.tls.certresolver=https-resolver",
-        "traefik.http.routers.upolujksiazke-front.tls.domains[0].main=upolujksiazke.pl"
+        "traefik.http.routers.upolujksiazke-assets.rule=Host(`upolujksiazke.pl`) && (PathPrefix(`/cdn`) || PathPrefix(`/sitemaps))",
+        "traefik.http.routers.upolujksiazke-assets.entrypoints=http,https",
+        "traefik.http.routers.upolujksiazke-assets.tls=true",
+        "traefik.http.routers.upolujksiazke-assets.tls.certresolver=https-resolver",
+        "traefik.http.routers.upolujksiazke-assets.tls.domains[0].main=upolujksiazke.pl"
       ]
     }
   }

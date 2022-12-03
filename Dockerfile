@@ -1,4 +1,4 @@
-FROM node:16-alpine3.15 as builder
+FROM node:16 as builder
 
 ARG sentry_org
 ARG sentry_project
@@ -17,7 +17,7 @@ RUN --mount=type=cache,id=yarn-cache,target=/root/.yarn YARN_CACHE_FOLDER=/root/
 COPY . ./
 RUN yarn build:production
 
-FROM node:16-alpine3.15 as runner
+FROM node:16 as runner
 
 ENV DB_PORT 5432
 ENV REDIS_PORT 6379

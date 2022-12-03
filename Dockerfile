@@ -9,16 +9,6 @@ ENV SENTRY_ORG $sentry_org
 ENV SENTRY_PROJECT $sentry_project
 ENV SENTRY_AUTH_TOKEN $sentry_auth_token
 
-RUN apk add python3 make g++
-
-COPY package.json ./
-RUN --mount=type=cache,id=yarn-cache,target=/root/.yarn YARN_CACHE_FOLDER=/root/.yarn yarn install --frozen-lockfile --production=false
-
-COPY . ./
-RUN yarn build:production
-
-FROM node:16-alpine3.15 as runner
-
 ENV DB_PORT 5432
 ENV REDIS_PORT 6379
 ENV REDIS_PREFIX upolujksiazke-queue
@@ -33,12 +23,18 @@ ENV CDN_LOCAL_PATH /data/upolujksiazke/cdn
 ENV SITEMAP_OUTPUT_PATH /data/upolujksiazke/sitemaps
 
 WORKDIR /app
+
 RUN apk add exiv2 imagemagick python3 make g++
 
-COPY ./docker/entrypoint.sh ./
-COPY --from=builder gulpfile.js tsconfig.json package.json config dist public ./
+COPY package.json ./
+RUN --mount=type=cache,id=yarn-cache,target=/root/.yarn YARN_CACHE_FOLDER=/root/.yarn yarn install --frozen-lockfile --production=false
 
-RUN --mount=type=cache,id=yarn-cache,target=/root/.yarn YARN_CACHE_FOLDER=/root/.yarn yarn install --frozen-lockfile --production=true \
-  && chmod +x ./entrypoint.sh
+COPY . ./
+COPY ./docker/entrypoint.sh ./
+
+RUN --mount=type=cache,id=yarn-cache,target=/root/.yarn yarn build:production \
+  && chmod +x ./entrypoint.sh \
+  && rm -rf ./node_modules \
+  && YARN_CACHE_FOLDER=/root/.yarn yarn install --frozen-lockfile --production=true
 
 ENTRYPOINT [ "/app/entrypoint.sh" ]

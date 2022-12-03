@@ -33,7 +33,7 @@ ENV CDN_LOCAL_PATH /data/upolujksiazke/cdn
 ENV SITEMAP_OUTPUT_PATH /data/upolujksiazke/sitemaps
 
 WORKDIR /app
-RUN apk add exiv2 imagemagick
+RUN apk add exiv2 imagemagick python3 make g++
 
 COPY ./docker/entrypoint.sh ./
 COPY --from=builder package.json ./

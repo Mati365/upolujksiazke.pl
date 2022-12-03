@@ -52,7 +52,7 @@ job "upolujksiazke-site" {
       template {
         data = <<EOH
           server {
-            listen 80
+            listen 80;
 
             location /cdn/ {
               alias /data/upolujksiazke/cdn;

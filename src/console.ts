@@ -10,6 +10,8 @@ import awaitOutside from 'await-outside';
 import repl from 'pretty-repl';
 
 import {DB_ENTITIES} from '@server/modules/database/config/dbConfig';
+import {SERVER_ENV} from '@server/constants/env';
+
 import * as AppModules from '@server/modules';
 import * as Helpers from '@shared/helpers';
 
@@ -39,6 +41,7 @@ const LOGGER_OPTIONS = {
       R,
       Helpers,
       app: context,
+      SERVER_ENV,
       ...AppModules,
       ...DB_ENTITIES,
     },

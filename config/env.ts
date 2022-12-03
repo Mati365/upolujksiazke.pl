@@ -99,7 +99,6 @@ const {
   DB_PORT,
   JWT_SECRET,
   JWT_EXPIRE_IN_SECONDS,
-  APP_ENV = 'development',
   APP_INSTANCES = 2,
   APP_PORT = 3000,
   APP_LISTEN_ADDRESS = 'localhost',

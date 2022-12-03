@@ -10,14 +10,14 @@
     "backup:sync": "./scripts/sync-backup.sh",
     "backup:restore": "./scripts/restore-backup.sh",
     "build:production": "rm -rf ./dist && APP_ENV=production NODE_ENV=production node_modules/.bin/webpack --mode=production --config=config/webpack.config.js",
-    "migration:revert": "node_modules/.bin/ts-node --transpile-only --project tsconfig.json -r tsconfig-paths/register ./node_modules/.bin/typeorm migration:revert --config src/server/ormconfig.js",
-    "migration:run": "TS_NODE_FILES=true TS_NODE_TRANSPILE_ONLY=true node_modules/.bin/ts-node --transpile-only --project tsconfig.json -r tsconfig-paths/register ./node_modules/.bin/typeorm migration:run --config src/server/ormconfig.js",
-    "migration:generate": "TS_NODE_FILES=true TS_NODE_TRANSPILE_ONLY=true node_modules/.bin/ts-node --transpile-only --project tsconfig.json -r tsconfig-paths/register ./node_modules/.bin/typeorm migration:generate --config src/server/ormconfig.js",
+    "migration:revert": "node_modules/.bin/ts-node --project tsconfig.json -r tsconfig-paths/register ./node_modules/.bin/typeorm migration:revert --config src/server/ormconfig.js",
+    "migration:run": "TS_NODE_FILES=true TS_NODE_TRANSPILE_ONLY=true node_modules/.bin/ts-node --project tsconfig.json -r tsconfig-paths/register ./node_modules/.bin/typeorm migration:run --config src/server/ormconfig.js",
+    "migration:generate": "TS_NODE_FILES=true TS_NODE_TRANSPILE_ONLY=true node_modules/.bin/ts-node --project tsconfig.json -r tsconfig-paths/register ./node_modules/.bin/typeorm migration:generate --config src/server/ormconfig.js",
     "sitemap:refresh": "node_modules/.bin/gulp sitemap:refresh",
-    "schema:sync": "TS_NODE_FILES=true TS_NODE_TRANSPILE_ONLY=true node_modules/.bin/ts-node --transpile-only --project tsconfig.json -r tsconfig-paths/register ./node_modules/.bin/typeorm schema:sync --config src/server/ormconfig.js",
-    "schema:migrate": "TS_NODE_FILES=true TS_NODE_TRANSPILE_ONLY=true node_modules/.bin/ts-node --transpile-only --project tsconfig.json -r tsconfig-paths/register ./node_modules/.bin/typeorm migration:run --config src/server/ormconfig.js",
-    "seed:config": "node_modules/.bin/ts-node --transpile-only --project tsconfig.json -r tsconfig-paths/register ./node_modules/typeorm-seeding/dist/cli.js config -n src/server/ormconfig.js",
-    "seed:run": "node_modules/.bin/ts-node --transpile-only --project tsconfig.json -r tsconfig-paths/register ./node_modules/typeorm-seeding/dist/cli.js seed -n src/server/ormconfig.js",
+    "schema:sync": "TS_NODE_FILES=true TS_NODE_TRANSPILE_ONLY=true node_modules/.bin/ts-node --project tsconfig.json -r tsconfig-paths/register ./node_modules/.bin/typeorm schema:sync --config src/server/ormconfig.js",
+    "schema:migrate": "TS_NODE_FILES=true TS_NODE_TRANSPILE_ONLY=true node_modules/.bin/ts-node --project tsconfig.json -r tsconfig-paths/register ./node_modules/.bin/typeorm migration:run --config src/server/ormconfig.js",
+    "seed:config": "node_modules/.bin/ts-node --project tsconfig.json -r tsconfig-paths/register ./node_modules/typeorm-seeding/dist/cli.js config -n src/server/ormconfig.js",
+    "seed:run": "node_modules/.bin/ts-node --project tsconfig.json -r tsconfig-paths/register ./node_modules/typeorm-seeding/dist/cli.js seed -n src/server/ormconfig.js",
     "bull:wait_if_has_jobs": "node scripts/wait-for-queue.mjs",
     "console": "NODE_REPL_HISTORY_FILE=$HOME/.node_history node ./dist/console.js"
   },
@@ -33,7 +33,6 @@
   "devDependencies": {
     "@alex_neo/jest-expect-message": "^1.0.5",
     "@babel/preset-react": "^7.14.5",
-    "@sentry/webpack-plugin": "^1.15.1",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^11.2.7",
     "@types/bull": "^3.15.1",
@@ -118,9 +117,6 @@
     "@nestjs/schedule": "^0.4.1",
     "@nestjs/throttler": "^1.2.0",
     "@nestjs/typeorm": "^7.1.5",
-    "@sentry/integrations": "^6.9.0",
-    "@sentry/node": "^6.9.0",
-    "@sentry/tracing": "^6.9.0",
     "await-outside": "^3.0.0",
     "bull": "^4.7.0",
     "cache-manager": "^3.4.4",
@@ -167,6 +163,7 @@
     "react-router-dom": "^5.2.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0",
+    "set-cookie-parser": "^2.4.8",
     "sitemap": "^7.0.0",
     "slugify": "^1.6.0",
     "snakecase-keys": "^4.0.2",
@@ -181,7 +178,6 @@
     "typeorm-seeding": "^1.6.1",
     "uuid": "^8.3.2",
     "wikijs": "^6.2.1",
-    "xml-stream": "^0.4.5",
-    "set-cookie-parser": "^2.4.8"
+    "xml-stream": "^0.4.5"
   }
 }

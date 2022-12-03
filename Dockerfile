@@ -1,13 +1,6 @@
 FROM node:16 as builder
 
-ARG sentry_org
-ARG sentry_project
-ARG sentry_auth_token
-
 ENV NODE_ENV production
-ENV SENTRY_ORG $sentry_org
-ENV SENTRY_PROJECT $sentry_project
-ENV SENTRY_AUTH_TOKEN $sentry_auth_token
 
 RUN apt-get update \
   && apt-get install -y python3 make g++

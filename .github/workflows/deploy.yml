@@ -37,8 +37,8 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: true
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=gha, scope=${{ github.workflow }}
+          cache-to: type=gha, scope=${{ github.workflow }}
           tags: registry.upolujksiazke.pl/upolujksiazke-front:latest
 
       - name: Apply job

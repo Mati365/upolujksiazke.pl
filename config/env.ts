@@ -1,8 +1,5 @@
 import * as path from 'path';
 
-import {Options as SentryOptions} from '@sentry/types';
-import {LogLevel} from '@sentry/types/dist/loglevel';
-
 import {DefaultUrlsConfig} from '@scrapper/service/shared/DefaultWebsiteScrappersGroup';
 import {WykopScrappersGroupConfig} from '@server/modules/importer/sites/wykop/WykopScrappersGroup';
 import {WykopAPI} from '@server/modules/importer/sites/wykop/api/WykopAPI';
@@ -74,7 +71,6 @@ export type AppEnv = Partial<{
       localPath: string,
     },
     sitemap: SitemapServiceOptions,
-    sentry: Omit<SentryOptions, 'integrations'>,
     parsers: Record<DefaultConfigBookShopNames, DefaultUrlsConfig> & {
       wykop: WykopScrappersGroupConfig & {
         bots: {
@@ -109,7 +105,6 @@ const {
   APP_LISTEN_ADDRESS = 'localhost',
   HTTPS_KEY_PATH,
   HTTPS_CERT_PATH,
-  SENTRY_DSN,
   REDIS_PORT = '6379',
   REDIS_HOST = 'localhost',
   REDIS_PREFIX = 'upolujksiazke:',
@@ -181,12 +176,6 @@ export const GLOBAL_CONFIG: Record<string, AppEnv> = {
       cdn: {
         publicUrl: CDN_PUBLIC_URL,
         localPath: CDN_LOCAL_PATH,
-      },
-      sentry: {
-        dsn: SENTRY_DSN,
-        environment: APP_ENV,
-        logLevel: LogLevel.Debug,
-        tracesSampleRate: 1.0,
       },
       parsers: {
         polskina5: {

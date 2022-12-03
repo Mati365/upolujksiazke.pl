@@ -2,8 +2,7 @@
 
 set -e
 
-while [ -n $(chmod 755 /data) ]; do
-  echo "Try again";
-done;
+sleep 7
+chmod 755 /data
 
 . /docker-entrypoint.sh

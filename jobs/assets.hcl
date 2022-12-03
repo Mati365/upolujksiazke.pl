@@ -117,7 +117,7 @@ job "upolujksiazke-assets" {
 
       tags = [
         "traefik.enable=true",
-        "traefik.http.routers.upolujksiazke-assets.rule=Host(`upolujksiazke.pl`) && (PathPrefix(`/cdn`) || PathPrefix(`/sitemaps`))",
+        "traefik.http.routers.upolujksiazke-assets.rule=Host(`upolujksiazke.pl`) && PathPrefix(`/(cdn|sitemaps|public)`)",
         "traefik.http.routers.upolujksiazke-assets.entrypoints=http,https",
         "traefik.http.routers.upolujksiazke-assets.tls=true",
         "traefik.http.routers.upolujksiazke-assets.tls.certresolver=https-resolver",

@@ -7,9 +7,8 @@ export $(grep -v '^#' /etc/app.envs | xargs)
 cat /etc/app.envs
 cd /app
 
-while [ -n $(chmod 755 /data) ]; do
-  echo "Try again";
-done;
+sleep 7
+chmod 755 /data
 
 rm -rf /data/upolujksiazke/public 2>/dev/null
 cp -r public/ /data/upolujksiazke/public

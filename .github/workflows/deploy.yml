@@ -33,13 +33,23 @@ jobs:
           source: jobs/site.hcl
           target: /var/www/jobs/upolujksiazke/
 
-      - name: Build
+      - name: Build site image
         uses: docker/build-push-action@v3
         with:
           push: true
+          file: Dockerfile
           cache-from: type=gha, scope=${{ github.workflow }}
           cache-to: type=gha, scope=${{ github.workflow }}
           tags: registry.upolujksiazke.pl/upolujksiazke-front:latest
+
+      - name: Build assets host image
+        uses: docker/build-push-action@v3
+        with:
+          push: true
+          file: Dockerfile.assets
+          cache-from: type=gha, scope=${{ github.workflow }}
+          cache-to: type=gha, scope=${{ github.workflow }}
+          tags: registry.upolujksiazke.pl/upolujksiazke-assets:latest
 
       - name: Apply job
         uses: appleboy/ssh-action@master

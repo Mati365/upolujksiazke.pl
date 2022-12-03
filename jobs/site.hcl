@@ -67,7 +67,7 @@ job "upolujksiazke-site" {
       driver = "docker"
 
       config {
-        image = "nginx:latest"
+        image = "docker-registry.service.consul:5000/upolujksiazke-assets"
         ports = ["http"]
         volumes = [
           "custom/default.conf:/etc/nginx/conf.d/default.conf"

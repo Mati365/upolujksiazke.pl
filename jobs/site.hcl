@@ -87,6 +87,11 @@ job "upolujksiazke-site" {
 
         destination = "custom/default.conf"
       }
+
+      resources {
+        cpu    = 2000
+        memory = 128
+      }
     }
 
     service {
@@ -101,11 +106,6 @@ job "upolujksiazke-site" {
         "traefik.http.routers.upolujksiazke-front.tls.certresolver=https-resolver",
         "traefik.http.routers.upolujksiazke-front.tls.domains[0].main=upolujksiazke.pl"
       ]
-    }
-
-    resources {
-      cpu    = 2000
-      memory = 128
     }
   }
 

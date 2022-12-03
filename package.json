@@ -97,7 +97,6 @@
     "react-svg-loader": "^3.0.3",
     "sass": "^1.35.1",
     "sass-loader": "^12.1.0",
-    "set-cookie-parser": "^2.4.8",
     "ts-jest": "^27.0.3",
     "ts-loader": "^9.2.3",
     "tslib": "^2.3.0",
@@ -182,6 +181,7 @@
     "typeorm-seeding": "^1.6.1",
     "uuid": "^8.3.2",
     "wikijs": "^6.2.1",
-    "xml-stream": "^0.4.5"
+    "xml-stream": "^0.4.5",
+    "set-cookie-parser": "^2.4.8"
   }
 }

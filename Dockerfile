@@ -46,5 +46,4 @@ COPY --from=builder gulpfile.js public ./public/
 RUN --mount=type=cache,id=yarn-cache,target=/root/.yarn YARN_CACHE_FOLDER=/root/.yarn yarn install --frozen-lockfile --production=true \
   && chmod +x ./entrypoint.sh
 
-# ENTRYPOINT [ "/app/entrypoint.sh" ]
-ENTRYPOINT [ "sleep", "7200" ]
+ENTRYPOINT [ "/app/entrypoint.sh" ]

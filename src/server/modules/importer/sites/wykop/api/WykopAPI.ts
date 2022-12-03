@@ -76,7 +76,7 @@ export class WykopAPI {
    * @returns {Promise<WykopAPIResponse>}
    * @memberof WykopAPI
    */
-  async call(params: WykopRequestParams): Promise<WykopAPIResponse> {
+  call = async (params: WykopRequestParams): Promise<WykopAPIResponse> => {
     const {userkey, authConfig, cacheResolver} = this;
     const cacheResult = cacheResolver?.(params);
 
@@ -128,14 +128,14 @@ export class WykopAPI {
     }
 
     return response.json();
-  }
+  };
 
   /**
    * Authorize to API
    *
    * @memberof WykopAPI
    */
-  async authorize() {
+  authorize = async () => {
     const {account} = this.authConfig;
     const {data: {userkey}} = await this.call(
       {
@@ -150,5 +150,5 @@ export class WykopAPI {
     );
 
     this.userkey = userkey;
-  }
+  };
 }

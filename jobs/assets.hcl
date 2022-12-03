@@ -123,6 +123,14 @@ job "upolujksiazke-assets" {
         "traefik.http.routers.upolujksiazke-assets.tls.certresolver=https-resolver",
         "traefik.http.routers.upolujksiazke-assets.tls.domains[0].main=upolujksiazke.pl"
       ]
+
+      check {
+        name = "upolujksiazke-assets-check"
+        type = "http"
+        path     = "/"
+        interval = "6s"
+        timeout = "4s"
+      }
     }
   }
 }

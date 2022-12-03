@@ -1,4 +1,10 @@
 name: Shared deploy steps
+inputs:
+  username:
+    required: true
+  password:
+    required: true
+
 runs:
   using: composite
   steps:
@@ -10,6 +16,6 @@ runs:
     - name: Login to private registry
       uses: docker/login-action@v1
       with:
-        username: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
-        password: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
+        username: ${{ inputs.username }}
+        password: ${{ inputs.password }}
         registry: https://registry.upolujksiazke.pl

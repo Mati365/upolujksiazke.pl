@@ -10,6 +10,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/workflows/shared-deploy-steps
+        inputs:
+          username: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
+          password: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
 
       - name: Copy job file
         uses: appleboy/scp-action@master
@@ -51,6 +54,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/actions/shared-deploy-steps
+        inputs:
+          username: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
+          password: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
 
       - name: Copy job file
         uses: appleboy/scp-action@master

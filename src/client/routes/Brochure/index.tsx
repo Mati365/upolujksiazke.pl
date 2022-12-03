@@ -63,7 +63,7 @@ export const BrochureRoute: AsyncRoute<BrochureRouteViewData> = (
           title: t('seo.title', translatorAttrs),
           description: t('seo.description', translatorAttrs),
           cover: {
-            url: brochure.pages[0].image.preview.file,
+            url: brochure.pages[0]?.image.preview.file,
           },
         }}
       />

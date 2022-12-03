@@ -213,7 +213,7 @@ export class EsBrochureIndex extends EntityIndex<BrochureEntity, BrochureIndexEn
         logo: brand.logo,
       } as any,
 
-      cover: pages[0].image,
+      cover: pages[0]?.image,
       pages: pages.map((page) => ({
         id: page.id,
         index: page.index,

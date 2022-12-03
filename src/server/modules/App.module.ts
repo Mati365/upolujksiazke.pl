@@ -6,7 +6,6 @@ import {EventEmitterModule} from '@nestjs/event-emitter';
 import {ThrottlerGuard, ThrottlerModule} from '@nestjs/throttler';
 
 import {SERVER_ENV} from '@server/constants/env';
-import {isDevMode} from '@shared/helpers';
 
 import {
   getClusterAppInstance,
@@ -20,7 +19,6 @@ import {ManifestModule} from './manifest';
 import {AttachmentModule} from './attachment';
 import {ImporterModule} from './importer';
 import {TmpDirModule} from './tmp-dir';
-import {SentryModule} from './sentry';
 import {RedisCacheModule} from './cache';
 import {APIModule} from './api';
 import {ElasticsearchConnectionModule} from './elasticsearch';
@@ -72,11 +70,6 @@ import {RecommendationModule} from './recommendation';
               },
             ),
           ]
-      ),
-      SentryModule.forRoot(
-        isDevMode() || isCmdAppInstance()
-          ? {}
-          : SERVER_ENV.sentry,
       ),
       AttachmentModule.forRoot(
         {

@@ -8,7 +8,6 @@ const CompressionPlugin = require('compression-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
-const SentryPlugin = require('@sentry/webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 /* eslint-disable import/no-default-export */
@@ -18,13 +17,7 @@ require('dotenv').config(
   },
 );
 
-const {
-  NODE_ENV,
-  SENTRY_ORG,
-  SENTRY_PROJECT,
-  SENTRY_AUTH_TOKEN,
-} = process.env;
-
+const { NODE_ENV } = process.env;
 const resolveSource = (_path) => path.resolve(__dirname, '../src/', _path);
 
 const createConfig = ({
@@ -133,16 +126,7 @@ const createConfig = ({
 
       ...(
         !devMode
-          ? [
-            new SentryPlugin(
-              {
-                authToken: SENTRY_AUTH_TOKEN,
-                org: SENTRY_ORG,
-                project: SENTRY_PROJECT,
-                include: outputPath,
-              },
-            ),
-          ]
+          ? []
           : [
             new ESLintPlugin(
               {

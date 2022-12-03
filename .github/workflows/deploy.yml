@@ -1,32 +1,94 @@
-name: CI Deploy
+name: CI
 
 on:
   push:
-    branches: [ production ]
+    branches: [ feature/new-server ]
 
 jobs:
-  build:
+  build-site:
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v2
-    - uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: 3.0.0
-        bundler-cache: true
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/shared-deploy-steps
+        with:
+          username: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
+          password: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
 
-    - uses: actions/setup-node@v2
-      with:
-        node-version: '16.x'
+      - name: Copy job file
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_CI_USER }}
+          key: ${{ secrets.SERVER_CI_USER_KEY }}
+          port: 22
+          source: jobs/site.hcl
+          target: /var/www/jobs/upolujksiazke/
 
-    - uses: miloserdow/capistrano-deploy@master
-      with:
-        target: production
-        enc_rsa_key_val: ${{ secrets.DEPLOY_ENC_RSA_KEY }}
-        deploy_key: ${{ secrets.DEPLOY_ENC_KEY }}
-      env:
-        SENTRY_LOG_LEVEL: info
-        SENTRY_ORG: upolujksiazkepl
-        SENTRY_PROJECT: upolujksiazkepl
-        SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-        SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+      - name: Build site image
+        uses: docker/build-push-action@v3
+        with:
+          push: true
+          file: Dockerfile
+          cache-from: type=gha, scope=${{ github.workflow }}
+          cache-to: type=gha, scope=${{ github.workflow }}
+          tags: registry.upolujksiazke.pl/upolujksiazke-front:latest
+
+      - name: Apply site job
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_CI_USER }}
+          key: ${{ secrets.SERVER_CI_USER_KEY }}
+          port: 22
+          script: |
+            nomad job run \
+              -address=https://localhost:4646 \
+              -ca-path=/var/www/nomad/tls/nomad-ca.pem \
+              -client-cert=/var/www/nomad/tls/server.pem \
+              -client-key=/var/www/nomad/tls/server-key.pem \
+              -token=$(cat /var/www/nomad/server/token.key) \
+              /var/www/jobs/upolujksiazke/jobs/site.hcl
+
+  build-assets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/shared-deploy-steps
+        with:
+          username: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
+          password: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
+
+      - name: Copy job file
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_CI_USER }}
+          key: ${{ secrets.SERVER_CI_USER_KEY }}
+          port: 22
+          source: jobs/assets.hcl
+          target: /var/www/jobs/upolujksiazke/
+
+      - name: Build assets host image
+        uses: docker/build-push-action@v3
+        with:
+          push: true
+          file: Dockerfile.assets
+          cache-from: type=gha, scope=${{ github.workflow }}
+          cache-to: type=gha, scope=${{ github.workflow }}
+          tags: registry.upolujksiazke.pl/upolujksiazke-assets:latest
+
+      - name: Apply assets job
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_CI_USER }}
+          key: ${{ secrets.SERVER_CI_USER_KEY }}
+          port: 22
+          script: |
+            nomad job run \
+              -address=https://localhost:4646 \
+              -ca-path=/var/www/nomad/tls/nomad-ca.pem \
+              -client-cert=/var/www/nomad/tls/server.pem \
+              -client-key=/var/www/nomad/tls/server-key.pem \
+              -token=$(cat /var/www/nomad/server/token.key) \
+              /var/www/jobs/upolujksiazke/jobs/assets.hcl

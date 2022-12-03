@@ -1,0 +1,6 @@
+FROM nginx:latest
+
+COPY ./docker/entrypoint-assets.sh ./
+RUN chmod +x /entrypoint-assets.sh
+
+ENTRYPOINT [ "/entrypoint-assets.sh" ]

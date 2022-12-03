@@ -3,4 +3,4 @@
 set -e
 
 chmod 755 /data
-sh /docker-entrypoint.sh
+. /docker-entrypoint.sh

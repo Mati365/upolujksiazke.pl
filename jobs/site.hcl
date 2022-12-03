@@ -45,13 +45,13 @@ job "upolujksiazke-site" {
         "traefik.http.routers.traefik.tls.domains[0].main=upolujksiazke.pl"
       ]
 
-      check {
-        name = "upolujksiazke-front-check"
-        type = "http"
-        path     = "/"
-        interval = "2s"
-        timeout = "1s"
-      }
+      // check {
+      //   name = "upolujksiazke-front-check"
+      //   type = "http"
+      //   path     = "/"
+      //   interval = "2s"
+      //   timeout = "1s"
+      // }
     }
 
     task "upolujksiazke-front" {

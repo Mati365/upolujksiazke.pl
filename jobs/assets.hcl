@@ -94,6 +94,11 @@ job "upolujksiazke-assets" {
               alias /data/upolujksiazke/sitemaps/;
               ${var.nginx_assets_config}
             }
+
+            location /public/ {
+              alias /data/upolujksiazke/public/;
+              ${var.nginx_assets_config}
+            }
           }
         EOH
 

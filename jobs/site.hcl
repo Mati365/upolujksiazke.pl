@@ -64,7 +64,6 @@ job "upolujksiazke-site" {
       config {
         image = "docker-registry.service.consul:5000/upolujksiazke-front"
         ports = ["http"]
-        network_mode = "host"
 
         volumes = [
           "secrets/app.envs:/etc/app.envs"

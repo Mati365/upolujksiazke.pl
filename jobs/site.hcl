@@ -36,12 +36,22 @@ job "upolujksiazke-site" {
       name = "upolujksiazke-front"
       port = "http"
 
-      // check {
-      //   name = "upolujksiazke-front-check"
-      //   type = "tcp"
-      //   interval = "15s"
-      //   timeout = "3s"
-      // }
+      tags = [
+        "traefik.enable=true",
+        "traefik.http.routers.traefik.rule=Host(`upolujksiazke.pl`)",
+        "traefik.http.routers.traefik.entrypoints=http,https",
+        "traefik.http.routers.traefik.tls=true",
+        "traefik.http.routers.traefik.tls.certresolver=https-resolver",
+        "traefik.http.routers.traefik.tls.domains[0].main=upolujksiazke.pl"
+      ]
+
+      check {
+        name = "upolujksiazke-front-check"
+        port = "http"
+        type = "tcp"
+        interval = "15s"
+        timeout = "3s"
+      }
     }
 
     task "upolujksiazke-front" {
@@ -92,7 +102,7 @@ job "upolujksiazke-site" {
 
       resources {
         cpu    = 1200
-        memory = 1524
+        memory = 750
       }
     }
   }

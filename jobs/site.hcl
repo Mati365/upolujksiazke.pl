@@ -48,7 +48,7 @@ job "upolujksiazke-site" {
       }
 
       config {
-        image = "0.0.0.0:5000/upolujksiazke-front"
+        image = "docker-registry.service.consul:5000/upolujksiazke-front"
         ports = ["http"]
         network_mode = "host"
 

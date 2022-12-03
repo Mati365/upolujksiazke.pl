@@ -49,8 +49,8 @@ job "upolujksiazke-site" {
         name = "upolujksiazke-front-check"
         port = "http"
         type = "tcp"
-        interval = "15s"
-        timeout = "3s"
+        interval = "20s"
+        timeout = "15s"
       }
     }
 
@@ -102,7 +102,7 @@ job "upolujksiazke-site" {
 
       resources {
         cpu    = 1200
-        memory = 750
+        memory = 1500
       }
     }
   }

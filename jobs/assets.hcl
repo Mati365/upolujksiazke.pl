@@ -126,8 +126,7 @@ job "upolujksiazke-assets" {
 
       check {
         name = "upolujksiazke-assets-check"
-        type = "http"
-        path     = "/"
+        type = "tcp"
         interval = "6s"
         timeout = "4s"
       }

@@ -92,7 +92,7 @@ job "upolujksiazke-site" {
 
       resources {
         cpu    = 1200
-        memory = 720
+        memory = 1024
       }
     }
   }

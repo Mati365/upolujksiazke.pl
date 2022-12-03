@@ -2,9 +2,8 @@
 
 set -e
 
-while ! chmod 755 /data
-do
-  echo "Waiting for volumes ..."
-done
+while [ -n $(chmod 755 /data) ]; do
+  echo "Try again";
+done;
 
 . /docker-entrypoint.sh

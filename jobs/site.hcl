@@ -14,6 +14,101 @@ job "upolujksiazke-site" {
     canary = 0
   }
 
+  group "upolujksiazke-assets" {
+    count = 2
+
+    network {
+      mode = "bridge"
+
+      port "http" {
+        host_network = "internal-cluster-network"
+        to = 80
+      }
+    }
+
+    volume "app-data" {
+      type      = "host"
+      source    = "app-data"
+      read_only = false
+    }
+
+    task "nginx" {
+      driver = "docker"
+
+      config {
+        image = "nginx:latest"
+        ports = ["http"]
+        volumes = [
+          "custom/default.conf:/etc/nginx/conf.d/default.conf"
+        ]
+      }
+
+      volume_mount {
+        volume      = "app-data"
+        destination = "/data"
+        read_only   = false
+      }
+
+      template {
+        data = <<EOH
+          server {
+            listen 80
+
+            location /cdn/ {
+              alias /data/upolujksiazke/cdn;
+              autoindex off;
+              access_log off;
+              log_not_found off;
+
+              gzip_static on;
+              gzip_comp_level 6;
+              gzip_min_length 1100;
+              gzip_buffers 16 8k;
+              gzip_proxied any;
+              gzip_types
+                  text/plain
+                  text/css
+                  text/js
+                  text/xml
+                  text/javascript
+                  application/javascript
+                  application/json
+                  application/xml
+                  application/rss+xml
+                  image/svg+xml;
+
+              add_header Pragma public;
+              add_header Vary Accept-Encoding;
+              add_header Cache-Control "public, no-transform, max-age=31536000, immutable";
+              expires 3d;
+            }
+          }
+        EOH
+
+        destination = "custom/default.conf"
+      }
+    }
+
+    service {
+      name = "upolujksiazke-front"
+      port = "http"
+
+      tags = [
+        "traefik.enable=true",
+        "traefik.http.routers.upolujksiazke-front.rule=Host(`upolujksiazke.pl`) && (PathPrefix(`/cdn`) || PathPrefix(`/sitemaps))",
+        "traefik.http.routers.upolujksiazke-front.entrypoints=http,https",
+        "traefik.http.routers.upolujksiazke-front.tls=true",
+        "traefik.http.routers.upolujksiazke-front.tls.certresolver=https-resolver",
+        "traefik.http.routers.upolujksiazke-front.tls.domains[0].main=upolujksiazke.pl"
+      ]
+    }
+
+    resources {
+      cpu    = 2000
+      memory = 128
+    }
+  }
+
   group "upolujksiazke-site" {
     count = 1
 
@@ -49,8 +144,8 @@ job "upolujksiazke-site" {
         name = "upolujksiazke-front-check"
         type = "http"
         path     = "/"
-        interval = "2s"
-        timeout = "1s"
+        interval = "6s"
+        timeout = "4s"
       }
     }
 
@@ -100,8 +195,8 @@ job "upolujksiazke-site" {
       }
 
       resources {
-        cpu    = 1200
-        memory = 1500
+        cpu    = 2000
+        memory = 1200
       }
     }
   }

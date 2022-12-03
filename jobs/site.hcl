@@ -15,7 +15,7 @@ job "upolujksiazke-site" {
   }
 
   group "upolujksiazke-assets" {
-    count = 2
+    count = 1
 
     network {
       mode = "bridge"
@@ -89,7 +89,7 @@ job "upolujksiazke-site" {
       }
 
       resources {
-        cpu    = 2000
+        cpu    = 1000
         memory = 128
       }
     }
@@ -195,7 +195,7 @@ job "upolujksiazke-site" {
       }
 
       resources {
-        cpu    = 2000
+        cpu    = 1200
         memory = 1200
       }
     }

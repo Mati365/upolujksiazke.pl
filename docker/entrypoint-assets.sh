@@ -1,8 +1,10 @@
-#!/bin/sh
+#!/bin/bash
 
 set -e
 
-sleep 7
-chmod 755 /data
+while ! chmod 755 /data
+do
+  echo "Waiting for volumes ..."
+done
 
 . /docker-entrypoint.sh

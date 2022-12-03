@@ -10,7 +10,7 @@ ENV SENTRY_PROJECT $sentry_project
 ENV SENTRY_AUTH_TOKEN $sentry_auth_token
 
 RUN apt-get update \
-  && apt-get install python3 make g++
+  && apt-get install -y python3 make g++
 
 COPY package.json ./
 RUN --mount=type=cache,id=yarn-cache,target=/root/.yarn YARN_CACHE_FOLDER=/root/.yarn yarn install --frozen-lockfile --production=false
@@ -35,7 +35,7 @@ ENV SITEMAP_OUTPUT_PATH /data/upolujksiazke/sitemaps
 
 WORKDIR /app
 RUN apt-get update \
- && apt-get install exiv2 imagemagick python3 make g++
+ && apt-get install -y exiv2 imagemagick python3 make g++
 
 COPY ./docker/entrypoint.sh ./
 COPY --from=builder gulpfile.js tsconfig.json package.json ./

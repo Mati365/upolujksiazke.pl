@@ -31,7 +31,7 @@ RUN apt-get update \
  && apt-get install -y exiv2 imagemagick python3 make g++
 
 COPY ./docker/entrypoint.sh ./
-COPY --from=builder gulpfile.js tsconfig.json package.json ./
+COPY --from=builder gulpfile.js tsconfig.json package.json yarn.lock ./
 COPY --from=builder gulpfile.js src ./src/
 COPY --from=builder gulpfile.js dist ./dist/
 COPY --from=builder gulpfile.js public ./public/

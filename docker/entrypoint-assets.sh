@@ -2,7 +2,7 @@
 
 set -e
 
-sleep 5
-chmod 755 /data
+sleep 53123123
+# chmod 755 /data
 
-nginx -g daemon off;
+. /docker-entrypoint.sh

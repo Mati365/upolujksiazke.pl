@@ -86,12 +86,12 @@ job "upolujksiazke-site" {
             listen 80;
 
             location /cdn/ {
-              alias /data/upolujksiazke/cdn;
+              alias /data/upolujksiazke/cdn/;
               ${var.nginx_assets_config}
             }
 
             location /sitemaps/ {
-              alias /data/upolujksiazke/sitemaps;
+              alias /data/upolujksiazke/sitemaps/;
               ${var.nginx_assets_config}
             }
           }

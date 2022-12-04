@@ -22,8 +22,7 @@ RUN apt-get update \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
 
-COPY --from=builder package.json yarn.lock ./
-COPY ./docker/entrypoint.sh ./
+COPY package.json yarn.lock ./docker/entrypoint.sh ./
 
 RUN yarn install --frozen-lockfile --production=false \
   && yarn cache clean \

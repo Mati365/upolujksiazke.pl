@@ -124,7 +124,7 @@ export const GLOBAL_CONFIG: Record<string, AppEnv> = {
   shared: {
     shared: {
       repo: {
-        url: 'https://github.com/upolujksiazke/upolujksiazke.pl',
+        url: 'https://github.com/Mati365/upolujksiazke.pl',
         hidden: false,
       },
       website: {

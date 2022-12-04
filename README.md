@@ -15,75 +15,6 @@ Real world open source book reviews aggregator, something like Metacritic / Digg
 ![Home](/doc/screens/home.png) <br />
 ![Bot](/doc/screens/integration.png)
 
-## Goals
-
-- [ ] wykop #książki as blog
-- [ ] Book summary
-- [ ] Changes history
-- [ ] Mark as school reading
-- [ ] Book summary aggregation
-- [ ] Free readings download button
-- [ ] Discover all author books (links discover queue, discover all series book, all author book)
-- [ ] Add article scrapping (wykop, reddit, etc)
-- [ ] Book series tree (al'a tree box)
-- [ ] Allegro.pl / Amazon.pl / Skąpiec.pl price synchronization integration
-- [ ] Wikipedia style edit info proposals
-- [ ] Automatic daily summary tag posting (wykop.pl, #bookmeter tag)
-- [ ] Notifications about new reviews
-- [ ] Front page customization (pin sections)
-- [ ] Read list
-- [ ] Category books RSS
-- [ ] Allow users to books exchange
-- [ ] Price, activity diagram, notifications
-- [ ] Category filters
-- [ ] Mobile APP
-- [ ] Trending books
-- [ ] Emoji reactions
-- [ ] Add comment after publishing entry on wykop.pl with links to shops, add comment to verify matched book
-- [ ] Add current user library link to wykop comment
-- [x] Add website spiders (as separate module that appends content to redis)
-- [ ] Fb top offers bot post publish
-- [ ] product basket, compare multiple books prices in table and summarize per shop basket price
-- [ ] RSS integration
-- [ ] E-Book readers price section and reviews
-- [ ] Section: Top Books/Reviews from Wykop.pl
-- [ ] Machine learning for book (review) picking
-- [ ] Users who bought this book bought also section
-- [ ] Automatic blog posts
-- [ ] SEOLinks on blog posts / reviews
-- [ ] Tinder alternative but for books
-- [ ] Wykop charts in comment
-- [ ] Add trending stats
-- [ ] Books summaries
-- [ ] Dynamic create e-leaflets from books grouped by shop
-- [ ] Add button on availability table with "add store link" and if user adds try to parse
-- [ ] Video reviews
-- [ ] Hierarchic comments (filmweb, reddit)
-- [ ] Popular phrases aggregator
-- [ ] Pin favourite blog from news using heart icon (allow users to comment posts)
-- [ ] Users might create own book regals
-- [ ] tinder but for books(I'm hard, my father is..)
-- [ ] allow users to add book store by configuring JSON / XML (https://news.ycombinator.com/item?id=27739568)
-- [ ] add e-leaflets
-- [ ] youtube reviews
-- [ ] add coupons
-- [ ] books cons table
-- [ ] Lookup in Empik go, Legimi
-
-## Resources
-
-Similar websites:
-https://dribbble.com/shots/4644902-Community-Discussion
-https://dribbble.com/shots/9367777-Overindulge-Buy-Books-Product-Page-Exploration-E-commerce
-https://www.waterstones.com/book/hamnet/maggie-ofarrell/9781472273468
-https://www.barnesandnoble.com/w/shadow-and-bone-leigh-bardugo/1105622727;jsessionid=C67A01F0724C7ED1FB131018117261F6.prodny_store02-atgap14?ean=9781250027436
-
-Icons:
-https://boxicons.com/
-
-Color palette:
-https://coolors.co/2b2d42-8d99ae-edf2f4-ef233c-d90429
-
 ## Available websites
 
 🇵🇱 Poland
@@ -109,6 +40,11 @@ https://coolors.co/2b2d42-8d99ae-edf2f4-ef233c-d90429
 - [x] Streszczenia.pl
 - [x] klp.pl
 - [x] legimi.pl
+
+To be added soon:
+
+🇵🇱 Poland
+
 - [ ] polskina5.pl
 - [ ] Virtualo.pl
 - [ ] tantis.pl
@@ -143,6 +79,55 @@ https://coolors.co/2b2d42-8d99ae-edf2f4-ef233c-d90429
 - [ ] Reddit
 - [ ] Goodreads
 
+## Goals
+
+- [x] wykop #książki as blog
+- [x] Book summary
+- [ ] Changes history
+- [x] Mark as school reading
+- [x] Book summary aggregation
+- [ ] Free readings download button
+- [ ] Discover all author books (links discover queue, discover all series book, all author book)
+- [ ] Add article scrapping (wykop, reddit, etc)
+- [ ] Book series tree (al'a tree box)
+- [ ] Allegro.pl / Amazon.pl / Skąpiec.pl price synchronization integration
+- [ ] Wikipedia style edit info proposals
+- [ ] Automatic daily summary tag posting (wykop.pl, #bookmeter tag)
+- [ ] Notifications about new reviews
+- [ ] Front page customization (pin sections)
+- [ ] Read list
+- [ ] Category books RSS
+- [ ] Price, activity diagram, notifications
+- [x] Category filters
+- [ ] Trending books
+- [ ] Emoji reactions
+- [ ] Add comment after publishing entry on wykop.pl with links to shops, add comment to verify matched book
+- [ ] Add current user library link to wykop comment
+- [x] Add website spiders (as separate module that appends content to redis)
+- [ ] Fb top offers bot post publish
+- [ ] product basket, compare multiple books prices in table and summarize per shop basket price
+- [ ] RSS integration
+- [ ] E-Book readers price section and reviews
+- [ ] Section: Top Books/Reviews from Wykop.pl
+- [ ] Machine learning for book (review) picking
+- [ ] Users who bought this book bought also section
+- [ ] Automatic blog posts
+- [x] SEOLinks on blog posts / reviews
+- [ ] Tinder alternative but for books
+- [ ] Wykop charts in comment
+- [ ] Add trending stats
+- [ ] Books summaries
+- [ ] Dynamic create e-leaflets from books grouped by shop
+- [ ] Add button on availability table with "add store link" and if user adds try to parse
+- [x] Video reviews
+- [ ] Users might create own book regals
+- [ ] allow users to add book store by configuring JSON / XML (https://news.ycombinator.com/item?id=27739568)
+- [ ] add e-leaflets
+- [ ] youtube reviews
+- [ ] add coupons
+- [ ] books cons table
+- [ ] Lookup in Empik go, Legimi
+
 ## Development
 
 ### Setup
@@ -165,42 +150,12 @@ yarn run develop
 gulp scrapper:refresh
 ```
 
-### Production
-
-Be sure that `--insecure-http-parser` is present in systemd service.
-
-```bash
-cat /etc/systemd/system/node-upolujksiazke.service
-
-[Unit]
-Description=upolujksiazke.pl
-
-[Service]
-ExecStart=/usr/bin/node /var/www/upolujksiazke.pl/current/dist/server.js --insecure-http-parser
-Restart=always
-User=web
-# Note Debian/Ubuntu uses 'nogroup', RHEL/Fedora uses 'nobody'
-Group=webusers
-Environment=PATH=/usr/bin:/usr/local/bin
-Environment=NODE_ENV=production APP_ENV=production
-WorkingDirectory=/var/www/upolujksiazke.pl/current
-
-[Install]
-WantedBy=multi-user.target
-```
-
 ### Remote connect
 
 Proxy local 9201 to remote ES
 
 ```bash
 ssh -g -L 9201:localhost:9200 -f -N deploy@upolujksiazke.pl
-```
-
-Logs
-
-```bash
-sudo journalctl -xefu node-upolujksiazke.service
 ```
 
 ### REPL
@@ -280,7 +235,7 @@ gulp scrapper:reanalyze:single --remoteId szepty-spoza-nicosci-remigiusz-mroz,p6
 
 Stats (console):
 
-```
+```bash
 app.select(BookModule).get('BookStatsService').refreshBooksStats(R.pluck('id', books))
 ```
 
@@ -329,17 +284,6 @@ dist/locks/redis_warmup_flushdb.lock
 
   2. Assign scrapper to `scrappersGroups` variable inside `ScrapperService`
 
-
-#### Available
-
-Available scrappers:
-
-- [x] wykop.pl
-- [x] hrosskar.pl
-- [x] krytycznymokiem.blogspot.com
-- [x] lektury.gov.pl
-- [ ] wolnelektury.pl
-
 ## Stack
 
 Real World Nest.JS + TypeORM app.
@@ -349,3 +293,4 @@ Real World Nest.JS + TypeORM app.
 - TypeORM
 - React
 - nginx
+- Nomad

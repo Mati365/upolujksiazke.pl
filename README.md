@@ -1,6 +1,6 @@
 # upolujksiazke.pl
 
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/9251952df8934dd7b138acf02de68b1d)](https://www.codacy.com/gh/upolujksiazke/upolujksiazke.pl/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=upolujksiazke/upolujksiazke.pl&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/e5c219d6311c43b69468d240fc912ff4)](https://www.codacy.com/gh/Mati365/upolujksiazke.pl/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Mati365/upolujksiazke.pl&amp;utm_campaign=Badge_Grade)
 ![Website](https://img.shields.io/website?url=https%3A%2F%2Fupolujksiazke.pl&style=flat-square)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 

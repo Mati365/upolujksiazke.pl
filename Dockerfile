@@ -1,17 +1,6 @@
-FROM node:18 as builder
-
-ENV NODE_ENV production
-
-RUN apt-get update \
-  && apt-get install -y python3 make g++
-
-COPY package.json ./
-RUN --mount=type=cache,id=yarn-cache,target=/root/.yarn YARN_CACHE_FOLDER=/root/.yarn yarn install --frozen-lockfile --production=false
-
-COPY . ./
-RUN yarn build:production
-
 FROM node:18 as runner
+
+WORKDIR /app
 
 ENV DB_PORT 5432
 ENV REDIS_PORT 6379
@@ -28,20 +17,22 @@ ENV APP_LISTEN_ADDRESS 0.0.0.0
 ENV CDN_LOCAL_PATH /data/upolujksiazke/cdn
 ENV SITEMAP_OUTPUT_PATH /data/upolujksiazke/sitemaps
 
-WORKDIR /app
 RUN apt-get update \
   && apt-get install -y exiv2 imagemagick python3 make g++ \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder package.json yarn.lock ./
-RUN --mount=type=cache,id=yarn-cache,target=/root/.yarn YARN_CACHE_FOLDER=/root/.yarn yarn install --frozen-lockfile --production=true \
+COPY ./docker/entrypoint.sh ./
+
+RUN yarn install --frozen-lockfile --production=false \
+  && yarn cache clean \
   && chmod +x ./entrypoint.sh
 
-COPY ./docker/entrypoint.sh ./
-COPY --from=builder gulpfile.js tsconfig.json ./
-COPY --from=builder src ./src/
-COPY --from=builder dist ./dist/
-COPY --from=builder public ./public/
+COPY ./ .
+
+RUN yarn run build:production \
+  && yarn install --production --ignore-scripts --prefer-offline \
+  && rm -rf ./assets ./doc ./test
 
 ENTRYPOINT [ "/app/entrypoint.sh" ]

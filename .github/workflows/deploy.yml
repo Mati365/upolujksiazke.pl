@@ -29,8 +29,8 @@ jobs:
         with:
           push: true
           file: Dockerfile
-          cache-from: type=gha, scope=${{ github.workflow }}
-          cache-to: type=gha, scope=${{ github.workflow }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
           tags: registry.upolujksiazke.pl/upolujksiazke-front:latest
 
       - name: Apply site job
@@ -73,8 +73,8 @@ jobs:
         with:
           push: true
           file: Dockerfile.assets
-          cache-from: type=gha, scope=${{ github.workflow }}
-          cache-to: type=gha, scope=${{ github.workflow }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
           tags: registry.upolujksiazke.pl/upolujksiazke-assets:latest
 
       - name: Apply assets job

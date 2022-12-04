@@ -25,13 +25,13 @@ RUN apt-get update \
 COPY package.json yarn.lock ./docker/entrypoint.sh ./
 
 RUN yarn install --frozen-lockfile --production=false \
-  && yarn cache clean \
   && chmod +x ./entrypoint.sh
 
 COPY ./ .
 
 RUN yarn run build:production \
   && yarn install --production --ignore-scripts --prefer-offline \
+  && yarn cache clean \
   && rm -rf ./assets ./doc ./test
 
 ENTRYPOINT [ "/app/entrypoint.sh" ]

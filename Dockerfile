@@ -30,15 +30,18 @@ ENV SITEMAP_OUTPUT_PATH /data/upolujksiazke/sitemaps
 
 WORKDIR /app
 RUN apt-get update \
- && apt-get install -y exiv2 imagemagick python3 make g++
+  && apt-get install -y exiv2 imagemagick python3 make g++ \
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/*
 
-COPY ./docker/entrypoint.sh ./
-COPY --from=builder gulpfile.js tsconfig.json package.json yarn.lock ./
-COPY --from=builder gulpfile.js src ./src/
-COPY --from=builder gulpfile.js dist ./dist/
-COPY --from=builder gulpfile.js public ./public/
-
+COPY --from=builder package.json yarn.lock ./
 RUN --mount=type=cache,id=yarn-cache,target=/root/.yarn YARN_CACHE_FOLDER=/root/.yarn yarn install --frozen-lockfile --production=true \
   && chmod +x ./entrypoint.sh
+
+COPY ./docker/entrypoint.sh ./
+COPY --from=builder gulpfile.js tsconfig.json ./
+COPY --from=builder src ./src/
+COPY --from=builder dist ./dist/
+COPY --from=builder public ./public/
 
 ENTRYPOINT [ "/app/entrypoint.sh" ]

@@ -1,16 +1,16 @@
 import cheerio from 'cheerio';
 import chalk from 'chalk';
-import convertBody from '@opentermsarchive/fetch-charset-detection';
 import {Logger} from '@nestjs/common';
 import * as R from 'ramda';
 
 import {HTTPCode} from '@shared/constants';
-
 import {
   concatUrls,
   isDevMode,
   timeout,
 } from '@shared/helpers';
+
+import {convertBody} from './detect-encoding';
 
 // eslint-disable-next-line max-len
 export const DEFAULT_USER_AGENT = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.96 Safari/537.36';

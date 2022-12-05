@@ -117,7 +117,6 @@
     "@nestjs/schedule": "^0.4.1",
     "@nestjs/throttler": "^1.2.0",
     "@nestjs/typeorm": "^7.1.5",
-    "@opentermsarchive/fetch-charset-detection": "^1.0.1",
     "await-outside": "^3.0.0",
     "bull": "^4.10.2",
     "cache-manager": "^3.4.4",

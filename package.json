@@ -120,7 +120,7 @@
     "await-outside": "^3.0.0",
     "bull": "^4.10.2",
     "cache-manager": "^3.4.4",
-    "cache-manager-redis-store": "^3.0.1",
+    "cache-manager-redis-store": "^2.0.0",
     "camelcase-keys": "^7.0.0",
     "chalk": "^4.1.1",
     "cheerio": "^1.0.0-rc.10",

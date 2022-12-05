@@ -1,4 +1,4 @@
-FROM node:16.6.1 as runner
+FROM node:16.18 as runner
 
 WORKDIR /app
 

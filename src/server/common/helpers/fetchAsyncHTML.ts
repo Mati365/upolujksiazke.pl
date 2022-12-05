@@ -29,7 +29,7 @@ export async function fetchAsyncHTML(request: Request) {
   });
 
   return {
-    result: await (response as any).textConverted() as string,
+    result: await (response as any).text() as string,
     response,
   };
 }

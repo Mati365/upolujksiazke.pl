@@ -1,4 +1,4 @@
-FROM node:16.18 as runner
+FROM node:19 as runner
 
 WORKDIR /app
 
@@ -6,7 +6,7 @@ ENV DB_PORT 5432
 ENV REDIS_PORT 6379
 ENV REDIS_PREFIX upolujksiazke-queue
 
-ENV NODE_OPTIONS '--insecure-http-parser'
+ENV NODE_OPTIONS '--insecure-http-parser --openssl-legacy-provider'
 ENV NODE_ENV production
 ENV APP_ENV production
 

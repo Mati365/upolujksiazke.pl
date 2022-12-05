@@ -122,3 +122,4 @@ public/sitemaps/
 
 .vscode/
 .pgpass
+.env*

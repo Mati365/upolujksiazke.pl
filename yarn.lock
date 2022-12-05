@@ -1079,6 +1079,16 @@
     consola "^2.15.0"
     node-fetch "^2.6.1"
 
+"@opentermsarchive/fetch-charset-detection@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@opentermsarchive/fetch-charset-detection/-/fetch-charset-detection-1.0.1.tgz#bc7b979b41125674a00753168e19edfcad4b060a"
+  integrity sha512-LU8TotpbfvB25c+IUrE0WjKcR5cc2ZV9+koyvT1sZ5LrHyjUkou21liNbkCD2d0nkfCk+TL1vv3qYNYalwqmbw==
+  dependencies:
+    cheerio "^1.0.0-rc.10"
+    content-type "^1.0.4"
+    iconv-lite "^0.6.3"
+    type-fest "^2.0.0"
+
 "@sindresorhus/is@^0.14.0":
   version "0.14.0"
   resolved "https://registry.yarnpkg.com/@sindresorhus/is/-/is-0.14.0.tgz#9fb3a3cf3132328151f353de4632e01e52102bea"
@@ -4743,16 +4753,6 @@ fetch-blob@^3.1.2:
   integrity sha512-hunJbvy/6OLjCD0uuhLdp0mMPzP/yd2ssd1t2FCJsaA7wkWhpbp9xfuNVpv7Ll4jFhzp6T4LAupSiV9uOeg0VQ==
   dependencies:
     web-streams-polyfill "^3.0.3"
-
-fetch-charset-detection@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/fetch-charset-detection/-/fetch-charset-detection-1.0.1.tgz#ac7884b897aa44a4373e506757b6404d1574c9c8"
-  integrity sha512-r/jcmtfZAvtrT7JhlsxLqT+Zq6NLelVo87wYaT1PLo4dWq8y4whBP1B82/LkFTTYBjvK13/6/UziRzrPkUM8Qw==
-  dependencies:
-    cheerio "^1.0.0-rc.10"
-    content-type "^1.0.4"
-    iconv-lite "^0.6.3"
-    type-fest "^2.0.0"
 
 figlet@^1.1.1:
   version "1.5.0"

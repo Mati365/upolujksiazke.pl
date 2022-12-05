@@ -1,6 +1,6 @@
 import cheerio from 'cheerio';
 import chalk from 'chalk';
-import convertBody from 'fetch-charset-detection';
+import convertBody from '@opentermsarchive/fetch-charset-detection';
 import {Logger} from '@nestjs/common';
 import * as R from 'ramda';
 

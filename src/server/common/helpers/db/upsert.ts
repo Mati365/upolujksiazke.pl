@@ -80,7 +80,7 @@ export async function upsert<T, E extends T | T[], K extends keyof T>(
     repo
       .createQueryBuilder()
       .insert()
-      .values(data)
+      .values(data as any)
       .onConflict(`${conflictKeys} ${doNothing ? 'DO NOTHING' : `DO UPDATE SET ${updateStr}`}`)
       .execute()
   );

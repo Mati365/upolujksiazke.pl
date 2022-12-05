@@ -1,4 +1,4 @@
-FROM node:19 as runner
+FROM node:18 as runner
 
 WORKDIR /app
 

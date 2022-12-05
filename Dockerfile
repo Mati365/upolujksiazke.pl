@@ -4,7 +4,7 @@ WORKDIR /app
 
 ENV DB_PORT 5432
 ENV REDIS_PORT 6379
-ENV REDIS_PREFIX upolujksiazke-queue
+ENV REDIS_PREFIX 'upolujksiazke/'
 
 ENV NODE_OPTIONS '--insecure-http-parser --openssl-legacy-provider'
 ENV NODE_ENV production

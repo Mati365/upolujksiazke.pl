@@ -1,6 +1,8 @@
 import {Module} from '@nestjs/common';
 import {BullModule} from '@nestjs/bull';
 
+import {SERVER_ENV} from '@server/constants/env';
+
 import {TagModule} from '@server/modules/tag/Tag.module';
 import {BookModule} from '@server/modules/book/Book.module';
 import {BrochureModule} from '@server/modules/brochure/Brochure.module';
@@ -35,6 +37,7 @@ import {ScrapperModule} from '../scrapper/Scrapper.module';
       TagModule,
       BullModule.registerQueue(
         {
+          redis: SERVER_ENV.redisConfig,
           name: SCRAPPER_METADATA_LOADER_QUEUE,
           limiter: {
             max: 1,

@@ -137,6 +137,7 @@
     "express": "^4.17.1",
     "express-useragent": "^1.0.15",
     "fast-xml-parser": "^3.18.0",
+    "fetch-charset-detection": "^1.0.1",
     "fs-extra": "^10.0.0",
     "gulp": "^4.0.2",
     "instant.page": "^5.1.0",

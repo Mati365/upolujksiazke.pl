@@ -1,5 +1,6 @@
 import cheerio from 'cheerio';
 import chalk from 'chalk';
+import convertBody from 'fetch-charset-detection';
 import {Logger} from '@nestjs/common';
 import * as R from 'ramda';
 
@@ -28,8 +29,11 @@ export async function fetchAsyncHTML(request: Request) {
     },
   });
 
+  const buf = await response.arrayBuffer();
+  const text = convertBody(buf, response.headers);
+
   return {
-    result: await (response as any).text() as string,
+    result: text,
     response,
   };
 }

@@ -158,6 +158,12 @@ export class WykopBookReviewScrapper extends AsyncScrapper<BookReviewScrapperInf
       },
     );
 
+    // console.info(JSON.stringify({
+    //   response: {data: post},
+    //   description,
+    //   properties,
+    // }));
+
     return {
       remoteId,
       kind: ScrapperMetadataKind.BOOK_REVIEW,

@@ -84,7 +84,7 @@ export class WykopEntryLatestParser extends WykopEntryContentParser {
     ),
     (array) => R.reduce(
       (acc, [key, value]) => {
-        acc[R.toLower(key)] = R.trim(value);
+        acc[R.toLower(key) as string] = R.trim(value);
         return acc;
       },
       {},
@@ -138,7 +138,7 @@ export class WykopEntryLatestParser extends WykopEntryContentParser {
       WykopEntryLatestParser
         .normalizeBody(body)
         // eslint-disable-next-line max-len
-        .match(/(?:[☆★]+|\d+\s*\/\s*\d+(?:(?:<br \/>)+[☆★]+)?)\s*(?:<br\s\/>)+(.*?)(?<!<a)(?:<br \/>)*(?:Wpis dodano za pomocą stron|#bookmeter|$).*/mi)
+        .match(/(?:[☆★]+|\d+\s*\/\s*\d+(?:(?:<br \/>)+[☆★]+)?)(?:[^>]+(?:<\/code>)*)\s*(?:<br\s\/>)+(.*?)(?<!<a)(?:<br \/>)*(?:Wpis dodano za pomocą stron|#bookmeter|$).*/mi)
     )?.[1] ?? null;
 
     if (!match)
